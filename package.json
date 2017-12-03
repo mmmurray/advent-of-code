@@ -1,0 +1,24 @@
+{
+  "name": "advent-of-code",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "jest": "jest --watch",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/MarkMurrayBBC/advent-of-code.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/MarkMurrayBBC/advent-of-code/issues"
+  },
+  "homepage": "https://github.com/MarkMurrayBBC/advent-of-code#readme",
+  "devDependencies": {
+    "jest": "^21.2.1"
+  }
+}
