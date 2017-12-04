@@ -20,5 +20,8 @@
   "homepage": "https://github.com/MarkMurrayBBC/advent-of-code#readme",
   "devDependencies": {
     "jest": "^21.2.1"
+  },
+  "dependencies": {
+    "lodash": "^4.17.4"
   }
 }
