@@ -21,8 +21,6 @@ const processInstruction = ({ registers, largest }, instruction) => {
   return { registers, largest };
 };
 
-const getLargest = registers => Object.values(registers).sort((a, b) => b - a)[0];
-
 const { largest } = input
   .trim()
   .split('\n')

@@ -20,12 +20,10 @@ const processInstruction = (registers, instruction) => {
   return registers;
 };
 
-const getLargest = registers => Object.values(registers).sort((a, b) => b - a)[0];
-
 const registers = input
   .trim()
   .split('\n')
   .map(parseInstruction)
   .reduce(processInstruction, {});
 
-console.log(getLargest(registers));
+console.log(Math.max(...Object.values(registers)));
