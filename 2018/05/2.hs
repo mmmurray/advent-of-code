@@ -1,37 +1,29 @@
-import Data.List.Split
-import Data.Text (toLower, unpack, pack, head,singleton)
+import qualified Data.List.Split as Split
+import qualified Data.Text as Text
 import Data.List
 
 lowerChar :: Char -> Char
-lowerChar c = Data.Text.head . toLower . singleton $ c
+lowerChar c = Text.head . Text.toLower . Text.singleton $ c
 
 doesReact :: String -> Bool
-doesReact [x,y] =
-  lowerChar x == lowerChar y && x /= y
+doesReact [x,y] = lowerChar x == lowerChar y && x /= y
 
 removeReactionPairs :: String -> String
-removeReactionPairs s = concat $ filter (\x -> length x /= 2 || (not $ doesReact x)) (chunksOf 2 s)
+removeReactionPairs s = concat $ filter (\x -> length x /= 2 || (not $ doesReact x)) (Split.chunksOf 2 s)
 
 removeReactions :: String -> String
-removeReactions s1 =
+removeReactions units =
   let
-    s2 = removeReactionPairs s1
-    s3 = removeReactionPairs $ tail s2
-  in
-    (Prelude.head s2) : s3
-
-removeReactionsRec :: String -> String
-removeReactionsRec s1 =
-  let
-    s2 = removeReactions s1
-  in
-    if s1 == s2 then s1 else removeReactionsRec s2
+    withoutEvenUnits = removeReactionPairs units
+    withoutOddUnits = removeReactionPairs $ tail withoutEvenUnits
+    result = (Prelude.head withoutEvenUnits) : withoutOddUnits
+  in if result == units then units else removeReactions result
 
 removeUnit :: Char -> String -> String
 removeUnit unit s = filter (\c -> lowerChar c /= unit) s
 
 reactedLengthsWithoutUnit :: Char -> String -> Int
-reactedLengthsWithoutUnit unit s = length . removeReactionsRec . (removeUnit unit) $ s
+reactedLengthsWithoutUnit unit s = length . removeReactions . (removeUnit unit) $ s
 
 main = do
   contents <- getContents
