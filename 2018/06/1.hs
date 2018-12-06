@@ -40,7 +40,6 @@ main = do
   let
     allLines = lines contents
     points = map parseLine allLines
-    p = findClosestTo points (1,2)
     bound1 = (0, 0)
     bound2 = (500, 500)
     perimeter = perimeterPoints bound1 bound2
