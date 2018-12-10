@@ -1,5 +1,4 @@
 import Text.Regex.PCRE
-import qualified Data.Set as Set
 import qualified Data.List as List
 
 type Vector = (Int, Int)
@@ -13,12 +12,14 @@ parseLine line =
   in
     ((dx, dy), (vx, vy))
 
+
 tick :: [Point] -> [Point]
 tick = map (\(d, v) ->
   let
     (dx, dy) = d
     (vx, vy) = v
   in ((dx + vx, dy + vy), (vx, vy)))
+
 
 isMessage :: [Point] -> Bool
 isMessage points =
@@ -29,29 +30,20 @@ isMessage points =
     range < 10
 
 
-moveToOrigin :: [Point] -> [Vector]
-moveToOrigin points =
-  let
-    positions = map (\(d, v) -> d) points
-    minY = minimum $ map (\(dx, dy) -> dy) positions
-    minX = minimum $ map (\(dx, dy) -> dx) positions
-  in
-    map (\(dx, dy) -> (dx - minX, dy - minY)) positions
-
-
-fastForward :: [Point] -> [Point]
-fastForward points
-  | isMessage points = points
-  | otherwise = fastForward $ tick points
+fastForward :: [Point] -> Int -> ([Point], Int)
+fastForward points time
+  | isMessage points = (points, time)
+  | otherwise = fastForward (tick points) (time + 1)
 
 
 main = do
   contents <- getContents
   let
     points = map parseLine (lines contents)
-    result = moveToOrigin $ fastForward points
-  print result
+    (result, time) = fastForward points 0
+    positions = map (\(d, v) -> d) result
+  print positions
+  print time
 
-
--- tbSKMSe
--- http://www.shodor.org/interactivate/activities/SimplePlot/
+-- Plot with: http://www.shodor.org/interactivate/activities/SimplePlot/
+-- Flip vertically and scale Y 33% to read message.
