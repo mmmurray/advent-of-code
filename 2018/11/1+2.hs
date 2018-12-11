@@ -7,7 +7,7 @@ type Cell = (Int, Int)
 
 gridSize = 300
 serial = 3463
--- squareSize = 3
+
 
 allSquaresInGrid :: Int -> [Cell]
 allSquaresInGrid squareSize = [(x, y) | x <- [1..(gridSize - squareSize + 1)], y <- [1..(gridSize - squareSize + 1)]]
@@ -49,7 +49,7 @@ getPowerForSquareSizes powerLevels serial =
   let
     sizes = [1..gridSize]
   in
-    map (\size -> ((getLargestPower powerLevels size serial), (traceShowId size))) sizes
+    map (\size -> ((getLargestPower powerLevels size serial), size)) sizes
 
 
 getBestSquareSize :: Grid -> Int -> ((Cell, Int), Int)
@@ -64,13 +64,5 @@ getBestSquareSize powerLevels serial =
 main = do
   let
     powerLevels = Array.array ((1, 1), (gridSize, gridSize)) [((x, y), powerForCell serial (x, y)) | x <- [1..gridSize], y <- [1..gridSize]]
-    powerForSquareSizes = getPowerForSquareSizes powerLevels serial
-    bestSquare = List.maximumBy (\(p1, s1) (p2, s2) -> compare (snd p1) (snd p2)) powerForSquareSizes
-  print powerForSquareSizes
-  print bestSquare
-  -- print $ getPowerForSquareSizes powerLevels serial
-    -- powerLevels = Array.array ((1,1),(2,2)) [((2,1),"C"),((1,2),"B"),((1,1),"A"),((2,2),"D")]
-  -- print $ powerLevels
-  -- print $ "Part 1: " ++ (show . fst $ getLargestPower powerLevels 3 serial)
-  -- print $ "Part 2: " ++ (show $ getBestSquareSize powerLevels serial)
-  -- print $ map (\size -> ((getLargestPower powerLevels size serial), (traceShowId size))) [0..20]
+  print $ "Part 1: " ++ (show $ getLargestPower powerLevels 3 serial)
+  print $ "Part 2: " ++ (show $ getBestSquareSize powerLevels serial)
