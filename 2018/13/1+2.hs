@@ -1,4 +1,3 @@
-import Debug.Trace
 import qualified Data.List as List
 import qualified Data.Map as Map
 
@@ -7,6 +6,7 @@ type Vector = (Int, Int)
 type Cart = (Vector, Vector, Int) -- position, direction, last intersection
 type TrackSection = (Vector, TrackType)
 type Track = Map.Map Vector TrackType
+
 
 vAdd :: Vector -> Vector -> Vector
 vAdd (a1, b1) (a2, b2) = (a1 + a2, b1 + b2)
@@ -71,7 +71,16 @@ moveCart track (position, direction, nextDecision) =
 
 
 sortCarts :: [Cart] -> [Cart]
-sortCarts = List.sortBy (\(p1, _, _) (p2, _, _) -> if (fst p1) == (fst p2) then compare (snd p1) (snd p2) else compare (fst p1) (fst p2))
+sortCarts = List.sortBy (\(p1, _, _) (p2, _, _) -> sorter p1 p2)
+
+
+sorter :: Vector -> Vector -> Ordering
+sorter (x1, y1) (x2, y2)
+  | x1 < x2 = LT
+  | x1 > x2 = GT
+  | y1 < y2 = LT
+  | y1 > y2 = GT
+  | otherwise = EQ
 
 
 cartCollides :: [Cart] -> Cart -> Bool
@@ -120,18 +129,15 @@ tickAndRemove :: Track -> [Cart] -> [Cart] -> [Cart]
 tickAndRemove track movedCarts (c:cs) =
   let
     newCart = moveCart track c
-    nextMovedCarts = removeCollisions $ movedCarts ++ [newCart]
-    in if length cs == 0 then nextMovedCarts else tickAndRemove track nextMovedCarts cs
-
-
-p :: [Cart] -> [Vector]
-p carts = map (\(p, _, _) -> p) carts
+    collidesWithMoved = cartCollides movedCarts newCart
+    collidesWithNext = cartCollides cs newCart
+    nextMovedCarts = if collidesWithNext then movedCarts else removeCollisions $ movedCarts ++ [newCart]
+    nextCarts = if collidesWithNext then removeCollisions (newCart : cs) else cs
+    in if length nextCarts == 0 then nextMovedCarts else tickAndRemove track nextMovedCarts nextCarts
 
 
 lastCartStanding :: Track -> [Cart] -> Cart
-lastCartStanding track carts
-  -- | trace (show $ p carts) False = undefined
-  | otherwise =
+lastCartStanding track carts =
   let
     newCarts = tickAndRemove track [] (sortCarts carts)
   in if length newCarts == 1 then head newCarts else lastCartStanding track newCarts
