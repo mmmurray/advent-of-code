@@ -71,7 +71,7 @@ moveCart track (position, direction, nextDecision) =
 
 
 sortCarts :: [Cart] -> [Cart]
-sortCarts = List.sortBy (\(p1, _, _) (p2, _, _) -> compare (fst p1) (fst p2))
+sortCarts = List.sortBy (\(p1, _, _) (p2, _, _) -> if (fst p1) == (fst p2) then compare (snd p1) (snd p2) else compare (fst p1) (fst p2))
 
 
 cartCollides :: [Cart] -> Cart -> Bool
@@ -120,7 +120,7 @@ tickAndRemove :: Track -> [Cart] -> [Cart] -> [Cart]
 tickAndRemove track movedCarts (c:cs) =
   let
     newCart = moveCart track c
-    nextMovedCarts = removeCollisions $ newCart : movedCarts
+    nextMovedCarts = removeCollisions $ movedCarts ++ [newCart]
     in if length cs == 0 then nextMovedCarts else tickAndRemove track nextMovedCarts cs
 
 
@@ -130,11 +130,11 @@ p carts = map (\(p, _, _) -> p) carts
 
 lastCartStanding :: Track -> [Cart] -> Cart
 lastCartStanding track carts
-  | trace (show $ p carts) False = undefined
+  -- | trace (show $ p carts) False = undefined
   | otherwise =
   let
-    newCarts = tickAndRemove track [] carts
-  in if length newCarts == 1 then head newCarts else lastCartStanding track (sortCarts newCarts)
+    newCarts = tickAndRemove track [] (sortCarts carts)
+  in if length newCarts == 1 then head newCarts else lastCartStanding track newCarts
 
 
 main = do
@@ -144,4 +144,4 @@ main = do
     (trackSections, carts) = loadTrack input
     track = Map.fromList trackSections
   print $ "Part 1: " ++ (show $ tickUntilCrash track (sortCarts carts))
-  print $ "Part 2: " ++ (show $ lastCartStanding track (sortCarts carts))
+  print $ "Part 2: " ++ (show $ lastCartStanding track carts)
