@@ -83,6 +83,16 @@ cartCollides carts (position, _, _) =
     length colliding > 0
 
 
+removeCollisions :: [Cart] -> [Cart]
+removeCollisions carts =
+  let
+    positions = map (\(p, _, _) -> p) carts
+    grouped = List.group $ List.sort positions
+    collisions = map head (filter ((== 2) . length) grouped)
+  in
+    filter (\(p, _, _) -> not $ List.elem p collisions) carts
+
+
 tick :: Track -> [Cart] -> [Cart] -> ([Cart], [Vector])
 tick track movedCarts (c:cs) =
   let
@@ -106,10 +116,32 @@ tickUntilCrash track carts =
   in if length collisions > 0 then head collisions else tickUntilCrash track (sortCarts newCarts)
 
 
+tickAndRemove :: Track -> [Cart] -> [Cart] -> [Cart]
+tickAndRemove track movedCarts (c:cs) =
+  let
+    newCart = moveCart track c
+    nextMovedCarts = removeCollisions $ newCart : movedCarts
+    in if length cs == 0 then nextMovedCarts else tickAndRemove track nextMovedCarts cs
+
+
+p :: [Cart] -> [Vector]
+p carts = map (\(p, _, _) -> p) carts
+
+
+lastCartStanding :: Track -> [Cart] -> Cart
+lastCartStanding track carts
+  | trace (show $ p carts) False = undefined
+  | otherwise =
+  let
+    newCarts = tickAndRemove track [] carts
+  in if length newCarts == 1 then head newCarts else lastCartStanding track (sortCarts newCarts)
+
+
 main = do
   contents <- getContents
   let
     input = parseInput contents
     (trackSections, carts) = loadTrack input
     track = Map.fromList trackSections
-  print $ tickUntilCrash track (sortCarts carts)
+  print $ "Part 1: " ++ (show $ tickUntilCrash track (sortCarts carts))
+  print $ "Part 2: " ++ (show $ lastCartStanding track (sortCarts carts))
