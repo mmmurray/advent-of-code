@@ -8,7 +8,8 @@ type Player = (Int, Point, Int, Bool) -- id, position, HP, is goblin
 type Walls = Set.Set Point
 
 initialHP = 200
-attackDamage = 3
+elfAttackDamage = 3
+goblinAttackDamage = 3
 noPoint = (-1, -1)
 
 
@@ -83,6 +84,9 @@ attackEnemyInRange players player =
       then (let (_, p2, _, _) = head targets in p2)
       else noPoint
 
+    (_, _, _, t1) = player
+    attackDamage = if t1 then goblinAttackDamage else elfAttackDamage
+
     damagedPlayers = map (\(id2, p2, hp, t2) -> if attackerPosition == p2 then (id2, p2, hp - attackDamage, t2) else (id2, p2, hp, t2)) players
 
     newPlayers = filter (\(_, _, hp, _) -> hp > 0) damagedPlayers
@@ -152,10 +156,10 @@ totalHP :: [Player] -> Int
 totalHP players = sum (map (\(_, _, hp, _) -> hp) players)
 
 
-battle :: Walls -> [Player] -> Int -> Int
+battle :: Walls -> [Player] -> Int -> (Int, [Player])
 battle walls players turn
   -- | trace ((show turn) ++ (":\n") ++ (printPlayers players) ++ ("\n") ++ (printPoints $ renderState walls players)) False = undefined
-  | battleComplete players = (turn - 1) * (totalHP players)
+  | battleComplete players = (turn - 1, players)
   | otherwise = battle walls (takeTurns walls players) (turn + 1)
 
 
@@ -211,5 +215,6 @@ main = do
     walls = Set.fromList wallPoints
     playerPoints = Set.fromList $ map (\(_, p, _, _) -> p) players
     spaces = allPoints Set.\\ walls
-    result = battle walls players 0
+    (turn, victors) = battle walls players 0
+    result = turn * (totalHP victors)
   print result
