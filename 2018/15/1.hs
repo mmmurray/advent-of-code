@@ -8,7 +8,7 @@ type Player = (Int, Point, Int, Bool) -- id, position, HP, is goblin
 type Walls = Set.Set Point
 
 initialHP = 200
-elfAttackDamage = 3
+elfAttackDamage = 19
 goblinAttackDamage = 3
 noPoint = (-1, -1)
 
@@ -158,8 +158,8 @@ totalHP players = sum (map (\(_, _, hp, _) -> hp) players)
 
 battle :: Walls -> [Player] -> Int -> (Int, [Player])
 battle walls players turn
-  -- | trace ((show turn) ++ (":\n") ++ (printPlayers players) ++ ("\n") ++ (printPoints $ renderState walls players)) False = undefined
-  | battleComplete players = (turn - 1, players)
+  | trace ((show turn) ++ (":\n") ++ (printPlayers players) ++ ("\n") ++ (printPoints $ renderState walls players)) False = undefined
+  | battleComplete players = (turn, players)
   | otherwise = battle walls (takeTurns walls players) (turn + 1)
 
 
@@ -209,6 +209,7 @@ main = do
   let
     (wallPoints, playersWithoutIds) = loadMap contents
     players = map (\(id, player) -> playerWithId player id) (zip [0..] playersWithoutIds)
+    totalElves = length $ filter (\(_, _, _, t) -> not t) players
     (xMax, yMax) = maximum wallPoints
     allPointsList = [(x, y) | x <- [0..xMax], y <- [0..yMax]]
     allPoints = Set.fromList allPointsList
@@ -216,5 +217,9 @@ main = do
     playerPoints = Set.fromList $ map (\(_, p, _, _) -> p) players
     spaces = allPoints Set.\\ walls
     (turn, victors) = battle walls players 0
-    result = turn * (totalHP victors)
+    result = (turn - 1) * (totalHP victors)
+  print $ (length victors) == totalElves
+  putStr $ printPoints $ renderState walls victors
+  print turn
+  print $ totalHP victors
   print result
