@@ -1,12 +1,16 @@
 import qualified Data.List.Split as Split
+import qualified Data.List as List
+import qualified Data.Map as Map
+import qualified Data.Set as Set
 import Text.Regex.PCRE
 import Data.Bits
 
 type Registers = [Int]
 type Instruction = [Int]
 type Operation = Registers -> Instruction -> Registers
+type Sample = (Registers, Instruction, Registers)
 
-parseInput :: String -> [(Registers, Instruction, Registers)]
+parseInput :: String -> [Sample]
 parseInput input = map (f . (take 3)) (Split.chunksOf 4 (lines input))
   where
     f l =
@@ -18,6 +22,16 @@ parseInput input = map (f . (take 3)) (Split.chunksOf 4 (lines input))
         readDigits matches = map read (tail . head $ matches)
       in
         (readDigits matchesBefore, readDigits matchesInstruction, readDigits matchesAfter)
+
+parseProgram :: String -> [Instruction]
+parseProgram input = map f (lines input)
+  where
+    f :: String -> Instruction
+    f l =
+      let
+        matchesInstruction = l =~ "^(\\d+) (\\d+) (\\d+) (\\d+)$" :: [[String]]
+      in
+        map read (tail . head $ matchesInstruction)
 
 set :: Registers -> Int -> Int -> Registers
 set [r0, r1, r2, r3] register value
@@ -84,15 +98,73 @@ eqrr registers [operation, a, b, c] = set registers c (if (get registers a) == (
 operations :: [(Operation)]
 operations = [addr, addi, mulr, muli, banr, bani, borr, bori, setr, seti, gtir, gtri, gtrr, eqir, eqri, eqrr]
 
-behavesLikeOperation :: (Registers, Instruction, Registers) -> Operation -> Bool
+behavesLikeOperation :: Sample -> Operation -> Bool
 behavesLikeOperation (before, instruction, after) operation = operation before instruction == after
 
-behavesLikeThreeOrMoreOperations :: [Operation] -> (Registers, Instruction, Registers) -> Bool
+behavesLikeThreeOrMoreOperations :: [Operation] -> Sample -> Bool
 behavesLikeThreeOrMoreOperations operations sample = length (filter (behavesLikeOperation sample) operations) >= 3
+
+behavesLikeOneOperation :: [Operation] -> Sample -> Bool
+behavesLikeOneOperation operations sample = length (filter (behavesLikeOperation sample) operations) == 1
+
+behavesLikeOperations :: [Operation] -> Sample -> [Operation]
+behavesLikeOperations operations sample = filter (behavesLikeOperation sample) operations
+
+getOpCode :: Sample -> Int
+getOpCode (_, instruction, _) =
+  let
+    [opCode, _, _, _] = instruction
+  in
+    opCode
+
+possibleOperations :: [Operation] -> Sample -> Set.Set Int
+possibleOperations operations sample =
+  let
+    indexedOperations = zip [0..] operations
+    possible = filter (\(i, operation) -> behavesLikeOperation sample operation) indexedOperations
+  in Set.fromList (map fst possible)
+
+translateOpCode :: [Operation] -> [Sample] -> Int -> [Int]
+translateOpCode operations samples opCode =
+  let
+    samplesForOperation = filter (\sample -> getOpCode sample == opCode) samples
+    operationSets = map (possibleOperations operations) samplesForOperation
+    intersection = foldl (\acc s -> Set.intersection acc s) (Set.fromList [0..(length operations - 1)]) operationSets
+  in Set.toList intersection
+
+-- Generated manually by analysing Mappings output using Sudoku style strategy
+operationMap :: Map.Map Int Operation
+operationMap = Map.fromList [
+    (0, operations !! 5),
+    (1, operations !! 11),
+    (2, operations !! 9),
+    (3, operations !! 13),
+    (4, operations !! 15),
+    (5, operations !! 6),
+    (6, operations !! 7),
+    (7, operations !! 4),
+    (8, operations !! 3),
+    (9, operations !! 14),
+    (10, operations !! 2),
+    (11, operations !! 12),
+    (12, operations !! 8),
+    (13, operations !! 0),
+    (14, operations !! 10),
+    (15, operations !! 1)
+  ]
+
+runProgram :: Map.Map Int Operation -> [Instruction] -> Registers
+runProgram operationMap instructions =
+  foldl (\acc instruction -> (operationMap Map.! (head instruction)) acc instruction) [0,0,0,0] instructions
 
 main = do
   contents <- getContents
+  program <- readFile "program.txt"
   let
+    programInstructions = parseProgram program
     samples = parseInput contents
     part1 = length (filter (behavesLikeThreeOrMoreOperations operations) samples)
-  print $ part1
+    part2 = head $ runProgram operationMap programInstructions
+  putStr $ "Mappings: " ++ (unlines $ map (\i -> (show i) ++ ": " ++ (show $ translateOpCode operations samples i)) [0..15])
+  print ("Part 1: " ++ (show part1))
+  print ("Part 2: " ++ (show part2))
