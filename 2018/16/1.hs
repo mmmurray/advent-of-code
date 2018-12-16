@@ -6,6 +6,19 @@ type Registers = [Int]
 type Instruction = [Int]
 type Operation = Registers -> Instruction -> Registers
 
+parseInput :: String -> [(Registers, Instruction, Registers)]
+parseInput input = map (f . (take 3)) (Split.chunksOf 4 (lines input))
+  where
+    f l =
+      let
+        [before, instruction, after] = l :: [String]
+        matchesBefore = before =~ "^Before: \\[(\\d+), (\\d+), (\\d+), (\\d+)\\]$" :: [[String]]
+        matchesInstruction = instruction =~ "^(\\d+) (\\d+) (\\d+) (\\d+)$" :: [[String]]
+        matchesAfter = after =~ "^After:  \\[(\\d+), (\\d+), (\\d+), (\\d+)\\]$" :: [[String]]
+        readDigits matches = map read (tail . head $ matches)
+      in
+        (readDigits matchesBefore, readDigits matchesInstruction, readDigits matchesAfter)
+
 set :: Registers -> Int -> Int -> Registers
 set [r0, r1, r2, r3] register value
   | register == 0 = [value, r1, r2, r3]
@@ -75,24 +88,11 @@ behavesLikeOperation :: (Registers, Instruction, Registers) -> Operation -> Bool
 behavesLikeOperation (before, instruction, after) operation = operation before instruction == after
 
 behavesLikeThreeOrMoreOperations :: [Operation] -> (Registers, Instruction, Registers) -> Bool
-behavesLikeThreeOrMoreOperations operations test = length (filter (behavesLikeOperation test) operations) >= 3
-
-parseInput :: String -> [(Registers, Instruction, Registers)]
-parseInput input = map (f . (take 3)) (Split.chunksOf 4 (lines input))
-  where
-    f l =
-      let
-        [before, instruction, after] = l :: [String]
-        matchesBefore = before =~ "^Before: \\[(\\d+), (\\d+), (\\d+), (\\d+)\\]$" :: [[String]]
-        matchesInstruction = instruction =~ "^(\\d+) (\\d+) (\\d+) (\\d+)$" :: [[String]]
-        matchesAfter = after =~ "^After:  \\[(\\d+), (\\d+), (\\d+), (\\d+)\\]$" :: [[String]]
-        readDigits matches = map read (tail . head $ matches)
-      in
-        (readDigits matchesBefore, readDigits matchesInstruction, readDigits matchesAfter)
+behavesLikeThreeOrMoreOperations operations sample = length (filter (behavesLikeOperation sample) operations) >= 3
 
 main = do
   contents <- getContents
   let
-    testInputs = parseInput contents
-    part1 = length (filter (behavesLikeThreeOrMoreOperations operations) testInputs)
+    samples = parseInput contents
+    part1 = length (filter (behavesLikeThreeOrMoreOperations operations) samples)
   print $ part1
