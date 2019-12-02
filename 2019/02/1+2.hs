@@ -19,9 +19,9 @@ execute ip memory = case memory !! ip of
 
 run :: Int -> Int -> String -> Int
 run n v input = head $ execute 0 $ initMemory n v $ parseInput input
- where
-  initMemory a b memory = setElement 1 a $ setElement 2 b memory
-  parseInput input = map read $ splitOn "," input
+  where
+    initMemory a b memory = setElement 1 a $ setElement 2 b memory
+    parseInput input = map read $ splitOn "," input
 
 part1 :: String -> Int
 part1 = run 12 2
