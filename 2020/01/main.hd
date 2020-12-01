@@ -1,0 +1,46 @@
+<filter, head, map, maybeValue, product, sum> = @core
+<equal, test> = @test
+
+parseNumber = (input) -> maybeValue(0, stringToNumber(input))
+
+parseInput = (input) -> map(parseNumber, lines(input))
+
+findCombination = (combinations) -> {
+  correctSums = filter((x) -> sum(x) == 2020, combinations)
+  products = map(product, correctSums)
+
+  maybeValue(0, head(products))
+}
+
+part1 = (values) -> {
+  combinations = {
+    x <- values
+    y <- values
+    [[x, y]]
+  }
+
+  findCombination(combinations)
+}
+
+part2 = (values) -> {
+  combinations = {
+    x <- values
+    y <- values
+    z <- values
+    [[x, y, z]]
+  }
+
+  findCombination(combinations)
+}
+
+input <- readFile("./input.txt")
+
+test("Part 1", {
+  equal(part1([1721, 979, 366, 299, 675, 1456]), 514579)
+  equal(part1(parseInput(input)), 471019)
+})
+
+test("Part 2", {
+  equal(part2([1721, 979, 366, 299, 675, 1456]), 241861950)
+  equal(part2(parseInput(input)), 103927824)
+})
