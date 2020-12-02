@@ -1,0 +1,71 @@
+<map, maybeValue, Pair> = @core
+<equal, test> = @test
+
+Policy = Policy(min, max, char)
+
+parseNumber = (input) -> maybeValue(0, stringToNumber(input))
+
+parsePolicy = (policy) -> [split(" ", policy)
+  | [length, [char]] -> [map(parseNumber, split("-", length))
+      | [min, max] -> Policy(min, max, char)
+    ]
+]
+
+parseLine = (input) -> [split(": ", input)
+  | [policy, password] -> Pair(parsePolicy(policy), password)
+]
+
+parseInput = (input) -> map(parseLine, lines(input))
+
+countChar = (char, input) -> {
+  recurse = (input, count) -> [input
+    | [x, ...xs] -> recurse(xs, count + [x == char -> 1 | 0])
+    | count
+  ]
+
+  recurse(input, 0)
+}
+
+countValid = (entries, isValid) -> {
+  recurse = (entries, count) -> [entries
+    | [x, ...xs] -> recurse(xs, count + [isValid(x) -> 1 | 0])
+    | count
+  ]
+
+  recurse(entries, 0)
+}
+
+part1 = (entries) -> {
+  isValid = (p) -> [p | Pair(Policy(min, max, char), password) -> {
+    count = countChar(char, password)
+
+    count >= min && count <= max
+  }]
+
+  countValid(entries, isValid)
+}
+
+part2 = (entries) -> {
+  isValid = (p) -> [p | Pair(Policy(min, max, char), password) ->     
+    [[maybeValue(' ', element(password, min - 1)) == char,
+      maybeValue(' ', element(password, max - 1)) == char]
+      | [True, False] -> True
+      | [False, True] -> True
+      | False
+    ]
+  ]
+
+  countValid(entries, isValid)
+}
+
+input <- readFile("./input.txt")
+
+test("Part 1", {
+  equal(part1([parseLine("1-3 a: abcde"), parseLine("1-3 b: cdefg"), parseLine("2-9 c: ccccccccc")]), 2)
+  equal(part1(parseInput(input)), 586)
+})
+
+test("Part 2", {
+  equal(part2([parseLine("1-3 a: abcde"), parseLine("1-3 b: cdefg"), parseLine("2-9 c: ccccccccc")]), 1)
+  equal(part2(parseInput(input)), 352)
+})
