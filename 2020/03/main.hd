@@ -1,0 +1,72 @@
+<map, mapEmpty, mapGet, mapInsert, mod, product> = @core
+<equal, test> = @test
+
+Vec2 = Vec2(x, y)
+
+vec2Add = (v1, v2) -> [v1
+  | Vec2(x1, y1) -> [v2
+    | Vec2(x2, y2) -> Vec2(x1 + x2, y1 + y2)
+  ]
+]
+
+vec2ModX = (d, v) -> [v | Vec2(x, y) -> Vec2(mod(d, x), y)]
+
+parseInput = (input) -> {
+  recurseColumn = (grid, columns, columnNumber, rowNumber) -> [columns
+    | [column, ...columns] -> {
+        position = Vec2(columnNumber, rowNumber)
+        newGrid = [column == '#' -> mapInsert(position, True, grid) | grid]
+        recurseColumn(newGrid, columns, columnNumber + 1, rowNumber)
+      }
+    | grid
+  ]
+
+  recurseRow = (grid, rows, rowNumber) -> [rows
+    | [row, ...rows] -> {
+        newGrid = recurseColumn(grid, row, 0, rowNumber)
+        recurseRow(newGrid, rows, rowNumber + 1)
+      }
+    | grid
+  ]
+
+  recurseRow(mapEmpty, lines(input), 0)
+}
+
+countSteps = (grid, position, step, width, height) -> {
+  recurse = (position, count) -> {
+    newPosition = vec2ModX(width, vec2Add(position, step))
+    newCount = count + [mapGet(newPosition, grid) | Nothing -> 0 | 1]
+    finished = [newPosition | Vec2(x, y) -> y >= height | False]
+    [finished -> newCount | recurse(newPosition, newCount)]
+  }
+
+  recurse(position, 0)
+}
+
+part1 = (input, width, height) -> {
+  countSteps(parseInput(input), Vec2(0, 0), Vec2(3, 1), width, height)
+}
+
+part2 = (input, width, height) -> {
+  grid = parseInput(input)
+  product(
+    map(
+      (step) -> countSteps(grid, Vec2(0, 0), step, width, height),
+      [Vec2(1, 1), Vec2(3, 1), Vec2(5, 1), Vec2(7, 1), Vec2(1, 2)]
+    )
+  )
+}
+
+example <- readFile("./example.txt")
+
+input <- readFile("./input.txt")
+
+test("Part 1", {
+  equal(part1(example, 11, 11), 7)
+  equal(part1(input, 31, 323), 181)
+})
+
+test("Part 2", {
+  equal(part2(example, 11, 11), 336)
+  equal(part2(input, 31, 323), 1260601650)
+})
