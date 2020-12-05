@@ -1,0 +1,52 @@
+<filter, listContains, listHead, listLast, map, maybeValue, not, range, Pair> = @core
+<equal, test> = @test
+
+findSeat = (code) -> {
+  recurse = (code, rmin, rmax, cmin, cmax) -> [code
+    | ['F', ...code] -> recurse(code, rmin, rmax - (rmax - rmin) / 2, cmin, cmax)
+    | ['B', ...code] -> recurse(code, rmin + (rmax - rmin) / 2, rmax, cmin, cmax)
+    | ['L', ...code] -> recurse(code, rmin, rmax, cmin, cmax - (cmax - cmin) / 2)
+    | ['R', ...code] -> recurse(code, rmin, rmax, cmin + (cmax - cmin) / 2, cmax)
+    | Pair(rmin, cmin)
+  ]
+
+  recurse(code, 0, 128, 0, 8)
+}
+
+findSeatId = (code) -> [findSeat(code)
+  | Pair(r, c) -> r * 8 + c
+]
+
+part1 = (input) -> maybeValue(0, listLast(sort(map(findSeatId, lines(input)))))
+
+part2 = (input) -> {
+  otherSeatIds = sort(map(findSeatId, lines(input)))
+
+  minSeatId = maybeValue(0, listHead(otherSeatIds))
+
+  maxSeatId = maybeValue(0, listLast(otherSeatIds))
+
+  possibleIds = filter(
+    (id) -> id > minSeatId && id < maxSeatId && not(listContains(id, otherSeatIds)),
+    {
+      r <- range(0, 127)
+      c <- range(0, 7)
+      [r * 8 + c]
+    }
+  )
+
+  maybeValue(0, listHead(possibleIds))
+}
+
+input <- readFile("./input.txt")
+
+test("Part 1", {
+  equal(findSeatId("BFFFBBFRRR"), 567)
+  equal(findSeatId("FFFBBBFRRR"), 119)
+  equal(findSeatId("BBFFBBFRLL"), 820)
+  equal(part1(input), 842)
+})
+
+test("Part 2", {
+  equal(part2(input), 617)
+})
