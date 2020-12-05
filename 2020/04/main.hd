@@ -1,0 +1,112 @@
+<filter, listContains, listEvery, map, mapEmpty, mapGet, mapInsert, mapMember, reduce, Just, Nothing, Pair> = @core
+<equal, test> = @test
+
+parsePassport = (passport) -> {
+  parts = {
+    l <- lines(passport)
+    p <- split(" ", l)
+    [p]
+  }
+
+  reduce(
+    (acc, part) -> [split(":", part)
+      | [key, value] -> mapInsert(key, value, acc)
+    ],
+    mapEmpty,
+    parts
+  )
+}
+
+parseInput = (input) -> map(parsePassport, split([newLine, newLine], input))
+
+isYearValid = (min, max, yearString) -> [stringToNumber(yearString)
+  | Just(year) -> year >= min && year <= max
+  | False
+]
+
+digits = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9']
+
+isDigit = (c) -> listContains(c, digits)
+
+hexDigits = ['a', 'b', 'c', 'd', 'e', 'f']
+
+isHexDigit = (c) -> isDigit(c) || listContains(c, hexDigits)
+
+isValidHeight = (height) -> {
+  parseHeight = (cs, digits) -> [cs
+    | [c, ...cs] -> [
+        | isDigit(c) -> parseHeight(cs, digits + c)
+        | [stringToNumber(digits)
+            | Just(x) -> Just(Pair(x, [c] + cs))
+            | Nothing
+          ]
+          
+      ]
+    | Nothing
+  ]
+
+  [parseHeight(height, "")
+    | Just(Pair(height, unit)) ->
+        (unit == "cm" && height >= 150 && height <= 193) ||
+        (unit == "in" && height >= 59 && height <= 76) 
+    | False
+  ]
+}
+
+isValidColor = (color) -> [color
+  | [a, ...cs] ->
+    a == '#' &&
+    listSize(cs) == 6 &&
+    listEvery(isHexDigit, cs)
+  | False
+]
+
+validEyeColors = ["amb", "blu", "brn", "gry", "grn", "hzl", "oth"]
+
+isValidEyeColor = (color) -> listContains(color, validEyeColors)
+
+isValidPassportId = (id) -> listEvery(isDigit, id) && listSize(id) == 9
+
+isPassportEntryValid = (passport, key, validator) -> [mapGet(key, passport)
+  | Just(value) -> validator(value)
+  | False
+]
+
+countValidPassports = (input, validator) -> listSize(filter(validator, parseInput(input)))
+
+part1 = (input) -> countValidPassports(input, (passport) ->
+  mapMember("byr", passport) &&
+  mapMember("iyr", passport) &&
+  mapMember("eyr", passport) &&
+  mapMember("hgt", passport) &&
+  mapMember("hcl", passport) &&
+  mapMember("ecl", passport) &&
+  mapMember("pid", passport)
+)
+
+part2 = (input) -> countValidPassports(input, (passport) ->
+  isPassportEntryValid(passport, "byr", (year) -> isYearValid(1920, 2002, year)) &&
+  isPassportEntryValid(passport, "iyr", (year) -> isYearValid(2010, 2020, year)) &&
+  isPassportEntryValid(passport, "eyr", (year) -> isYearValid(2020, 2030, year)) &&
+  isPassportEntryValid(passport, "hgt", isValidHeight) &&
+  isPassportEntryValid(passport, "hcl", isValidColor) &&
+  isPassportEntryValid(passport, "ecl", isValidEyeColor) &&
+  isPassportEntryValid(passport, "pid", isValidPassportId)
+)
+
+example1 <- readFile("./example1.txt")
+example2 <- readFile("./example2.txt")
+example3 <- readFile("./example3.txt")
+input <- readFile("./input.txt")
+
+test("Part 1", {
+  equal(part1(example1), 2)
+  equal(part1(input), 260)
+})
+
+test("Part 2", {
+  equal(part2(example1), 2)
+  equal(part2(example2), 0)
+  equal(part2(example3), 4)
+  equal(part2(input), 153)
+})
