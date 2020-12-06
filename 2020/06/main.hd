@@ -1,0 +1,61 @@
+<map, mapEmpty, mapEntries, mapGet, mapInsert, mapSize, reduce, Pair> = @core
+<equal, test> = @test
+
+incrementCount = (form, question) -> [mapGet(question, form)
+  | Just(count) -> mapInsert(question, count + 1, form)
+  | mapInsert(question, 1, form)
+]
+
+parseForm = (passport) -> {
+  people = lines(passport)
+
+  Pair(
+    listSize(people),
+    reduce(
+      (acc, part) -> [split("", part) | parts -> reduce(incrementCount, acc, parts)],
+      mapEmpty,
+      people
+    )
+  )
+}
+
+parseInput = (input) -> map(parseForm, split([newLine, newLine], input))
+
+part1 = (input) -> {
+  forms = parseInput(input)
+
+  reduce(
+    (acc, form) -> [form | Pair(people, answers) -> acc + mapSize(answers)],
+    0,
+    forms
+  )
+}
+
+part2 = (input) -> {
+  forms = parseInput(input)
+
+  questionsWithTotalAnswers = (total, answers) -> reduce(
+    (acc, entry) -> [entry | Pair(question, count) -> acc + [count == total -> 1 | 0]],
+    0,
+    mapEntries(answers)
+  )
+
+  reduce(
+    (acc, form) -> [form | Pair(people, answers) -> acc + questionsWithTotalAnswers(people, answers)],
+    0,
+    forms
+  )
+}
+
+example <- readFile("./example.txt")
+input <- readFile("./input.txt")
+
+test("Part 1", {
+  equal(part1(example), 11)
+  equal(part1(input), 6885)
+})
+
+test("Part 2", {
+  equal(part2(example), 6)
+  equal(part2(input), 3550)
+})
