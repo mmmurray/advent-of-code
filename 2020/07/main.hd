@@ -1,0 +1,74 @@
+<filter, listContains, mapEmpty, mapEntries, mapGet, mapInsert, mapKeys, mapMember, maybeValue, not, reduce, Pair> = @core
+<equal, test> = @test
+
+parseConditions = (words) -> {
+  recurse = (conditions, words) -> [words
+    | [n, c1, c2, i1, ...words] -> 
+        recurse(mapInsert(c1 + " " + c2, maybeValue(0, stringToNumber(n)), conditions), words)
+    | conditions
+  ]
+
+  recurse(mapEmpty, words)
+}
+
+parseInput = (input) -> reduce(
+  (rules, rule) -> [split(" ", rule)
+    | [c1, c2, i1, i4, ...rest] -> mapInsert(c1 + " " + c2, parseConditions(rest), rules)
+  ],
+  mapEmpty,
+  split([newLine], input)
+)
+
+part1 = (input) -> {
+  rules = parseInput(input)
+
+  canContain = (container, color) -> {
+    recurse = (check, checked) -> [check
+      | [container, ...check] -> {
+          newChecked = checked + [container]
+          [mapGet(container, rules)
+            | Just(contents) -> [
+                | mapMember(color, contents) -> True
+                | recurse(check + filter((key) -> not(listContains(key, newChecked)), mapKeys(contents)), newChecked)
+              ]
+            | False
+          ]
+        }
+      | False
+    ]
+
+    recurse([container], [])
+  }
+  
+  listSize(filter((container) -> canContain(container, "shiny gold"), mapKeys(rules)))
+}
+
+part2 = (input) -> {
+  rules = parseInput(input)
+
+  maxContents = (color) -> [mapGet(color, rules)
+    | Just(contents) -> reduce(
+        (acc, c) -> [c | Pair(color, count) -> acc + count + count * maxContents(color)],
+        0,
+        mapEntries(contents)
+      )
+    | 1
+  ]
+
+  maxContents("shiny gold")
+}
+
+example1 <- readFile("./example1.txt")
+example2 <- readFile("./example2.txt")
+input <- readFile("./input.txt")
+
+test("Part 1", {
+  equal(part1(example1), 4)
+  equal(part1(input), 261)
+})
+
+test("Part 2", {
+  equal(part2(example1), 32)
+  equal(part2(example2), 126)
+  equal(part2(input), 3765)
+})
