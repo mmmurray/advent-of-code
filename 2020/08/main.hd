@@ -1,0 +1,59 @@
+<listContains, map, maybeValue, Pair> = @core
+<equal, test> = @test
+
+parseInstruction = (instruction) -> [split(" ", instruction)
+  | [name, value] -> Pair(name, maybeValue(0, stringToNumber(value)))
+]
+
+parseInput = (input) -> map(parseInstruction, lines(input))
+
+execute = (instructions) -> {
+  recurse = (counter, acc, ran) -> [
+    | listContains(counter, ran) -> Pair(False, acc)
+    | [listGet(counter, instructions)
+        | Just(Pair("acc", value)) -> recurse(counter + 1, acc + value, ran + [counter])
+        | Just(Pair("jmp", value)) -> recurse(counter + value, acc, ran + [counter])
+        | Just(Pair(name, value)) -> recurse(counter + 1, acc, ran + [counter])
+        | Pair(True, acc)
+      ]
+  ]
+
+  recurse(0, 0, [])
+}
+
+part1 = (input) -> {
+  instructions = parseInput(input)
+
+  [execute(instructions) | Pair(terminated, acc) -> acc]
+}
+
+part2 = (input) -> {
+  instructions = parseInput(input)
+
+  recurse = (counter) -> [listGet(counter, instructions)
+    | Just(Pair("nop", value)) -> [execute(listReplace(counter, Pair("jmp", value), instructions))
+        | Pair(True, acc) -> acc
+        | recurse(counter + 1)
+      ]
+    | Just(Pair("jmp", value)) -> [execute(listReplace(counter, Pair("nop", value), instructions))
+        | Pair(True, acc) -> acc
+        | recurse(counter + 1)
+      ]
+    | Just(Pair(name, value)) -> recurse(counter + 1)
+  ]
+
+  recurse(0)
+}
+
+example <- readFile("./example.txt")
+input <- readFile("./input.txt")
+
+test("Part 1", {
+  equal(part1(example), 5)
+  equal(part1(input), 1586)
+})
+
+test("Part 2", {
+  equal(part2(example), 8)
+  equal(part2(input), 703)
+})
