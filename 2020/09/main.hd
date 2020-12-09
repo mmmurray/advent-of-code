@@ -1,0 +1,68 @@
+<listContains, map, maybeValue, range, Pair> = @core
+<equal, test> = @test
+
+parseNumber = (value) -> maybeValue(0, stringToNumber(value))
+
+parseInput = (input) -> map(parseNumber, lines(input))
+
+part1 = (input, preamble) -> {
+  ns = parseInput(input)
+
+  sumPairs = (start, end) -> {
+    x <- range(start, end)
+    y <- range(start, end)
+    n1 = maybeValue(0, listGet(x, ns))
+    n2 = maybeValue(0, listGet(y, ns))
+
+    [x == y -> [] | [n1 + n2]]
+  }
+
+  recurse = (start, end) -> {
+    sums = sumPairs(start, end)
+    n = maybeValue(0, listGet(end + 1, ns))
+    [listContains(n, sums) -> recurse(start + 1, end + 1) | n]
+  }
+
+  recurse(0, preamble - 1)
+}
+
+part2 = (input, target) -> {
+  ns = parseInput(input)
+  size = listSize(ns)
+
+  sumRange = (start, end) -> {
+    recurse = (acc, index) -> {
+      n = maybeValue(0, listGet(index, ns))
+      newAcc = acc + n
+      
+      [index == end -> newAcc | recurse(newAcc, index + 1)]
+    }
+
+    recurse(0, start)
+  }
+
+  recurse = (start, end) -> {
+    s = sumRange(start, end)
+
+    [
+      | s == target -> maybeValue(0, listGet(start, ns)) + maybeValue(0, listGet(end - 1, ns))
+      | s > target || end >= size - 1 -> recurse(start + 1, start + 2)
+      | recurse(start, end + 1)
+    ]
+  }
+
+  recurse(0, 1)
+}
+
+example <- readFile("./example.txt")
+input <- readFile("./input.txt")
+
+test("Part 1", {
+  equal(part1(example, 5), 127)
+  equal(part1(input, 25), 373803594)
+})
+
+test("Part 2", {
+  equal(part2(example, 127), 62)
+  equal(part2(input, 373803594), 51152360)
+})
