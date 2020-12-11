@@ -1,0 +1,72 @@
+<filter, listLast, map, mapGet, mapInsert, mapEmpty, maybeValue, reduce, sum> = @core
+<equal, test> = @test
+
+parseNumber = (value) -> maybeValue(0, stringToNumber(value))
+
+parseInput = (input) -> {
+  adapters = sort(map(parseNumber, lines(input)))
+  deviceJolts = maybeValue(0, listLast(adapters)) + 3
+  [0] + adapters + [deviceJolts]
+}
+
+part1 = (input) -> {
+  jolts = parseInput(input)
+
+  recurse = (jolts, ones, threes, current) -> [jolts
+    | [n, ...jolts] -> {
+        diff = n - current
+        newOnes = ones + [diff == 1 -> 1 | 0]
+        newThrees = threes + [diff == 3 -> 1 | 0]
+        recurse(jolts, newOnes, newThrees, n)
+      }
+    | ones * threes
+  ]
+
+  recurse(jolts, 0, 0, 0)
+}
+
+part2 = (input) -> {
+  jolts = parseInput(input)
+
+  reachableFrom = reduce(
+    (acc, current) -> {
+      reachable = filter((n) -> n > current && n <= current + 3, jolts)
+      mapInsert(current, reachable, acc)
+    },
+    mapEmpty,
+    jolts
+  )
+
+  combinationsFrom = reduce(
+    (acc, current) -> {
+      reachable = maybeValue([], mapGet(current, reachableFrom))
+
+      combinations = [
+        | listSize(reachable) == 0 -> 1
+        | sum(map((r) -> maybeValue(0, mapGet(r, acc)), reachable))
+      ]
+
+      mapInsert(current, combinations, acc)
+    },
+    mapEmpty,
+    listReverse(jolts)
+  )
+
+  maybeValue(0, mapGet(0, combinationsFrom))
+}
+
+example1 <- readFile("./example1.txt")
+example2 <- readFile("./example2.txt")
+input <- readFile("./input.txt")
+
+test("Part 1", {
+  equal(part1(example1), 35)
+  equal(part1(example2), 220)
+  equal(part1(input), 2450)
+})
+
+test("Part 2", {
+  equal(part2(example1), 8)
+  equal(part2(example2), 19208)
+  equal(part2(input), 32396521357312)
+})
