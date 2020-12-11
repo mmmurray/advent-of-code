@@ -1,0 +1,125 @@
+<identity, filter, map, mapEmpty, mapGet, mapEntries, mapInsert, mapValues, maybeValue, not> = @core
+<equal, test> = @test
+
+Vec2 = Vec2(x, y)
+
+vec2Add = (v1, v2) -> [v1
+  | Vec2(x1, y1) -> [v2
+    | Vec2(x2, y2) -> Vec2(x1 + x2, y1 + y2)
+  ]
+]
+
+vec2ModX = (d, v) -> [v | Vec2(x, y) -> Vec2(mod(d, x), y)]
+
+adjacentDirections = [
+  Vec2(1, 0),
+  Vec2(1, 1),
+  Vec2(0, 1),
+  Vec2(-1, 1),
+  Vec2(-1, 0),
+  Vec2(-1, -1),
+  Vec2(0, -1),
+  Vec2(1, -1),
+]
+
+vec2Adjacent = (v) -> map((direction) -> vec2Add(v, direction), adjacentDirections)
+
+vec2ContainedIn = (v, xMin, yMin, xMax, yMax) -> [v | Vec2(x, y) -> x >= xMin && x <= xMax && y >= yMin && y <= yMax]
+
+parseInput = (input) -> {
+  recurseColumn = (grid, columns, columnNumber, rowNumber) -> [columns
+    | [column, ...columns] -> {
+        position = Vec2(columnNumber, rowNumber)
+        newGrid = [column == 'L' -> mapInsert(position, False, grid) | grid]
+        recurseColumn(newGrid, columns, columnNumber + 1, rowNumber)
+      }
+    | grid
+  ]
+
+  recurseRow = (grid, rows, rowNumber) -> [rows
+    | [row, ...rows] -> {
+        newGrid = recurseColumn(grid, row, 0, rowNumber)
+        recurseRow(newGrid, rows, rowNumber + 1)
+      }
+    | grid
+  ]
+
+  recurseRow(mapEmpty, lines(input), 0)
+}
+
+evolve = (seats, shouldOccupy, shouldVacate) -> {
+  recurse = (acc, ss) -> [ss
+    | [s, ...ss] -> [s | Pair(position, occupied) -> {
+        newAcc = [
+          | occupied && shouldVacate(position) -> mapInsert(position, False, acc)
+          | not(occupied) && shouldOccupy(position) -> mapInsert(position, True, acc)
+          | acc
+        ]
+
+        recurse(newAcc, ss)
+      }]
+    | acc
+  ]
+
+  recurse(seats, mapEntries(seats))
+}
+
+part1 = (input) -> {
+  countOccupied = (seats) -> listSize(filter(identity, mapValues(seats)))
+
+  recurse = (seats) -> {
+    isOccupied = (position) -> maybeValue(False, mapGet(position, seats))
+
+    countAdjacentOccupied = (position) -> listSize(filter(identity, map(isOccupied, vec2Adjacent(position))))
+
+    shouldOccupy = (position) -> countAdjacentOccupied(position) == 0
+
+    shouldVacate = (position) -> countAdjacentOccupied(position) >= 4
+    
+    newSeats = evolve(seats, shouldOccupy, shouldVacate)
+
+    [seats == newSeats -> countOccupied(newSeats) | recurse(newSeats)]
+  }
+
+  recurse(parseInput(input))
+}
+
+part2 = (input, width, height) -> {
+  countOccupied = (seats) -> listSize(filter(identity, mapValues(seats)))
+
+  recurse = (seats) -> {
+    isOccupied = (position, direction) -> [mapGet(position, seats)
+      | Just(occupied) -> occupied
+      | {
+          nextPosition = vec2Add(position, direction)
+          [vec2ContainedIn(nextPosition, 0, 0, width - 1, height - 1) -> isOccupied(nextPosition, direction) | False]
+        }
+    ]
+
+    countAdjacentOccupied = (position) -> listSize(filter(identity, map((direction) -> isOccupied(vec2Add(position, direction), direction), adjacentDirections)))
+
+    shouldOccupy = (position) -> countAdjacentOccupied(position) == 0
+
+    shouldVacate = (position) -> countAdjacentOccupied(position) >= 5
+
+    newSeats = evolve(seats, shouldOccupy, shouldVacate)
+
+    [seats == newSeats -> countOccupied(newSeats) | recurse(newSeats)]
+  }
+
+  recurse(parseInput(input))
+}
+
+example <- readFile("./example.txt")
+
+input <- readFile("./input.txt")
+
+test("Part 1", {
+  equal(part1(example), 37)
+  equal(part1(input), 2424)
+})
+
+test("Part 2", {
+  equal(part2(example, 10, 10), 26)
+  equal(part2(input, 96, 99), 2208)
+})
