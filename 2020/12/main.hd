@@ -1,0 +1,78 @@
+<map, maybeValue, mod, Pair> = @core
+<equal, test> = @test
+
+Vec2 = Vec2(x, y)
+
+vec2Add = (v1, v2) -> [v1
+  | Vec2(x1, y1) -> [v2
+    | Vec2(x2, y2) -> Vec2(x1 + x2, y1 + y2)
+  ]
+]
+
+vec2Scale = (v, scale) -> [v | Vec2(x, y) -> Vec2(x * scale, y * scale)]
+
+vec2Rotate = (v, rotation) -> [v | Vec2(x, y) -> {
+  r = mod(360, rotation)
+
+  [
+    | r == 90 -> Vec2(-y, x)
+    | r == 180 -> Vec2(-x, -y)
+    | r == 270 -> Vec2(y, -x)
+    | Vec2(x, y)
+  ]
+}]
+
+Instruction = Move(delta) | Turn(delta) | Forward(distance)
+
+parseNumber = (digits) -> maybeValue(0, stringToNumber(digits))
+
+parseInstruction = (instruction) -> [instruction
+  | ['N', ...digits] -> Move(Vec2(0, parseNumber(digits)))
+  | ['E', ...digits] -> Move(Vec2(parseNumber(digits), 0))
+  | ['S', ...digits] -> Move(Vec2(0, -parseNumber(digits)))
+  | ['W', ...digits] -> Move(Vec2(-parseNumber(digits), 0))
+  | ['L', ...digits] -> Turn(parseNumber(digits))
+  | ['R', ...digits] -> Turn(-parseNumber(digits))
+  | ['F', ...digits] -> Forward(parseNumber(digits))
+]
+
+parseInput = (input) -> map(parseInstruction, lines(input))
+
+simulate = (applyInstruction, ship, instructions) -> [instructions
+  | [instruction, ...instructions] -> simulate(applyInstruction, applyInstruction(ship, instruction), instructions)
+  | [ship | Pair(Vec2(x, y), rotation) -> abs(x) + abs(y)]
+]
+
+part1 = (input) -> {
+  applyInstruction = (ship, instruction) -> [instruction
+    | Move(delta) -> [ship | Pair(position, rotation) -> Pair(vec2Add(position, delta), rotation)]
+    | Turn(delta) -> [ship | Pair(position, rotation) -> Pair(position, rotation + delta)]
+    | Forward(distance) -> [ship | Pair(position, rotation) -> Pair(vec2Add(position, vec2Scale(vec2Rotate(Vec2(1, 0), rotation), distance)), rotation)]
+  ]
+
+  simulate(applyInstruction, Pair(Vec2(0, 0), 0), parseInput(input))
+}
+
+part2 = (input) -> {
+  applyInstruction = (ship, instruction) -> [instruction
+    | Move(delta) -> [ship | Pair(position, waypoint) -> Pair(position, vec2Add(waypoint, delta))]
+    | Turn(delta) -> [ship | Pair(position, waypoint) -> Pair(position, vec2Rotate(waypoint, delta))]
+    | Forward(distance) -> [ship | Pair(position, waypoint) -> Pair(vec2Add(position, vec2Scale(waypoint, distance)), waypoint)]
+  ]
+
+  simulate(applyInstruction, Pair(Vec2(0, 0), Vec2(10, 1)), parseInput(input))
+}
+
+example <- readFile("./example.txt")
+
+input <- readFile("./input.txt")
+
+test("Part 1", {
+  equal(part1(example), 25)
+  equal(part1(input), 562)
+})
+
+test("Part 2", {
+  equal(part2(example), 286)
+  equal(part2(input), 101860)
+})
