@@ -1,0 +1,119 @@
+<map, mapEmpty, mapGet, mapInsert, mapValues, maybeValue, reduce, sum> = @core
+<equal, test> = @test
+
+Instruction = SetMask(mask) | StoreMem(address, value)
+
+parseNumber = (digits) -> maybeValue(0, stringToNumber(digits))
+
+parseInstruction = (line) -> [line
+  | ['m', 'a', 's', 'k', ' ', '=', ' ', ...mask] -> SetMask(mask)
+  | ['m', 'e', 'm', '[', ...rest] -> [split("] = ", rest)
+      | [address, value] -> StoreMem(parseNumber(address), parseNumber(value))
+    ]
+]
+
+parseInput = (input) -> map(parseInstruction, lines(input))
+
+applyMask = (mask, value) -> {
+  recurse = (acc, power) -> {
+    maskBit = maybeValue('', listGet(35 - power, mask))
+    base = pow(2, power)
+
+    newAcc = acc + [
+      | maskBit == 'X' -> bitwiseAnd(base, value)
+      | maskBit == '1' -> base
+      | 0
+    ]
+
+    newPower = power + 1
+
+    [newPower <= 36 -> recurse(newAcc, newPower) | acc]
+  }
+
+  recurse(0, 0)
+}
+
+maskAddress = (mask, address) -> {
+  recurse = (acc, power) -> {
+    maskBit = maybeValue('', listGet(35 - power, mask))
+    base = pow(2, power)
+
+    newAcc = [
+      | maskBit == 'X' -> acc + map((x) -> x + base, acc)
+      | maskBit == '1' -> map((x) -> x + base, acc)
+      | map((x) -> x + bitwiseAnd(base, address), acc)
+    ]
+
+    newPower = power + 1
+
+    [newPower <= 36 -> recurse(newAcc, newPower) | acc]
+  }
+
+  recurse([0], 0)
+}
+
+part1 = (input) -> {
+  execute = (instructions) -> {
+    recurse = (instructions, memory, mask) -> [instructions
+      | [SetMask(mask), ...instructions] -> recurse(instructions, memory, mask)
+      | [StoreMem(address, value), ...instructions] -> {
+          newMemory = mapInsert(address, applyMask(mask, value), memory)
+          recurse(instructions, newMemory, mask)
+        }
+      | memory
+    ]
+
+    recurse(instructions, mapEmpty, "")
+  }
+
+  instructions = parseInput(input)
+  memory = execute(instructions)
+
+  sum(mapValues(memory))
+}
+
+part2 = (input) -> {
+  execute = (instructions) -> {
+    recurse = (instructions, memory, mask) -> [instructions
+      | [SetMask(mask), ...instructions] -> recurse(instructions, memory, mask)
+      | [StoreMem(address, value), ...instructions] -> {
+          newMemory = reduce(
+            (acc, address) -> mapInsert(address, value, acc),
+            memory,
+            maskAddress(mask, address)
+          )
+          recurse(instructions, newMemory, mask)
+        }
+      | memory
+    ]
+
+    recurse(instructions, mapEmpty, "")
+  }
+
+  instructions = parseInput(input)
+  memory = execute(instructions)
+
+  sum(mapValues(memory))
+}
+
+example1 <- readFile("./example1.txt")
+
+example2 <- readFile("./example2.txt")
+
+input <- readFile("./input.txt")
+
+test("Part 1", {
+  equal(applyMask("XXXXXXXXXXXXXXXXXXXXXXXXXXXXX1XXXX0X", 11), 73)
+  equal(applyMask("XXXXXXXXXXXXXXXXXXXXXXXXXXXXX1XXXX0X", 101), 101)
+  equal(applyMask("XXXXXXXXXXXXXXXXXXXXXXXXXXXXX1XXXX0X", 0), 64)
+  equal(applyMask("1XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX", 0), 34359738368)
+  equal(part1(example1), 165)
+  equal(part1(input), 15919415426101)
+})
+
+test("Part 2", {
+  equal(maskAddress("000000000000000000000000000000X1001X", 42), [26, 27, 58, 59])
+  equal(maskAddress("00000000000000000000000000000000X0XX", 26), [16, 17, 18, 19, 24, 25, 26, 27])
+  equal(part2(example2), 208)
+  equal(part2(input), 3443997590975)
+})
