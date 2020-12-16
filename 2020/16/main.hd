@@ -1,0 +1,149 @@
+<filter, listEvery, listHead, listSome, listStartsWith, map, mapEmpty, mapEntries, mapInsert, mapMapValues, mapValues, maybeValue, not, range, reduce, sum, zip, Pair> = @core
+<equal, test> = @test
+
+parseNumber = (digits) -> maybeValue(0, stringToNumber(digits))
+
+parseRange = (range) -> [split("-", range)
+  | [from, to] -> Pair(parseNumber(from), parseNumber(to))
+]
+
+parseRule = (rule) -> [split(": ", rule)
+  | [name, ranges] -> [split(" or ", ranges)
+    | [r1, r2] -> Pair(name, [parseRange(r1), parseRange(r2)])
+  ]
+]
+
+parseTicket = (ticket) -> [map(parseNumber, split(",", ticket))]
+
+parseInput = (input) -> [split([newLine, newLine], input)
+  | [rulesBlock, ticketBlock, nearbyBlock] -> [
+    map(parseRule, lines(rulesBlock)),
+    [split("your ticket:" + [newLine], ticketBlock) | [i, ticket] -> parseTicket(ticket)] + 
+    [split("nearby tickets:" + [newLine], nearbyBlock)
+      | [i, tickets] -> map(parseTicket, lines(tickets))
+    ]
+  ]
+]
+
+inRange = (value, range) -> [range | Pair(from, to) -> value >= from && value <= to]
+
+inRanges = (value, ranges) -> listSome((range) -> inRange(value, range), ranges)
+
+part1 = (input) -> [parseInput(input)
+  | [rules, nearby] -> {
+    values = reduce(
+      (acc, ticket) -> acc + ticket,
+      [],
+      nearby
+    )
+
+    ranges = reduce(
+      (acc, rule) -> [rule | Pair(name, ranges) -> acc + ranges],
+      [],
+      rules
+    )
+
+    isInvalid = (value) -> not(listSome(
+      (rule) -> [rule | Pair(name, ranges) -> inRanges(value, ranges)],
+      rules
+    ))
+
+    sum(filter(isInvalid, values))
+  }
+]
+
+eliminateIndicies = (rows) -> {
+  getIndicies = (row) -> [row | Pair(name, indicies) -> indicies]
+  setIndicies = (row, indicies) -> [row | Pair(name, x) -> Pair(name, indicies)]
+
+  processRow = (rows, row) -> [
+    | listSize(getIndicies(row)) == 1 -> map(
+        (other) -> [
+          | row == other -> row
+          | setIndicies(other, filter((x) -> x != maybeValue(0, listHead(getIndicies(row))), getIndicies(other)))
+        ],
+        rows
+      )
+    | rows
+  ]
+
+  newRows = reduce(
+    (rows, row) -> processRow(rows, row),
+    rows,
+    rows
+  )
+
+  [newRows == rows -> newRows | eliminateIndicies(newRows)]
+}
+
+part2 = (input) -> [parseInput(input)
+  | [rules, nearby] -> {
+    isValid = (value) -> listSome(
+      (rule) -> [rule | Pair(name, ranges) -> inRanges(value, ranges)],
+      rules
+    )
+
+    validTickets = filter(
+      (ticket) -> listEvery(isValid, ticket),
+      nearby
+    )
+
+    myTicket = maybeValue([], listHead(validTickets))
+
+    fieldCount = listSize(myTicket)
+
+    indicies = range(0, fieldCount - 1)
+
+    initialFieldMapping = reduce(
+      (acc, rule) -> [rule | Pair(name, ranges) -> mapInsert(name, Pair(indicies, ranges), acc)],
+      mapEmpty,
+      rules
+    )
+
+    fieldMapping = reduce(
+      (acc, ticket) -> {
+        reduce(
+          (acc, x) -> [x | Pair(i, value) -> mapMapValues(
+            (name, x) -> [x | Pair(indicies, ranges) -> {
+              newIndicies = [inRanges(value, ranges) -> indicies | filter((x) -> x != i, indicies)]
+              Pair(newIndicies, ranges)
+            }],
+            acc
+          )],
+          acc,
+          zip(indicies, ticket),
+        )
+      },
+      initialFieldMapping,
+      validTickets
+    )
+
+    indexMapping = eliminateIndicies(map(
+      (entry) -> [entry | Pair(name, Pair(indicies, ranges)) -> Pair(name, indicies)],
+      mapEntries(fieldMapping)
+    ))
+
+    reduce(
+      (acc, x) -> [x | Pair(name, indicies) -> [
+        listStartsWith("departure", name) ->
+          acc * maybeValue(0, listGet(maybeValue(0, listHead(indicies)), myTicket))
+        | acc]
+      ],
+      1,
+      indexMapping
+    )
+  }
+]
+
+example <- readFile("./example.txt")
+
+input <- readFile("./input.txt")
+
+test("Part 1", {
+  equal(part1(example), 71)
+  equal(part1(input), 28873)
+})
+
+test("Part 2", {
+  equal(part2(input), 2587271823407)
+})
