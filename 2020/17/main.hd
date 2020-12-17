@@ -1,0 +1,127 @@
+<Pair, compare, listMinimum, listMaximum, filter, map, mapDelete, mapEmpty, mapGet, mapKeys, mapInsert, mapSize, maybeValue, not, range, reduce> = @core
+<Vec3, vec3X, vec3Y, vec3Z, vec3Empty, vec3CompareX, vec3CompareY, vec3CompareZ, vec3Adjacent> = @core/vec3
+<Vec4, vec4X, vec4Y, vec4Z, vec4W, vec4Empty, vec4CompareX, vec4CompareY, vec4CompareZ, vec4CompareW, vec4Adjacent> = @core/vec4
+<equal, test> = @test
+
+parseInput = (input, createInitialCell) -> {
+  recurseColumn = (grid, columns, columnNumber, rowNumber) -> [columns
+    | [column, ...columns] -> {
+        position = createInitialCell(columnNumber, rowNumber)
+        newGrid = [column == '#' -> mapInsert(position, True, grid) | grid]
+        recurseColumn(newGrid, columns, columnNumber + 1, rowNumber)
+      }
+    | grid
+  ]
+
+  recurseRow = (grid, rows, rowNumber) -> [rows
+    | [row, ...rows] -> {
+        newGrid = recurseColumn(grid, row, 0, rowNumber)
+        recurseRow(newGrid, rows, rowNumber + 1)
+      }
+    | grid
+  ]
+
+  recurseRow(mapEmpty, lines(input), 0)
+}
+
+evolve = (grid, getCells, getAdjacent) -> {
+  isActive = (v) -> maybeValue(False, mapGet(v, grid))
+
+  countActiveAdjacent = (v) -> listSize(filter(isActive, getAdjacent(v)))
+
+  reduce(
+    (grid, cell) -> {
+      active = isActive(cell)
+      adjacent = countActiveAdjacent(cell)
+
+      [
+        | active && (adjacent < 2 || adjacent > 3) -> mapDelete(cell, grid)
+        | not(active) && adjacent == 3 -> mapInsert(cell, True, grid)
+        | grid
+      ]
+    },
+    grid,
+    getCells(grid),
+  )
+}
+
+run = (initialGrid, getCells, getAdjacent) -> {
+  evolveTimes = (grid, times) -> [
+    | times == 0 -> grid
+    | evolveTimes(evolve(grid, getCells, getAdjacent), times - 1)
+  ]
+
+  finalGrid = evolveTimes(initialGrid, 6)
+  
+  mapSize(finalGrid)
+}
+
+part1 = (input) -> {
+  getCells = (grid) -> {
+    active = mapKeys(grid)
+    {
+      x <- range(
+        vec3X(maybeValue(vec3Empty, listMinimum(vec3CompareX, active))) - 1,
+        vec3X(maybeValue(vec3Empty, listMaximum(vec3CompareX, active))) + 1,
+      )
+      y <- range(
+        vec3Y(maybeValue(vec3Empty, listMinimum(vec3CompareY, active))) - 1,
+        vec3Y(maybeValue(vec3Empty, listMaximum(vec3CompareY, active))) + 1,
+      )
+      z <- range(
+        vec3Z(maybeValue(vec3Empty, listMinimum(vec3CompareZ, active))) - 1,
+        vec3Z(maybeValue(vec3Empty, listMaximum(vec3CompareZ, active))) + 1,
+      )
+
+      [Vec3(x, y, z)]
+    }
+  }
+
+  initialGrid = parseInput(input, (x, y) -> Vec3(x, y, 0))
+
+  run(initialGrid, getCells, vec3Adjacent)
+}
+
+part2 = (input) -> {
+  getCells = (grid) -> {
+    active = mapKeys(grid)
+    {
+      x <- range(
+        vec4X(maybeValue(vec4Empty, listMinimum(vec4CompareX, active))) - 1,
+        vec4X(maybeValue(vec4Empty, listMaximum(vec4CompareX, active))) + 1,
+      )
+      y <- range(
+        vec4Y(maybeValue(vec4Empty, listMinimum(vec4CompareY, active))) - 1,
+        vec4Y(maybeValue(vec4Empty, listMaximum(vec4CompareY, active))) + 1,
+      )
+      z <- range(
+        vec4Z(maybeValue(vec4Empty, listMinimum(vec4CompareZ, active))) - 1,
+        vec4Z(maybeValue(vec4Empty, listMaximum(vec4CompareZ, active))) + 1,
+      )
+      w <- range(
+        vec4W(maybeValue(vec4Empty, listMinimum(vec4CompareW, active))) - 1,
+        vec4W(maybeValue(vec4Empty, listMaximum(vec4CompareW, active))) + 1,
+      )
+
+      [Vec4(x, y, z, w)]
+    }
+  }
+
+  initialGrid = parseInput(input, (x, y) -> Vec4(x, y, 0, 0))
+
+  run(initialGrid, getCells, vec4Adjacent)
+}
+
+example <- readFile("./example.txt")
+
+input <- readFile("./input.txt")
+
+test("Part 1", {
+  equal(part1(example), 112)
+  equal(part1(input), 265)
+})
+
+test("Part 2", {
+  equal(part2(example), 848)
+  equal(part2(input), 1936)
+})
