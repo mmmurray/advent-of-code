@@ -1,5 +1,5 @@
 .DS_Store
 /global.d.ts
 /node_modules
-/output
 /tsconfig.json
+output
