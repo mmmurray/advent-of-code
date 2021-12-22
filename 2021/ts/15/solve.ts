@@ -1,5 +1,5 @@
 import { findShortestPathWeight } from 'core/algorithms'
-import { array, range } from 'core/common'
+import { array2, range } from 'core/common'
 
 type Vec2 = [number, number]
 
@@ -71,9 +71,7 @@ const expandGrid = (grid: Grid, multiplier: number): Grid => {
   const { width, height, cells } = grid
   const expandedWidth = width * multiplier
   const expandedHeight = height * multiplier
-  const expandedCells: number[][] = array(expandedHeight).map(() =>
-    array(expandedWidth),
-  )
+  const expandedCells: number[][] = array2(expandedHeight, expandedWidth, 0)
 
   for (let y = 0; y < expandedHeight; y++) {
     for (let x = 0; x < expandedWidth; x++) {
