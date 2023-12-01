@@ -1,0 +1,120 @@
+let getCalibrationValue1 = (line: String): i32 -> {
+  let setFirstDigit = false
+  let firstDigit = 0
+  let lastDigit = 0
+  let charIndex = 0
+  while (< charIndex (stringSize line)) {
+    let char = (stringGet line charIndex)
+
+    if (charIsNumeric char) {
+      let digit = (- char '0')
+
+      lastDigit = digit
+      if (!setFirstDigit) {
+        firstDigit = digit
+        setFirstDigit = true
+      }
+    }
+
+    charIndex = (+ charIndex 1)
+  }
+
+  return (stringToNumber (stringConcat (stringFromNumber firstDigit) (stringFromNumber lastDigit)))
+}
+
+let solvePart1 = (input: String): String -> {
+  let lines = (stringToLines input)
+  let result = 0
+
+  let lineIndex = 0
+  while (< lineIndex (listSize lines)) {
+    let line = (listGet lines lineIndex)
+    let calibrationValue = (getCalibrationValue1 line)
+    result = (+ result calibrationValue)
+    lineIndex = (+ lineIndex 1)
+  }
+
+  return (stringFromNumber result)
+}
+
+let digitStrings = [
+  "one",
+  "two",
+  "three",
+  "four",
+  "five",
+  "six",
+  "seven",
+  "eight",
+  "nine",
+]
+
+let getCalibrationValue2 = (line: String): i32 -> {
+  let setFirstDigit = false
+  let firstDigit = 0
+  let lastDigit = 0
+  let charIndex = 0
+
+  while (< charIndex (stringSize line)) {
+    let char = (stringGet line charIndex)
+
+    if (charIsNumeric char) {
+      let digit = (- char '0')
+
+      lastDigit = digit
+      if (!setFirstDigit) {
+        firstDigit = digit
+        setFirstDigit = true
+      }
+    } else {
+      let digitStringIndex = 0
+      while (< digitStringIndex (listSize digitStrings)) {
+        let digitString = (listGet digitStrings digitStringIndex)
+
+        if (stringContainsAt line digitString charIndex) {
+          let digit = (+ digitStringIndex 1)
+          lastDigit = digit
+          if (!setFirstDigit) {
+            firstDigit = digit
+            setFirstDigit = true
+          }
+        }
+
+        digitStringIndex = (+ digitStringIndex 1)
+      }
+    }
+
+    charIndex = (+ charIndex 1)
+  }
+
+  return (stringToNumber (stringConcat (stringFromNumber firstDigit) (stringFromNumber lastDigit)))
+}
+
+let solvePart2 = (input: String): String -> {
+  let lines = (stringToLines input)
+  let result = 0
+
+  let lineIndex = 0
+  while (< lineIndex (listSize lines)) {
+    let line = (listGet lines lineIndex)
+    let calibrationValue = (getCalibrationValue2 line)
+    result = (+ result calibrationValue)
+    lineIndex = (+ lineIndex 1)
+  }
+
+  return (stringFromNumber result)
+}
+
+let main = (): void -> {
+  let input = (stringTrim (fileRead "input.txt"))
+
+  let part1 = (solvePart1 input)
+  (print "Part 1:")
+  (print part1)
+  (assertEqualString part1 "54605")
+
+  let part2 = (solvePart2 input)
+  (print "Part 2:")
+  (print part2)
+  (assertEqualString part2 "55429")
+}
