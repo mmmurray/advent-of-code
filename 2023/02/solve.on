@@ -1,0 +1,153 @@
+data Selection {
+  red: i32,
+  blue: i32,
+  green: i32,
+}
+
+data Game {
+  id: i32,
+  selections: List<Selection>,
+}
+
+let parseSelection = (input: String): Selection -> {
+  let valueParts = (stringSplitBy input ',')
+  let selection = Selection {
+    red: 0,
+    blue: 0,
+    green: 0,
+  }
+
+  let index = 0
+  while (< index (listSize valueParts)) {
+    let valuePart = (stringTrim (listGet valueParts index))
+    let pairParts = (stringSplitBy valuePart ' ')
+    let value = (stringToNumber (listGet pairParts 0))
+    let color = (listGet pairParts 1)
+
+    if (stringEquals color "red") {
+      selection.red = value
+    }
+    if (stringEquals color "green") {
+      selection.green = value
+    }
+    if (stringEquals color "blue") {
+      selection.blue = value
+    }
+
+    index = (+ index 1)
+  }
+
+  return selection
+}
+
+let parseInputLine = (line: String): Game -> {
+  let parts = (stringSplitBy line ':')
+  let gameIdPart = (listGet parts 0)
+  let idPart = (stringSlice gameIdPart 5 (stringSize gameIdPart))
+  let id = (stringToNumber idPart)
+
+  let selections = (listCreateDefault<Selection>)
+  let selectionsPart = (stringTrim (listGet parts 1))
+  let selectionParts = (stringSplitBy selectionsPart ';')
+
+  let selectionIndex = 0
+  while (< selectionIndex (listSize selectionParts)) {
+    let selectionPart = (stringTrim (listGet selectionParts selectionIndex))
+    let selection = (parseSelection selectionPart)
+    (listPush selections selection)
+    selectionIndex = (+ selectionIndex 1)
+  }
+
+  return Game {
+    id: id,
+    selections: selections,
+  }
+}
+
+let parseInput = (input: String): List<Game> -> {
+  let lines = (stringToLines input)
+  let games = (listCreateDefault<Game>)
+  
+  let lineIndex = 0
+  while (< lineIndex (listSize lines)) {
+    let line = (listGet lines lineIndex)
+    let game = (parseInputLine line)
+    (listPush games game)
+    lineIndex = (+ lineIndex 1)
+  }
+
+  return games
+}
+
+let solvePart1 = (input: String): String -> {
+  let games = (parseInput input)
+  let result = 0
+  let gameIndex = 0
+  while (< gameIndex (listSize games)) {
+    let game = (listGet games gameIndex)
+    let selectionIndex = 0
+    let possible = true
+    while (< selectionIndex (listSize game.selections)) {
+      let selection = (listGet game.selections selectionIndex)
+
+      if (|| (> selection.red 12) (|| (> selection.green 13) (> selection.blue 14))) {
+        possible = false
+      }
+
+      selectionIndex = (+ selectionIndex 1)
+    }
+
+    if possible {
+      result = (+ result game.id)
+    }
+    
+    gameIndex = (+ gameIndex 1)
+  }
+
+  return (stringFromNumber result)
+}
+
+let solvePart2 = (input: String): String -> {
+  let games = (parseInput input)
+  let result = 0
+  let gameIndex = 0
+  while (< gameIndex (listSize games)) {
+    let game = (listGet games gameIndex)
+    let selectionIndex = 0
+    let minSelection = Selection {
+      red: 0,
+      green: 0,
+      blue: 0,
+    }
+    while (< selectionIndex (listSize game.selections)) {
+      let selection = (listGet game.selections selectionIndex)
+
+      minSelection.red = (max minSelection.red selection.red)
+      minSelection.green = (max minSelection.green selection.green)
+      minSelection.blue = (max minSelection.blue selection.blue)
+
+      selectionIndex = (+ selectionIndex 1)
+    }
+
+    let power = (* minSelection.red (* minSelection.blue minSelection.green))
+    result = (+ result power)
+    
+    gameIndex = (+ gameIndex 1)
+  }
+
+  return (stringFromNumber result)
+}
+
+let main = (): void -> {
+  let input = (stringTrim (fileRead "input.txt"))
+
+  let part1 = (solvePart1 input)
+  (print "Part 1:")
+  (print part1)
+  (assertEqualString part1 "1853")
+
+  let part2 = (solvePart2 input)
+  (print "Part 2:")
+  (print part2)
+  (assertEqualString part2 "72706")
+}
