@@ -17,10 +17,8 @@ let parseSelection = (input: String): Selection -> {
     green: 0,
   }
 
-  let index = 0
-  while (< index (listSize valueParts)) {
-    let valuePart = (stringTrim (listGet valueParts index))
-    let pairParts = (stringSplitBy valuePart ' ')
+  for valuePart in valueParts {
+    let pairParts = (stringSplitBy (stringTrim valuePart) ' ')
     let value = (stringToNumber (listGet pairParts 0))
     let color = (listGet pairParts 1)
 
@@ -33,8 +31,6 @@ let parseSelection = (input: String): Selection -> {
     if (stringEquals color "blue") {
       selection.blue = value
     }
-
-    index = (+ index 1)
   }
 
   return selection
@@ -51,8 +47,7 @@ let parseInputLine = (line: String): Game -> {
   let selectionParts = (stringSplitBy selectionsPart ';')
 
   let selectionIndex = 0
-  while (< selectionIndex (listSize selectionParts)) {
-    let selectionPart = (stringTrim (listGet selectionParts selectionIndex))
+  for selectionPart in selectionParts {
     let selection = (parseSelection selectionPart)
     (listPush selections selection)
     selectionIndex = (+ selectionIndex 1)
@@ -68,12 +63,9 @@ let parseInput = (input: String): List<Game> -> {
   let lines = (stringToLines input)
   let games = (listCreateDefault<Game>)
   
-  let lineIndex = 0
-  while (< lineIndex (listSize lines)) {
-    let line = (listGet lines lineIndex)
+  for line in lines {
     let game = (parseInputLine line)
     (listPush games game)
-    lineIndex = (+ lineIndex 1)
   }
 
   return games
@@ -82,26 +74,18 @@ let parseInput = (input: String): List<Game> -> {
 let solvePart1 = (input: String): String -> {
   let games = (parseInput input)
   let result = 0
-  let gameIndex = 0
-  while (< gameIndex (listSize games)) {
-    let game = (listGet games gameIndex)
-    let selectionIndex = 0
-    let possible = true
-    while (< selectionIndex (listSize game.selections)) {
-      let selection = (listGet game.selections selectionIndex)
 
+  for game in games {
+    let possible = true
+    for selection in game.selections {
       if (|| (> selection.red 12) (|| (> selection.green 13) (> selection.blue 14))) {
         possible = false
       }
-
-      selectionIndex = (+ selectionIndex 1)
     }
 
     if possible {
       result = (+ result game.id)
     }
-    
-    gameIndex = (+ gameIndex 1)
   }
 
   return (stringFromNumber result)
@@ -110,29 +94,20 @@ let solvePart1 = (input: String): String -> {
 let solvePart2 = (input: String): String -> {
   let games = (parseInput input)
   let result = 0
-  let gameIndex = 0
-  while (< gameIndex (listSize games)) {
-    let game = (listGet games gameIndex)
-    let selectionIndex = 0
+  for game in games {
     let minSelection = Selection {
       red: 0,
       green: 0,
       blue: 0,
     }
-    while (< selectionIndex (listSize game.selections)) {
-      let selection = (listGet game.selections selectionIndex)
-
+    for selection in game.selections {
       minSelection.red = (max minSelection.red selection.red)
       minSelection.green = (max minSelection.green selection.green)
       minSelection.blue = (max minSelection.blue selection.blue)
-
-      selectionIndex = (+ selectionIndex 1)
     }
 
     let power = (* minSelection.red (* minSelection.blue minSelection.green))
     result = (+ result power)
-    
-    gameIndex = (+ gameIndex 1)
   }
 
   return (stringFromNumber result)

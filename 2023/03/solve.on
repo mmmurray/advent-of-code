@@ -21,10 +21,7 @@ let parseInput = (input: String): Schematic -> {
     numbers: (listCreateDefault<SchematicNumber>),
   }
   
-  let lineIndex = 0
-  while (< lineIndex (listSize lines)) {
-    let line = (listGet lines lineIndex)
-
+  for line, lineIndex in lines {
     let charIndex = 0
     while (< charIndex (stringSize line)) {
       let char = (stringGet line charIndex)
@@ -70,8 +67,6 @@ let parseInput = (input: String): Schematic -> {
 
       charIndex = (+ charIndex 1)
     }
-    
-    lineIndex = (+ lineIndex 1)
   }
 
   return schematic
@@ -80,26 +75,18 @@ let parseInput = (input: String): Schematic -> {
 let solvePart1 = (input: String): String -> {
   let result = 0
   let schematic = (parseInput input)
-  let numberIndex = 0
-  while (< numberIndex (listSize schematic.numbers)) {
-    let number = (listGet schematic.numbers numberIndex)
-
+  for number in schematic.numbers {
     let offsetX = 0
     while (< offsetX number.length) {
       let offset = Vec2 { x: offsetX, y: 0 }
       let position = (vec2Add number.location offset)
       let found = false
 
-      let symbolIndex = 0
-      while (< symbolIndex (listSize schematic.symbols)) {
-        let symbol = (listGet schematic.symbols symbolIndex)
-
+      for symbol in schematic.symbols {
         if (vec2IsAdjacent position symbol.location) {
           found = true
           break
         }
-
-        symbolIndex = (+ symbolIndex 1)
       }
 
       if found {
@@ -109,8 +96,6 @@ let solvePart1 = (input: String): String -> {
 
       offsetX = (+ offsetX 1)
     }
-
-    numberIndex = (+ numberIndex 1)
   }
 
   return (stringFromNumber result)
@@ -119,17 +104,12 @@ let solvePart1 = (input: String): String -> {
 let solvePart2 = (input: String): String -> {
   let result = 0
   let schematic = (parseInput input)
-  let symbolIndex = 0
-  while (< symbolIndex (listSize schematic.symbols)) {
-    let symbol = (listGet schematic.symbols symbolIndex)
-
+  for symbol in schematic.symbols {
     if (== symbol.value '*') {
       let adjacentCount = 0
       let adjacentProduct = 1
 
-      let numberIndex = 0
-      while (< numberIndex (listSize schematic.numbers)) {
-        let number = (listGet schematic.numbers numberIndex)
+      for number in schematic.numbers {
         let adjacent = false
 
         let offsetX = 0
@@ -149,16 +129,12 @@ let solvePart2 = (input: String): String -> {
           adjacentCount = (+ adjacentCount 1)
           adjacentProduct = (* adjacentProduct number.value)
         }
-
-        numberIndex = (+ numberIndex 1)
       }
 
       if (== adjacentCount 2) {
         result = (+ result adjacentProduct)
       }
     }
-
-    symbolIndex = (+ symbolIndex 1)
   }
   
   return (stringFromNumber result)

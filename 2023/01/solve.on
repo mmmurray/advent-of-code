@@ -2,10 +2,8 @@ let getCalibrationValue1 = (line: String): i32 -> {
   let setFirstDigit = false
   let firstDigit = 0
   let lastDigit = 0
-  let charIndex = 0
-  while (< charIndex (stringSize line)) {
-    let char = (stringGet line charIndex)
 
+  for char in line {
     if (charIsNumeric char) {
       let digit = (- char '0')
 
@@ -15,8 +13,6 @@ let getCalibrationValue1 = (line: String): i32 -> {
         setFirstDigit = true
       }
     }
-
-    charIndex = (+ charIndex 1)
   }
 
   return (stringToNumber (stringConcat (stringFromNumber firstDigit) (stringFromNumber lastDigit)))
@@ -26,12 +22,9 @@ let solvePart1 = (input: String): String -> {
   let lines = (stringToLines input)
   let result = 0
 
-  let lineIndex = 0
-  while (< lineIndex (listSize lines)) {
-    let line = (listGet lines lineIndex)
+  for line in lines {
     let calibrationValue = (getCalibrationValue1 line)
     result = (+ result calibrationValue)
-    lineIndex = (+ lineIndex 1)
   }
 
   return (stringFromNumber result)
@@ -53,11 +46,8 @@ let getCalibrationValue2 = (line: String): i32 -> {
   let setFirstDigit = false
   let firstDigit = 0
   let lastDigit = 0
-  let charIndex = 0
 
-  while (< charIndex (stringSize line)) {
-    let char = (stringGet line charIndex)
-
+  for char, charIndex in line {
     if (charIsNumeric char) {
       let digit = (- char '0')
 
@@ -67,10 +57,7 @@ let getCalibrationValue2 = (line: String): i32 -> {
         setFirstDigit = true
       }
     } else {
-      let digitStringIndex = 0
-      while (< digitStringIndex (listSize digitStrings)) {
-        let digitString = (listGet digitStrings digitStringIndex)
-
+      for digitString, digitStringIndex in digitStrings {
         if (stringContainsAt line digitString charIndex) {
           let digit = (+ digitStringIndex 1)
           lastDigit = digit
@@ -79,12 +66,8 @@ let getCalibrationValue2 = (line: String): i32 -> {
             setFirstDigit = true
           }
         }
-
-        digitStringIndex = (+ digitStringIndex 1)
       }
     }
-
-    charIndex = (+ charIndex 1)
   }
 
   return (stringToNumber (stringConcat (stringFromNumber firstDigit) (stringFromNumber lastDigit)))
@@ -94,12 +77,9 @@ let solvePart2 = (input: String): String -> {
   let lines = (stringToLines input)
   let result = 0
 
-  let lineIndex = 0
-  while (< lineIndex (listSize lines)) {
-    let line = (listGet lines lineIndex)
+  for line in lines {
     let calibrationValue = (getCalibrationValue2 line)
     result = (+ result calibrationValue)
-    lineIndex = (+ lineIndex 1)
   }
 
   return (stringFromNumber result)
