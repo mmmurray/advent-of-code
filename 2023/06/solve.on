@@ -1,0 +1,101 @@
+data Race {
+  time: i32,
+  distance: i32,
+}
+
+let parseNumberList = (input: String): List<i32> -> {
+  let values = (listCreateDefault<i32>)
+  let parts = (stringSplitBy input ' ')
+  for part in parts {
+    if (> (stringSize part) 0) {
+      let num = (stringToNumber part)
+      (listPush values num)
+    }
+  }
+  return values
+}
+
+let parseInput = (input: String): List<Race> -> {
+  let races = (listCreateDefault<Race>)
+  let lines = (stringToLines input)
+  let timesLine = (listGet lines 0)
+  let distancesLine = (listGet lines 1)
+  let times = (parseNumberList (listGet (stringSplitBy timesLine ':') 1))
+  let distances = (parseNumberList (listGet (stringSplitBy distancesLine ':') 1))
+
+  for time, timeIndex in times {
+    let race = Race {
+      time: time,
+      distance: (listGet distances timeIndex),
+    }
+    (listPush races race)
+  }
+
+  return races
+}
+
+let solveRace = (race: Race): i32 -> {
+  let winningStrategies = 0
+
+  let holdTime = 0
+  while (<= holdTime race.time) {
+    let speed = holdTime
+    let remainingTime = (- race.time holdTime)
+    let distance = (* remainingTime speed)
+
+    if (> distance race.distance) {
+      winningStrategies = (+ winningStrategies 1)
+    }
+
+    holdTime = (+ holdTime 1)
+  }
+
+  return winningStrategies
+}
+
+let solvePart1 = (input: String): String -> {
+  let races = (parseInput input)
+  let result = 1
+
+  for race in races {
+    let winningStrategies = (solveRace race)
+    result = (* result winningStrategies)
+  }
+
+  return (stringFromNumber result)
+}
+
+let solvePart2 = (input: String): String -> {
+  let races = (parseInput input)
+
+  let combinedTimes = (stringBuilderCreate 128)
+  let combinedDistances = (stringBuilderCreate 128)
+
+  for race in races {
+    (stringBuilderAppend combinedTimes (stringFromNumber race.time))
+    (stringBuilderAppend combinedDistances (stringFromNumber race.distance))
+  }
+
+  let combinedRace = Race {
+    time: (stringToNumber (stringBuilderBuild combinedTimes)),
+    distance: (stringToNumber (stringBuilderBuild combinedDistances)),
+  }
+
+  let result = (solveRace combinedRace)
+
+  return (stringFromNumber result)
+}
+
+let main = (): void -> {
+  let input = (fileRead "input.txt")
+
+  let part1 = (solvePart1 input)
+  (print "Part 1:")
+  (print part1)
+  (assertEqualString part1 "1413720")
+
+  let part2 = (solvePart2 input)
+  (print "Part 2:")
+  (print part2)
+  (assertEqualString part2 "30565288")
+}
