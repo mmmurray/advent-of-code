@@ -1,0 +1,187 @@
+data Hand {
+  cards: List<i32>,
+  bid: i32,
+  score: i32,
+}
+
+let scoreCards = (cards: List<i32>): i32 -> {
+  let countByCard = (mapCreate<i32>)
+  let jokers = 0
+
+  for card in cards {
+    if (== card 1) {
+      jokers = (+ jokers 1)
+    } else {
+      let key = (stringFromNumber card)
+      let current = (optionValue 0 (mapGet countByCard key))
+      (mapSet countByCard key (+ current 1))
+    }
+  }
+
+  let maxCount = 0
+  let maxCard = "2"
+  for item0 in countByCard.items {
+    if (> item0.value maxCount) {
+      maxCount = item0.value
+      maxCard = item0.key
+    }
+  }
+
+  (mapSet countByCard maxCard (+ maxCount jokers))
+
+  for item1 in countByCard.items {
+    if (== item1.value 5) {
+      # Five of a kind
+      return 7
+    }
+    if (== item1.value 4) {
+      # Four of a kind
+      return 6
+    }
+  }
+
+  if (== (mapSize countByCard) 2) {
+    # Full house
+    return 5
+  }
+
+  for item2 in countByCard.items {
+    if (== item2.value 3) {
+      # Three of a kind
+      return 4
+    }
+  }
+
+  if (== (mapSize countByCard) 3) {
+    # Two pair
+    return 3
+  }
+
+  if (== (mapSize countByCard) 4) {
+    # One pair
+    return 2
+  }
+
+  return 1
+}
+
+let parseInput = (input: String, jokers: boolean): List<Hand> -> {
+  let hands = (listCreateDefault<Hand>)
+  let lines = (stringToLines (stringTrim input))
+
+  for line in lines {
+    let parts = (stringSplitBy line ' ')
+    let cardsPart = (listGet parts 0)
+    let bidPart = (listGet parts 1)
+    let cards = (listCreateDefault<i32>)
+
+    for cardChar in cardsPart {
+      let card = 0
+      if (== cardChar 'A') {
+        card = 14
+      }
+      if (== cardChar 'K') {
+        card = 13
+      }
+      if (== cardChar 'Q') {
+        card = 12
+      }
+      if (== cardChar 'J') {
+        if jokers {
+          card = 1
+        } else {
+          card = 11
+        }
+      }
+      if (== cardChar 'T') {
+        card = 10
+      }
+      if (charIsNumeric cardChar) {
+        card = (- cardChar '0')
+      }
+      (listPush cards card)
+    }
+
+    let hand = Hand {
+      cards: cards,
+      bid: (stringToNumber bidPart),
+      score: (scoreCards cards),
+    }
+
+    (listPush hands hand)
+  }
+
+  return hands
+}
+
+let compareHands = (a: Hand, b: Hand): boolean -> {
+  if (== a.score b.score) {
+    for cardA, cardIndex in a.cards {
+      let cardB = (listGet b.cards cardIndex)
+
+      if (!= cardA cardB) {
+        return (> cardA cardB)
+      }
+    }
+
+    return false
+  }
+
+  return (> a.score b.score)
+}
+
+let sortHands = (hands: List<Hand>): List<Hand> -> {
+  let endIndex = (- (listSize hands) 1)
+
+  while (> endIndex 0) {
+    let index = 0
+    while (< index endIndex) {
+      let a = (listGet hands index)
+      let b = (listGet hands (+ index 1))
+
+      if (compareHands a b) {
+        (listSet hands index b)
+        (listSet hands (+ index 1) a)
+      }
+
+      index = (+ index 1)
+    }
+
+    endIndex = (- endIndex 1)
+  }
+
+  return hands
+}
+
+let scoreHands = (hands: List<Hand>): i32 -> {
+  let result = 0
+  for hand, handIndex in hands {
+    let rank = (+ handIndex 1)
+    result = (+ result (* rank hand.bid))
+  }
+  return result
+}
+
+let solvePart1 = (input: String): String -> {
+  let hands = (sortHands (parseInput input false))
+  return (stringFromNumber (scoreHands hands))
+}
+
+let solvePart2 = (input: String): String -> {
+  let hands = (sortHands (parseInput input true))
+  return (stringFromNumber (scoreHands hands))
+}
+
+let main = (): void -> {
+  let input = (fileRead "input.txt")
+
+  let part1 = (solvePart1 input)
+  (print "Part 1:")
+  (print part1)
+  (assertEqualString part1 "245794640")
+
+  let part2 = (solvePart2 input)
+  (print "Part 2:")
+  (print part2)
+  (assertEqualString part2 "247899149")
+}
