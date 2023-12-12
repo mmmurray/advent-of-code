@@ -1,0 +1,206 @@
+data Row {
+  conditions: List<i32>,
+  damaged: List<i32>,
+  damageTotal: i32,
+}
+
+let parseRow = (line: String): Row -> {
+  let parts = (stringSplitBy line ' ')
+  let conditions = (listCreateDefault<i32>)
+  for char in (listGet parts 0) {
+    (listPush conditions char)
+  }
+
+  let damaged = (listCreateDefault<i32>)
+  let damagedParts = (stringSplitBy (listGet parts 1) ',')
+  let damageTotal = 0
+  for damagedPart in damagedParts {
+    let damage = (stringToNumber damagedPart)
+    (listPush damaged damage)
+    damageTotal = (+ damageTotal damage)
+  }
+
+  return Row {
+    conditions: conditions,
+    damaged: damaged,
+    damageTotal: damageTotal,
+  }
+}
+
+let parseInput = (input: String): List<Row> -> {
+  let lines = (stringToLines (stringTrim input))
+  let rows = (listCreateDefault<Row>)
+
+  for line in lines {
+    (listPush rows (parseRow line))
+  }
+
+  return rows
+}
+
+let formatConditions = (conditions: List<i32>): String -> {
+  let out = (stringBuilderCreate 1024)
+  for condition in conditions {
+    (stringBuilderAppend out (charToString condition))
+  }
+  return (stringBuilderBuild out)
+}
+
+let printRow = (row: Row): void -> {
+  let out = (stringBuilderCreate 1024)
+  (stringBuilderAppend out (formatConditions row.conditions))
+  (stringBuilderAppend out " ")
+  for d, i in row.damaged {
+    if (> i 0) {
+      (stringBuilderAppend out ",")
+    }
+    (stringBuilderAppend out (stringFromNumber d))
+  }
+  (print (stringBuilderBuild out))
+}
+
+let printRows = (rows: List<Row>): void -> {
+  for row in rows {
+    (printRow row)
+  }
+}
+
+let countArrangements = (row: Row, start: i32): i32 -> {
+  if (== (listSize row.damaged) 0) {
+    let damageTotal = 0
+    for condition in row.conditions {
+      if (== condition '#') {
+        damageTotal = (+ damageTotal 1)
+      }
+    }
+    if (== damageTotal row.damageTotal) {
+      return 1
+    }
+    return 0
+  }
+
+  let damagedWidth = (listGet row.damaged 0)
+  let damagedStart = (- 0 1)
+
+  let arrangements = 0
+
+  let length = (listSize row.conditions)
+  let startMax = (+ (- length damagedWidth) 1)
+  while (< start startMax) {
+    let end = (+ start damagedWidth)
+
+    let prev = '.'
+    if (> start 0) {
+      prev = (listGet row.conditions (- start 1))
+    }
+    let next = '.'
+    if (< end length) {
+      next = (listGet row.conditions end)
+    }
+
+    let validPrev = (!= prev '#')
+    let validNext = (!= next '#')
+
+    if (&& validPrev validNext) {
+      let conditionsSlice = (listSlice row.conditions start end)
+
+      let nextRow = Row {
+        conditions: (listClone row.conditions),
+        damaged: (listSlice row.damaged 1 (listSize row.damaged)),
+        damageTotal: row.damageTotal,
+      }
+
+      let prefixIndex = 0
+      while (< prefixIndex start) {
+        if (== (listGet nextRow.conditions prefixIndex) '?') {
+          (listSet nextRow.conditions prefixIndex '.')
+        }
+        prefixIndex = (+ prefixIndex 1)
+      }
+
+      let valid = true
+      for condition, i in conditionsSlice {
+        if (== condition '.') {
+          valid = false
+        }
+        (listSet nextRow.conditions (+ i start) '#')
+      }
+
+      if valid {
+        arrangements = (+ arrangements (countArrangements nextRow end))
+      }
+    }
+
+    start = (+ start 1)
+  }
+
+  return arrangements
+}
+
+let unfoldRow = (row: Row): Row -> {
+  return Row {
+    conditions: [
+      ...row.conditions,
+      '?',
+      ...row.conditions,
+      '?',
+      ...row.conditions,
+      '?',
+      ...row.conditions,
+      '?',
+      ...row.conditions,
+    ],
+    damaged: [
+      ...row.damaged,
+      ...row.damaged,
+      ...row.damaged,
+      ...row.damaged,
+      ...row.damaged,
+    ],
+    damageTotal: (* row.damageTotal 5),
+  }
+}
+
+let unfoldRows = (rows: List<Row>): List<Row> -> {
+  let newRows = (listCreateDefault<Row>)
+  for row in rows {
+    (listPush newRows (unfoldRow row))
+  }
+  return newRows
+}
+
+let solvePart1 = (input: String): String -> {
+  let rows = (parseInput input)
+
+  let result = 0
+  for row in rows {
+    result = (+ result (countArrangements row 0))
+  }
+
+  return (stringFromNumber result)
+}
+
+let solvePart2 = (input: String): String -> {
+  let rows = (unfoldRows (parseInput input))
+
+  let result = 0
+  for row in rows {
+    result = (+ result (countArrangements row 0))
+  }
+
+  return (stringFromNumber result)
+}
+
+let main = (): void -> {
+  let input = (fileRead "input.txt")
+
+  let part1 = (solvePart1 input)
+  (print "Part 1:")
+  (print part1)
+  (assertEqualString part1 "7204")
+
+  let part2 = (solvePart2 input)
+  (print "Part 2:")
+  (print part2)
+  (assertEqualString part2 "???")
+}
