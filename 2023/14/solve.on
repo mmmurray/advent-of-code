@@ -1,0 +1,202 @@
+data Grid {
+  size: Vec2,
+  cols: List< List<i32> >,
+}
+
+let parseInput = (input: String): Grid -> {
+  let lines = (stringToLines (stringTrim input))
+  let cols = (listCreateDefault< List<i32> >)
+  let size = Vec2 {
+    x: (stringSize (listGet lines 0)),
+    y: (listSize lines)
+  }
+
+  for c, colIndex in (listGet lines 0) {
+    let col = (listCreate<i32> size.y)
+    for line in lines {
+      (listPush col (stringGet line colIndex))
+    }
+    (listPush cols col)
+  }
+
+  return Grid {
+    size: size,
+    cols: cols,
+  }
+}
+
+let printGrid = (grid: Grid): void -> {
+  let out = (stringBuilderCreate 1024)
+  let size = grid.size
+  (stringBuilderAppend out "Size: ")
+  (stringBuilderAppend out (vec2ToString size))
+  (stringBuilderAppend out "\n")
+  let y = 0
+  while (< y size.y) {
+    let x = 0
+    while (< x size.x) {
+      let value = (listGet (listGet grid.cols x) y)
+      (stringBuilderAppend out (charToString value))
+      x = (+ x 1)
+    }
+    (stringBuilderAppend out "\n")
+    y = (+ y 1)
+  }
+  (print (stringBuilderBuild out))
+}
+
+let tiltColumn = (col: List<i32>): List<i32> -> {
+  let newCol = (listClone col)
+
+  let nextFreeIndex = 0
+  for tile, colIndex in col {
+    if (== tile '#') {
+      nextFreeIndex = (+ colIndex 1)
+      (listSet newCol colIndex '#')
+    } else { if (== tile 'O') {
+      (listSet newCol colIndex '.')
+      (listSet newCol nextFreeIndex 'O')
+      nextFreeIndex = (+ nextFreeIndex 1)
+    } else {
+      (listSet newCol colIndex '.')
+    }}
+  }
+
+  return newCol
+}
+
+let tiltGrid = (grid: Grid): Grid -> {
+  let newCols = (listCreateDefault< List<i32> >)
+
+  for col in grid.cols {
+    (listPush newCols (tiltColumn col))
+  }
+
+  return Grid {
+    size: grid.size,
+    cols: newCols,
+  }
+}
+
+let calculateLoad = (grid: Grid): i32 -> {
+  let totalLoad = 0
+  let size = grid.size
+
+  for col in grid.cols {
+    for tile, rowIndex in col {
+      if (== tile 'O') {
+        totalLoad = (+ totalLoad (- size.y rowIndex))
+      }
+    }
+  }
+
+  return totalLoad
+}
+
+let rotateGridClockwise = (grid: Grid): Grid -> {
+  let newCols = (listCreateDefault< List<i32> >)
+  let size = grid.size
+
+  let rowIndex = (- size.y 1)
+  while (>= rowIndex 0) {
+    let newCol = (listCreateDefault<i32>)
+
+    for col, colIndex in grid.cols {
+      (listPush newCol (listGet col rowIndex))
+    }
+
+    (listPush newCols newCol)
+    rowIndex = (- rowIndex 1)
+  }
+
+  return Grid {
+    size: size,
+    cols: newCols,
+  }
+}
+
+let performSpinCycle = (grid: Grid): Grid -> {
+  grid = (tiltGrid grid)
+  grid = (rotateGridClockwise grid)
+  grid = (tiltGrid grid)
+  grid = (rotateGridClockwise grid)
+  grid = (tiltGrid grid)
+  grid = (rotateGridClockwise grid)
+  grid = (tiltGrid grid)
+  grid = (rotateGridClockwise grid)
+  return grid
+}
+
+let areColsEqual = (a: List<i32>, b: List<i32>): boolean -> {
+  for v1, i in a {
+    let v2 = (listGet b i)
+    if (!= v1 v2) {
+      return false
+    }
+  }
+  return true
+}
+
+let areGridsEqual = (a: Grid, b: Grid): boolean -> {
+  for c1, i in a.cols {
+    let c2 = (listGet b.cols i)
+    if (!(areColsEqual c1 c2)) {
+      return false
+    }
+  }
+  return true
+}
+
+let solvePart1 = (input: String): String -> {
+  let grid = (parseInput input)
+  let tiltedGrid = (tiltGrid grid)
+  let result = (calculateLoad tiltedGrid)
+
+  return (stringFromNumber result)
+}
+
+let solvePart2 = (input: String): String -> {
+  let grid = (parseInput input)
+  let grids = (listCreateDefault<Grid>)
+  let totalCycles = 1000000000
+  let cycleOffset = (- 0 1)
+
+  let i = 0
+  while (< i totalCycles) {
+    grid = (performSpinCycle grid)
+
+    for otherGrid, otherGridIndex in grids {
+      if (areGridsEqual grid otherGrid) {
+        cycleOffset = otherGridIndex
+      }
+    }
+
+    if (> cycleOffset 0) {
+      break
+    }
+
+    (listPush grids grid)
+
+    i = (+ i 1)
+  }
+
+  let cycleLength = (- (listSize grids) cycleOffset)
+  let gridIndex = (+ cycleOffset (% (- (- totalCycles 1) cycleOffset) cycleLength))
+  let result = (calculateLoad (listGet grids gridIndex))
+
+  return (stringFromNumber result)
+}
+
+let main = (): void -> {
+  let input = (fileRead "input.txt")
+
+  let part1 = (solvePart1 input)
+  (print "Part 1:")
+  (print part1)
+  (assertEqualString part1 "109345")
+
+  let part2 = (solvePart2 input)
+  (print "Part 2:")
+  (print part2)
+  (assertEqualString part2 "112452")
+}
