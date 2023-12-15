@@ -65,76 +65,137 @@ let printRows = (rows: List<Row>): void -> {
   }
 }
 
-let countArrangements = (row: Row, start: i32): i32 -> {
-  if (== (listSize row.damaged) 0) {
-    let damageTotal = 0
-    for condition in row.conditions {
-      if (== condition '#') {
-        damageTotal = (+ damageTotal 1)
-      }
+let cacheSpacing = 30
+
+let createCache = (): Array<i32> -> {
+  let cache = (arrayCreate<i32> (* cacheSpacing (* cacheSpacing cacheSpacing)))
+  for x, i in cache {
+    (arraySet cache i (- 0 1))
+  }
+  return cache
+}
+
+let placeDamage = (conditions: List<i32>, offset: i32, width: i32): List<i32> -> {
+  let newConditions = (listClone conditions)
+
+  for condition, index in conditions {
+    if (== condition '?') {
+      (listSet newConditions index '.')
     }
-    if (== damageTotal row.damageTotal) {
-      return 1
+
+    if (>= index offset) {
+      (listSet newConditions index '#')
     }
-    return 0
+
+    if (>= index (+ offset width)) {
+      (listSet newConditions index (listGet conditions index))
+    }
   }
 
-  let damagedWidth = (listGet row.damaged 0)
-  let damagedStart = (- 0 1)
+  return newConditions
+}
+
+let finalizeConditions = (conditions: List<i32>): List<i32> -> {
+  let newConditions = (listClone conditions)
+
+  for condition, index in conditions {
+    if (== condition '?') {
+      (listSet newConditions index '.')
+    } else {
+      (listSet newConditions index (listGet conditions index))
+    }
+  }
+
+  return newConditions
+}
+
+let isValidPlacement = (conditions: List<i32>, maxDamage: i32, offset: i32, width: i32): boolean -> {
+  if (> (+ offset width) (listSize conditions)) {
+    return false
+  }
+
+  let conditionsSlice = (listSlice conditions offset (+ offset width))
+  for condition in conditionsSlice {
+    if (== condition '.') {
+      return false
+    }
+  }
+
+  let prevIndex = (- offset 1)
+  if (&& (>= prevIndex 0) (== (listGet conditions prevIndex) '#')) {
+    return false
+  }
+
+  let nextIndex = (+ offset width)
+  if (&& (< nextIndex (- (listSize conditions) 1)) (== (listGet conditions nextIndex) '#')) {
+    return false
+  }
+
+  let damageTotal = 0
+  for condition2 in (placeDamage conditions offset width) {
+    if (== condition2 '#') {
+      damageTotal = (+ damageTotal 1)
+    }
+  }
+
+  if (> damageTotal maxDamage) {
+    return false
+  }
+
+  return true
+}
+
+let countArrangementsRec = (cache: Array< i32 >, row: Row, offset: i32, damagedIndex: i32): i32 -> {
+  let damageTotal = 0
+  for condition2 in row.conditions {
+    if (== condition2 '#') {
+      damageTotal = (+ damageTotal 1)
+    }
+  }
+
+  let cacheKey = (+ damagedIndex (+ (* cacheSpacing offset) (* damageTotal (* cacheSpacing cacheSpacing))))
+  let cached = (arrayGet cache cacheKey)
+
+  if (>= cached 0) {
+    return cached
+  }
 
   let arrangements = 0
 
-  let length = (listSize row.conditions)
-  let startMax = (+ (- length damagedWidth) 1)
-  while (< start startMax) {
-    let end = (+ start damagedWidth)
+  if (>= offset (listSize row.conditions)) {
+    return arrangements
+  }
 
-    let prev = '.'
-    if (> start 0) {
-      prev = (listGet row.conditions (- start 1))
-    }
-    let next = '.'
-    if (< end length) {
-      next = (listGet row.conditions end)
-    }
+  let damageWidth = (listGet row.damaged damagedIndex)
+  let valid = (isValidPlacement row.conditions row.damageTotal offset damageWidth)
 
-    let validPrev = (!= prev '#')
-    let validNext = (!= next '#')
+  if valid {
+    let nextConditions = (placeDamage row.conditions offset damageWidth)
+    let nextDamagedIndex = (+ damagedIndex 1)
+    let nextOffset = (+ offset (+ damageWidth 1))
 
-    if (&& validPrev validNext) {
-      let conditionsSlice = (listSlice row.conditions start end)
-
-      let nextRow = Row {
-        conditions: (listClone row.conditions),
-        damaged: (listSlice row.damaged 1 (listSize row.damaged)),
+    if (< nextDamagedIndex (listSize row.damaged)) {
+      let newRow = Row {
+        conditions: nextConditions,
+        damaged: row.damaged,
         damageTotal: row.damageTotal,
       }
 
-      let prefixIndex = 0
-      while (< prefixIndex start) {
-        if (== (listGet nextRow.conditions prefixIndex) '?') {
-          (listSet nextRow.conditions prefixIndex '.')
-        }
-        prefixIndex = (+ prefixIndex 1)
-      }
-
-      let valid = true
-      for condition, i in conditionsSlice {
-        if (== condition '.') {
-          valid = false
-        }
-        (listSet nextRow.conditions (+ i start) '#')
-      }
-
-      if valid {
-        arrangements = (+ arrangements (countArrangements nextRow end))
-      }
+      arrangements = (+ arrangements (countArrangementsRec cache newRow nextOffset nextDamagedIndex))
+    } else {
+      arrangements = (+ arrangements 1)
     }
-
-    start = (+ start 1)
   }
 
+  arrangements = (+ arrangements (countArrangementsRec cache row (+ offset 1) damagedIndex))
+
+  (arraySet cache cacheKey arrangements)
+
   return arrangements
+}
+
+let countArrangements = (row: Row): i32 -> {
+  return (countArrangementsRec (createCache) row 0 0)
 }
 
 let unfoldRow = (row: Row): Row -> {
@@ -169,12 +230,28 @@ let unfoldRows = (rows: List<Row>): List<Row> -> {
   return newRows
 }
 
+let testCountArrangements = (): void -> {
+  (assertEqual (countArrangements (parseRow "? 1")) 1)
+  (assertEqual (countArrangements (parseRow "?? 1")) 2)
+  (assertEqual (countArrangements (parseRow "??? 1")) 3)
+  (assertEqual (countArrangements (parseRow "??? 2")) 2)
+  (assertEqual (countArrangements (parseRow "??? 1,1")) 1)
+  (assertEqual (countArrangements (parseRow "??? 3")) 1)
+  (assertEqual (countArrangements (parseRow "??? 4")) 0)
+  (assertEqual (countArrangements (parseRow "#?? 1")) 1)
+  (assertEqual (countArrangements (parseRow "#?? 2")) 1)
+  (assertEqual (countArrangements (parseRow "#.. 2")) 0)
+  (assertEqual (countArrangements (parseRow "### 2")) 0)
+  (assertEqual (countArrangements (parseRow ".## 2")) 1)
+  (assertEqual (countArrangements (parseRow "?????#???? 2,1,1")) 11)
+}
+
 let solvePart1 = (input: String): String -> {
   let rows = (parseInput input)
 
   let result = 0
-  for row in rows {
-    result = (+ result (countArrangements row 0))
+  for row, rowIndex in rows {
+    result = (+ result (countArrangements row))
   }
 
   return (stringFromNumber result)
@@ -185,13 +262,17 @@ let solvePart2 = (input: String): String -> {
 
   let result = 0
   for row in rows {
-    result = (+ result (countArrangements row 0))
+    (allocArenaStart)
+    result = (+ result (countArrangements row))
+    (allocArenaEnd)
   }
 
   return (stringFromNumber result)
 }
 
 let main = (): void -> {
+  (testCountArrangements)
+
   let input = (fileRead "input.txt")
 
   let part1 = (solvePart1 input)
@@ -199,8 +280,8 @@ let main = (): void -> {
   (print part1)
   (assertEqualString part1 "7204")
 
-  let part2 = (solvePart2 input)
-  (print "Part 2:")
-  (print part2)
-  (assertEqualString part2 "???")
+  # let part2 = (solvePart2 input)
+  # (print "Part 2:")
+  # (print part2)
+  # (assertEqualString part2 "???")
 }
