@@ -1,0 +1,286 @@
+data Direction =
+  | North {}
+  | East {}
+  | South {}
+  | West {}
+
+let directionNorth = North {}
+let directionEast = East {}
+let directionSouth = South {}
+let directionWest = West {}
+
+let vec2North = Vec2 { x: 0, y: (- 0 1) }
+let vec2East = Vec2 { x: 1, y: 0 }
+let vec2South = Vec2 { x: 0, y: 1 }
+let vec2West = Vec2 { x: (- 0 1), y: 0 }
+
+let directionToVec2 = (direction: Direction): Vec2 -> {
+  return match direction {
+    North -> vec2North;
+    East -> vec2East;
+    South -> vec2South;
+    West -> vec2West;
+  }
+}
+
+data Tile =
+  | Empty {}
+  | ReflectForward {}
+  | ReflectBackward {}
+  | SplitHorizontal {}
+  | SplitVertical {}
+
+data Grid {
+  size: Vec2,
+  tiles: List< List<Tile> >,
+  energized: List< List< List<Direction> > >,
+}
+
+let gridClone = (grid: Grid): Grid -> {
+  let newEnergized = (listCreateDefault< List< List<Direction> > >)
+
+  for energizedRow in grid.energized {
+    let newEnergizedRow = (listCreateDefault< List<Direction> >)
+    for x in energizedRow {
+      (listPush newEnergizedRow (listClone x))
+    }
+    (listPush newEnergized newEnergizedRow)
+  }
+
+  return Grid {
+    size: grid.size,
+    tiles: grid.tiles,
+    energized: newEnergized,
+  }
+}
+
+let parseTile = (char: i32): Tile -> {
+  if (== char '.') {
+    return Empty {}
+  }
+  if (== char '/') {
+    return ReflectForward {}
+  }
+  if (== char '\\') {
+    return ReflectBackward {}
+  }
+  if (== char '-') {
+    return SplitHorizontal {}
+  }
+  if (== char '|') {
+    return SplitVertical {}
+  }
+}
+
+let parseInput = (input: String): Grid -> {
+  let lines = (stringToLines (stringTrim input))
+  let size = Vec2 {
+    x: (stringSize (listGet lines 0)),
+    y: (listSize lines),
+  }
+  let tiles = (listCreateDefault< List<Tile> >)
+  let energized = (listCreateDefault< List< List<Direction> > >)
+
+  for line, y in lines {
+    let tileRow = (listCreateDefault<Tile>)
+    let energizedRow = (listCreateDefault< List<Direction> >)
+    for char, x in line {
+      (listPush tileRow (parseTile char))
+      (listPush energizedRow (listCreateDefault<Direction>))
+    }
+    (listPush tiles tileRow)
+    (listPush energized energizedRow)
+  }
+
+  return Grid {
+    size: size,
+    tiles: tiles,
+    energized: energized,
+  }
+}
+
+let formatTile = (tile: Tile): String -> {
+  return match tile {
+    Empty -> ".";
+    ReflectForward -> "/";
+    ReflectBackward -> "\\";
+    SplitHorizontal -> "-";
+    SplitVertical -> "|";
+  }
+}
+
+let printGrid = (grid: Grid): void -> {
+  let size = grid.size
+  let out = (stringBuilderCreate 1024)
+  (stringBuilderAppend out "Size: ")
+  (stringBuilderAppend out (vec2ToString size))
+  (stringBuilderAppend out "\n")
+
+  let y = 0
+  while (< y size.y) {
+    let x = 0
+    while (< x size.x) {
+      let energized = (listGet (listGet grid.energized y) x)
+      let tile = (listGet (listGet grid.tiles y) x)
+      if (> (listSize energized) 0) {
+        (stringBuilderAppend out "#")
+      } else {
+        (stringBuilderAppend out (formatTile tile))
+      }
+      x = (+ x 1)
+    }
+    (stringBuilderAppend out "\n")
+    y = (+ y 1)
+  }
+
+  (print (stringBuilderBuild out))
+}
+
+let propagate = (grid: Grid, position: Vec2, direction: Direction): pointer -> {
+  let size = grid.size
+  if (< position.x 0) { return null }
+  if (< position.y 0) { return null }
+  if (>= position.x size.x) { return null }
+  if (>= position.y size.y) { return null }
+
+  let energizedRow = (listGet grid.energized position.y)
+  let currentEnergizedDirections = (listGet energizedRow position.x)
+  for currentEnergizedDirection in currentEnergizedDirections {
+    if (== currentEnergizedDirection direction) {
+      return null
+    }
+  }
+
+  (listSet energizedRow position.x [...currentEnergizedDirections, direction])
+
+  let tile = (listGet (listGet grid.tiles position.y) position.x)
+  let directionVec = (directionToVec2 direction)
+
+  let m1 = match tile {
+    Empty -> void {
+      (propagate grid (vec2Add position directionVec) direction)
+    };
+    ReflectForward -> void {
+      let m2 = match direction {
+        North -> void {
+          (propagate grid (vec2Add position vec2East) directionEast)
+        };
+        East -> void {
+          (propagate grid (vec2Add position vec2North) directionNorth)
+        };
+        South -> void {
+          (propagate grid (vec2Add position vec2West) directionWest)
+        };
+        West -> void {
+          (propagate grid (vec2Add position vec2South) directionSouth)
+        };
+      }
+    };
+    ReflectBackward -> void {
+      let m2 = match direction {
+        North -> void {
+          (propagate grid (vec2Add position vec2West) directionWest)
+        };
+        East -> void {
+          (propagate grid (vec2Add position vec2South) directionSouth)
+        };
+        South -> void {
+          (propagate grid (vec2Add position vec2East) directionEast)
+        };
+        West -> void {
+          (propagate grid (vec2Add position vec2North) directionNorth)
+        };
+      }
+    };
+    SplitHorizontal -> void {
+      let m2 = match direction {
+        North -> void {
+          (propagate grid (vec2Add position vec2East) directionEast)
+          (propagate grid (vec2Add position vec2West) directionWest)
+        };
+        East -> void {
+          (propagate grid (vec2Add position directionVec) direction)
+        };
+        South -> void {
+          (propagate grid (vec2Add position vec2West) directionWest)
+          (propagate grid (vec2Add position vec2East) directionEast)
+        };
+        West -> void {
+          (propagate grid (vec2Add position directionVec) direction)
+        };
+      }
+    };
+    SplitVertical -> void {
+      let m2 = match direction {
+        North -> void {
+          (propagate grid (vec2Add position directionVec) direction)
+        };
+        East -> void {
+          (propagate grid (vec2Add position vec2North) directionNorth)
+          (propagate grid (vec2Add position vec2South) directionSouth)
+        };
+        South -> void {
+          (propagate grid (vec2Add position directionVec) direction)
+        };
+        West -> void {
+          (propagate grid (vec2Add position vec2South) directionSouth)
+          (propagate grid (vec2Add position vec2North) directionNorth)
+        };
+      }
+    };
+  }
+}
+
+let countEnergized = (grid: Grid, startPosition: Vec2, startDirection: Direction): i32 -> {
+  (allocArenaStart)
+  let newGrid = (gridClone grid)
+  (propagate newGrid startPosition startDirection)
+
+  let total = 0
+  for row in newGrid.energized {
+    for col in row {
+      if (> (listSize col) 0) {
+        total = (+ total 1)
+      }
+    }
+  }
+
+  (allocArenaEnd)
+  return total
+}
+
+let solvePart1 = (input: String): String -> {
+  let grid = (parseInput input)
+  let result = (countEnergized grid Vec2 { x: 0, y: 0 } directionEast)
+  return (stringFromNumber result)
+}
+
+let solvePart2 = (input: String): String -> {
+  let grid = (parseInput input)
+  let size = grid.size
+  let result = 0
+  let offset = 0
+  while (< offset size.x) {
+    result = (max result (countEnergized grid Vec2 { x: offset, y: 0 } directionSouth))
+    result = (max result (countEnergized grid Vec2 { x: offset, y: (- size.y 1) } directionNorth))
+    result = (max result (countEnergized grid Vec2 { x: 0, y: offset } directionEast))
+    result = (max result (countEnergized grid Vec2 { x: (- size.x 1), y: offset } directionWest))
+    offset = (+ offset 1)
+  }
+
+  return (stringFromNumber result)
+}
+
+let main = (): void -> {
+  let input = (fileRead "input.txt")
+
+  let part1 = (solvePart1 input)
+  (print "Part 1:")
+  (print part1)
+  (assertEqualString part1 "8034")
+
+  let part2 = (solvePart2 input)
+  (print "Part 2:")
+  (print part2)
+  (assertEqualString part2 "8225")
+}
