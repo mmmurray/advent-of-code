@@ -1,3 +1,16 @@
+# / a b \
+# \ c d /
+data Mat2 {
+  a: i32,
+  b: i32,
+  c: i32,
+  d: i32,
+}
+
+let mat2Determinant = (m: Mat2): i32 -> {
+  return (- (* m.a m.d) (* m.b m.c))
+}
+
 let vec2Scale = (scale: i32, v: Vec2): Vec2 -> {
   return Vec2 {
     x: (* v.x scale),
@@ -30,7 +43,7 @@ let directionToVec2 = (direction: Direction): Vec2 -> {
   }
 }
 
-data Step {
+data DigPlanStep {
   direction: Direction,
   distance: i32,
   color: String,
@@ -52,16 +65,16 @@ let parseDirection = (input: String): Direction -> {
   }
 }
 
-let parseInput = (input: String): List<Step> -> {
+let parseInput = (input: String): List<DigPlanStep> -> {
   let lines = (stringToLines (stringTrim input))
-  let steps = (listCreateDefault<Step>)
+  let steps = (listCreateDefault<DigPlanStep>)
 
   for line in lines {
     let parts = (stringSplitBy line ' ')
     let direction = (parseDirection (listGet parts 0))
     let distance = (stringToNumber (listGet parts 1))
     let color = (listGet parts 2)
-    let step = Step {
+    let step = DigPlanStep {
       direction: direction,
       distance: distance,
       color: color,
@@ -72,159 +85,98 @@ let parseInput = (input: String): List<Step> -> {
   return steps
 }
 
-data Grid {
-  size: Vec2,
-  tiles: List< List<i32> >,
+data Step {
+  direction: Direction,
+  distance: i32,
 }
 
-let infinity = 1000000000
+let calculateAreaFromSteps = (steps: List<Step>): i32 -> {
+  # Shoelace formula (https://en.wikipedia.org/wiki/Shoelace_formula#Example)
+  # Determines the area of a simple polygon whose vertices are described by
+  # their Cartesian coordinates in the plane
 
-let buidGridFromSteps = (steps: List<Step>): Grid -> {
-  let minX = infinity
-  let minY = infinity
-  let maxX = (- 0 infinity)
-  let maxY = (- 0 infinity)
+  # Since the Shoelace formula considers the area of the polygon made up from the _center_
+  # of each grid cell, we need to account for the missing area from the perimeter.
+  # Intuitively: if the shape was a square we would count half the area of each
+  # side tile and a quarter of the area of each of the 4 corner tiles.
+  # Therefore the missing area that we need to add is perimeter / 2 + 1.
+  # This is generalized as:
 
-  let position1 = Vec2 { x: 0, y: 0 }
-  for step1 in steps {
-    let delta = (vec2Scale step1.distance (directionToVec2 step1.direction))
-    position1 = (vec2Add position1 delta)
-    minX = (min minX position1.x)
-    minY = (min minY position1.y)
-    maxX = (max maxX position1.x)
-    maxY = (max maxY position1.y)
+  # Pick's theorem (https://en.wikipedia.org/wiki/Pick%27s_theorem) which provides
+  # a formula for the area of a simple polygon with integer vertex coordinates,
+  # in terms of the number of integer points within it and on its boundary:
+  #
+  # area = interiorPoints + borderPoints / 2 - 1
+  # 
+  # Rearranging gives:
+  # 
+  # interiorPoints = area - borderPoints / 2 + 1
+  # interiorPoints + borderPoints = area + borderPoints / 2 + 1
+
+  let shoelaceArea = 0
+  let borderPoints = 0
+
+  let initialPosition = Vec2 { x: 0, y: 0 }
+  let position = initialPosition
+  for step in steps {
+    borderPoints = (+ borderPoints step.distance)
+    let delta = (vec2Scale step.distance (directionToVec2 step.direction))
+    let nextPosition = (vec2Add position delta)
+
+    shoelaceArea = (+ shoelaceArea (mat2Determinant Mat2 {
+      a: position.x,
+      b: nextPosition.x,
+      c: position.y,
+      d: nextPosition.y,
+    }))
+
+    position = nextPosition
   }
 
-  let offset = Vec2 { x: (- 1 minX), y: (- 1 minY) }
-  let position2 = Vec2 { x: 0, y: 0 }
-  let boundaryPositions = (listCreateDefault<Vec2>)
-  for step2 in steps {
-    let delta = (directionToVec2 step2.direction)
-    let it = 0
-    while (< it step2.distance) {
-      position2 = (vec2Add position2 delta)
-      (listPush boundaryPositions (vec2Add offset position2))
-      it = (+ it 1)
-    }
-  }
+  shoelaceArea = (+ shoelaceArea (mat2Determinant Mat2 {
+    a: position.x,
+    b: initialPosition.x,
+    c: position.y,
+    d: initialPosition.y,
+  }))
 
-  let size = Vec2 { x: (+ (- maxX minX) 3), y: (+ (- maxY minY) 3) }
-  let tiles = (listCreateDefault< List<i32> )
+  let area = (/ shoelaceArea 2)
 
-  let y = 0
-  while (< y size.y) {
-    let x = 0
-    let row = (listCreateDefault<i32>)
-    while (< x size.x) {
-      let tilePosition = Vec2 { x: x, y: y }
-      let value = 0
-      for boundaryPosition in boundaryPositions {
-        if (vec2Equals tilePosition boundaryPosition) {
-          value = 1
-        }
-      }
-      (listPush row value)
-      x = (+ x 1)
-    }
-    (listPush tiles row)
-    y = (+ y 1)
-  }
-
-  return Grid {
-    size: size,
-    tiles: tiles,
-  }
-}
-
-let printGrid = (grid: Grid): void -> {
-  let size = grid.size
-  let out = (stringBuilderCreate 1024)
-  (stringBuilderAppend out "Size: ")
-  (stringBuilderAppend out (vec2ToString size))
-  (stringBuilderAppend out "\n")
-
-  let y = 0
-  while (< y size.y) {
-    let x = 0
-    while (< x size.x) {
-      let position = Vec2 { x: x, y: y }
-      let tile = (listGet (listGet grid.tiles y) x)
-
-      if (== tile 2) {
-        (stringBuilderAppend out "~")
-      }
-      if (== tile 1) {
-        (stringBuilderAppend out "#")
-      }
-      if (== tile 0) {
-        (stringBuilderAppend out ".")
-      }
-      x = (+ x 1)
-    }
-    (stringBuilderAppend out "\n")
-    y = (+ y 1)
-  }
-
-  (print (stringBuilderBuild out))
-}
-
-let floodGrid = (grid: Grid, current: Vec2): i32 -> {
-  let currentRow = (listGet grid.tiles current.y)
-  let value = (listGet currentRow current.x)
-  let size = grid.size
-
-  if (!= value 0) {
-    return 0
-  }
-
-  (listSet currentRow current.x 2)
-
-  if (> current.y 0) {
-    let candidate = Vec2 { x: current.x, y: (- current.y 1) }
-    (floodGrid grid candidate)
-  }
-
-  if (< current.x (- size.x 1)) {
-    let candidate = Vec2 { x: (+ current.x 1), y: current.y }
-    (floodGrid grid candidate)
-  }
-
-  if (< current.y (- size.y 1)) {
-    let candidate = Vec2 { x: current.x, y: (+ current.y 1) }
-    (floodGrid grid candidate)
-  }
-
-  if (> current.x 0) {
-    let candidate = Vec2 { x: (- current.x 1), y: current.y }
-    (floodGrid grid candidate)
-  }
-  
-  return 0
+  return (+ (+ area (/ borderPoints 2)) 1)
 }
 
 let solvePart1 = (input: String): String -> {
-  let steps = (parseInput input)
-  let grid = (buidGridFromSteps steps)
-  (printGrid grid)
+  let planSteps = (parseInput input)
+  let steps = (listCreateDefault<Step>)
 
-  (floodGrid grid Vec2 { x: 0, y: 0 })
-  (printGrid grid)
-
-  let size = grid.size
-  let result = 0
-
-  let y = 0
-  while (< y size.y) {
-    let x = 0
-    while (< x size.x) {
-      let value = (listGet (listGet grid.tiles y) x)
-      if (!= value 2) {
-        result = (+ result 1)
-      }
-      x = (+ x 1)
-    }
-    y = (+ y 1)
+  for planStep in planSteps {
+    (listPush steps Step {
+      direction: planStep.direction,
+      distance: planStep.distance,
+    })
   }
+
+  let result = (calculateAreaFromSteps steps)
+
+  return (stringFromNumber result)
+}
+
+let solvePart2 = (input: String): String -> {
+  let planSteps = (parseInput input)
+  let steps = (listCreateDefault<Step>)
+  let orderedDirections = [directionEast, directionSouth, directionWest, directionNorth]
+
+  for planStep in planSteps {
+    let distanceHex = (stringSlice planStep.color 2 7)
+    let distance = (stringToNumber (stringConcat "0x" (stringToUpper distanceHex)))
+    let directionNum = (- (stringGet planStep.color 7) '0')
+    (listPush steps Step {
+      direction: (listGet orderedDirections directionNum),
+      distance: distance,
+    })
+  }
+
+  let result = (calculateAreaFromSteps steps)
 
   return (stringFromNumber result)
 }
@@ -237,8 +189,8 @@ let main = (): void -> {
   (print part1)
   (assertEqualString part1 "44436")
 
-  # let part2 = (solvePart2 input)
-  # (print "Part 2:")
-  # (print part2)
-  # (assertEqualString part2 "???")
+  let part2 = (solvePart2 input)
+  (print "Part 2:")
+  (print part2)
+  (assertEqualString part2 "106941819907437")
 }
