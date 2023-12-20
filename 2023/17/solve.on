@@ -1,24 +1,3 @@
-let listPop = <T>(list: List<T>): Option<T> -> {
-  if (== (listSize list) 0) {
-    return None<T> {}
-  }
-  let index = (- (listSize list) 1)
-  let item = (listGet list index)
-  (listRemove list index)
-  return Some { value: item }
-}
-
-let optionExpect = <T>(option: Option<T>): T -> {
-  let result = match option {
-    Some { value } -> value;
-    None -> T {
-      ($panic "Expected option to have some value")
-    };
-  }
-
-  return result
-}
-
 data PriorityQueueHeapEntry<T> {
   node: T,
   priority: i32,
