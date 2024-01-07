@@ -3,7 +3,7 @@ let getCalibrationValue1 = (line: String): i32 -> {
   let firstDigit = 0
   let lastDigit = 0
 
-  for char in line {
+  for char in (listFromString line) {
     if (charIsNumeric char) {
       let digit = (- char '0')
 
@@ -30,7 +30,7 @@ let solvePart1 = (input: String): String -> {
   return (stringFromNumber result)
 }
 
-let digitStrings = [
+let digitStrings: List<String> = [
   "one",
   "two",
   "three",
@@ -47,7 +47,7 @@ let getCalibrationValue2 = (line: String): i32 -> {
   let firstDigit = 0
   let lastDigit = 0
 
-  for char, charIndex in line {
+  for char, charIndex in (listFromString line) {
     if (charIsNumeric char) {
       let digit = (- char '0')
 
@@ -59,10 +59,10 @@ let getCalibrationValue2 = (line: String): i32 -> {
     } else {
       for digitString, digitStringIndex in digitStrings {
         if (stringContainsAt line digitString charIndex) {
-          let digit = (+ digitStringIndex 1)
-          lastDigit = digit
+          let digit2 = (+ digitStringIndex 1)
+          lastDigit = digit2
           if (!setFirstDigit) {
-            firstDigit = digit
+            firstDigit = digit2
             setFirstDigit = true
           }
         }
