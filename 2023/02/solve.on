@@ -1,10 +1,10 @@
-data Selection {
+data Selection = {
   red: i32,
   blue: i32,
   green: i32,
 }
 
-data Game {
+data Game = {
   id: i32,
   selections: List<Selection>,
 }
@@ -113,7 +113,7 @@ let solvePart2 = (input: String): String -> {
   return (stringFromNumber result)
 }
 
-let main = (): void -> {
+let main = (): unit -> {
   let input = (stringTrim (fileRead "input.txt"))
 
   let part1 = (solvePart1 input)
