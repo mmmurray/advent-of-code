@@ -1,23 +1,17 @@
-let vec2ManhattanDistance = (a: Vec2, b: Vec2): i32 -> {
-  let dx = (abs (- a.x b.x))
-  let dy = (abs (- a.y b.y))
-  return (+ dx dy)
-}
-
-data Universe {
-  size: Vec2,
-  galaxies: List<Vec2>,
+data Universe = {
+  size: Vec2<i64>,
+  galaxies: List< Vec2<i64> >,
 }
 
 let parseInput = (input: String): Universe -> {
   let lines = (stringToLines (stringTrim input))
-  let galaxies = (listCreateDefault<Vec2>)
-  let size = Vec2 { x: (stringSize (listGet lines 0)), y: (listSize lines) }
+  let galaxies = []
+  let size = Vec2 { x: (@i64 (stringSize (listGet lines 0))), y: (@i64 (listSize lines)) }
 
   for line, y in lines {
-    for char, x in line {
+    for char, x in (listFromString line) {
       if (== char '#') {
-        let galaxy = Vec2 { x: x, y: y }
+        let galaxy = Vec2 { x: (@i64 x), y: (@i64 y) }
         (listPush galaxies galaxy)
       }
     }
@@ -29,9 +23,9 @@ let parseInput = (input: String): Universe -> {
   }
 }
 
-let expandUniverse = (universe: Universe, expansionRate: i32): Universe -> {
+let expandUniverse = (universe: Universe, expansionRate: i64): Universe -> {
   let size = universe.size
-  let emptyRows = (listCreateDefault<i32>)
+  let emptyRows = []
   let y = 0
   while (< y size.y) {
     let empty = true
@@ -45,7 +39,7 @@ let expandUniverse = (universe: Universe, expansionRate: i32): Universe -> {
     }
     y = (+ y 1)
   }
-  let emptyCols = (listCreateDefault<i32>)
+  let emptyCols = []
   let x = 0
   while (< x size.x) {
     let empty = true
@@ -61,11 +55,11 @@ let expandUniverse = (universe: Universe, expansionRate: i32): Universe -> {
   }
 
   let newSize = Vec2 {
-    x: (+ size.x (- (* (listSize emptyCols) expansionRate) 1)),
-    y: (+ size.y (- (* (listSize emptyRows) expansionRate) 1)),
+    x: (+ size.x (- (* (@i64 (listSize emptyCols)) expansionRate) 1)),
+    y: (+ size.y (- (* (@i64 (listSize emptyRows)) expansionRate) 1)),
   }
 
-  let newGalaxies = (listCreateDefault<Vec2>)
+  let newGalaxies = []
 
   for galaxy in universe.galaxies {
     let redShift = Vec2 { x: 0, y: 0 }
@@ -92,7 +86,7 @@ let expandUniverse = (universe: Universe, expansionRate: i32): Universe -> {
   }
 }
 
-let sumOfDistancesBetweenGalaxies = (universe: Universe): i32 -> {
+let sumOfDistancesBetweenGalaxies = (universe: Universe): i64 -> {
   let total = 0
   let count = (listSize universe.galaxies)
   let i = 0
@@ -115,7 +109,7 @@ let solvePart1 = (input: String): String -> {
   let universe = (expandUniverse (parseInput input) expansionRate)
   let result = (sumOfDistancesBetweenGalaxies universe)
 
-  return (stringFromNumber result)
+  return (stringFromNumberU64 (@u64 result))
 }
 
 let solvePart2 = (input: String): String -> {
@@ -123,10 +117,10 @@ let solvePart2 = (input: String): String -> {
   let universe = (expandUniverse (parseInput input) expansionRate)
   let result = (sumOfDistancesBetweenGalaxies universe)
 
-  return (stringFromNumber result)
+  return (stringFromNumberU64 (@u64 result))
 }
 
-let main = (): void -> {
+let main = (): unit -> {
   let input = (fileRead "input.txt")
 
   let part1 = (solvePart1 input)
