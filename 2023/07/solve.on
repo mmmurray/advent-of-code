@@ -1,4 +1,4 @@
-data Hand {
+data Hand = {
   cards: List<i32>,
   bid: i32,
   score: i32,
@@ -20,7 +20,7 @@ let scoreCards = (cards: List<i32>): i32 -> {
 
   let maxCount = 0
   let maxCard = "2"
-  for item0 in countByCard.items {
+  for item0 in (mapEntries countByCard) {
     if (> item0.value maxCount) {
       maxCount = item0.value
       maxCard = item0.key
@@ -29,7 +29,7 @@ let scoreCards = (cards: List<i32>): i32 -> {
 
   (mapSet countByCard maxCard (+ maxCount jokers))
 
-  for item1 in countByCard.items {
+  for item1 in (mapEntries countByCard) {
     if (== item1.value 5) {
       # Five of a kind
       return 7
@@ -45,7 +45,7 @@ let scoreCards = (cards: List<i32>): i32 -> {
     return 5
   }
 
-  for item2 in countByCard.items {
+  for item2 in (mapEntries countByCard) {
     if (== item2.value 3) {
       # Three of a kind
       return 4
@@ -75,7 +75,7 @@ let parseInput = (input: String, jokers: boolean): List<Hand> -> {
     let bidPart = (listGet parts 1)
     let cards = (listCreateDefault<i32>)
 
-    for cardChar in cardsPart {
+    for cardChar in (listFromString cardsPart) {
       let card = 0
       if (== cardChar 'A') {
         card = 14
@@ -172,7 +172,7 @@ let solvePart2 = (input: String): String -> {
   return (stringFromNumber (scoreHands hands))
 }
 
-let main = (): void -> {
+let main = (): unit -> {
   let input = (fileRead "input.txt")
 
   let part1 = (solvePart1 input)
