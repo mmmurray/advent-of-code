@@ -4,17 +4,17 @@ data Direction =
   | South {}
   | West {}
 
-let directionNorth = North {}
-let directionEast = East {}
-let directionSouth = South {}
-let directionWest = West {}
+let directionNorth: Direction = North {}
+let directionEast: Direction = East {}
+let directionSouth: Direction = South {}
+let directionWest: Direction = West {}
 
-let vec2North = Vec2 { x: 0, y: (- 0 1) }
-let vec2East = Vec2 { x: 1, y: 0 }
-let vec2South = Vec2 { x: 0, y: 1 }
-let vec2West = Vec2 { x: (- 0 1), y: 0 }
+let vec2North: Vec2<i32> = Vec2 { x: 0, y: (- 0 1) }
+let vec2East: Vec2<i32> = Vec2 { x: 1, y: 0 }
+let vec2South: Vec2<i32> = Vec2 { x: 0, y: 1 }
+let vec2West: Vec2<i32> = Vec2 { x: (- 0 1), y: 0 }
 
-let directionToVec2 = (direction: Direction): Vec2 -> {
+let directionToVec2 = (direction: Direction): Vec2<i32> -> {
   return match direction {
     North -> vec2North;
     East -> vec2East;
@@ -30,8 +30,8 @@ data Tile =
   | SplitHorizontal {}
   | SplitVertical {}
 
-data Grid {
-  size: Vec2,
+data Grid = {
+  size: Vec2<i32>,
   tiles: List< List<Tile> >,
   energized: List< List< List<Direction> > >,
 }
@@ -55,9 +55,6 @@ let gridClone = (grid: Grid): Grid -> {
 }
 
 let parseTile = (char: i32): Tile -> {
-  if (== char '.') {
-    return Empty {}
-  }
   if (== char '/') {
     return ReflectForward {}
   }
@@ -70,6 +67,7 @@ let parseTile = (char: i32): Tile -> {
   if (== char '|') {
     return SplitVertical {}
   }
+  return Empty {}
 }
 
 let parseInput = (input: String): Grid -> {
@@ -84,7 +82,7 @@ let parseInput = (input: String): Grid -> {
   for line, y in lines {
     let tileRow = (listCreateDefault<Tile>)
     let energizedRow = (listCreateDefault< List<Direction> >)
-    for char, x in line {
+    for char, x in (listFromString line) {
       (listPush tileRow (parseTile char))
       (listPush energizedRow (listCreateDefault<Direction>))
     }
@@ -109,7 +107,7 @@ let formatTile = (tile: Tile): String -> {
   }
 }
 
-let printGrid = (grid: Grid): void -> {
+let printGrid = (grid: Grid): unit -> {
   let size = grid.size
   let out = (stringBuilderCreate 1024)
   (stringBuilderAppend out "Size: ")
@@ -136,18 +134,18 @@ let printGrid = (grid: Grid): void -> {
   (print (stringBuilderBuild out))
 }
 
-let propagate = (grid: Grid, position: Vec2, direction: Direction): pointer -> {
+let propagate = (grid: Grid, position: Vec2<i32>, direction: Direction): boolean -> {
   let size = grid.size
-  if (< position.x 0) { return null }
-  if (< position.y 0) { return null }
-  if (>= position.x size.x) { return null }
-  if (>= position.y size.y) { return null }
+  if (< position.x 0) { return false }
+  if (< position.y 0) { return false }
+  if (>= position.x size.x) { return false }
+  if (>= position.y size.y) { return false }
 
   let energizedRow = (listGet grid.energized position.y)
   let currentEnergizedDirections = (listGet energizedRow position.x)
   for currentEnergizedDirection in currentEnergizedDirections {
-    if (== currentEnergizedDirection direction) {
-      return null
+    if (== (@i32 currentEnergizedDirection) (@i32 direction)) {
+      return false
     }
   }
 
@@ -157,82 +155,83 @@ let propagate = (grid: Grid, position: Vec2, direction: Direction): pointer -> {
   let directionVec = (directionToVec2 direction)
 
   let m1 = match tile {
-    Empty -> void {
+    Empty -> {
       (propagate grid (vec2Add position directionVec) direction)
     };
-    ReflectForward -> void {
+    ReflectForward -> {
       let m2 = match direction {
-        North -> void {
+        North -> {
           (propagate grid (vec2Add position vec2East) directionEast)
         };
-        East -> void {
+        East -> {
           (propagate grid (vec2Add position vec2North) directionNorth)
         };
-        South -> void {
+        South -> {
           (propagate grid (vec2Add position vec2West) directionWest)
         };
-        West -> void {
+        West -> {
           (propagate grid (vec2Add position vec2South) directionSouth)
         };
       }
     };
-    ReflectBackward -> void {
+    ReflectBackward -> {
       let m2 = match direction {
-        North -> void {
+        North -> {
           (propagate grid (vec2Add position vec2West) directionWest)
         };
-        East -> void {
+        East -> {
           (propagate grid (vec2Add position vec2South) directionSouth)
         };
-        South -> void {
+        South -> {
           (propagate grid (vec2Add position vec2East) directionEast)
         };
-        West -> void {
+        West -> {
           (propagate grid (vec2Add position vec2North) directionNorth)
         };
       }
     };
-    SplitHorizontal -> void {
+    SplitHorizontal -> {
       let m2 = match direction {
-        North -> void {
+        North -> {
           (propagate grid (vec2Add position vec2East) directionEast)
           (propagate grid (vec2Add position vec2West) directionWest)
         };
-        East -> void {
+        East -> {
           (propagate grid (vec2Add position directionVec) direction)
         };
-        South -> void {
+        South -> {
           (propagate grid (vec2Add position vec2West) directionWest)
           (propagate grid (vec2Add position vec2East) directionEast)
         };
-        West -> void {
+        West -> {
           (propagate grid (vec2Add position directionVec) direction)
         };
       }
     };
-    SplitVertical -> void {
+    SplitVertical -> {
       let m2 = match direction {
-        North -> void {
+        North -> {
           (propagate grid (vec2Add position directionVec) direction)
         };
-        East -> void {
+        East -> {
           (propagate grid (vec2Add position vec2North) directionNorth)
           (propagate grid (vec2Add position vec2South) directionSouth)
         };
-        South -> void {
+        South -> {
           (propagate grid (vec2Add position directionVec) direction)
         };
-        West -> void {
+        West -> {
           (propagate grid (vec2Add position vec2South) directionSouth)
           (propagate grid (vec2Add position vec2North) directionNorth)
         };
       }
     };
   }
+
+  return false
 }
 
-let countEnergized = (grid: Grid, startPosition: Vec2, startDirection: Direction): i32 -> {
-  (allocArenaStart)
+let countEnergized = (grid: Grid, startPosition: Vec2<i32>, startDirection: Direction): i32 -> {
   let newGrid = (gridClone grid)
   (propagate newGrid startPosition startDirection)
 
@@ -245,7 +244,6 @@ let countEnergized = (grid: Grid, startPosition: Vec2, startDirection: Direction
     }
   }
 
-  (allocArenaEnd)
   return total
 }
 
@@ -271,7 +269,7 @@ let solvePart2 = (input: String): String -> {
   return (stringFromNumber result)
 }
 
-let main = (): void -> {
+let main = (): unit -> {
   let input = (fileRead "input.txt")
 
   let part1 = (solvePart1 input)
