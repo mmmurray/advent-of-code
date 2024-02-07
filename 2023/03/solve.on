@@ -1,10 +1,10 @@
 data SchematicSymbol = {
-  location: Vec2,
+  location: Vec2<i32>,
   value: i32,
 }
 
 data SchematicNumber = {
-  location: Vec2,
+  location: Vec2<i32>,
   value: i32,
   length: i32,
 }
@@ -17,10 +17,10 @@ data Schematic = {
 let parseInput = (input: String): Schematic -> {
   let lines = (stringToLines input)
   let schematic = Schematic {
-    symbols: (listCreateDefault<SchematicSymbol>),
-    numbers: (listCreateDefault<SchematicNumber>),
+    symbols: [],
+    numbers: [],
   }
-  
+
   for line, lineIndex in lines {
     let charIndex = 0
     while (< charIndex (stringSize line)) {
