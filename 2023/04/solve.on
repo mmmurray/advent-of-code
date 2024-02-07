@@ -64,7 +64,7 @@ let solvePart2 = (input: String): String -> {
   let countByGame = (arrayCreate<u64> (listSize games))
 
   for game, gameIndex in games {
-    let gameResult = 0
+    let gameResult = 0u64
 
     for number in game.numbers {
       for needed in game.winning {
@@ -75,17 +75,17 @@ let solvePart2 = (input: String): String -> {
     }
 
     (arraySet resultByGame gameIndex gameResult)
-    (arraySet countByGame gameIndex 1)
+    (arraySet countByGame gameIndex 1u64)
   }
 
   for count, gameIndex in (listFromArray countByGame) {
     result = (+ result count)
 
-    let gameStart = (+ gameIndex 1)
-    let gameEnd = (+ gameStart (@i32 (arrayGet resultByGame gameIndex)))
+    let gameStart = (+ (@u64 gameIndex) 1)
+    let gameEnd = (+ gameStart (arrayGet resultByGame gameIndex))
     while (< gameStart gameEnd) {
       let currentCount = (arrayGet countByGame gameStart)
-      let newCount = (+ currentCount count)
+      let newCount = (+ currentCount (@u64 count))
       (arraySet countByGame gameStart newCount)
       gameStart = (+ gameStart 1)
     }
