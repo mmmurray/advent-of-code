@@ -1,5 +1,5 @@
-data Grid {
-  size: Vec2,
+data Grid = {
+  size: Vec2<i32>,
   rows: List< List<boolean> >,
 }
 
@@ -22,7 +22,7 @@ let parseInput = (input: String): List<Grid> -> {
       size.x = (stringSize line)
       size.y = (+ size.y 1)
       let row = (listCreateDefault<boolean>)
-      for char in line {
+      for char in (listFromString line) {
         let isWall = (== char '#')
         (listPush row isWall)
       }
@@ -51,7 +51,7 @@ let getReflectionScore = (grid: Grid, notScore: i32): i32 -> {
       while (< row size.y) {
         let valA = (listGet (listGet grid.rows row) colA)
         let valB = (listGet (listGet grid.rows row) colB)
-        if (!= valA valB) {
+        if (!= (@i32 valA) (@i32 valB)) {
           isReflection = false
           break
         }
@@ -89,7 +89,7 @@ let getReflectionScore = (grid: Grid, notScore: i32): i32 -> {
       while (< col size.x) {
         let valA = (listGet (listGet grid.rows rowA) col)
         let valB = (listGet (listGet grid.rows rowB) col)
-        if (!= valA valB) {
+        if (!= (@i32 valA) (@i32 valB)) {
           isReflection = false
           break
         }
@@ -162,7 +162,7 @@ let solvePart2 = (input: String): String -> {
   return (stringFromNumber result)
 }
 
-let main = (): void -> {
+let main = (): unit -> {
   let input = (fileRead "input.txt")
 
   let part1 = (solvePart1 input)
