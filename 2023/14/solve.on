@@ -1,5 +1,5 @@
-data Grid {
-  size: Vec2,
+data Grid = {
+  size: Vec2<i32>,
   cols: List< List<i32> >,
 }
 
@@ -11,7 +11,7 @@ let parseInput = (input: String): Grid -> {
     y: (listSize lines)
   }
 
-  for c, colIndex in (listGet lines 0) {
+  for c, colIndex in (listFromString (listGet lines 0)) {
     let col = (listCreate<i32> size.y)
     for line in lines {
       (listPush col (stringGet line colIndex))
@@ -25,7 +25,7 @@ let parseInput = (input: String): Grid -> {
   }
 }
 
-let printGrid = (grid: Grid): void -> {
+let printGrid = (grid: Grid): unit -> {
   let out = (stringBuilderCreate 1024)
   let size = grid.size
   (stringBuilderAppend out "Size: ")
@@ -187,7 +187,7 @@ let solvePart2 = (input: String): String -> {
   return (stringFromNumber result)
 }
 
-let main = (): void -> {
+let main = (): unit -> {
   let input = (fileRead "input.txt")
 
   let part1 = (solvePart1 input)
