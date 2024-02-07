@@ -1,9 +1,9 @@
-data PriorityQueueHeapEntry<T> {
+data PriorityQueueHeapEntry<T> = {
   node: T,
   priority: i32,
 }
 
-data PriorityQueue<T> {
+data PriorityQueue<T> = {
   heap: List< PriorityQueueHeapEntry<T> >
 }
 
@@ -17,7 +17,7 @@ let priorityQueueSize = <T>(queue: PriorityQueue<T>): i32 -> {
   return (listSize queue.heap)
 }
 
-let priorityQueueInsert = <T>(queue: PriorityQueue<T>, node: T, priority: i32): void -> {
+let priorityQueueInsert = <T>(queue: PriorityQueue<T>, node: T, priority: i32): unit -> {
   let entry = PriorityQueueHeapEntry<T> {
     node: node,
     priority: priority
@@ -92,7 +92,7 @@ let priorityQueueNext = <T>(queue: PriorityQueue<T>): Option<T> -> {
   return Some { value: highestPriority.node }
 }
 
-let testPriorityQueue = (): void -> {
+let testPriorityQueue = (): unit -> {
   let queue = (priorityQueueCreate<i32>)
 
   (assertEqual (priorityQueueSize queue) 0)
@@ -124,8 +124,8 @@ let testPriorityQueue = (): void -> {
   (assertEqual (priorityQueueSize queue) 0)
 }
 
-data Grid {
-  size: Vec2,
+data Grid = {
+  size: Vec2<i32>,
   tiles: List< List<i32> >,
 }
 
@@ -139,7 +139,7 @@ let parseInput = (input: String): Grid -> {
 
   for line, y in lines {
     let tileRow = (listCreateDefault<i32>)
-    for char, x in line {
+    for char, x in (listFromString line) {
       (listPush tileRow (- char '0'))
     }
     (listPush tiles tileRow)
@@ -151,7 +151,7 @@ let parseInput = (input: String): Grid -> {
   }
 }
 
-let printGrid = (grid: Grid, path: List<Vec2>): void -> {
+let printGrid = (grid: Grid, path: List< Vec2<i32> >): unit -> {
   let size = grid.size
   let out = (stringBuilderCreate 1024)
   (stringBuilderAppend out "Size: ")
@@ -185,8 +185,8 @@ let printGrid = (grid: Grid, path: List<Vec2>): void -> {
   (print (stringBuilderBuild out))
 }
 
-let gridAdjacent = (grid: Grid, position: Vec2): List<Vec2> -> {
-  let adjacent = (listCreateDefault<Vec2>)
+let gridAdjacent = (grid: Grid, position: Vec2<i32>): List< Vec2<i32> > -> {
+  let adjacent = []
   let size = grid.size
 
   if (< position.x (- size.x 1)) {
@@ -205,9 +205,9 @@ let gridAdjacent = (grid: Grid, position: Vec2): List<Vec2> -> {
   return adjacent
 }
 
-let extractShortestPath = (cameFrom: Map<Vec2>, targetNode: Vec2): List<Vec2> -> {
+let extractShortestPath = (cameFrom: Map< Vec2<i32> >, targetNode: Vec2<i32>): List< Vec2<i32> > -> {
   # (print "+ extractShortestPath")
-  let path = (listCreateDefault<Vec2>)
+  let path = []
   let c = targetNode
   # (print (vec2ToString c))
   (listPush path c)
@@ -228,7 +228,7 @@ let extractShortestPath = (cameFrom: Map<Vec2>, targetNode: Vec2): List<Vec2> ->
   return path
 }
 
-let exceedsSingleDirectionLimit = (path: List<Vec2>): boolean -> {
+let exceedsSingleDirectionLimit = (path: List< Vec2<i32> >): boolean -> {
   # (print "exceedsSingleDirectionLimit")
   let limit = 5
   let size = (listSize path)
@@ -265,20 +265,20 @@ let exceedsSingleDirectionLimit = (path: List<Vec2>): boolean -> {
 
 let solvePart1 = (input: String): String -> {
   let grid = (parseInput input)
-  (printGrid grid (listCreateDefault<Vec2>))
+  # (printGrid grid [])
 
   let size = grid.size
   let startNode = Vec2 { x: 0, y: 0 }
   let targetNode = Vec2 { x: (- size.x 1), y: (- size.y 1) }
-  let openSet = (priorityQueueCreate<Vec2>)
-  let cameFrom = (mapCreate<Vec2>)
-  let gScore = (mapCreate<i32>)
+  let openSet = (priorityQueueCreate)
+  let cameFrom = (mapCreate)
+  let gScore = (mapCreate)
 
   (priorityQueueInsert openSet startNode 0)
   (mapSet gScore (vec2ToString startNode) 0)
 
   while true {
-    (print "~~ STEP ~~")
+    # (print "~~ STEP ~~")
     let currentOption = (priorityQueueNext openSet)
     let done = match currentOption {
       Some -> false;
@@ -288,17 +288,17 @@ let solvePart1 = (input: String): String -> {
       break
     }
     let current = (optionExpect currentOption)
-    (print (stringConcat "Current: " (vec2ToString current)))
+    # (print (stringConcat "Current: " (vec2ToString current)))
 
     if (vec2Equals current targetNode) {
-      (print "Reached target")
+      # (print "Reached target")
       break
     }
 
     let currentKey = (vec2ToString current)
 
     let currentShortestPath = (extractShortestPath cameFrom current)
-    (printGrid grid currentShortestPath)
+    # (printGrid grid currentShortestPath)
 
     for neighbor in (gridAdjacent grid current) {
       let viable = true
@@ -315,14 +315,14 @@ let solvePart1 = (input: String): String -> {
 
         # let reachedLimit = (exceedsSingleDirectionLimit [...currentShortestPath, neighbor])
         # (write (@i32 reachedLimit))
-        (print (stringConcat "Neighbor: " (vec2ToString neighbor)))
+        # (print (stringConcat "Neighbor: " (vec2ToString neighbor)))
 
         let neighborKey = (vec2ToString neighbor)
         let distance = (listGet (listGet grid.tiles neighbor.y) neighbor.x)
         if (!viable) {
           distance = (+ distance 99999)
         }
-        (print (stringConcat "Distance: " (stringFromNumber distance)))
+        # (print (stringConcat "Distance: " (stringFromNumber distance)))
         let currentGScore = (optionValue 10000 (mapGet gScore currentKey))
         let tentativeGScore = (+ currentGScore distance)
         let neighborGScore = (optionValue 10000 (mapGet gScore neighborKey))
@@ -337,13 +337,13 @@ let solvePart1 = (input: String): String -> {
   }
 
   let path = (extractShortestPath cameFrom targetNode)
-  (printGrid grid path)
+  # (printGrid grid path)
   let result = 0
 
   for position in path {
     if (!(vec2Equals position startNode)) {
       let weight = (listGet (listGet grid.tiles position.y) position.x)
-      (print (stringConcat "Path " (stringConcat (vec2ToString position) (stringFromNumber weight))))
+      # (print (stringConcat "Path " (stringConcat (vec2ToString position) (stringFromNumber weight))))
       result = (+ result weight)
     }
   }
@@ -351,8 +351,8 @@ let solvePart1 = (input: String): String -> {
   return (stringFromNumber result)
 }
 
-let main = (): void -> {
-  (testPriorityQueue)
+let main = (): unit -> {
+  # (testPriorityQueue)
 
   let input = (fileRead "example.txt")
 
