@@ -1,20 +1,17 @@
-data Connections {
+data Connections = {
   north: boolean,
   east: boolean,
   south: boolean,
   west: boolean,
 }
 
-data Pipes {
-  start: Vec2,
+data Pipes = {
+  start: Vec2<i32>,
   grid: List< List<Connections> >,
-  size: Vec2,
+  size: Vec2<i32>,
 }
 
 let charToConnections = (char: i32): Connections -> {
-  if (== char '.') {
-    return Connections { north: false, east: false, south: false, west: false }
-  }
   if (== char '|') {
     return Connections { north: true, east: false, south: true, west: false }
   }
@@ -36,6 +33,7 @@ let charToConnections = (char: i32): Connections -> {
   if (== char 'S') {
     return Connections { north: true, east: true, south: true, west: true }
   }
+  return Connections { north: false, east: false, south: false, west: false }
 }
 
 let parseInput = (input: String): Pipes -> {
@@ -46,7 +44,7 @@ let parseInput = (input: String): Pipes -> {
 
   for line, y in lines {
     let row = (listCreateDefault<Connections>)
-    for char, x in line {
+    for char, x in (listFromString line) {
       let connections = (charToConnections char)
       (listPush row connections)
 
@@ -149,7 +147,7 @@ let connectionsToWalls = (connections: Connections): List< List<i32> > -> {
   return walls
 }
 
-let printPipes = (grid: List< List<Connections> >): void -> {
+let printPipes = (grid: List< List<Connections> >): unit -> {
   let out = (stringBuilderCreate 1024)
   for row in grid {
     for connections in row {
@@ -160,11 +158,11 @@ let printPipes = (grid: List< List<Connections> >): void -> {
   (print (stringBuilderBuild out))
 }
 
-let getConnections = (pipes: Pipes, p: Vec2): Connections -> {
+let getConnections = (pipes: Pipes, p: Vec2<i32>): Connections -> {
   return (listGet (listGet pipes.grid p.y) p.x)
 }
 
-let pointsContain = (points: List<Vec2>, point: Vec2): boolean -> {
+let pointsContain = (points: List< Vec2<i32> >, point: Vec2<i32>): boolean -> {
   for other in points {
     if (vec2Equals point other) {
       return true
@@ -191,7 +189,7 @@ let formatConnections = (connections: Connections): String -> {
   return (stringBuilderBuild out)
 }
 
-let searchPipes = (pipes: Pipes, visited: List< Vec2 >, current: Vec2, steps: i32): i32 -> {
+let searchPipes = (pipes: Pipes, visited: List< Vec2<i32> >, current: Vec2<i32>, steps: i32): i32 -> {
   if (pointsContain visited current) {
     return steps
   }
@@ -243,18 +241,18 @@ let searchPipes = (pipes: Pipes, visited: List< Vec2 >, current: Vec2, steps: i3
 
 let solvePart1 = (input: String): String -> {
   let pipes = (parseInput input)
-  let steps = (searchPipes pipes (listCreateDefault<Vec2>) pipes.start 0)
+  let steps = (searchPipes pipes (listCreateDefault< Vec2<i32> >) pipes.start 0)
   let result = (/ steps 2)
 
   return (stringFromNumber result)
 }
 
-data Lake {
+data Lake = {
   walls: List< List< i32 > >,
-  size: Vec2,
+  size: Vec2<i32>,
 }
 
-let buildLake = (pipes: Pipes, visited: List<Vec2>): Lake -> {
+let buildLake = (pipes: Pipes, visited: List< Vec2<i32> >): Lake -> {
   let walls = (listCreateDefault< List<i32> >)
   let pipesSize = pipes.size
   let lakeSize = Vec2 { x: (* pipesSize.x 3), y: (* pipesSize.y 3) }
@@ -293,7 +291,7 @@ let buildLake = (pipes: Pipes, visited: List<Vec2>): Lake -> {
   }
 }
 
-let printLake = (lake: Lake): void -> {
+let printLake = (lake: Lake): unit -> {
   let out = (stringBuilderCreate 1024)
   let size = lake.size
 
@@ -323,7 +321,7 @@ let printLake = (lake: Lake): void -> {
   (print (stringBuilderBuild out))
 }
 
-let floodLake = (lake: Lake, current: Vec2): i32 -> {
+let floodLake = (lake: Lake, current: Vec2<i32>): i32 -> {
   let currentRow = (listGet lake.walls current.y)
   let value = (listGet currentRow current.x)
   let size = lake.size
@@ -360,7 +358,7 @@ let floodLake = (lake: Lake, current: Vec2): i32 -> {
 let solvePart2 = (input: String): String -> {
   let pipes = (parseInput input)
   let pipesSize = pipes.size
-  let visited = (listCreateDefault<Vec2>)
+  let visited = (listCreateDefault< Vec2<i32> >)
   let steps = (searchPipes pipes visited pipes.start 0)
   let lake = (buildLake pipes visited)
   let count = (floodLake lake Vec2 { x: 0, y: 0 })
@@ -386,7 +384,7 @@ let solvePart2 = (input: String): String -> {
   return (stringFromNumber result)
 }
 
-let main = (): void -> {
+let main = (): unit -> {
   let input = (fileRead "input.txt")
 
   let part1 = (solvePart1 input)
