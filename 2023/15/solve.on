@@ -2,7 +2,7 @@ data Operation =
   | Insert { label: String, focalLength: i32 }
   | Remove { label: String }
 
-data Step {
+data Step = {
   raw: String,
   operation: Operation,
 }
@@ -36,7 +36,7 @@ let parseInput = (input: String): List<Step> -> {
 
 let hash = (value: String): i32 -> {
   let result = 0
-  for char in value {
+  for char in (listFromString value) {
     result = (% (* (+ result char) 17) 256)
   }
 
@@ -54,18 +54,18 @@ let solvePart1 = (input: String): String -> {
   return (stringFromNumber result)
 }
 
-data Lens {
+data Lens = {
   label: String,
   focalLength: i32,
 }
 
-data Box {
+data Box = {
   lenses: List<Lens>,
 }
 
-let printBoxes = (boxes: Array<Box>): void -> {
+let printBoxes = (boxes: Array<Box>): unit -> {
   let out = (stringBuilderCreate 1024)
-  for box, boxIndex in boxes {
+  for box, boxIndex in (listFromArray boxes) {
     if (> (listSize box.lenses) 0) {
       (stringBuilderAppend out "Box ")
       (stringBuilderAppend out (stringFromNumber boxIndex))
@@ -87,7 +87,7 @@ let solvePart2 = (input: String): String -> {
   let sequence = (parseInput input)
   let result = 0
   let boxes = (arrayCreate<Box> 256)
-  for x, i in boxes {
+  for x, i in (listFromArray boxes) {
     let box = Box {
       lenses: (listCreateDefault<Lens>),
     }
@@ -95,15 +95,16 @@ let solvePart2 = (input: String): String -> {
   }
 
   for step in sequence {
-    let stepLabel = match step.operation {
+    let stepOperation = step.operation
+    let stepLabel = match stepOperation {
       Insert { label } -> label;
       Remove { label } -> label;
     }
     let boxIndex = (hash stepLabel)
     let box = (arrayGet boxes boxIndex)
 
-    let m = match step.operation {
-      Insert { label, focalLength } -> void {
+    let m = match stepOperation {
+      Insert { label, focalLength } -> {
         let replaced = false
         for lens, lensIndex in box.lenses {
           if (stringEquals lens.label label) {
@@ -120,7 +121,7 @@ let solvePart2 = (input: String): String -> {
           (listPush box.lenses lens)
         }
       };
-      Remove { label } -> void {
+      Remove { label } -> {
         let removeIndex = (- 0 1)
         for lens, lensIndex in box.lenses {
           if (stringEquals lens.label label) {
@@ -134,7 +135,7 @@ let solvePart2 = (input: String): String -> {
     }
   }
 
-  for box, boxIndex in boxes {
+  for box, boxIndex in (listFromArray boxes) {
     for lens, lensIndex in box.lenses {
       let focussingPower = (* (+ boxIndex 1) (* (+ lensIndex 1) lens.focalLength))
       result = (+ result focussingPower)
@@ -144,7 +145,7 @@ let solvePart2 = (input: String): String -> {
   return (stringFromNumber result)
 }
 
-let main = (): void -> {
+let main = (): unit -> {
   let input = (fileRead "input.txt")
 
   let part1 = (solvePart1 input)
