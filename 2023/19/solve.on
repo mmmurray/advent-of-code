@@ -1,11 +1,11 @@
-data Rating {
+data Rating = {
   x: i32,
   m: i32,
   a: i32,
   s: i32,
 }
 
-data Condition {
+data Condition = {
   property: i32,
   operator: i32,
   value: i32,
@@ -15,12 +15,12 @@ data WorkflowStep =
   | WorkflowStep { target: String }
   | WorkflowStepConditional { target: String, condition: Condition }
 
-data Workflow {
+data Workflow = {
   name: String,
   steps: List<WorkflowStep>,
 }
 
-data System {
+data System = {
   ratings: List<Rating>
   workflows: Map<Workflow>
 }
@@ -48,10 +48,10 @@ let parseWorkflow = (input: String): Workflow -> {
       }
       (listPush steps step)
     } else {
-      let step = WorkflowStep {
+      let step2 = WorkflowStep {
         target: stepPart,
       }
-      (listPush steps step)
+      (listPush steps step2)
     }
   }
 
@@ -119,11 +119,11 @@ let parseInput = (input: String): System -> {
   }
 }
 
-let printSystem = (system: System): void -> {
+let printSystem = (system: System): unit -> {
   let out = (stringBuilderCreate 1024)
   let workflows = system.workflows
 
-  for workflowItem in workflows.items {
+  for workflowItem in (mapEntries workflows) {
     let workflow = workflowItem.value
     (stringBuilderAppend out workflow.name)
 
@@ -133,10 +133,10 @@ let printSystem = (system: System): void -> {
         (stringBuilderAppend out ",")
       }
       let m = match step {
-        WorkflowStep { target } -> void {
+        WorkflowStep { target } -> {
           (stringBuilderAppend out target)
         };
-        WorkflowStepConditional { target, condition } -> void {
+        WorkflowStepConditional { target, condition } -> {
           (stringBuilderAppend out (charToString condition.property))
           (stringBuilderAppend out (charToString condition.operator))
           (stringBuilderAppend out (stringFromNumber condition.value))
@@ -204,16 +204,17 @@ let isPartAccepted = (workflows: Map<Workflow>, rating: Rating): boolean -> {
       let rejected = false
 
       let continue = match step {
-        WorkflowStep { target } -> boolean {
+        WorkflowStep { target } -> {
           currentWorkflow = target
           return false
         };
-        WorkflowStepConditional { target, condition } -> boolean {
+        WorkflowStepConditional { target, condition } -> {
+          let result = true
           if (doesConditionApply condition rating) {
             currentWorkflow = target
-            return false
+            result = false
           }
-          return true
+          return result
         };
       }
 
@@ -222,6 +223,7 @@ let isPartAccepted = (workflows: Map<Workflow>, rating: Rating): boolean -> {
       }
     }
   }
+  return false
 }
 
 let solvePart1 = (input: String): String -> {
@@ -238,7 +240,7 @@ let solvePart1 = (input: String): String -> {
   return (stringFromNumber result)
 }
 
-let main = (): void -> {
+let main = (): unit -> {
   let input = (fileRead "input.txt")
 
   let part1 = (solvePart1 input)
