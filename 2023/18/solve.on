@@ -4,17 +4,17 @@ data Direction =
   | South {}
   | West {}
 
-let directionNorth = North {}
-let directionEast = East {}
-let directionSouth = South {}
-let directionWest = West {}
+let directionNorth: Direction = North {}
+let directionEast: Direction = East {}
+let directionSouth: Direction = South {}
+let directionWest: Direction = West {}
 
-let vec2North = Vec2 { x: 0, y: (- 0 1) }
-let vec2East = Vec2 { x: 1, y: 0 }
-let vec2South = Vec2 { x: 0, y: 1 }
-let vec2West = Vec2 { x: (- 0 1), y: 0 }
+let vec2North: Vec2<i32> = Vec2 { x: 0, y: (- 0 1) }
+let vec2East: Vec2<i32> = Vec2 { x: 1, y: 0 }
+let vec2South: Vec2<i32> = Vec2 { x: 0, y: 1 }
+let vec2West: Vec2<i32> = Vec2 { x: (- 0 1), y: 0 }
 
-let directionToVec2 = (direction: Direction): Vec2 -> {
+let directionToVec2 = (direction: Direction): Vec2<i32> -> {
   return match direction {
     North -> vec2North;
     East -> vec2East;
@@ -23,7 +23,7 @@ let directionToVec2 = (direction: Direction): Vec2 -> {
   }
 }
 
-data DigPlanStep {
+data DigPlanStep = {
   direction: Direction,
   distance: i32,
   color: String,
@@ -43,6 +43,7 @@ let parseDirection = (input: String): Direction -> {
   if (== char 'L') {
     return directionWest
   }
+  return directionNorth
 }
 
 let parseInput = (input: String): List<DigPlanStep> -> {
@@ -65,7 +66,7 @@ let parseInput = (input: String): List<DigPlanStep> -> {
   return steps
 }
 
-data Step {
+data Step = {
   direction: Direction,
   distance: i32,
 }
@@ -161,7 +162,7 @@ let solvePart2 = (input: String): String -> {
   return (stringFromNumber result)
 }
 
-let main = (): void -> {
+let main = (): unit -> {
   let input = (fileRead "input.txt")
 
   let part1 = (solvePart1 input)
