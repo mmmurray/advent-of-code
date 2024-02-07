@@ -1,32 +1,34 @@
-data AlmanacMapping {
-  destinationStart: i32,
-  sourceStart: i32,
-  rangeLength: i32,
-  sourceRange: Range,
-  offset: i32,
+import "@range.mice"
+
+data AlmanacMapping = {
+  destinationStart: u64,
+  sourceStart: u64,
+  rangeLength: u64,
+  sourceRange: Range<u64>,
+  offset: u64,
 }
 
-data AlmanacCategory {
+data AlmanacCategory = {
   mappings: List<AlmanacMapping>,
 }
 
-data Almanac {
-  seeds: List<i32>,
+data Almanac = {
+  seeds: List<u64>,
   categories: List<AlmanacCategory>,
 }
 
-let parseNumberList = (input: String): List<i32> -> {
-  let values = (listCreateDefault<i32>)
+let parseNumberList = (input: String): List<u64> -> {
+  let values = []
   let parts = (stringSplitBy input ' ')
   for part in parts {
-    let num = (stringToNumber part)
+    let num = (stringToNumberU64 part)
     (listPush values num)
   }
   return values
 }
 
-let parseSeeds = (input: String): List<i32> -> {
-  let seeds = (listCreateDefault<i32>)
+let parseSeeds = (input: String): List<u64> -> {
+  let seeds = []
   let inputParts = (stringSplitBy input ':')
   let values = (stringTrim (listGet inputParts 1))
   return (parseNumberList values)
@@ -96,7 +98,7 @@ let sortAlmanacMappings = (almanac: Almanac): Almanac -> {
   return almanac
 }
 
-let mapPositionToLocation = (almanac: Almanac, position: i32): i32 -> {
+let mapPositionToLocation = (almanac: Almanac, position: u64): u64 -> {
   let value = position
 
   for category in almanac.categories {
@@ -111,11 +113,11 @@ let mapPositionToLocation = (almanac: Almanac, position: i32): i32 -> {
   return value 
 }
 
-let positionMin = 0
-let positionMax = 999999999999
+let positionMin: u64 = 0
+let positionMax: u64 = 999999999
 
-let mapRangeToLocationInCategory = (category: AlmanacCategory, range: Range): List<Range> -> {
-  let ranges = (listCreateDefault<Range>)
+let mapRangeToLocationInCategory = (category: AlmanacCategory, range: Range<u64>): List< Range<u64> > -> {
+  let ranges = []
 
   let position = positionMin
   let mappingIndex = 0
@@ -145,12 +147,12 @@ let mapRangeToLocationInCategory = (category: AlmanacCategory, range: Range): Li
   return ranges
 }
 
-let mapRangeToLocationInAlmanac = (almanac: Almanac, initialRange: Range): List<Range> -> {
-  let ranges = (listCreateDefault<Range>)
+let mapRangeToLocationInAlmanac = (almanac: Almanac, initialRange: Range<u64>): List< Range<u64> > -> {
+  let ranges = []
   (listPush ranges initialRange)
 
   for category in almanac.categories {
-    let nextRanges = (listCreateDefault<Range>)
+    let nextRanges = []
 
     for range in ranges {
       (listPushList nextRanges (mapRangeToLocationInCategory category range))
@@ -171,12 +173,12 @@ let solvePart1 = (input: String): String -> {
     result = (min result location)
   }
 
-  return (stringFromNumber result)
+  return (stringFromNumberU64 result)
 }
 
 let solvePart2 = (input: String): String -> {
   let almanac = (sortAlmanacMappings (parseInput input))
-  let ranges = (listCreateDefault<Range>)
+  let ranges = (listCreateDefault< Range<u64> >)
 
   for seedStart, seedIndex in almanac.seeds {
     if (== (% seedIndex 2) 0) {
@@ -194,10 +196,10 @@ let solvePart2 = (input: String): String -> {
     }
   }
 
-  return (stringFromNumber result)
+  return (stringFromNumberU64 result)
 }
 
-let main = (): void -> {
+let main = (): unit -> {
   let input = (fileRead "input.txt")
 
   let part1 = (solvePart1 input)
