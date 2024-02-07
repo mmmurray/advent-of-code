@@ -1,4 +1,4 @@
-data Row {
+data Row = {
   conditions: List<i32>,
   damaged: List<i32>,
   damageTotal: i32,
@@ -7,7 +7,7 @@ data Row {
 let parseRow = (line: String): Row -> {
   let parts = (stringSplitBy line ' ')
   let conditions = (listCreateDefault<i32>)
-  for char in (listGet parts 0) {
+  for char in (listFromString (listGet parts 0)) {
     (listPush conditions char)
   }
 
@@ -46,7 +46,7 @@ let formatConditions = (conditions: List<i32>): String -> {
   return (stringBuilderBuild out)
 }
 
-let printRow = (row: Row): void -> {
+let printRow = (row: Row): unit -> {
   let out = (stringBuilderCreate 1024)
   (stringBuilderAppend out (formatConditions row.conditions))
   (stringBuilderAppend out " ")
@@ -59,17 +59,17 @@ let printRow = (row: Row): void -> {
   (print (stringBuilderBuild out))
 }
 
-let printRows = (rows: List<Row>): void -> {
+let printRows = (rows: List<Row>): unit -> {
   for row in rows {
     (printRow row)
   }
 }
 
-let cacheSpacing = 30
+let cacheSpacing: i32 = 30
 
 let createCache = (): Array<i32> -> {
   let cache = (arrayCreate<i32> (* cacheSpacing (* cacheSpacing cacheSpacing)))
-  for x, i in cache {
+  for x, i in (listFromArray cache) {
     (arraySet cache i (- 0 1))
   }
   return cache
@@ -230,7 +230,7 @@ let unfoldRows = (rows: List<Row>): List<Row> -> {
   return newRows
 }
 
-let testCountArrangements = (): void -> {
+let testCountArrangements = (): unit -> {
   (assertEqual (countArrangements (parseRow "? 1")) 1)
   (assertEqual (countArrangements (parseRow "?? 1")) 2)
   (assertEqual (countArrangements (parseRow "??? 1")) 3)
@@ -257,20 +257,20 @@ let solvePart1 = (input: String): String -> {
   return (stringFromNumber result)
 }
 
-let solvePart2 = (input: String): String -> {
-  let rows = (unfoldRows (parseInput input))
+# let solvePart2 = (input: String): String -> {
+#   let rows = (unfoldRows (parseInput input))
 
-  let result = 0
-  for row in rows {
-    (allocArenaStart)
-    result = (+ result (countArrangements row))
-    (allocArenaEnd)
-  }
+#   let result = 0
+#   for row in rows {
+#     (allocArenaStart)
+#     result = (+ result (countArrangements row))
+#     (allocArenaEnd)
+#   }
 
-  return (stringFromNumber result)
-}
+#   return (stringFromNumber result)
+# }
 
-let main = (): void -> {
+let main = (): unit -> {
   (testCountArrangements)
 
   let input = (fileRead "input.txt")
