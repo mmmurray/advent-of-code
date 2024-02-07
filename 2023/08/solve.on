@@ -1,9 +1,9 @@
-data Node {
+data Node = {
   left: String,
   right: String,
 }
 
-data Network {
+data Network = {
   instructions: List<boolean>,
   nodes: Map<Node>,
 }
@@ -14,7 +14,7 @@ let parseInput = (input: String): Network -> {
   let lines = (stringToLines (stringTrim input))
   let instructionsLine = (listGet lines 0)
 
-  for char in instructionsLine {
+  for char in (listFromString instructionsLine) {
     let instruction = false
     if (== char 'L') {
       instruction = true
@@ -40,7 +40,7 @@ let parseInput = (input: String): Network -> {
   }
 }
 
-let countSteps = (network: Network, start: String): i32 -> {
+let countSteps = (network: Network, start: String): u64 -> {
   let instructionIndex = 0
   let current = start
   let steps = 0
@@ -50,16 +50,14 @@ let countSteps = (network: Network, start: String): i32 -> {
     let node = (mapGet network.nodes current)
 
     let m = match node {
-      Some { value } -> void {
+      Some { value } -> {
         if instruction {
           current = value.left
         } else {
           current = value.right
         }
       };
-      None -> void {
-        ($panic "Node not found")
-      };
+      None -> (panic "Node not found");
     }
 
     instructionIndex = (% (+ instructionIndex 1) (listSize network.instructions))
@@ -77,15 +75,15 @@ let solvePart1 = (input: String): String -> {
   let network = (parseInput input)
   let result = (countSteps network "AAA")
 
-  return (stringFromNumber result)
+  return (stringFromNumberU64 result)
 }
 
 let solvePart2 = (input: String): String -> {
   let network = (parseInput input)
   let nodes = network.nodes
-  let allSteps = (listCreateDefault<i32>)
+  let allSteps = []
 
-  for item in nodes.items {
+  for item in (mapEntries nodes) {
     if (== (stringGet item.key 2) 'A') {
       (listPush allSteps (countSteps network item.key))
     }
@@ -93,10 +91,10 @@ let solvePart2 = (input: String): String -> {
 
   let result = (lcmMany allSteps)
 
-  return (stringFromNumber result)
+  return (stringFromNumberU64 result)
 }
 
-let main = (): void -> {
+let main = (): unit -> {
   let input = (fileRead "input.txt")
 
   let part1 = (solvePart1 input)
