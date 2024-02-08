@@ -109,7 +109,7 @@ let solvePart1 = (input: String): String -> {
   let universe = (expandUniverse (parseInput input) expansionRate)
   let result = (sumOfDistancesBetweenGalaxies universe)
 
-  return (stringFromNumberU64 (@u64 result))
+  return (stringFromNumber result)
 }
 
 let solvePart2 = (input: String): String -> {
@@ -117,7 +117,7 @@ let solvePart2 = (input: String): String -> {
   let universe = (expandUniverse (parseInput input) expansionRate)
   let result = (sumOfDistancesBetweenGalaxies universe)
 
-  return (stringFromNumberU64 (@u64 result))
+  return (stringFromNumber result)
 }
 
 let main = (): unit -> {
