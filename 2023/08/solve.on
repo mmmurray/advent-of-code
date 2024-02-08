@@ -75,7 +75,7 @@ let solvePart1 = (input: String): String -> {
   let network = (parseInput input)
   let result = (countSteps network "AAA")
 
-  return (stringFromNumberU64 result)
+  return (stringFromNumber result)
 }
 
 let solvePart2 = (input: String): String -> {
@@ -91,7 +91,7 @@ let solvePart2 = (input: String): String -> {
 
   let result = (lcmMany allSteps)
 
-  return (stringFromNumberU64 result)
+  return (stringFromNumber result)
 }
 
 let main = (): unit -> {
