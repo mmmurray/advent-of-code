@@ -1,14 +1,14 @@
 data Race = {
-  time: i32,
-  distance: i32,
+  time: u64,
+  distance: u64,
 }
 
-let parseNumberList = (input: String): List<i32> -> {
-  let values = (listCreateDefault<i32>)
+let parseNumberList = (input: String): List<u64> -> {
+  let values = []
   let parts = (stringSplitBy input ' ')
   for part in parts {
     if (> (stringSize part) 0) {
-      let num = (stringToNumber part)
+      let num = (stringToNumberU64 part)
       (listPush values num)
     }
   }
@@ -16,16 +16,16 @@ let parseNumberList = (input: String): List<i32> -> {
 }
 
 let parseInput = (input: String): List<Race> -> {
-  let races = (listCreateDefault<Race>)
+  let races = []
   let lines = (stringToLines input)
   let timesLine = (listGet lines 0)
   let distancesLine = (listGet lines 1)
   let times = (parseNumberList (listGet (stringSplitBy timesLine ':') 1))
   let distances = (parseNumberList (listGet (stringSplitBy distancesLine ':') 1))
 
-  for time1, timeIndex in times {
+  for time, timeIndex in times {
     let race = Race {
-      time: time1,
+      time: time,
       distance: (listGet distances timeIndex),
     }
     (listPush races race)
@@ -34,7 +34,7 @@ let parseInput = (input: String): List<Race> -> {
   return races
 }
 
-let solveRace = (race: Race): i32 -> {
+let solveRace = (race: Race): u64 -> {
   let winningStrategies = 0
 
   let holdTime = 0
@@ -62,7 +62,7 @@ let solvePart1 = (input: String): String -> {
     result = (* result winningStrategies)
   }
 
-  return (stringFromNumber result)
+  return (stringFromNumberU64 result)
 }
 
 let solvePart2 = (input: String): String -> {
@@ -72,18 +72,18 @@ let solvePart2 = (input: String): String -> {
   let combinedDistances = (stringBuilderCreate 128)
 
   for race in races {
-    (stringBuilderAppend combinedTimes (stringFromNumber race.time))
-    (stringBuilderAppend combinedDistances (stringFromNumber race.distance))
+    (stringBuilderAppend combinedTimes (stringFromNumberU64 race.time))
+    (stringBuilderAppend combinedDistances (stringFromNumberU64 race.distance))
   }
 
   let combinedRace = Race {
-    time: (stringToNumber (stringBuilderBuild combinedTimes)),
-    distance: (stringToNumber (stringBuilderBuild combinedDistances)),
+    time: (stringToNumberU64 (stringBuilderBuild combinedTimes)),
+    distance: (stringToNumberU64 (stringBuilderBuild combinedDistances)),
   }
 
   let result = (solveRace combinedRace)
 
-  return (stringFromNumber result)
+  return (stringFromNumberU64 result)
 }
 
 let main = (): unit -> {
