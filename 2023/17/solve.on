@@ -259,7 +259,7 @@ let exceedsSingleDirectionLimit = (path: List< Vec2<i32> >): boolean -> {
 
   let result = (|| sameX sameY)
 
-  # (print (stringConcat "exceedsSingleDirectionLimit result: " (stringFromNumber (@i32 result))))
+  # (print (stringConcat "exceedsSingleDirectionLimit result: " (stringFromNumber result)))
   return result
 }
 
