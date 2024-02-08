@@ -91,7 +91,7 @@ let solvePart2 = (input: String): String -> {
     }
   }
 
-  return (stringFromNumberU64 result)
+  return (stringFromNumber result)
 }
 
 let main = (): unit -> {
