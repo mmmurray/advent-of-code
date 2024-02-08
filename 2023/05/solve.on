@@ -173,7 +173,7 @@ let solvePart1 = (input: String): String -> {
     result = (min result location)
   }
 
-  return (stringFromNumberU64 result)
+  return (stringFromNumber result)
 }
 
 let solvePart2 = (input: String): String -> {
@@ -196,7 +196,7 @@ let solvePart2 = (input: String): String -> {
     }
   }
 
-  return (stringFromNumberU64 result)
+  return (stringFromNumber result)
 }
 
 let main = (): unit -> {
