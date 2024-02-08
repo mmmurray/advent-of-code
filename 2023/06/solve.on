@@ -62,7 +62,7 @@ let solvePart1 = (input: String): String -> {
     result = (* result winningStrategies)
   }
 
-  return (stringFromNumberU64 result)
+  return (stringFromNumber result)
 }
 
 let solvePart2 = (input: String): String -> {
@@ -72,8 +72,8 @@ let solvePart2 = (input: String): String -> {
   let combinedDistances = (stringBuilderCreate 128)
 
   for race in races {
-    (stringBuilderAppend combinedTimes (stringFromNumberU64 race.time))
-    (stringBuilderAppend combinedDistances (stringFromNumberU64 race.distance))
+    (stringBuilderAppend combinedTimes (stringFromNumber race.time))
+    (stringBuilderAppend combinedDistances (stringFromNumber race.distance))
   }
 
   let combinedRace = Race {
@@ -83,7 +83,7 @@ let solvePart2 = (input: String): String -> {
 
   let result = (solveRace combinedRace)
 
-  return (stringFromNumberU64 result)
+  return (stringFromNumber result)
 }
 
 let main = (): unit -> {
