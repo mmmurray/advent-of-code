@@ -1,17 +1,16 @@
 data Game = {
-  winning: List<u64>,
-  numbers: List<u64>,
+  winning: List<i32>,
+  numbers: List<i32>,
 }
 
-let parseNumberList = (input: String): List<u64> -> {
+let parseNumberList = (input: String): List<i32> -> {
   let parts = (stringSplitBy (stringTrim input) ' ')
-  let numbers = (listCreateDefault<u64>)
+  let numbers = []
 
   for part in parts {
     let trimmed = (stringTrim part)
     if (> (stringSize trimmed) 0) {
-      let number = (stringToNumberU64 trimmed)
-      (listPush numbers number)
+      (listPush numbers (stringToNumber trimmed))
     }
   }
 
@@ -19,17 +18,16 @@ let parseNumberList = (input: String): List<u64> -> {
 }
 
 let parseInput = (input: String): List<Game> -> {
-  let lines = (stringToLines input)
-  let games = (listCreateDefault<Game>)
+  let lines = (stringToLines (stringTrim input))
+  let games = []
   
   for line in lines {
     let lineParts = (stringSplitBy line ':')
     let sectionParts = (stringSplitBy (listGet lineParts 1) '|')
-    let game = Game {
+    (listPush games Game {
       winning: (parseNumberList (listGet sectionParts 0)),
       numbers: (parseNumberList (listGet sectionParts 1)),
-    }
-    (listPush games game)
+    })
   }
 
   return games
@@ -60,11 +58,11 @@ let solvePart2 = (input: String): String -> {
   let result = 0
   let games = (parseInput input)
 
-  let resultByGame = (arrayCreate<u64> (listSize games))
-  let countByGame = (arrayCreate<u64> (listSize games))
+  let resultByGame = (arrayCreate<i32> (listSize games))
+  let countByGame = []
 
   for game, gameIndex in games {
-    let gameResult = 0u64
+    let gameResult = 0
 
     for number in game.numbers {
       for needed in game.winning {
@@ -75,18 +73,18 @@ let solvePart2 = (input: String): String -> {
     }
 
     (arraySet resultByGame gameIndex gameResult)
-    (arraySet countByGame gameIndex 1u64)
+    (listPush countByGame 1)
   }
 
-  for count, gameIndex in (listFromArray countByGame) {
+  for count, gameIndex in countByGame {
     result = (+ result count)
 
-    let gameStart = (+ (@u64 gameIndex) 1)
+    let gameStart = (+ gameIndex 1)
     let gameEnd = (+ gameStart (arrayGet resultByGame gameIndex))
     while (< gameStart gameEnd) {
-      let currentCount = (arrayGet countByGame gameStart)
-      let newCount = (+ currentCount (@u64 count))
-      (arraySet countByGame gameStart newCount)
+      let currentCount = (listGet countByGame gameStart)
+      let newCount = (+ currentCount count)
+      (listSet countByGame gameStart newCount)
       gameStart = (+ gameStart 1)
     }
   }
@@ -95,7 +93,7 @@ let solvePart2 = (input: String): String -> {
 }
 
 let main = (): unit -> {
-  let input = (stringTrim (fileRead "input.txt"))
+  let input = (fileRead "input.txt")
 
   let part1 = (solvePart1 input)
   (print "Part 1:")
