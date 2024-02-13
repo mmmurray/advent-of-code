@@ -9,12 +9,12 @@ let directionEast: Direction = East {}
 let directionSouth: Direction = South {}
 let directionWest: Direction = West {}
 
-let vec2North: Vec2<i32> = Vec2 { x: 0, y: (- 0 1) }
-let vec2East: Vec2<i32> = Vec2 { x: 1, y: 0 }
-let vec2South: Vec2<i32> = Vec2 { x: 0, y: 1 }
-let vec2West: Vec2<i32> = Vec2 { x: (- 0 1), y: 0 }
+let vec2North: Vec2<i64> = Vec2 { x: 0, y: (- 0 1) }
+let vec2East: Vec2<i64> = Vec2 { x: 1, y: 0 }
+let vec2South: Vec2<i64> = Vec2 { x: 0, y: 1 }
+let vec2West: Vec2<i64> = Vec2 { x: (- 0 1), y: 0 }
 
-let directionToVec2 = (direction: Direction): Vec2<i32> -> {
+let directionToVec2 = (direction: Direction): Vec2<i64> -> {
   return match direction {
     North -> vec2North;
     East -> vec2East;
@@ -25,7 +25,7 @@ let directionToVec2 = (direction: Direction): Vec2<i32> -> {
 
 data DigPlanStep = {
   direction: Direction,
-  distance: i32,
+  distance: i64,
   color: String,
 }
 
@@ -53,7 +53,7 @@ let parseInput = (input: String): List<DigPlanStep> -> {
   for line in lines {
     let parts = (stringSplitBy line ' ')
     let direction = (parseDirection (listGet parts 0))
-    let distance = (stringToNumber (listGet parts 1))
+    let distance = (stringToNumberI64 (listGet parts 1))
     let color = (listGet parts 2)
     let step = DigPlanStep {
       direction: direction,
@@ -68,10 +68,10 @@ let parseInput = (input: String): List<DigPlanStep> -> {
 
 data Step = {
   direction: Direction,
-  distance: i32,
+  distance: i64,
 }
 
-let calculateAreaFromSteps = (steps: List<Step>): i32 -> {
+let calculateAreaFromSteps = (steps: List<Step>): i64 -> {
   # Shoelace formula (https://en.wikipedia.org/wiki/Shoelace_formula#Example)
   # Determines the area of a simple polygon whose vertices are described by
   # their Cartesian coordinates in the plane
@@ -149,7 +149,7 @@ let solvePart2 = (input: String): String -> {
 
   for planStep in planSteps {
     let distanceHex = (stringSlice planStep.color 2 7)
-    let distance = (stringToNumber (stringConcat "0x" (stringToUpper distanceHex)))
+    let distance = (stringToNumberI64 (stringConcat "0x" (stringToUpper distanceHex)))
     let directionNum = (- (stringGet planStep.color 7) '0')
     (listPush steps Step {
       direction: (listGet orderedDirections directionNum),
