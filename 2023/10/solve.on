@@ -321,37 +321,41 @@ let printLake = (lake: Lake): unit -> {
   (print (stringBuilderBuild out))
 }
 
-let floodLake = (lake: Lake, current: Vec2<i32>): i32 -> {
-  let currentRow = (listGet lake.walls current.y)
-  let value = (listGet currentRow current.x)
+let floodLake = (lake: Lake, initial: Vec2<i32>): i32 -> {
   let size = lake.size
+  let candidates = [initial]
+  let defaultCandidate = Vec2<i32> { x: 0, y: 0 }
 
-  if (!= value 0) {
-    return 0
+  while (> (listSize candidates) 0) {
+    let current = (optionValue defaultCandidate (listPop candidates))
+    let currentRow = (listGet lake.walls current.y)
+    let value = (listGet currentRow current.x)
+
+    if (== value 0) {
+      (listSet currentRow current.x 2)
+
+      if (> current.y 0) {
+        let candidate = Vec2 { x: current.x, y: (- current.y 1) }
+        (listPush candidates candidate)
+      }
+
+      if (< current.x (- size.x 1)) {
+        let candidate = Vec2 { x: (+ current.x 1), y: current.y }
+        (listPush candidates candidate)
+      }
+
+      if (< current.y (- size.y 1)) {
+        let candidate = Vec2 { x: current.x, y: (+ current.y 1) }
+        (listPush candidates candidate)
+      }
+
+      if (> current.x 0) {
+        let candidate = Vec2 { x: (- current.x 1), y: current.y }
+        (listPush candidates candidate)
+      }
+    }
   }
 
-  (listSet currentRow current.x 2)
-
-  if (> current.y 0) {
-    let candidate = Vec2 { x: current.x, y: (- current.y 1) }
-    (floodLake lake candidate)
-  }
-
-  if (< current.x (- size.x 1)) {
-    let candidate = Vec2 { x: (+ current.x 1), y: current.y }
-    (floodLake lake candidate)
-  }
-
-  if (< current.y (- size.y 1)) {
-    let candidate = Vec2 { x: current.x, y: (+ current.y 1) }
-    (floodLake lake candidate)
-  }
-
-  if (> current.x 0) {
-    let candidate = Vec2 { x: (- current.x 1), y: current.y }
-    (floodLake lake candidate)
-  }
-  
   return 0
 }
 
