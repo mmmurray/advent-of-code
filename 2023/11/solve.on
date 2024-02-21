@@ -1,135 +1,145 @@
 data Universe = {
   size: Vec2<i64>,
-  galaxies: List< Vec2<i64> >,
+  galaxies: List<Vec2<i64> >,
 }
 
 let parseInput = (input: String): Universe -> {
-  let lines = (stringToLines (stringTrim input))
-  let galaxies = []
-  let size = Vec2 { x: (@i64 (stringSize (listGet lines 0))), y: (@i64 (listSize lines)) }
+  let lines = (stringToLines (stringTrim input));
+  let galaxies = [];
+  let size = Vec2 { x: (@i64 (stringSize (listGet lines 0))), y: (@i64 (listSize lines)) };
 
   for line, y in lines {
     for char, x in (listFromString line) {
       if (== char '#') {
-        let galaxy = Vec2 { x: (@i64 x), y: (@i64 y) }
-        (listPush galaxies galaxy)
+        let galaxy = Vec2 { x: (@i64 x), y: (@i64 y) };
+
+        (listPush galaxies galaxy);
       }
     }
   }
 
-  return Universe {
-    size: size,
-    galaxies: galaxies,
-  }
+  return Universe { size: size, galaxies: galaxies };
 }
 
 let expandUniverse = (universe: Universe, expansionRate: i64): Universe -> {
-  let size = universe.size
-  let emptyRows = []
-  let y = 0
+  let size = universe.size;
+  let emptyRows = [];
+  let y = 0;
+
   while (< y size.y) {
-    let empty = true
+    let empty = true;
+
     for galaxy in universe.galaxies {
       if (== galaxy.y y) {
-        empty = false
+        empty = false;
       }
     }
+
     if empty {
-      (listPush emptyRows y)
+      (listPush emptyRows y);
     }
-    y = (+ y 1)
+
+    y = (+ y 1);
   }
-  let emptyCols = []
-  let x = 0
+
+  let emptyCols = [];
+  let x = 0;
+
   while (< x size.x) {
-    let empty = true
+    let empty = true;
+
     for galaxy in universe.galaxies {
       if (== galaxy.x x) {
-        empty = false
+        empty = false;
       }
     }
+
     if empty {
-      (listPush emptyCols x)
+      (listPush emptyCols x);
     }
-    x = (+ x 1)
+
+    x = (+ x 1);
   }
 
   let newSize = Vec2 {
     x: (+ size.x (- (* (@i64 (listSize emptyCols)) expansionRate) 1)),
     y: (+ size.y (- (* (@i64 (listSize emptyRows)) expansionRate) 1)),
-  }
-
-  let newGalaxies = []
+  };
+  let newGalaxies = [];
 
   for galaxy in universe.galaxies {
-    let redShift = Vec2 { x: 0, y: 0 }
-    
+    let redShift = Vec2 { x: 0, y: 0 };
+
     for emptyCol in emptyCols {
       if (< emptyCol galaxy.x) {
-        redShift.x = (+ redShift.x (- expansionRate 1))
+        redShift.x = (+ redShift.x (- expansionRate 1));
       }
     }
 
     for emptyRow in emptyRows {
       if (< emptyRow galaxy.y) {
-        redShift.y = (+ redShift.y (- expansionRate 1))
+        redShift.y = (+ redShift.y (- expansionRate 1));
       }
     }
 
-    let newGalaxy = (vec2Add galaxy redShift)
-    (listPush newGalaxies newGalaxy)
+    let newGalaxy = (vec2Add galaxy redShift);
+
+    (listPush newGalaxies newGalaxy);
   }
 
-  return Universe {
-    size: newSize,
-    galaxies: newGalaxies,
-  }
+  return Universe { size: newSize, galaxies: newGalaxies };
 }
 
 let sumOfDistancesBetweenGalaxies = (universe: Universe): i64 -> {
-  let total = 0
-  let count = (listSize universe.galaxies)
-  let i = 0
+  let total = 0;
+  let count = (listSize universe.galaxies);
+  let i = 0;
+
   while (< i (- count 1)) {
-    let j = (+ i 1)
+    let j = (+ i 1);
+
     while (< j count) {
-      let galaxy1 = (listGet universe.galaxies i)
-      let galaxy2 = (listGet universe.galaxies j)
-      let distance = (vec2ManhattanDistance galaxy1 galaxy2)
-      total = (+ total distance)
-      j = (+ j 1)
+      let galaxy1 = (listGet universe.galaxies i);
+      let galaxy2 = (listGet universe.galaxies j);
+      let distance = (vec2ManhattanDistance galaxy1 galaxy2);
+
+      total = (+ total distance);
+      j = (+ j 1);
     }
-    i = (+ i 1)
+
+    i = (+ i 1);
   }
-  return total
+
+  return total;
 }
 
 let solvePart1 = (input: String): String -> {
-  let expansionRate = 2
-  let universe = (expandUniverse (parseInput input) expansionRate)
-  let result = (sumOfDistancesBetweenGalaxies universe)
+  let expansionRate = 2;
+  let universe = (expandUniverse (parseInput input) expansionRate);
+  let result = (sumOfDistancesBetweenGalaxies universe);
 
-  return (stringFromNumber result)
+  return (stringFromNumber result);
 }
 
 let solvePart2 = (input: String): String -> {
-  let expansionRate = 1000000
-  let universe = (expandUniverse (parseInput input) expansionRate)
-  let result = (sumOfDistancesBetweenGalaxies universe)
+  let expansionRate = 1000000;
+  let universe = (expandUniverse (parseInput input) expansionRate);
+  let result = (sumOfDistancesBetweenGalaxies universe);
 
-  return (stringFromNumber result)
+  return (stringFromNumber result);
 }
 
 let main = (): unit -> {
-  let input = (fileRead "input.txt")
+  let input = (fileRead "input.txt");
+  let part1 = (solvePart1 input);
 
-  let part1 = (solvePart1 input)
-  (print "Part 1:")
-  (print part1)
-  (assertEqualString part1 "9565386")
+  (print "Part 1:");
+  (print part1);
+  (assertEqualString part1 "9565386");
 
-  let part2 = (solvePart2 input)
-  (print "Part 2:")
-  (print part2)
-  (assertEqualString part2 "857986849428")
+  let part2 = (solvePart2 input);
+
+  (print "Part 2:");
+  (print part2);
+  (assertEqualString part2 "857986849428");
 }
