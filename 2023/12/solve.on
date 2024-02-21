@@ -5,197 +5,210 @@ data Row = {
 }
 
 let parseRow = (line: String): Row -> {
-  let parts = (stringSplitBy line ' ')
-  let conditions = (listCreateDefault<i32>)
+  let parts = (stringSplitBy line ' ');
+  let conditions = (listCreateDefault<i32>);
+
   for char in (listFromString (listGet parts 0)) {
-    (listPush conditions char)
+    (listPush conditions char);
   }
 
-  let damaged = (listCreateDefault<i32>)
-  let damagedParts = (stringSplitBy (listGet parts 1) ',')
-  let damageTotal = 0
+  let damaged = (listCreateDefault<i32>);
+  let damagedParts = (stringSplitBy (listGet parts 1) ',');
+  let damageTotal = 0;
+
   for damagedPart in damagedParts {
-    let damage = (stringToNumber damagedPart)
-    (listPush damaged damage)
-    damageTotal = (+ damageTotal damage)
+    let damage = (stringToNumber damagedPart);
+
+    (listPush damaged damage);
+
+    damageTotal = (+ damageTotal damage);
   }
 
-  return Row {
-    conditions: conditions,
-    damaged: damaged,
-    damageTotal: damageTotal,
-  }
+  return Row { conditions: conditions, damaged: damaged, damageTotal: damageTotal };
 }
 
 let parseInput = (input: String): List<Row> -> {
-  let lines = (stringToLines (stringTrim input))
-  let rows = (listCreateDefault<Row>)
+  let lines = (stringToLines (stringTrim input));
+  let rows = (listCreateDefault<Row>);
 
   for line in lines {
-    (listPush rows (parseRow line))
+    (listPush rows (parseRow line));
   }
 
-  return rows
+  return rows;
 }
 
 let formatConditions = (conditions: List<i32>): String -> {
-  let out = (stringBuilderCreate 1024)
+  let out = (stringBuilderCreate 1024);
+
   for condition in conditions {
-    (stringBuilderAppend out (charToString condition))
+    (stringBuilderAppend out (charToString condition));
   }
-  return (stringBuilderBuild out)
+
+  return (stringBuilderBuild out);
 }
 
 let printRow = (row: Row): unit -> {
-  let out = (stringBuilderCreate 1024)
-  (stringBuilderAppend out (formatConditions row.conditions))
-  (stringBuilderAppend out " ")
+  let out = (stringBuilderCreate 1024);
+
+  (stringBuilderAppend out (formatConditions row.conditions));
+  (stringBuilderAppend out " ");
+
   for d, i in row.damaged {
     if (> i 0) {
-      (stringBuilderAppend out ",")
+      (stringBuilderAppend out ",");
     }
-    (stringBuilderAppend out (stringFromNumber d))
+
+    (stringBuilderAppend out (stringFromNumber d));
   }
-  (print (stringBuilderBuild out))
+
+  (print (stringBuilderBuild out));
 }
 
 let printRows = (rows: List<Row>): unit -> {
   for row in rows {
-    (printRow row)
+    (printRow row);
   }
 }
 
-let cacheSpacing: i32 = 30
+let cacheSpacing: i32 = 30;
 
 let createCache = (): Array<i32> -> {
-  let cache = (arrayCreate<i32> (* cacheSpacing (* cacheSpacing cacheSpacing)))
+  let cache = (arrayCreate<i32> (* cacheSpacing (* cacheSpacing cacheSpacing)));
+
   for x, i in (listFromArray cache) {
-    (arraySet cache i (- 0 1))
+    (arraySet cache i (- 0 1));
   }
-  return cache
+
+  return cache;
 }
 
 let placeDamage = (conditions: List<i32>, offset: i32, width: i32): List<i32> -> {
-  let newConditions = (listClone conditions)
+  let newConditions = (listClone conditions);
 
   for condition, index in conditions {
     if (== condition '?') {
-      (listSet newConditions index '.')
+      (listSet newConditions index '.');
     }
 
     if (>= index offset) {
-      (listSet newConditions index '#')
+      (listSet newConditions index '#');
     }
 
     if (>= index (+ offset width)) {
-      (listSet newConditions index (listGet conditions index))
+      (listSet newConditions index (listGet conditions index));
     }
   }
 
-  return newConditions
+  return newConditions;
 }
 
 let finalizeConditions = (conditions: List<i32>): List<i32> -> {
-  let newConditions = (listClone conditions)
+  let newConditions = (listClone conditions);
 
   for condition, index in conditions {
     if (== condition '?') {
-      (listSet newConditions index '.')
+      (listSet newConditions index '.');
     } else {
-      (listSet newConditions index (listGet conditions index))
+      (listSet newConditions index (listGet conditions index));
     }
   }
 
-  return newConditions
+  return newConditions;
 }
 
 let isValidPlacement = (conditions: List<i32>, maxDamage: i32, offset: i32, width: i32): boolean -> {
   if (> (+ offset width) (listSize conditions)) {
-    return false
+    return false;
   }
 
-  let conditionsSlice = (listSlice conditions offset (+ offset width))
+  let conditionsSlice = (listSlice conditions offset (+ offset width));
+
   for condition in conditionsSlice {
     if (== condition '.') {
-      return false
+      return false;
     }
   }
 
-  let prevIndex = (- offset 1)
+  let prevIndex = (- offset 1);
+
   if (&& (>= prevIndex 0) (== (listGet conditions prevIndex) '#')) {
-    return false
+    return false;
   }
 
-  let nextIndex = (+ offset width)
+  let nextIndex = (+ offset width);
+
   if (&& (< nextIndex (- (listSize conditions) 1)) (== (listGet conditions nextIndex) '#')) {
-    return false
+    return false;
   }
 
-  let damageTotal = 0
+  let damageTotal = 0;
+
   for condition2 in (placeDamage conditions offset width) {
     if (== condition2 '#') {
-      damageTotal = (+ damageTotal 1)
+      damageTotal = (+ damageTotal 1);
     }
   }
 
   if (> damageTotal maxDamage) {
-    return false
+    return false;
   }
 
-  return true
+  return true;
 }
 
-let countArrangementsRec = (cache: Array< i32 >, row: Row, offset: i32, damagedIndex: i32): i32 -> {
-  let damageTotal = 0
+let countArrangementsRec = (cache: Array<i32>, row: Row, offset: i32, damagedIndex: i32): i32 -> {
+  let damageTotal = 0;
+
   for condition2 in row.conditions {
     if (== condition2 '#') {
-      damageTotal = (+ damageTotal 1)
+      damageTotal = (+ damageTotal 1);
     }
   }
 
-  let cacheKey = (+ damagedIndex (+ (* cacheSpacing offset) (* damageTotal (* cacheSpacing cacheSpacing))))
-  let cached = (arrayGet cache cacheKey)
+  let cacheKey = (+ damagedIndex (+ (* cacheSpacing offset) (* damageTotal (* cacheSpacing cacheSpacing))));
+  let cached = (arrayGet cache cacheKey);
 
   if (>= cached 0) {
-    return cached
+    return cached;
   }
 
-  let arrangements = 0
+  let arrangements = 0;
 
   if (>= offset (listSize row.conditions)) {
-    return arrangements
+    return arrangements;
   }
 
-  let damageWidth = (listGet row.damaged damagedIndex)
-  let valid = (isValidPlacement row.conditions row.damageTotal offset damageWidth)
+  let damageWidth = (listGet row.damaged damagedIndex);
+  let valid = (isValidPlacement row.conditions row.damageTotal offset damageWidth);
 
   if valid {
-    let nextConditions = (placeDamage row.conditions offset damageWidth)
-    let nextDamagedIndex = (+ damagedIndex 1)
-    let nextOffset = (+ offset (+ damageWidth 1))
+    let nextConditions = (placeDamage row.conditions offset damageWidth);
+    let nextDamagedIndex = (+ damagedIndex 1);
+    let nextOffset = (+ offset (+ damageWidth 1));
 
     if (< nextDamagedIndex (listSize row.damaged)) {
       let newRow = Row {
         conditions: nextConditions,
         damaged: row.damaged,
         damageTotal: row.damageTotal,
-      }
+      };
 
-      arrangements = (+ arrangements (countArrangementsRec cache newRow nextOffset nextDamagedIndex))
+      arrangements = (+ arrangements (countArrangementsRec cache newRow nextOffset nextDamagedIndex));
     } else {
-      arrangements = (+ arrangements 1)
+      arrangements = (+ arrangements 1);
     }
   }
 
-  arrangements = (+ arrangements (countArrangementsRec cache row (+ offset 1) damagedIndex))
+  arrangements = (+ arrangements (countArrangementsRec cache row (+ offset 1) damagedIndex));
 
-  (arraySet cache cacheKey arrangements)
+  (arraySet cache cacheKey arrangements);
 
-  return arrangements
+  return arrangements;
 }
 
 let countArrangements = (row: Row): i32 -> {
-  return (countArrangementsRec (createCache) row 0 0)
+  return (countArrangementsRec (createCache) row 0 0);
 }
 
 let unfoldRow = (row: Row): Row -> {
@@ -219,66 +232,66 @@ let unfoldRow = (row: Row): Row -> {
       ...row.damaged,
     ],
     damageTotal: (* row.damageTotal 5),
-  }
+  };
 }
 
 let unfoldRows = (rows: List<Row>): List<Row> -> {
-  let newRows = (listCreateDefault<Row>)
+  let newRows = (listCreateDefault<Row>);
+
   for row in rows {
-    (listPush newRows (unfoldRow row))
+    (listPush newRows (unfoldRow row));
   }
-  return newRows
+
+  return newRows;
 }
 
 let testCountArrangements = (): unit -> {
-  (assertEqual (countArrangements (parseRow "? 1")) 1)
-  (assertEqual (countArrangements (parseRow "?? 1")) 2)
-  (assertEqual (countArrangements (parseRow "??? 1")) 3)
-  (assertEqual (countArrangements (parseRow "??? 2")) 2)
-  (assertEqual (countArrangements (parseRow "??? 1,1")) 1)
-  (assertEqual (countArrangements (parseRow "??? 3")) 1)
-  (assertEqual (countArrangements (parseRow "??? 4")) 0)
-  (assertEqual (countArrangements (parseRow "#?? 1")) 1)
-  (assertEqual (countArrangements (parseRow "#?? 2")) 1)
-  (assertEqual (countArrangements (parseRow "#.. 2")) 0)
-  (assertEqual (countArrangements (parseRow "### 2")) 0)
-  (assertEqual (countArrangements (parseRow ".## 2")) 1)
-  (assertEqual (countArrangements (parseRow "?????#???? 2,1,1")) 11)
+  (assertEqual (countArrangements (parseRow "? 1")) 1);
+  (assertEqual (countArrangements (parseRow "?? 1")) 2);
+  (assertEqual (countArrangements (parseRow "??? 1")) 3);
+  (assertEqual (countArrangements (parseRow "??? 2")) 2);
+  (assertEqual (countArrangements (parseRow "??? 1,1")) 1);
+  (assertEqual (countArrangements (parseRow "??? 3")) 1);
+  (assertEqual (countArrangements (parseRow "??? 4")) 0);
+  (assertEqual (countArrangements (parseRow "#?? 1")) 1);
+  (assertEqual (countArrangements (parseRow "#?? 2")) 1);
+  (assertEqual (countArrangements (parseRow "#.. 2")) 0);
+  (assertEqual (countArrangements (parseRow "### 2")) 0);
+  (assertEqual (countArrangements (parseRow ".## 2")) 1);
+  (assertEqual (countArrangements (parseRow "?????#???? 2,1,1")) 11);
 }
 
 let solvePart1 = (input: String): String -> {
-  let rows = (parseInput input)
+  let rows = (parseInput input);
+  let result = 0;
 
-  let result = 0
   for row, rowIndex in rows {
-    result = (+ result (countArrangements row))
+    result = (+ result (countArrangements row));
   }
 
-  return (stringFromNumber result)
+  return (stringFromNumber result);
 }
 
 # let solvePart2 = (input: String): String -> {
 #   let rows = (unfoldRows (parseInput input))
-
 #   let result = 0
 #   for row in rows {
 #     (allocArenaStart)
 #     result = (+ result (countArrangements row))
 #     (allocArenaEnd)
 #   }
-
 #   return (stringFromNumber result)
 # }
 
 let main = (): unit -> {
-  (testCountArrangements)
+  (testCountArrangements);
 
-  let input = (fileRead "input.txt")
+  let input = (fileRead "input.txt");
+  let part1 = (solvePart1 input);
 
-  let part1 = (solvePart1 input)
-  (print "Part 1:")
-  (print part1)
-  (assertEqualString part1 "7204")
+  (print "Part 1:");
+  (print part1);
+  (assertEqualString part1 "7204");
 
   # let part2 = (solvePart2 input)
   # (print "Part 2:")
