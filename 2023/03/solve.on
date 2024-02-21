@@ -15,141 +15,141 @@ data Schematic = {
 }
 
 let parseInput = (input: String): Schematic -> {
-  let lines = (stringToLines input)
-  let schematic = Schematic {
-    symbols: [],
-    numbers: [],
-  }
+  let lines = (stringToLines input);
+  let schematic = Schematic { symbols: [], numbers: [] };
 
   for line, lineIndex in lines {
-    let charIndex = 0
+    let charIndex = 0;
+
     while (< charIndex (stringSize line)) {
-      let char = (stringGet line charIndex)
+      let char = (stringGet line charIndex);
 
       if (!= char '.') {
         if (charIsNumeric char) {
-          let length = 0
-          let value = 0
-          let location = Vec2 {
-            x: charIndex,
-            y: lineIndex,
-          }
+          let length = 0;
+          let value = 0;
+          let location = Vec2 { x: charIndex, y: lineIndex };
 
           while (< charIndex (stringSize line)) {
-            char = (stringGet line charIndex)
+            char = (stringGet line charIndex);
+
             if (charIsNumeric char) {
-              value = (+ (* value 10) (- char '0'))
-              length = (+ 1 length)
+              value = (+ (* value 10) (- char '0'));
+              length = (+ 1 length);
             } else {
-              break
+              break;
             }
-            charIndex = (+ charIndex 1)
+
+            charIndex = (+ charIndex 1);
           }
 
-          let number = SchematicNumber {
-            location: location,
-            value: value,
-            length: length,
-          }
-          (listPush schematic.numbers number)
-          charIndex = (- charIndex 1)
+          let number = SchematicNumber { location: location, value: value, length: length };
+
+          (listPush schematic.numbers number);
+
+          charIndex = (- charIndex 1);
         } else {
           let symbol = SchematicSymbol {
-            location: Vec2 {
-              x: charIndex,
-              y: lineIndex,
-            },
+            location: Vec2 { x: charIndex, y: lineIndex },
             value: char,
-          }
-          (listPush schematic.symbols symbol)
+          };
+
+          (listPush schematic.symbols symbol);
         }
       }
 
-      charIndex = (+ charIndex 1)
+      charIndex = (+ charIndex 1);
     }
   }
 
-  return schematic
+  return schematic;
 }
 
 let solvePart1 = (input: String): String -> {
-  let result = 0
-  let schematic = (parseInput input)
+  let result = 0;
+  let schematic = (parseInput input);
+
   for number in schematic.numbers {
-    let offsetX = 0
+    let offsetX = 0;
+
     while (< offsetX number.length) {
-      let offset = Vec2 { x: offsetX, y: 0 }
-      let position = (vec2Add number.location offset)
-      let found = false
+      let offset = Vec2 { x: offsetX, y: 0 };
+      let position = (vec2Add number.location offset);
+      let found = false;
 
       for symbol in schematic.symbols {
         if (vec2IsAdjacent position symbol.location) {
-          found = true
-          break
+          found = true;
+
+          break;
         }
       }
 
       if found {
-        result = (+ result number.value)
-        break
+        result = (+ result number.value);
+
+        break;
       }
 
-      offsetX = (+ offsetX 1)
+      offsetX = (+ offsetX 1);
     }
   }
 
-  return (stringFromNumber result)
+  return (stringFromNumber result);
 }
 
 let solvePart2 = (input: String): String -> {
-  let result = 0
-  let schematic = (parseInput input)
+  let result = 0;
+  let schematic = (parseInput input);
+
   for symbol in schematic.symbols {
     if (== symbol.value '*') {
-      let adjacentCount = 0
-      let adjacentProduct = 1
+      let adjacentCount = 0;
+      let adjacentProduct = 1;
 
       for number in schematic.numbers {
-        let adjacent = false
+        let adjacent = false;
+        let offsetX = 0;
 
-        let offsetX = 0
         while (< offsetX number.length) {
-          let offset = Vec2 { x: offsetX, y: 0 }
-          let position = (vec2Add number.location offset)
+          let offset = Vec2 { x: offsetX, y: 0 };
+          let position = (vec2Add number.location offset);
 
           if (vec2IsAdjacent position symbol.location) {
-            adjacent = true
-            break
+            adjacent = true;
+
+            break;
           }
 
-          offsetX = (+ offsetX 1)
+          offsetX = (+ offsetX 1);
         }
 
         if adjacent {
-          adjacentCount = (+ adjacentCount 1)
-          adjacentProduct = (* adjacentProduct number.value)
+          adjacentCount = (+ adjacentCount 1);
+          adjacentProduct = (* adjacentProduct number.value);
         }
       }
 
       if (== adjacentCount 2) {
-        result = (+ result adjacentProduct)
+        result = (+ result adjacentProduct);
       }
     }
   }
-  
-  return (stringFromNumber result)
+
+  return (stringFromNumber result);
 }
 
 let main = (): unit -> {
-  let input = (stringTrim (fileRead "input.txt"))
+  let input = (stringTrim (fileRead "input.txt"));
+  let part1 = (solvePart1 input);
 
-  let part1 = (solvePart1 input)
-  (print "Part 1:")
-  (print part1)
-  (assertEqualString part1 "525181")
+  (print "Part 1:");
+  (print part1);
+  (assertEqualString part1 "525181");
 
-  let part2 = (solvePart2 input)
-  (print "Part 2:")
-  (print part2)
-  (assertEqualString part2 "84289137")
+  let part2 = (solvePart2 input);
+
+  (print "Part 2:");
+  (print part2);
+  (assertEqualString part2 "84289137");
 }
