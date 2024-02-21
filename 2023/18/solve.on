@@ -4,15 +4,14 @@ data Direction =
   | South {}
   | West {}
 
-let directionNorth: Direction = North {}
-let directionEast: Direction = East {}
-let directionSouth: Direction = South {}
-let directionWest: Direction = West {}
-
-let vec2North: Vec2<i64> = Vec2 { x: 0, y: (- 0 1) }
-let vec2East: Vec2<i64> = Vec2 { x: 1, y: 0 }
-let vec2South: Vec2<i64> = Vec2 { x: 0, y: 1 }
-let vec2West: Vec2<i64> = Vec2 { x: (- 0 1), y: 0 }
+let directionNorth: Direction = North {};
+let directionEast: Direction = East {};
+let directionSouth: Direction = South {};
+let directionWest: Direction = West {};
+let vec2North: Vec2<i64> = Vec2 { x: 0, y: (- 0 1) };
+let vec2East: Vec2<i64> = Vec2 { x: 1, y: 0 };
+let vec2South: Vec2<i64> = Vec2 { x: 0, y: 1 };
+let vec2West: Vec2<i64> = Vec2 { x: (- 0 1), y: 0 };
 
 let directionToVec2 = (direction: Direction): Vec2<i64> -> {
   return match direction {
@@ -20,7 +19,7 @@ let directionToVec2 = (direction: Direction): Vec2<i64> -> {
     East -> vec2East;
     South -> vec2South;
     West -> vec2West;
-  }
+  };
 }
 
 data DigPlanStep = {
@@ -30,40 +29,42 @@ data DigPlanStep = {
 }
 
 let parseDirection = (input: String): Direction -> {
-  let char = (stringGet input 0)
+  let char = (stringGet input 0);
+
   if (== char 'U') {
-    return directionNorth
+    return directionNorth;
   }
+
   if (== char 'R') {
-    return directionEast
+    return directionEast;
   }
+
   if (== char 'D') {
-    return directionSouth
+    return directionSouth;
   }
+
   if (== char 'L') {
-    return directionWest
+    return directionWest;
   }
-  return directionNorth
+
+  return directionNorth;
 }
 
 let parseInput = (input: String): List<DigPlanStep> -> {
-  let lines = (stringToLines (stringTrim input))
-  let steps = (listCreateDefault<DigPlanStep>)
+  let lines = (stringToLines (stringTrim input));
+  let steps = (listCreateDefault<DigPlanStep>);
 
   for line in lines {
-    let parts = (stringSplitBy line ' ')
-    let direction = (parseDirection (listGet parts 0))
-    let distance = (stringToNumberI64 (listGet parts 1))
-    let color = (listGet parts 2)
-    let step = DigPlanStep {
-      direction: direction,
-      distance: distance,
-      color: color,
-    }
-    (listPush steps step)
+    let parts = (stringSplitBy line ' ');
+    let direction = (parseDirection (listGet parts 0));
+    let distance = (stringToNumberI64 (listGet parts 1));
+    let color = (listGet parts 2);
+    let step = DigPlanStep { direction: direction, distance: distance, color: color };
+
+    (listPush steps step);
   }
 
-  return steps
+  return steps;
 }
 
 data Step = {
@@ -75,14 +76,12 @@ let calculateAreaFromSteps = (steps: List<Step>): i64 -> {
   # Shoelace formula (https://en.wikipedia.org/wiki/Shoelace_formula#Example)
   # Determines the area of a simple polygon whose vertices are described by
   # their Cartesian coordinates in the plane
-
   # Since the Shoelace formula considers the area of the polygon made up from the _center_
   # of each grid cell, we need to account for the missing area from the perimeter.
   # Intuitively: if the shape was a square we would count half the area of each
   # side tile and a quarter of the area of each of the 4 corner tiles.
   # Therefore the missing area that we need to add is perimeter / 2 + 1.
   # This is generalized as:
-
   # Pick's theorem (https://en.wikipedia.org/wiki/Pick%27s_theorem) which provides
   # a formula for the area of a simple polygon with integer vertex coordinates,
   # in terms of the number of integer points within it and on its boundary:
@@ -94,24 +93,19 @@ let calculateAreaFromSteps = (steps: List<Step>): i64 -> {
   # interiorPoints = area - borderPoints / 2 + 1
   # interiorPoints + borderPoints = area + borderPoints / 2 + 1
 
-  let shoelaceArea = 0
-  let borderPoints = 0
+  let shoelaceArea = 0;
+  let borderPoints = 0;
+  let initialPosition = Vec2 { x: 0, y: 0 };
+  let position = initialPosition;
 
-  let initialPosition = Vec2 { x: 0, y: 0 }
-  let position = initialPosition
   for step in steps {
-    borderPoints = (+ borderPoints step.distance)
-    let delta = (vec2Scale step.distance (directionToVec2 step.direction))
-    let nextPosition = (vec2Add position delta)
+    borderPoints = (+ borderPoints step.distance);
 
-    shoelaceArea = (+ shoelaceArea (mat2Determinant Mat2 {
-      a: position.x,
-      b: nextPosition.x,
-      c: position.y,
-      d: nextPosition.y,
-    }))
+    let delta = (vec2Scale step.distance (directionToVec2 step.direction));
+    let nextPosition = (vec2Add position delta);
 
-    position = nextPosition
+    shoelaceArea = (+ shoelaceArea (mat2Determinant Mat2 { a: position.x, b: nextPosition.x, c: position.y, d: nextPosition.y }));
+    position = nextPosition;
   }
 
   shoelaceArea = (+ shoelaceArea (mat2Determinant Mat2 {
@@ -119,59 +113,58 @@ let calculateAreaFromSteps = (steps: List<Step>): i64 -> {
     b: initialPosition.x,
     c: position.y,
     d: initialPosition.y,
-  }))
+  }));
 
-  let area = (/ shoelaceArea 2)
+  let area = (/ shoelaceArea 2);
 
-  return (+ (+ area (/ borderPoints 2)) 1)
+  return (+ (+ area (/ borderPoints 2)) 1);
 }
 
 let solvePart1 = (input: String): String -> {
-  let planSteps = (parseInput input)
-  let steps = (listCreateDefault<Step>)
+  let planSteps = (parseInput input);
+  let steps = (listCreateDefault<Step>);
 
   for planStep in planSteps {
-    (listPush steps Step {
-      direction: planStep.direction,
-      distance: planStep.distance,
-    })
+    (listPush steps Step { direction: planStep.direction, distance: planStep.distance });
   }
 
-  let result = (calculateAreaFromSteps steps)
+  let result = (calculateAreaFromSteps steps);
 
-  return (stringFromNumber result)
+  return (stringFromNumber result);
 }
 
 let solvePart2 = (input: String): String -> {
-  let planSteps = (parseInput input)
-  let steps = (listCreateDefault<Step>)
-  let orderedDirections = [directionEast, directionSouth, directionWest, directionNorth]
+  let planSteps = (parseInput input);
+  let steps = (listCreateDefault<Step>);
+  let orderedDirections = [directionEast, directionSouth, directionWest, directionNorth];
 
   for planStep in planSteps {
-    let distanceHex = (stringSlice planStep.color 2 7)
-    let distance = (stringToNumberI64 (stringConcat "0x" (stringToUpper distanceHex)))
-    let directionNum = (- (stringGet planStep.color 7) '0')
+    let distanceHex = (stringSlice planStep.color 2 7);
+    let distance = (stringToNumberI64 (stringConcat "0x" (stringToUpper distanceHex)));
+    let directionNum = (- (stringGet planStep.color 7) '0');
+
     (listPush steps Step {
       direction: (listGet orderedDirections directionNum),
       distance: distance,
-    })
+    });
   }
 
-  let result = (calculateAreaFromSteps steps)
+  let result = (calculateAreaFromSteps steps);
 
-  return (stringFromNumber result)
+  return (stringFromNumber result);
 }
 
 let main = (): unit -> {
-  let input = (fileRead "input.txt")
+  let input = (fileRead "input.txt");
+  let part1 = (solvePart1 input);
 
-  let part1 = (solvePart1 input)
-  (print "Part 1:")
-  (print part1)
-  (assertEqualString part1 "44436")
+  (print "Part 1:");
+  (print part1);
+  (assertEqualString part1 "44436");
 
-  let part2 = (solvePart2 input)
-  (print "Part 2:")
-  (print part2)
-  (assertEqualString part2 "106941819907437")
+  let part2 = (solvePart2 input);
+
+  (print "Part 2:");
+  (print part2);
+  (assertEqualString part2 "106941819907437");
 }
