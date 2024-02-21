@@ -1,6 +1,11 @@
 data Operation =
-  | Insert { label: String, focalLength: i32 }
-  | Remove { label: String }
+  | Insert {
+      label: String,
+      focalLength: i32,
+    }
+  | Remove {
+      label: String,
+    }
 
 data Step = {
   raw: String,
@@ -8,50 +13,54 @@ data Step = {
 }
 
 let parseOperation = (input: String): Operation -> {
-  let lastChar = (stringGet input (- (stringSize input) 1))
+  let lastChar = (stringGet input (- (stringSize input) 1));
+
   if (== lastChar '-') {
-    let label = (stringSlice input 0 (- (stringSize input) 1))
-    return Remove { label: label }
+    let label = (stringSlice input 0 (- (stringSize input) 1));
+
+    return Remove { label: label };
   }
 
-  let parts = (stringSplitBy input '=')
+  let parts = (stringSplitBy input '=');
+
   return Insert {
     label: (listGet parts 0),
     focalLength: (stringToNumber (listGet parts 1)),
-  }
+  };
 }
 
 let parseInput = (input: String): List<Step> -> {
-  let parts = (stringSplitBy (stringTrim input) ',')
-  let steps = (listCreateDefault<Step>)
+  let parts = (stringSplitBy (stringTrim input) ',');
+  let steps = (listCreateDefault<Step>);
+
   for part in parts {
-    let step = Step {
-      raw: part,
-      operation: (parseOperation part),
-    }
-    (listPush steps step)
+    let step = Step { raw: part, operation: (parseOperation part) };
+
+    (listPush steps step);
   }
-  return steps
+
+  return steps;
 }
 
 let hash = (value: String): i32 -> {
-  let result = 0
+  let result = 0;
+
   for char in (listFromString value) {
-    result = (% (* (+ result char) 17) 256)
+    result = (% (* (+ result char) 17) 256);
   }
 
-  return result
+  return result;
 }
 
 let solvePart1 = (input: String): String -> {
-  let sequence = (parseInput input)
-  let result = 0
+  let sequence = (parseInput input);
+  let result = 0;
 
   for step in sequence {
-    result = (+ result (hash step.raw))
+    result = (+ result (hash step.raw));
   }
 
-  return (stringFromNumber result)
+  return (stringFromNumber result);
 }
 
 data Lens = {
@@ -64,97 +73,103 @@ data Box = {
 }
 
 let printBoxes = (boxes: Array<Box>): unit -> {
-  let out = (stringBuilderCreate 1024)
+  let out = (stringBuilderCreate 1024);
+
   for box, boxIndex in (listFromArray boxes) {
     if (> (listSize box.lenses) 0) {
-      (stringBuilderAppend out "Box ")
-      (stringBuilderAppend out (stringFromNumber boxIndex))
-      (stringBuilderAppend out ":")
+      (stringBuilderAppend out "Box ");
+      (stringBuilderAppend out (stringFromNumber boxIndex));
+      (stringBuilderAppend out ":");
+
       for lens in box.lenses {
-        (stringBuilderAppend out " [")
-        (stringBuilderAppend out lens.label)
-        (stringBuilderAppend out " ")
-        (stringBuilderAppend out (stringFromNumber lens.focalLength))
-        (stringBuilderAppend out "]")
+        (stringBuilderAppend out " [");
+        (stringBuilderAppend out lens.label);
+        (stringBuilderAppend out " ");
+        (stringBuilderAppend out (stringFromNumber lens.focalLength));
+        (stringBuilderAppend out "]");
       }
-      (stringBuilderAppend out "\n")
+
+      (stringBuilderAppend out "\n");
     }
   }
-  (print (stringBuilderBuild out))
+
+  (print (stringBuilderBuild out));
 }
 
 let solvePart2 = (input: String): String -> {
-  let sequence = (parseInput input)
-  let result = 0
-  let boxes = (arrayCreate<Box> 256)
+  let sequence = (parseInput input);
+  let result = 0;
+  let boxes = (arrayCreate<Box> 256);
+
   for x, i in (listFromArray boxes) {
-    let box = Box {
-      lenses: (listCreateDefault<Lens>),
-    }
-    (arraySet boxes i box)
+    let box = Box { lenses: (listCreateDefault<Lens>) };
+
+    (arraySet boxes i box);
   }
 
   for step in sequence {
-    let stepOperation = step.operation
+    let stepOperation = step.operation;
     let stepLabel = match stepOperation {
       Insert { label } -> label;
       Remove { label } -> label;
-    }
-    let boxIndex = (hash stepLabel)
-    let box = (arrayGet boxes boxIndex)
-
+    };
+    let boxIndex = (hash stepLabel);
+    let box = (arrayGet boxes boxIndex);
     let m = match stepOperation {
       Insert { label, focalLength } -> {
-        let replaced = false
+        let replaced = false;
+
         for lens, lensIndex in box.lenses {
           if (stringEquals lens.label label) {
-            lens.focalLength = focalLength
-            replaced = true
+            lens.focalLength = focalLength;
+            replaced = true;
           }
         }
 
         if (!replaced) {
-          let lens = Lens {
-            label: label,
-            focalLength: focalLength,
-          }
-          (listPush box.lenses lens)
+          let lens = Lens { label: label, focalLength: focalLength };
+
+          (listPush box.lenses lens);
         }
       };
       Remove { label } -> {
-        let removeIndex = (- 0 1)
+        let removeIndex = (- 0 1);
+
         for lens, lensIndex in box.lenses {
           if (stringEquals lens.label label) {
-            removeIndex = lensIndex
+            removeIndex = lensIndex;
           }
         }
+
         if (>= removeIndex 0) {
-          (listRemove box.lenses removeIndex)
+          (listRemove box.lenses removeIndex);
         }
       };
-    }
+    };
   }
 
   for box, boxIndex in (listFromArray boxes) {
     for lens, lensIndex in box.lenses {
-      let focussingPower = (* (+ boxIndex 1) (* (+ lensIndex 1) lens.focalLength))
-      result = (+ result focussingPower)
+      let focussingPower = (* (+ boxIndex 1) (* (+ lensIndex 1) lens.focalLength));
+
+      result = (+ result focussingPower);
     }
   }
 
-  return (stringFromNumber result)
+  return (stringFromNumber result);
 }
 
 let main = (): unit -> {
-  let input = (fileRead "input.txt")
+  let input = (fileRead "input.txt");
+  let part1 = (solvePart1 input);
 
-  let part1 = (solvePart1 input)
-  (print "Part 1:")
-  (print part1)
-  (assertEqualString part1 "509152")
+  (print "Part 1:");
+  (print part1);
+  (assertEqualString part1 "509152");
 
-  let part2 = (solvePart2 input)
-  (print "Part 2:")
-  (print part2)
-  (assertEqualString part2 "244403")
+  let part2 = (solvePart2 input);
+
+  (print "Part 2:");
+  (print part2);
+  (assertEqualString part2 "244403");
 }
