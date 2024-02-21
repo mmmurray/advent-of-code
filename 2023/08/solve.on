@@ -9,101 +9,99 @@ data Network = {
 }
 
 let parseInput = (input: String): Network -> {
-  let instructions = (listCreateDefault<boolean>)
-  let nodes = (mapCreate<Node>)
-  let lines = (stringToLines (stringTrim input))
-  let instructionsLine = (listGet lines 0)
+  let instructions = (listCreateDefault<boolean>);
+  let nodes = (mapCreate<Node>);
+  let lines = (stringToLines (stringTrim input));
+  let instructionsLine = (listGet lines 0);
 
   for char in (listFromString instructionsLine) {
-    let instruction = false
+    let instruction = false;
+
     if (== char 'L') {
-      instruction = true
+      instruction = true;
     }
-    (listPush instructions instruction)
+
+    (listPush instructions instruction);
   }
 
-  let nodesLines = (listSlice lines 2 (listSize lines))
+  let nodesLines = (listSlice lines 2 (listSize lines));
+
   for nodeLine in nodesLines {
-    let name = (stringSlice nodeLine 0 3)
-    let left = (stringSlice nodeLine 7 10)
-    let right = (stringSlice nodeLine 12 15)
-    let node = Node {
-      left: left,
-      right: right,
-    }
-    (mapSet nodes name node)
+    let name = (stringSlice nodeLine 0 3);
+    let left = (stringSlice nodeLine 7 10);
+    let right = (stringSlice nodeLine 12 15);
+    let node = Node { left: left, right: right };
+
+    (mapSet nodes name node);
   }
 
-  return Network {
-    instructions: instructions,
-    nodes: nodes,
-  }
+  return Network { instructions: instructions, nodes: nodes };
 }
 
 let countSteps = (network: Network, start: String): u64 -> {
-  let instructionIndex = 0
-  let current = start
-  let steps = 0
+  let instructionIndex = 0;
+  let current = start;
+  let steps = 0;
 
   while true {
-    let instruction = (listGet network.instructions instructionIndex)
-    let node = (mapGet network.nodes current)
-
+    let instruction = (listGet network.instructions instructionIndex);
+    let node = (mapGet network.nodes current);
     let m = match node {
       Some { value } -> {
         if instruction {
-          current = value.left
+          current = value.left;
         } else {
-          current = value.right
+          current = value.right;
         }
       };
       None -> (panic "Node not found");
-    }
+    };
 
-    instructionIndex = (% (+ instructionIndex 1) (listSize network.instructions))
-    steps = (+ steps 1)
+    instructionIndex = (% (+ instructionIndex 1) (listSize network.instructions));
+    steps = (+ steps 1);
 
     if (== (stringGet current 2) 'Z') {
-      break
+      break;
     }
   }
 
-  return steps
+  return steps;
 }
 
 let solvePart1 = (input: String): String -> {
-  let network = (parseInput input)
-  let result = (countSteps network "AAA")
+  let network = (parseInput input);
+  let result = (countSteps network "AAA");
 
-  return (stringFromNumber result)
+  return (stringFromNumber result);
 }
 
 let solvePart2 = (input: String): String -> {
-  let network = (parseInput input)
-  let nodes = network.nodes
-  let allSteps = []
+  let network = (parseInput input);
+  let nodes = network.nodes;
+  let allSteps = [];
 
   for item in (mapEntries nodes) {
     if (== (stringGet item.key 2) 'A') {
-      (listPush allSteps (countSteps network item.key))
+      (listPush allSteps (countSteps network item.key));
     }
   }
 
-  let result = (lcmMany allSteps)
+  let result = (lcmMany allSteps);
 
-  return (stringFromNumber result)
+  return (stringFromNumber result);
 }
 
 let main = (): unit -> {
-  let input = (fileRead "input.txt")
+  let input = (fileRead "input.txt");
+  let part1 = (solvePart1 input);
 
-  let part1 = (solvePart1 input)
-  (print "Part 1:")
-  (print part1)
-  (assertEqualString part1 "21883")
+  (print "Part 1:");
+  (print part1);
+  (assertEqualString part1 "21883");
 
-  let part2 = (solvePart2 input)
-  (print "Part 2:")
-  (print part2)
-  (assertEqualString part2 "12833235391111")
+  let part2 = (solvePart2 input);
+
+  (print "Part 2:");
+  (print part2);
+  (assertEqualString part2 "12833235391111");
 }
