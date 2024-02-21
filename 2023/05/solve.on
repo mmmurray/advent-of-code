@@ -1,4 +1,4 @@
-import "@range.mice"
+import "@range.mice";
 
 data AlmanacMapping = {
   destinationStart: u64,
@@ -18,197 +18,208 @@ data Almanac = {
 }
 
 let parseNumberList = (input: String): List<u64> -> {
-  let values = []
-  let parts = (stringSplitBy input ' ')
+  let values = [];
+  let parts = (stringSplitBy input ' ');
+
   for part in parts {
-    let num = (stringToNumberU64 part)
-    (listPush values num)
+    let num = (stringToNumberU64 part);
+
+    (listPush values num);
   }
-  return values
+
+  return values;
 }
 
 let parseSeeds = (input: String): List<u64> -> {
-  let seeds = []
-  let inputParts = (stringSplitBy input ':')
-  let values = (stringTrim (listGet inputParts 1))
-  return (parseNumberList values)
+  let seeds = [];
+  let inputParts = (stringSplitBy input ':');
+  let values = (stringTrim (listGet inputParts 1));
+
+  return (parseNumberList values);
 }
 
 let parseInput = (input: String): Almanac -> {
-  let lines = (stringToLines input)
+  let lines = (stringToLines input);
   let almanac = Almanac {
     seeds: (parseSeeds (listGet lines 0)),
     categories: (listCreateDefault<AlmanacCategory>),
-  }
-
-  let mappingLines = (listSlice lines 2 (listSize lines))
-  let category = AlmanacCategory {
-    mappings: (listCreateDefault<AlmanacMapping>),
-  }
+  };
+  let mappingLines = (listSlice lines 2 (listSize lines));
+  let category = AlmanacCategory { mappings: (listCreateDefault<AlmanacMapping>) };
 
   for mappingLine in mappingLines {
     if (== (stringSize mappingLine) 0) {
-      (listPush almanac.categories category)
-      category = AlmanacCategory {
-        mappings: (listCreateDefault<AlmanacMapping>),
-      }
+      (listPush almanac.categories category);
+
+      category = AlmanacCategory { mappings: (listCreateDefault<AlmanacMapping>) };
     } else {
       if (!= (stringGet mappingLine (- (stringSize mappingLine) 1)) ':') {
-        let values = (parseNumberList mappingLine)
-        let destinationStart = (listGet values 0)
-        let sourceStart = (listGet values 1)
-        let rangeLength = (listGet values 2)
+        let values = (parseNumberList mappingLine);
+        let destinationStart = (listGet values 0);
+        let sourceStart = (listGet values 1);
+        let rangeLength = (listGet values 2);
         let mapping = AlmanacMapping {
           destinationStart: destinationStart,
           sourceStart: sourceStart,
           rangeLength: rangeLength,
           sourceRange: (rangeCreate sourceStart (+ sourceStart rangeLength)),
           offset: (- destinationStart sourceStart),
-        }
-        (listPush category.mappings mapping)
+        };
+
+        (listPush category.mappings mapping);
       }
     }
   }
 
-  return almanac
+  return almanac;
 }
 
 let sortAlmanacMappings = (almanac: Almanac): Almanac -> {
   for category in almanac.categories {
-    let endIndex = (- (listSize category.mappings) 1)
+    let endIndex = (- (listSize category.mappings) 1);
 
     while (> endIndex 0) {
-      let index = 0
+      let index = 0;
+
       while (< index endIndex) {
-        let a = (listGet category.mappings index)
-        let b = (listGet category.mappings (+ index 1))
+        let a = (listGet category.mappings index);
+        let b = (listGet category.mappings (+ index 1));
 
         if (> a.sourceStart b.sourceStart) {
-          (listSet category.mappings index b)
-          (listSet category.mappings (+ index 1) a)
+          (listSet category.mappings index b);
+          (listSet category.mappings (+ index 1) a);
         }
 
-        index = (+ index 1)
+        index = (+ index 1);
       }
 
-      endIndex = (- endIndex 1)
+      endIndex = (- endIndex 1);
     }
   }
 
-  return almanac
+  return almanac;
 }
 
 let mapPositionToLocation = (almanac: Almanac, position: u64): u64 -> {
-  let value = position
+  let value = position;
 
   for category in almanac.categories {
     for mapping in category.mappings {
       if (&& (>= value mapping.sourceStart) (< value (+ mapping.sourceStart mapping.rangeLength))) {
-        value = (+ value mapping.offset)
-        break
+        value = (+ value mapping.offset);
+
+        break;
       }
     }
   }
 
-  return value 
+  return value;
 }
 
-let positionMin: u64 = 0
-let positionMax: u64 = 999999999
+let positionMin: u64 = 0;
+let positionMax: u64 = 999999999;
 
-let mapRangeToLocationInCategory = (category: AlmanacCategory, range: Range<u64>): List< Range<u64> > -> {
-  let ranges = []
+let mapRangeToLocationInCategory = (category: AlmanacCategory, range: Range<u64>): List<Range<u64> > -> {
+  let ranges = [];
+  let position = positionMin;
+  let mappingIndex = 0;
 
-  let position = positionMin
-  let mappingIndex = 0
   while (< mappingIndex (listSize category.mappings)) {
-    let mapping = (listGet category.mappings mappingIndex)
-    let mappingRange = mapping.sourceRange
+    let mapping = (listGet category.mappings mappingIndex);
+    let mappingRange = mapping.sourceRange;
+    let intersectionBefore = (rangeIntersect range (rangeCreate position mappingRange.start));
 
-    let intersectionBefore = (rangeIntersect range (rangeCreate position mappingRange.start))
     if (!(rangeEmpty intersectionBefore)) {
-      (listPush ranges intersectionBefore)
+      (listPush ranges intersectionBefore);
     }
 
-    let intersectionMapping = (rangeIntersect range mappingRange)
+    let intersectionMapping = (rangeIntersect range mappingRange);
+
     if (!(rangeEmpty intersectionMapping)) {
-      (listPush ranges (rangeShift mapping.offset intersectionMapping))
+      (listPush ranges (rangeShift mapping.offset intersectionMapping));
     }
 
-    position = mappingRange.end
-    mappingIndex = (+ mappingIndex 1)
+    position = mappingRange.end;
+    mappingIndex = (+ mappingIndex 1);
   }
 
-  let intersectionAfter = (rangeIntersect range  (rangeCreate position positionMax))
+  let intersectionAfter = (rangeIntersect range (rangeCreate position positionMax));
+
   if (!(rangeEmpty intersectionAfter)) {
-    (listPush ranges intersectionAfter)
+    (listPush ranges intersectionAfter);
   }
 
-  return ranges
+  return ranges;
 }
 
-let mapRangeToLocationInAlmanac = (almanac: Almanac, initialRange: Range<u64>): List< Range<u64> > -> {
-  let ranges = []
-  (listPush ranges initialRange)
+let mapRangeToLocationInAlmanac = (almanac: Almanac, initialRange: Range<u64>): List<Range<u64> > -> {
+  let ranges = [];
+
+  (listPush ranges initialRange);
 
   for category in almanac.categories {
-    let nextRanges = []
+    let nextRanges = [];
 
     for range in ranges {
-      (listPushList nextRanges (mapRangeToLocationInCategory category range))
+      (listPushList nextRanges (mapRangeToLocationInCategory category range));
     }
 
-    ranges = nextRanges
+    ranges = nextRanges;
   }
 
-  return ranges
+  return ranges;
 }
 
 let solvePart1 = (input: String): String -> {
-  let almanac = (sortAlmanacMappings (parseInput input))
+  let almanac = (sortAlmanacMappings (parseInput input));
+  let result = 999999999;
 
-  let result = 999999999
   for seed in almanac.seeds {
-    let location = (mapPositionToLocation almanac seed)
-    result = (min result location)
+    let location = (mapPositionToLocation almanac seed);
+
+    result = (min result location);
   }
 
-  return (stringFromNumber result)
+  return (stringFromNumber result);
 }
 
 let solvePart2 = (input: String): String -> {
-  let almanac = (sortAlmanacMappings (parseInput input))
-  let ranges = (listCreateDefault< Range<u64> >)
+  let almanac = (sortAlmanacMappings (parseInput input));
+  let ranges = (listCreateDefault<Range<u64> >);
 
   for seedStart, seedIndex in almanac.seeds {
     if (== (% seedIndex 2) 0) {
-      let seedCount = (listGet almanac.seeds (+ seedIndex 1))
-      let seedEnd = (+ seedStart seedCount)
-      (listPush ranges (rangeCreate seedStart seedEnd))
+      let seedCount = (listGet almanac.seeds (+ seedIndex 1));
+      let seedEnd = (+ seedStart seedCount);
+
+      (listPush ranges (rangeCreate seedStart seedEnd));
     }
   }
 
-  let result = 999999999
+  let result = 999999999;
+
   for range in ranges {
-    let mappedRanges = (mapRangeToLocationInAlmanac almanac range)
+    let mappedRanges = (mapRangeToLocationInAlmanac almanac range);
+
     for mappedRange in mappedRanges {
-      result = (min result mappedRange.start)
+      result = (min result mappedRange.start);
     }
   }
 
-  return (stringFromNumber result)
+  return (stringFromNumber result);
 }
 
 let main = (): unit -> {
-  let input = (fileRead "input.txt")
+  let input = (fileRead "input.txt");
+  let part1 = (solvePart1 input);
 
-  let part1 = (solvePart1 input)
-  (print "Part 1:")
-  (print part1)
-  (assertEqualString part1 "282277027")
+  (print "Part 1:");
+  (print part1);
+  (assertEqualString part1 "282277027");
 
-  let part2 = (solvePart2 input)
-  (print "Part 2:")
-  (print part2)
-  (assertEqualString part2 "11554135")
+  let part2 = (solvePart2 input);
+
+  (print "Part 2:");
+  (print part2);
+  (assertEqualString part2 "11554135");
 }
