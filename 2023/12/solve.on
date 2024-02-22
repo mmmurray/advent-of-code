@@ -77,7 +77,7 @@ let createCache = (): Array<i32> -> {
   let cache = (arrayCreate<i32> (* cacheSpacing (* cacheSpacing cacheSpacing)));
 
   for x, i in (listFromArray cache) {
-    (arraySet cache i (- 0 1));
+    (arraySet cache i -1);
   }
 
   return cache;
