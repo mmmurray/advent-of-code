@@ -168,7 +168,7 @@ let solvePart2 = (input: String): String -> {
   let grid = (parseInput input);
   let grids = (listCreateDefault<Grid>);
   let totalCycles = 1000000000;
-  let cycleOffset = (- 0 1);
+  let cycleOffset = -1;
   let i = 0;
 
   while (< i totalCycles) {
