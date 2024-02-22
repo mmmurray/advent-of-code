@@ -60,7 +60,7 @@ let priorityQueueNext = <T>(queue: PriorityQueue<T>): Option<T> -> {
     let leftChildIndex = (+ (* currentIndex 2) 1);
     let rightChildIndex = (+ (* currentIndex 2) 2);
     let current = (listGet queue.heap currentIndex);
-    let swapIndex = (- 0 1);
+    let swapIndex = -1;
 
     if (< leftChildIndex (listSize queue.heap)) {
       let leftChild = (listGet queue.heap leftChildIndex);
@@ -356,7 +356,7 @@ let solvePart1 = (input: String): String -> {
         if (< tentativeGScore neighborGScore) {
           (mapSet cameFrom neighborKey current);
           (mapSet gScore neighborKey tentativeGScore);
-          (priorityQueueInsert openSet neighbor (- 0 tentativeGScore));
+          (priorityQueueInsert openSet neighbor -tentativeGScore);
         }
       }
     }
