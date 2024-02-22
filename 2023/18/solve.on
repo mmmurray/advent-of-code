@@ -8,10 +8,10 @@ let directionNorth: Direction = North {};
 let directionEast: Direction = East {};
 let directionSouth: Direction = South {};
 let directionWest: Direction = West {};
-let vec2North: Vec2<i64> = Vec2 { x: 0, y: (- 0 1) };
+let vec2North: Vec2<i64> = Vec2 { x: 0, y: -1 };
 let vec2East: Vec2<i64> = Vec2 { x: 1, y: 0 };
 let vec2South: Vec2<i64> = Vec2 { x: 0, y: 1 };
-let vec2West: Vec2<i64> = Vec2 { x: (- 0 1), y: 0 };
+let vec2West: Vec2<i64> = Vec2 { x: -1, y: 0 };
 
 let directionToVec2 = (direction: Direction): Vec2<i64> -> {
   return match direction {
