@@ -133,7 +133,7 @@ let solvePart2 = (input: String): String -> {
         }
       };
       Remove { label } -> {
-        let removeIndex = (- 0 1);
+        let removeIndex = -1;
 
         for lens, lensIndex in box.lenses {
           if (stringEquals lens.label label) {
