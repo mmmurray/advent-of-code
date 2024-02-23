@@ -59,7 +59,7 @@ let solvePart1 = (input: String): String -> {
 let solvePart2 = (input: String): String -> {
   let result = 0;
   let games = (parseInput input);
-  let resultByGame = (arrayCreate<i32> (listSize games));
+  let resultByGame = (arrayCreate (listSize games));
   let countByGame = [];
 
   for game, gameIndex in games {
