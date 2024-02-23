@@ -52,7 +52,7 @@ let parseDirection = (input: String): Direction -> {
 
 let parseInput = (input: String): List<DigPlanStep> -> {
   let lines = (stringToLines (stringTrim input));
-  let steps = (listCreateDefault<DigPlanStep>);
+  let steps = [];
 
   for line in lines {
     let parts = (stringSplitBy line ' ');
@@ -122,7 +122,7 @@ let calculateAreaFromSteps = (steps: List<Step>): i64 -> {
 
 let solvePart1 = (input: String): String -> {
   let planSteps = (parseInput input);
-  let steps = (listCreateDefault<Step>);
+  let steps = [];
 
   for planStep in planSteps {
     (listPush steps Step { direction: planStep.direction, distance: planStep.distance });
@@ -135,7 +135,7 @@ let solvePart1 = (input: String): String -> {
 
 let solvePart2 = (input: String): String -> {
   let planSteps = (parseInput input);
-  let steps = (listCreateDefault<Step>);
+  let steps = [];
   let orderedDirections = [directionEast, directionSouth, directionWest, directionNorth];
 
   for planStep in planSteps {
