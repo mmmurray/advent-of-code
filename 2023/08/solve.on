@@ -10,7 +10,7 @@ data Network = {
 
 let parseInput = (input: String): Network -> {
   let instructions = [];
-  let nodes = (mapCreate<Node>);
+  let nodes = (mapCreate);
   let lines = (stringToLines (stringTrim input));
   let instructionsLine = (listGet lines 0);
 
