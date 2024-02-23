@@ -31,7 +31,7 @@ let parseOperation = (input: String): Operation -> {
 
 let parseInput = (input: String): List<Step> -> {
   let parts = (stringSplitBy (stringTrim input) ',');
-  let steps = (listCreateDefault<Step>);
+  let steps = [];
 
   for part in parts {
     let step = Step { raw: part, operation: (parseOperation part) };
@@ -102,7 +102,7 @@ let solvePart2 = (input: String): String -> {
   let boxes = (arrayCreate<Box> 256);
 
   for x, i in (listFromArray boxes) {
-    let box = Box { lenses: (listCreateDefault<Lens>) };
+    let box = Box { lenses: [] };
 
     (arraySet boxes i box);
   }
