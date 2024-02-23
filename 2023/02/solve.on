@@ -39,7 +39,7 @@ let parseInputLine = (line: String): Game -> {
   let gameIdPart = (listGet parts 0);
   let idPart = (stringSlice gameIdPart 5 (stringSize gameIdPart));
   let id = (stringToNumber idPart);
-  let selections = (listCreateDefault<Selection>);
+  let selections = [];
   let selectionsPart = (stringTrim (listGet parts 1));
   let selectionParts = (stringSplitBy selectionsPart ';');
   let selectionIndex = 0;
@@ -57,7 +57,7 @@ let parseInputLine = (line: String): Game -> {
 
 let parseInput = (input: String): List<Game> -> {
   let lines = (stringToLines input);
-  let games = (listCreateDefault<Game>);
+  let games = [];
 
   for line in lines {
     let game = (parseInputLine line);
