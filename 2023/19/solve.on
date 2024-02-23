@@ -96,7 +96,7 @@ let parseRating = (input: String): Rating -> {
 let parseInput = (input: String): System -> {
   let lines = (stringToLines (stringTrim input));
   let inWorkflowsSection = true;
-  let workflows = (mapCreate<Workflow>);
+  let workflows = (mapCreate);
   let ratings = [];
 
   for line in lines {
