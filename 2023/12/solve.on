@@ -6,13 +6,13 @@ data Row = {
 
 let parseRow = (line: String): Row -> {
   let parts = (stringSplitBy line ' ');
-  let conditions = (listCreateDefault<i32>);
+  let conditions = [];
 
   for char in (listFromString (listGet parts 0)) {
     (listPush conditions char);
   }
 
-  let damaged = (listCreateDefault<i32>);
+  let damaged = [];
   let damagedParts = (stringSplitBy (listGet parts 1) ',');
   let damageTotal = 0;
 
@@ -29,7 +29,7 @@ let parseRow = (line: String): Row -> {
 
 let parseInput = (input: String): List<Row> -> {
   let lines = (stringToLines (stringTrim input));
-  let rows = (listCreateDefault<Row>);
+  let rows = [];
 
   for line in lines {
     (listPush rows (parseRow line));
@@ -236,7 +236,7 @@ let unfoldRow = (row: Row): Row -> {
 }
 
 let unfoldRows = (rows: List<Row>): List<Row> -> {
-  let newRows = (listCreateDefault<Row>);
+  let newRows = [];
 
   for row in rows {
     (listPush newRows (unfoldRow row));
