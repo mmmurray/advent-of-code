@@ -99,7 +99,7 @@ let printBoxes = (boxes: Array<Box>): unit -> {
 let solvePart2 = (input: String): String -> {
   let sequence = (parseInput input);
   let result = 0;
-  let boxes = (arrayCreate<Box> 256);
+  let boxes = (arrayCreate 256);
 
   for x, i in (listFromArray boxes) {
     let box = Box { lenses: [] };
