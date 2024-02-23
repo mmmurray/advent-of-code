@@ -75,14 +75,14 @@ let scoreCards = (cards: List<i32>): i32 -> {
 }
 
 let parseInput = (input: String, jokers: boolean): List<Hand> -> {
-  let hands = (listCreateDefault<Hand>);
+  let hands = [];
   let lines = (stringToLines (stringTrim input));
 
   for line in lines {
     let parts = (stringSplitBy line ' ');
     let cardsPart = (listGet parts 0);
     let bidPart = (listGet parts 1);
-    let cards = (listCreateDefault<i32>);
+    let cards = [];
 
     for cardChar in (listFromString cardsPart) {
       let card = 0;
