@@ -42,16 +42,16 @@ let parseInput = (input: String): Almanac -> {
   let lines = (stringToLines input);
   let almanac = Almanac {
     seeds: (parseSeeds (listGet lines 0)),
-    categories: (listCreateDefault<AlmanacCategory>),
+    categories: [],
   };
   let mappingLines = (listSlice lines 2 (listSize lines));
-  let category = AlmanacCategory { mappings: (listCreateDefault<AlmanacMapping>) };
+  let category = AlmanacCategory { mappings: [] };
 
   for mappingLine in mappingLines {
     if (== (stringSize mappingLine) 0) {
       (listPush almanac.categories category);
 
-      category = AlmanacCategory { mappings: (listCreateDefault<AlmanacMapping>) };
+      category = AlmanacCategory { mappings: [] };
     } else {
       if (!= (stringGet mappingLine (- (stringSize mappingLine) 1)) ':') {
         let values = (parseNumberList mappingLine);
@@ -185,7 +185,7 @@ let solvePart1 = (input: String): String -> {
 
 let solvePart2 = (input: String): String -> {
   let almanac = (sortAlmanacMappings (parseInput input));
-  let ranges = (listCreateDefault<Range<u64> >);
+  let ranges = [];
 
   for seedStart, seedIndex in almanac.seeds {
     if (== (% seedIndex 2) 0) {
