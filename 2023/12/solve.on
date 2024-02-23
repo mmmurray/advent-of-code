@@ -74,7 +74,7 @@ let printRows = (rows: List<Row>): unit -> {
 let cacheSpacing: i32 = 30;
 
 let createCache = (): Array<i32> -> {
-  let cache = (arrayCreate<i32> (* cacheSpacing (* cacheSpacing cacheSpacing)));
+  let cache = (arrayCreate (* cacheSpacing (* cacheSpacing cacheSpacing)));
 
   for x, i in (listFromArray cache) {
     (arraySet cache i -1);
