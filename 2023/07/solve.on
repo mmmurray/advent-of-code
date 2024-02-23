@@ -5,7 +5,7 @@ data Hand = {
 }
 
 let scoreCards = (cards: List<i32>): i32 -> {
-  let countByCard = (mapCreate<i32>);
+  let countByCard = (mapCreate);
   let jokers = 0;
 
   for card in cards {
