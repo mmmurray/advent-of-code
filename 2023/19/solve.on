@@ -35,7 +35,7 @@ let parseWorkflow = (input: String): Workflow -> {
   let name = (listGet workflowParts 0);
   let innerPart = (listGet workflowParts 1);
   let inner = (stringSlice innerPart 0 (- (stringSize innerPart) 1));
-  let steps = (listCreateDefault<WorkflowStep>);
+  let steps = [];
   let stepParts = (stringSplitBy inner ',');
 
   for stepPart in stepParts {
@@ -97,7 +97,7 @@ let parseInput = (input: String): System -> {
   let lines = (stringToLines (stringTrim input));
   let inWorkflowsSection = true;
   let workflows = (mapCreate<Workflow>);
-  let ratings = (listCreateDefault<Rating>);
+  let ratings = [];
 
   for line in lines {
     if (== (stringSize line) 0) {
