@@ -1,0 +1,477 @@
+import { _type_Array, arrayCreate, arrayGet, arraySet } from "@array";
+import { assertEqual, assertEqualString } from "@assert";
+import { fileRead, print } from "@io";
+import {
+  _type_List,
+  listClone,
+  listFromArray,
+  listFromString,
+  listGet,
+  listPop,
+  listPush,
+  listPushList,
+  listRemove,
+  listSet,
+  listShift,
+  listSize,
+  listSlice,
+} from "@list";
+import { _type_Map, mapCreate, mapEntries, mapGet, mapSet, mapSize } from "@map";
+import {
+  Vec2,
+  _type_Vec2,
+  lcmMany,
+  max,
+  min,
+  vec2Add,
+  vec2Equals,
+  vec2IsAdjacent,
+  vec2ManhattanDistance,
+} from "@math";
+import { None, Some, _type_Option, optionValue } from "@option";
+import { _type_Range, rangeCreate, rangeEmpty, rangeIntersect, rangeShift } from "@range";
+import {
+  charIsNumeric,
+  charToString,
+  stringBuilderAppend,
+  stringBuilderBuild,
+  stringBuilderCreate,
+  stringConcat,
+  stringContainsAt,
+  stringEquals,
+  stringFromNumber,
+  stringGet,
+  stringSize,
+  stringSlice,
+  stringSplitBy,
+  stringToLines,
+  stringToNumber,
+  stringToNumberU64,
+  stringTrim,
+} from "@string";
+import { _type_String } from "@string-base";
+
+let optionExpect = <T>(option: Option<T>): T -> {
+  return match option {
+    Some { value } -> value;
+    None -> (@T 0);
+  };
+}
+
+let vec2ToString = (v: Vec2<i32>): String -> {
+  let out = (stringBuilderCreate 16);
+
+  (stringBuilderAppend out "[");
+  (stringBuilderAppend out (stringFromNumber v.x));
+  (stringBuilderAppend out ", ");
+  (stringBuilderAppend out (stringFromNumber v.y));
+  (stringBuilderAppend out "]");
+
+  return (stringBuilderBuild out);
+}
+
+data PriorityQueueHeapEntry<T> = {
+  node: T,
+  priority: i32,
+}
+
+data PriorityQueue<T> = {
+  heap: List<PriorityQueueHeapEntry<T> >,
+}
+
+let priorityQueueCreate = <T>(): PriorityQueue<T> -> {
+  return (PriorityQueue<T> { heap: [] });
+}
+
+let priorityQueueSize = <T>(queue: PriorityQueue<T>): i32 -> {
+  return (listSize queue.heap);
+}
+
+let priorityQueueInsert = <T>(queue: PriorityQueue<T>, node: T, priority: i32): unit -> {
+  let entry = (PriorityQueueHeapEntry<T> { node: node, priority: priority });
+
+  (listPush queue.heap entry);
+
+  let currentIndex = (- (listSize queue.heap) 1);
+  let loop = true;
+
+  while (&& loop (> currentIndex 0)) {
+    let parentIndex = (/ currentIndex 2);
+    let parent = (listGet queue.heap parentIndex);
+    let current = (listGet queue.heap currentIndex);
+
+    if (> parent.priority current.priority) {
+      loop = false;
+    } else {
+      (listSet queue.heap parentIndex current);
+      (listSet queue.heap currentIndex parent);
+
+      currentIndex = parentIndex;
+    }
+  }
+}
+
+let priorityQueueNext = <T>(queue: PriorityQueue<T>): Option<T> -> {
+  return case {
+    (== (listSize queue.heap) 0) -> (None {});
+    (== (listSize queue.heap) 1) -> {
+      return match (listShift queue.heap) {
+        Some { value } -> (Some { value: value.node });
+        None -> (None {});
+      };
+    };
+    true -> {
+      let highestPriority = (listGet queue.heap 0);
+
+      (listSet queue.heap 0 (optionExpect (listPop queue.heap)));
+
+      let currentIndex = 0;
+      let loop = false;
+
+      while loop {
+        let leftChildIndex = (+ (* currentIndex 2) 1);
+        let rightChildIndex = (+ (* currentIndex 2) 2);
+        let current = (listGet queue.heap currentIndex);
+        let swapIndex = -1;
+
+        if (< leftChildIndex (listSize queue.heap)) {
+          let leftChild = (listGet queue.heap leftChildIndex);
+
+          if (> leftChild.priority current.priority) {
+            swapIndex = leftChildIndex;
+          }
+        }
+
+        if (< rightChildIndex (listSize queue.heap)) {
+          let leftChild = (listGet queue.heap leftChildIndex);
+          let rightChild = (listGet queue.heap rightChildIndex);
+
+          if (|| (&& (< swapIndex 0) (> rightChild.priority current.priority)) (&& (>= swapIndex 0) (> rightChild.priority leftChild.priority))) {
+            swapIndex = rightChildIndex;
+          }
+        }
+
+        if (< swapIndex 0) {
+          loop = false;
+        } else {
+          (listSet queue.heap currentIndex (listGet queue.heap swapIndex));
+          (listSet queue.heap swapIndex current);
+
+          currentIndex = swapIndex;
+        }
+      }
+
+      return (Some { value: highestPriority.node });
+    };
+  };
+}
+
+let testPriorityQueue = (): unit -> {
+  let queue = (priorityQueueCreate<i32>);
+
+  (assertEqual (priorityQueueSize queue) 0);
+  (priorityQueueInsert queue 1 10);
+  (priorityQueueInsert queue 2 30);
+  (priorityQueueInsert queue 3 20);
+  (priorityQueueInsert queue 4 5);
+  (priorityQueueInsert queue 5 50);
+  (assertEqual (priorityQueueSize queue) 5);
+  (assertEqual (optionValue 0 (priorityQueueNext queue)) 5);
+  (assertEqual (priorityQueueSize queue) 4);
+  (assertEqual (optionValue 0 (priorityQueueNext queue)) 2);
+  (assertEqual (priorityQueueSize queue) 3);
+  (assertEqual (optionValue 0 (priorityQueueNext queue)) 3);
+  (assertEqual (priorityQueueSize queue) 2);
+  (assertEqual (optionValue 0 (priorityQueueNext queue)) 1);
+  (assertEqual (priorityQueueSize queue) 1);
+  (assertEqual (optionValue 0 (priorityQueueNext queue)) 4);
+  (assertEqual (priorityQueueSize queue) 0);
+  (assertEqual (optionValue 0 (priorityQueueNext queue)) 0);
+  (assertEqual (priorityQueueSize queue) 0);
+}
+
+data Grid = {
+  size: Vec2<i32>,
+  tiles: List<List<i32> >,
+}
+
+let parseInput = (input: String): Grid -> {
+  let lines = (stringToLines (stringTrim input));
+  let size = (Vec2 { x: (stringSize (listGet lines 0)), y: (listSize lines) });
+  let tiles = [];
+
+  for line, y in lines {
+    let tileRow = [];
+
+    for char, x in (listFromString line) {
+      (listPush tileRow (- char '0'));
+    }
+
+    (listPush tiles tileRow);
+  }
+
+  return (Grid { size: size, tiles: tiles });
+}
+
+let printGrid = (grid: Grid, path: List<Vec2<i32> >): unit -> {
+  let size = grid.size;
+  let out = (stringBuilderCreate 1024);
+
+  (stringBuilderAppend out "Size: ");
+  (stringBuilderAppend out (vec2ToString size));
+  (stringBuilderAppend out "\n");
+
+  let y = 0;
+
+  while (< y size.y) {
+    let x = 0;
+
+    while (< x size.x) {
+      let position = (Vec2 { x: x, y: y });
+      let tile = (listGet (listGet grid.tiles y) x);
+      let isOnPath = false;
+
+      for pathPosition in path {
+        if (vec2Equals pathPosition position) {
+          isOnPath = true;
+        }
+      }
+
+      if isOnPath {
+        (stringBuilderAppend out ".");
+      } else {
+        (stringBuilderAppend out (stringFromNumber tile));
+      }
+
+      x = (+ x 1);
+    }
+
+    (stringBuilderAppend out "\n");
+
+    y = (+ y 1);
+  }
+
+  (print (stringBuilderBuild out));
+}
+
+let gridAdjacent = (grid: Grid, position: Vec2<i32>): List<Vec2<i32> > -> {
+  let adjacent = [];
+  let size = grid.size;
+
+  if (< position.x (- size.x 1)) {
+    (listPush adjacent (Vec2 { x: (+ position.x 1), y: position.y }));
+  }
+
+  if (< position.y (- size.y 1)) {
+    (listPush adjacent (Vec2 { x: position.x, y: (+ position.y 1) }));
+  }
+
+  if (> position.x 0) {
+    (listPush adjacent (Vec2 { x: (- position.x 1), y: position.y }));
+  }
+
+  if (> position.y 0) {
+    (listPush adjacent (Vec2 { x: position.x, y: (- position.y 1) }));
+  }
+
+  return adjacent;
+}
+
+let extractShortestPath = (cameFrom: Map<Vec2<i32> >, targetNode: Vec2<i32>): List<Vec2<i32> > -> {
+  # (print "+ extractShortestPath")
+
+  let path = [];
+  let c = targetNode;
+
+  # (print (vec2ToString c))
+
+  (listPush path c);
+
+  let loop = true;
+
+  while loop {
+    let cameFromOption = (mapGet cameFrom (vec2ToString c));
+    let done = match cameFromOption {
+      Some -> false;
+      None -> true;
+    };
+
+    if done {
+      loop = false;
+    } else {
+      c = (optionExpect cameFromOption);
+
+      (listPush path c);
+
+      # (print (vec2ToString c))
+    }
+  }
+
+  # (print "- extractShortestPath")
+
+  return path;
+}
+
+let exceedsSingleDirectionLimit = (path: List<Vec2<i32> >): boolean -> {
+  # (print "exceedsSingleDirectionLimit")
+
+  let limit = 5;
+  let size = (listSize path);
+
+  return case {
+    (< size limit) -> false;
+    true -> {
+      let sameX = true;
+      let sameY = true;
+      let i = 0;
+      let current = (listGet path i);
+
+      # (print (stringConcat "Current " (vec2ToString current)))
+
+      i = (+ i 1);
+
+      while (< i limit) {
+        let next = (listGet path i);
+
+        # (print (stringConcat "Next " (vec2ToString next)))
+
+        if (!= next.x current.x) {
+          sameX = false;
+        }
+
+        if (!= next.y current.y) {
+          sameY = false;
+        }
+
+        current = next;
+        i = (+ i 1);
+      }
+
+      let result = (|| sameX sameY);
+
+      # (print (stringConcat "exceedsSingleDirectionLimit result: " (stringFromNumber result)))
+
+      return result;
+    };
+  };
+}
+
+let solvePart1 = (input: String): String -> {
+  let grid = (parseInput input);
+
+  # (printGrid grid [])
+
+  let size = grid.size;
+  let startNode = (Vec2 { x: 0, y: 0 });
+  let targetNode = (Vec2 { x: (- size.x 1), y: (- size.y 1) });
+  let openSet = (priorityQueueCreate);
+  let cameFrom = (mapCreate);
+  let gScore = (mapCreate);
+
+  (priorityQueueInsert openSet startNode 0);
+  (mapSet gScore (vec2ToString startNode) 0);
+
+  let loop = true;
+
+  while loop {
+    # (print "~~ STEP ~~")
+
+    let currentOption = (priorityQueueNext openSet);
+    let done = match currentOption {
+      Some -> false;
+      None -> true;
+    };
+
+    if done {
+      loop = false;
+    } else {
+      let current = (optionExpect currentOption);
+
+      # (print (stringConcat "Current: " (vec2ToString current)))
+
+      if (vec2Equals current targetNode) {
+        # (print "Reached target")
+
+        loop = false;
+      } else {
+        let currentKey = (vec2ToString current);
+        let currentShortestPath = (extractShortestPath cameFrom current);
+
+        # (printGrid grid currentShortestPath)
+
+        for neighbor in (gridAdjacent grid current) {
+          let viable = true;
+
+          for visited in currentShortestPath {
+            if (vec2Equals visited neighbor) {
+              viable = false;
+            }
+          }
+
+          if (exceedsSingleDirectionLimit [...currentShortestPath, neighbor]) {
+            viable = false;
+          }
+
+          if viable {
+            # let reachedLimit = (exceedsSingleDirectionLimit [...currentShortestPath, neighbor])
+            # (write (@i32 reachedLimit))
+            # (print (stringConcat "Neighbor: " (vec2ToString neighbor)))
+
+            let neighborKey = (vec2ToString neighbor);
+            let distance = (listGet (listGet grid.tiles neighbor.y) neighbor.x);
+
+            if (!viable) {
+              distance = (+ distance 99999);
+            }
+
+            # (print (stringConcat "Distance: " (stringFromNumber distance)))
+
+            let currentGScore = (optionValue 10000 (mapGet gScore currentKey));
+            let tentativeGScore = (+ currentGScore distance);
+            let neighborGScore = (optionValue 10000 (mapGet gScore neighborKey));
+
+            if (< tentativeGScore neighborGScore) {
+              (mapSet cameFrom neighborKey current);
+              (mapSet gScore neighborKey tentativeGScore);
+              (priorityQueueInsert openSet neighbor -tentativeGScore);
+            }
+          }
+        }
+      }
+    }
+  }
+
+  let path = (extractShortestPath cameFrom targetNode);
+
+  # (printGrid grid path)
+
+  let result = 0;
+
+  for position in path {
+    if (!(vec2Equals position startNode)) {
+      let weight = (listGet (listGet grid.tiles position.y) position.x);
+
+      # (print (stringConcat "Path " (stringConcat (vec2ToString position) (stringFromNumber weight))))
+
+      result = (+ result weight);
+    }
+  }
+
+  return (stringFromNumber result);
+}
+
+let main = (): unit -> {
+  # (testPriorityQueue)
+
+  let input = (fileRead "example.txt");
+  let part1 = (solvePart1 input);
+
+  (print "Part 1:");
+  (print part1);
+
+  # (assertEqualString part1 "102")
+  # let part2 = (solvePart2 input)
+  # (print "Part 2:")
+  # (print part2)
+  # (assertEqualString part2 "???")
+}
