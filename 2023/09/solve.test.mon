@@ -1,3 +1,40 @@
+import { arrayCreate, arrayGet, arraySet } from "@array";
+import { assertEqualString } from "@assert";
+import { fileRead, print } from "@io";
+import {
+  _type_List,
+  listFromString,
+  listGet,
+  listPush,
+  listPushList,
+  listSet,
+  listSize,
+  listSlice,
+} from "@list";
+import { _type_Map, mapCreate, mapEntries, mapGet, mapSet, mapSize } from "@map";
+import { Vec2, _type_Vec2, lcmMany, max, min, vec2Add, vec2IsAdjacent } from "@math";
+import { optionValue } from "@option";
+import { _type_Range, rangeCreate, rangeEmpty, rangeIntersect, rangeShift } from "@range";
+import {
+  charIsNumeric,
+  stringBuilderAppend,
+  stringBuilderBuild,
+  stringBuilderCreate,
+  stringConcat,
+  stringContainsAt,
+  stringEquals,
+  stringFromNumber,
+  stringGet,
+  stringSize,
+  stringSlice,
+  stringSplitBy,
+  stringToLines,
+  stringToNumber,
+  stringToNumberU64,
+  stringTrim,
+} from "@string";
+import { _type_String } from "@string-base";
+
 let parseInput = (input: String): List<List<i32> > -> {
   let lines = (stringToLines (stringTrim input));
   let sequences = [];
@@ -46,23 +83,25 @@ let isSequenceAllZero = (sequence: List<i32>): boolean -> {
 }
 
 let findNextValue = (sequence: List<i32>): i32 -> {
-  if (isSequenceAllZero sequence) {
-    return 0;
-  }
+  return case {
+    (isSequenceAllZero sequence) -> 0;
+    true -> {
+      let lastValue = (listGet sequence (- (listSize sequence) 1));
 
-  let lastValue = (listGet sequence (- (listSize sequence) 1));
-
-  return (+ lastValue (findNextValue (findDeltas sequence)));
+      return (+ lastValue (findNextValue (findDeltas sequence)));
+    };
+  };
 }
 
 let findPreviousValue = (sequence: List<i32>): i32 -> {
-  if (isSequenceAllZero sequence) {
-    return 0;
-  }
+  return case {
+    (isSequenceAllZero sequence) -> 0;
+    true -> {
+      let firstValue = (listGet sequence 0);
 
-  let firstValue = (listGet sequence 0);
-
-  return (- firstValue (findPreviousValue (findDeltas sequence)));
+      return (- firstValue (findPreviousValue (findDeltas sequence)));
+    };
+  };
 }
 
 let solvePart1 = (input: String): String -> {
