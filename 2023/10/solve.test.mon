@@ -1,3 +1,42 @@
+import { arrayCreate, arrayGet, arraySet } from "@array";
+import { assertEqualString } from "@assert";
+import { fileRead, print } from "@io";
+import {
+  _type_List,
+  listFromString,
+  listGet,
+  listPop,
+  listPush,
+  listPushList,
+  listSet,
+  listSize,
+  listSlice,
+} from "@list";
+import { _type_Map, mapCreate, mapEntries, mapGet, mapSet, mapSize } from "@map";
+import { Vec2, _type_Vec2, lcmMany, max, min, vec2Add, vec2Equals, vec2IsAdjacent } from "@math";
+import { optionValue } from "@option";
+import { _type_Range, rangeCreate, rangeEmpty, rangeIntersect, rangeShift } from "@range";
+import {
+  charIsNumeric,
+  charToString,
+  stringBuilderAppend,
+  stringBuilderBuild,
+  stringBuilderCreate,
+  stringConcat,
+  stringContainsAt,
+  stringEquals,
+  stringFromNumber,
+  stringGet,
+  stringSize,
+  stringSlice,
+  stringSplitBy,
+  stringToLines,
+  stringToNumber,
+  stringToNumberU64,
+  stringTrim,
+} from "@string";
+import { _type_String } from "@string-base";
+
 data Connections = {
   north: boolean,
   east: boolean,
@@ -12,42 +51,23 @@ data Pipes = {
 }
 
 let charToConnections = (char: i32): Connections -> {
-  if (== char '|') {
-    return Connections { north: true, east: false, south: true, west: false };
-  }
-
-  if (== char '-') {
-    return Connections { north: false, east: true, south: false, west: true };
-  }
-
-  if (== char 'L') {
-    return Connections { north: true, east: true, south: false, west: false };
-  }
-
-  if (== char 'J') {
-    return Connections { north: true, east: false, south: false, west: true };
-  }
-
-  if (== char '7') {
-    return Connections { north: false, east: false, south: true, west: true };
-  }
-
-  if (== char 'F') {
-    return Connections { north: false, east: true, south: true, west: false };
-  }
-
-  if (== char 'S') {
-    return Connections { north: true, east: true, south: true, west: true };
-  }
-
-  return Connections { north: false, east: false, south: false, west: false };
+  return case {
+    (== char '|') -> (Connections { north: true, east: false, south: true, west: false });
+    (== char '-') -> (Connections { north: false, east: true, south: false, west: true });
+    (== char 'L') -> (Connections { north: true, east: true, south: false, west: false });
+    (== char 'J') -> (Connections { north: true, east: false, south: false, west: true });
+    (== char '7') -> (Connections { north: false, east: false, south: true, west: true });
+    (== char 'F') -> (Connections { north: false, east: true, south: true, west: false });
+    (== char 'S') -> (Connections { north: true, east: true, south: true, west: true });
+    true -> (Connections { north: false, east: false, south: false, west: false });
+  };
 }
 
 let parseInput = (input: String): Pipes -> {
   let lines = (stringToLines (stringTrim input));
   let grid = [];
-  let start = Vec2 { x: 0, y: 0 };
-  let size = Vec2 { x: (stringSize (listGet lines 0)), y: (listSize lines) };
+  let start = (Vec2 { x: 0, y: 0 });
+  let size = (Vec2 { x: (stringSize (listGet lines 0)), y: (listSize lines) });
 
   for line, y in lines {
     let row = [];
@@ -58,50 +78,28 @@ let parseInput = (input: String): Pipes -> {
       (listPush row connections);
 
       if (== char 'S') {
-        start = Vec2 { x: x, y: y };
+        start = (Vec2 { x: x, y: y });
       }
     }
 
     (listPush grid row);
   }
 
-  return Pipes { grid: grid, start: start, size: size };
+  return (Pipes { grid: grid, start: start, size: size });
 }
 
 let connectionsToChar = (connections: Connections): i32 -> {
-  if (&& (!connections.north) (&& (!connections.east) (&& (!connections.south) (!connections.west)))) {
-    return '.';
-  } else {
-    if (&& connections.north (&& connections.east (&& connections.south connections.west))) {
-      return 'S';
-    } else {
-      if (&& connections.north connections.south) {
-        return '║';
-      } else {
-        if (&& connections.east connections.west) {
-          return '═';
-        } else {
-          if (&& connections.south connections.east) {
-            return '╔';
-          } else {
-            if (&& connections.west connections.south) {
-              return '╗';
-            } else {
-              if (&& connections.north connections.west) {
-                return '╝';
-              } else {
-                if (&& connections.east connections.north) {
-                  return '╚';
-                }
-              }
-            }
-          }
-        }
-      }
-    }
-  }
-
-  return ' ';
+  return case {
+    (&& (!connections.north) (&& (!connections.east) (&& (!connections.south) (!connections.west)))) -> '.';
+    (&& connections.north (&& connections.east (&& connections.south connections.west))) -> 'S';
+    (&& connections.north connections.south) -> '║';
+    (&& connections.east connections.west) -> '═';
+    (&& connections.south connections.east) -> '╔';
+    (&& connections.west connections.south) -> '╗';
+    (&& connections.north connections.west) -> '╝';
+    (&& connections.east connections.north) -> '╚';
+    true -> ' ';
+  };
 }
 
 let connectionsToWalls = (connections: Connections): List<List<i32> > -> {
@@ -162,13 +160,15 @@ let getConnections = (pipes: Pipes, p: Vec2<i32>): Connections -> {
 }
 
 let pointsContain = (points: List<Vec2<i32> >, point: Vec2<i32>): boolean -> {
+  let result = false;
+
   for other in points {
     if (vec2Equals point other) {
-      return true;
+      let result = true;
     }
   }
 
-  return false;
+  return result;
 }
 
 let formatConnections = (connections: Connections): String -> {
@@ -194,62 +194,63 @@ let formatConnections = (connections: Connections): String -> {
 }
 
 let searchPipes = (pipes: Pipes, visited: List<Vec2<i32> >, current: Vec2<i32>, steps: i32): i32 -> {
-  if (pointsContain visited current) {
-    return steps;
-  }
+  return case {
+    (pointsContain visited current) -> steps;
+    true -> {
+      let currentConnections = (getConnections pipes current);
 
-  let currentConnections = (getConnections pipes current);
+      (listPush visited current);
 
-  (listPush visited current);
+      let size = pipes.size;
+      let maxSteps = steps;
 
-  let size = pipes.size;
-  let maxSteps = steps;
+      if (> current.y 0) {
+        let candidate = (Vec2 { x: current.x, y: (- current.y 1) });
+        let candidateConnections = (getConnections pipes candidate);
 
-  if (> current.y 0) {
-    let candidate = Vec2 { x: current.x, y: (- current.y 1) };
-    let candidateConnections = (getConnections pipes candidate);
+        if (&& currentConnections.north candidateConnections.south) {
+          let nextSteps = (searchPipes pipes visited candidate (+ steps 1));
 
-    if (&& currentConnections.north candidateConnections.south) {
-      let nextSteps = (searchPipes pipes visited candidate (+ steps 1));
+          maxSteps = (max maxSteps nextSteps);
+        }
+      }
 
-      maxSteps = (max maxSteps nextSteps);
-    }
-  }
+      if (< current.x (- size.x 1)) {
+        let candidate = (Vec2 { x: (+ current.x 1), y: current.y });
+        let candidateConnections = (getConnections pipes candidate);
 
-  if (< current.x (- size.x 1)) {
-    let candidate = Vec2 { x: (+ current.x 1), y: current.y };
-    let candidateConnections = (getConnections pipes candidate);
+        if (&& currentConnections.east candidateConnections.west) {
+          let nextSteps = (searchPipes pipes visited candidate (+ steps 1));
 
-    if (&& currentConnections.east candidateConnections.west) {
-      let nextSteps = (searchPipes pipes visited candidate (+ steps 1));
+          maxSteps = (max maxSteps nextSteps);
+        }
+      }
 
-      maxSteps = (max maxSteps nextSteps);
-    }
-  }
+      if (< current.y (- size.y 1)) {
+        let candidate = (Vec2 { x: current.x, y: (+ current.y 1) });
+        let candidateConnections = (getConnections pipes candidate);
 
-  if (< current.y (- size.y 1)) {
-    let candidate = Vec2 { x: current.x, y: (+ current.y 1) };
-    let candidateConnections = (getConnections pipes candidate);
+        if (&& currentConnections.south candidateConnections.north) {
+          let nextSteps = (searchPipes pipes visited candidate (+ steps 1));
 
-    if (&& currentConnections.south candidateConnections.north) {
-      let nextSteps = (searchPipes pipes visited candidate (+ steps 1));
+          maxSteps = (max maxSteps nextSteps);
+        }
+      }
 
-      maxSteps = (max maxSteps nextSteps);
-    }
-  }
+      if (> current.x 0) {
+        let candidate = (Vec2 { x: (- current.x 1), y: current.y });
+        let candidateConnections = (getConnections pipes candidate);
 
-  if (> current.x 0) {
-    let candidate = Vec2 { x: (- current.x 1), y: current.y };
-    let candidateConnections = (getConnections pipes candidate);
+        if (&& currentConnections.west candidateConnections.east) {
+          let nextSteps = (searchPipes pipes visited candidate (+ steps 1));
 
-    if (&& currentConnections.west candidateConnections.east) {
-      let nextSteps = (searchPipes pipes visited candidate (+ steps 1));
+          maxSteps = (max maxSteps nextSteps);
+        }
+      }
 
-      maxSteps = (max maxSteps nextSteps);
-    }
-  }
-
-  return maxSteps;
+      return maxSteps;
+    };
+  };
 }
 
 let solvePart1 = (input: String): String -> {
@@ -268,7 +269,7 @@ data Lake = {
 let buildLake = (pipes: Pipes, visited: List<Vec2<i32> >): Lake -> {
   let walls = [];
   let pipesSize = pipes.size;
-  let lakeSize = Vec2 { x: (* pipesSize.x 3), y: (* pipesSize.y 3) };
+  let lakeSize = (Vec2 { x: (* pipesSize.x 3), y: (* pipesSize.y 3) });
   let y = 0;
 
   while (< y lakeSize.y) {
@@ -301,7 +302,7 @@ let buildLake = (pipes: Pipes, visited: List<Vec2<i32> >): Lake -> {
     }
   }
 
-  return Lake { walls: walls, size: lakeSize };
+  return (Lake { walls: walls, size: lakeSize });
 }
 
 let printLake = (lake: Lake): unit -> {
@@ -339,7 +340,7 @@ let printLake = (lake: Lake): unit -> {
 let floodLake = (lake: Lake, initial: Vec2<i32>): i32 -> {
   let size = lake.size;
   let candidates = [initial];
-  let defaultCandidate = Vec2<i32> { x: 0, y: 0 };
+  let defaultCandidate = (Vec2<i32> { x: 0, y: 0 });
 
   while (> (listSize candidates) 0) {
     let current = (optionValue defaultCandidate (listPop candidates));
@@ -350,25 +351,25 @@ let floodLake = (lake: Lake, initial: Vec2<i32>): i32 -> {
       (listSet currentRow current.x 2);
 
       if (> current.y 0) {
-        let candidate = Vec2 { x: current.x, y: (- current.y 1) };
+        let candidate = (Vec2 { x: current.x, y: (- current.y 1) });
 
         (listPush candidates candidate);
       }
 
       if (< current.x (- size.x 1)) {
-        let candidate = Vec2 { x: (+ current.x 1), y: current.y };
+        let candidate = (Vec2 { x: (+ current.x 1), y: current.y });
 
         (listPush candidates candidate);
       }
 
       if (< current.y (- size.y 1)) {
-        let candidate = Vec2 { x: current.x, y: (+ current.y 1) };
+        let candidate = (Vec2 { x: current.x, y: (+ current.y 1) });
 
         (listPush candidates candidate);
       }
 
       if (> current.x 0) {
-        let candidate = Vec2 { x: (- current.x 1), y: current.y };
+        let candidate = (Vec2 { x: (- current.x 1), y: current.y });
 
         (listPush candidates candidate);
       }
@@ -384,7 +385,7 @@ let solvePart2 = (input: String): String -> {
   let visited = [];
   let steps = (searchPipes pipes visited pipes.start 0);
   let lake = (buildLake pipes visited);
-  let count = (floodLake lake Vec2 { x: 0, y: 0 });
+  let count = (floodLake lake (Vec2 { x: 0, y: 0 }));
   let result = 0;
   let y = 0;
 
