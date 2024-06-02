@@ -1,4 +1,34 @@
-import "@range.mice";
+import { arrayCreate, arrayGet, arraySet } from "@array";
+import { assertEqualString } from "@assert";
+import { fileRead, print } from "@io";
+import {
+  _type_List,
+  listFromString,
+  listGet,
+  listPush,
+  listPushList,
+  listSet,
+  listSize,
+  listSlice,
+} from "@list";
+import { Vec2, _type_Vec2, max, min, vec2Add, vec2IsAdjacent } from "@math";
+import { _type_Range, rangeCreate, rangeEmpty, rangeIntersect, rangeShift } from "@range";
+import {
+  charIsNumeric,
+  stringConcat,
+  stringContainsAt,
+  stringEquals,
+  stringFromNumber,
+  stringGet,
+  stringSize,
+  stringSlice,
+  stringSplitBy,
+  stringToLines,
+  stringToNumber,
+  stringToNumberU64,
+  stringTrim,
+} from "@string";
+import { _type_String } from "@string-base";
 
 data AlmanacMapping = {
   destinationStart: u64,
@@ -40,31 +70,28 @@ let parseSeeds = (input: String): List<u64> -> {
 
 let parseInput = (input: String): Almanac -> {
   let lines = (stringToLines input);
-  let almanac = Almanac {
-    seeds: (parseSeeds (listGet lines 0)),
-    categories: [],
-  };
+  let almanac = (Almanac { seeds: (parseSeeds (listGet lines 0)), categories: [] });
   let mappingLines = (listSlice lines 2 (listSize lines));
-  let category = AlmanacCategory { mappings: [] };
+  let category = (AlmanacCategory { mappings: [] });
 
   for mappingLine in mappingLines {
     if (== (stringSize mappingLine) 0) {
       (listPush almanac.categories category);
 
-      category = AlmanacCategory { mappings: [] };
+      category = (AlmanacCategory { mappings: [] });
     } else {
       if (!= (stringGet mappingLine (- (stringSize mappingLine) 1)) ':') {
         let values = (parseNumberList mappingLine);
         let destinationStart = (listGet values 0);
         let sourceStart = (listGet values 1);
         let rangeLength = (listGet values 2);
-        let mapping = AlmanacMapping {
+        let mapping = (AlmanacMapping {
           destinationStart: destinationStart,
           sourceStart: sourceStart,
           rangeLength: rangeLength,
           sourceRange: (rangeCreate sourceStart (+ sourceStart rangeLength)),
           offset: (- destinationStart sourceStart),
-        };
+        });
 
         (listPush category.mappings mapping);
       }
@@ -102,13 +129,13 @@ let sortAlmanacMappings = (almanac: Almanac): Almanac -> {
 
 let mapPositionToLocation = (almanac: Almanac, position: u64): u64 -> {
   let value = position;
+  let loop = true;
 
   for category in almanac.categories {
     for mapping in category.mappings {
-      if (&& (>= value mapping.sourceStart) (< value (+ mapping.sourceStart mapping.rangeLength))) {
+      if (&& loop (&& (>= value mapping.sourceStart) (< value (+ mapping.sourceStart mapping.rangeLength)))) {
         value = (+ value mapping.offset);
-
-        break;
+        loop = false;
       }
     }
   }
