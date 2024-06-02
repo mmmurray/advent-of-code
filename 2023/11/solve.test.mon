@@ -1,3 +1,52 @@
+import { arrayCreate, arrayGet, arraySet } from "@array";
+import { assertEqualString } from "@assert";
+import { fileRead, print } from "@io";
+import {
+  _type_List,
+  listFromString,
+  listGet,
+  listPop,
+  listPush,
+  listPushList,
+  listSet,
+  listSize,
+  listSlice,
+} from "@list";
+import { _type_Map, mapCreate, mapEntries, mapGet, mapSet, mapSize } from "@map";
+import {
+  Vec2,
+  _type_Vec2,
+  lcmMany,
+  max,
+  min,
+  vec2Add,
+  vec2Equals,
+  vec2IsAdjacent,
+  vec2ManhattanDistance,
+} from "@math";
+import { optionValue } from "@option";
+import { _type_Range, rangeCreate, rangeEmpty, rangeIntersect, rangeShift } from "@range";
+import {
+  charIsNumeric,
+  charToString,
+  stringBuilderAppend,
+  stringBuilderBuild,
+  stringBuilderCreate,
+  stringConcat,
+  stringContainsAt,
+  stringEquals,
+  stringFromNumber,
+  stringGet,
+  stringSize,
+  stringSlice,
+  stringSplitBy,
+  stringToLines,
+  stringToNumber,
+  stringToNumberU64,
+  stringTrim,
+} from "@string";
+import { _type_String } from "@string-base";
+
 data Universe = {
   size: Vec2<i64>,
   galaxies: List<Vec2<i64> >,
@@ -6,19 +55,19 @@ data Universe = {
 let parseInput = (input: String): Universe -> {
   let lines = (stringToLines (stringTrim input));
   let galaxies = [];
-  let size = Vec2 { x: (@i64 (stringSize (listGet lines 0))), y: (@i64 (listSize lines)) };
+  let size = (Vec2 { x: (@i64 (stringSize (listGet lines 0))), y: (@i64 (listSize lines)) });
 
   for line, y in lines {
     for char, x in (listFromString line) {
       if (== char '#') {
-        let galaxy = Vec2 { x: (@i64 x), y: (@i64 y) };
+        let galaxy = (Vec2 { x: (@i64 x), y: (@i64 y) });
 
         (listPush galaxies galaxy);
       }
     }
   }
 
-  return Universe { size: size, galaxies: galaxies };
+  return (Universe { size: size, galaxies: galaxies });
 }
 
 let expandUniverse = (universe: Universe, expansionRate: i64): Universe -> {
@@ -61,14 +110,14 @@ let expandUniverse = (universe: Universe, expansionRate: i64): Universe -> {
     x = (+ x 1);
   }
 
-  let newSize = Vec2 {
+  let newSize = (Vec2 {
     x: (+ size.x (- (* (@i64 (listSize emptyCols)) expansionRate) 1)),
     y: (+ size.y (- (* (@i64 (listSize emptyRows)) expansionRate) 1)),
-  };
+  });
   let newGalaxies = [];
 
   for galaxy in universe.galaxies {
-    let redShift = Vec2 { x: 0, y: 0 };
+    let redShift = (Vec2 { x: 0, y: 0 });
 
     for emptyCol in emptyCols {
       if (< emptyCol galaxy.x) {
@@ -87,7 +136,7 @@ let expandUniverse = (universe: Universe, expansionRate: i64): Universe -> {
     (listPush newGalaxies newGalaxy);
   }
 
-  return Universe { size: newSize, galaxies: newGalaxies };
+  return (Universe { size: newSize, galaxies: newGalaxies });
 }
 
 let sumOfDistancesBetweenGalaxies = (universe: Universe): i64 -> {
