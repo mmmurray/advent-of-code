@@ -1,3 +1,55 @@
+import { _type_Array, arrayCreate, arrayGet, arraySet } from "@array";
+import { assertEqual, assertEqualString } from "@assert";
+import { fileRead, print } from "@io";
+import {
+  _type_List,
+  listClone,
+  listFromArray,
+  listFromString,
+  listGet,
+  listPop,
+  listPush,
+  listPushList,
+  listRemove,
+  listSet,
+  listSize,
+  listSlice,
+} from "@list";
+import { _type_Map, mapCreate, mapEntries, mapGet, mapSet, mapSize } from "@map";
+import {
+  Vec2,
+  _type_Vec2,
+  lcmMany,
+  max,
+  min,
+  vec2Add,
+  vec2Equals,
+  vec2IsAdjacent,
+  vec2ManhattanDistance,
+} from "@math";
+import { optionValue } from "@option";
+import { _type_Range, rangeCreate, rangeEmpty, rangeIntersect, rangeShift } from "@range";
+import {
+  charIsNumeric,
+  charToString,
+  stringBuilderAppend,
+  stringBuilderBuild,
+  stringBuilderCreate,
+  stringConcat,
+  stringContainsAt,
+  stringEquals,
+  stringFromNumber,
+  stringGet,
+  stringSize,
+  stringSlice,
+  stringSplitBy,
+  stringToLines,
+  stringToNumber,
+  stringToNumberU64,
+  stringTrim,
+} from "@string";
+import { _type_String } from "@string-base";
+
 data Operation =
   | Insert {
       label: String,
@@ -15,17 +67,20 @@ data Step = {
 let parseOperation = (input: String): Operation -> {
   let lastChar = (stringGet input (- (stringSize input) 1));
 
-  if (== lastChar '-') {
-    let label = (stringSlice input 0 (- (stringSize input) 1));
+  return case {
+    (== lastChar '-') -> {
+      let label = (stringSlice input 0 (- (stringSize input) 1));
 
-    return Remove { label: label };
-  }
+      return (Remove { label: label });
+    };
+    true -> {
+      let parts = (stringSplitBy input '=');
 
-  let parts = (stringSplitBy input '=');
-
-  return Insert {
-    label: (listGet parts 0),
-    focalLength: (stringToNumber (listGet parts 1)),
+      return (Insert {
+        label: (listGet parts 0),
+        focalLength: (stringToNumber (listGet parts 1)),
+      });
+    };
   };
 }
 
@@ -34,7 +89,7 @@ let parseInput = (input: String): List<Step> -> {
   let steps = [];
 
   for part in parts {
-    let step = Step { raw: part, operation: (parseOperation part) };
+    let step = (Step { raw: part, operation: (parseOperation part) });
 
     (listPush steps step);
   }
@@ -102,7 +157,7 @@ let solvePart2 = (input: String): String -> {
   let boxes = (arrayCreate 256);
 
   for x, i in (listFromArray boxes) {
-    let box = Box { lenses: [] };
+    let box = (Box { lenses: [] });
 
     (arraySet boxes i box);
   }
@@ -127,7 +182,7 @@ let solvePart2 = (input: String): String -> {
         }
 
         if (!replaced) {
-          let lens = Lens { label: label, focalLength: focalLength };
+          let lens = (Lens { label: label, focalLength: focalLength });
 
           (listPush box.lenses lens);
         }
