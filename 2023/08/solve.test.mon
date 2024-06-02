@@ -1,3 +1,40 @@
+import { arrayCreate, arrayGet, arraySet } from "@array";
+import { assertEqualString } from "@assert";
+import { fileRead, print } from "@io";
+import {
+  _type_List,
+  listFromString,
+  listGet,
+  listPush,
+  listPushList,
+  listSet,
+  listSize,
+  listSlice,
+} from "@list";
+import { _type_Map, mapCreate, mapEntries, mapGet, mapSet, mapSize } from "@map";
+import { Vec2, _type_Vec2, lcmMany, max, min, vec2Add, vec2IsAdjacent } from "@math";
+import { optionValue } from "@option";
+import { _type_Range, rangeCreate, rangeEmpty, rangeIntersect, rangeShift } from "@range";
+import {
+  charIsNumeric,
+  stringBuilderAppend,
+  stringBuilderBuild,
+  stringBuilderCreate,
+  stringConcat,
+  stringContainsAt,
+  stringEquals,
+  stringFromNumber,
+  stringGet,
+  stringSize,
+  stringSlice,
+  stringSplitBy,
+  stringToLines,
+  stringToNumber,
+  stringToNumberU64,
+  stringTrim,
+} from "@string";
+import { _type_String } from "@string-base";
+
 data Node = {
   left: String,
   right: String,
@@ -30,20 +67,21 @@ let parseInput = (input: String): Network -> {
     let name = (stringSlice nodeLine 0 3);
     let left = (stringSlice nodeLine 7 10);
     let right = (stringSlice nodeLine 12 15);
-    let node = Node { left: left, right: right };
+    let node = (Node { left: left, right: right });
 
     (mapSet nodes name node);
   }
 
-  return Network { instructions: instructions, nodes: nodes };
+  return (Network { instructions: instructions, nodes: nodes });
 }
 
 let countSteps = (network: Network, start: String): u64 -> {
   let instructionIndex = 0;
   let current = start;
   let steps = 0;
+  let loop = true;
 
-  while true {
+  while loop {
     let instruction = (listGet network.instructions instructionIndex);
     let node = (mapGet network.nodes current);
     let m = match node {
@@ -54,14 +92,14 @@ let countSteps = (network: Network, start: String): u64 -> {
           current = value.right;
         }
       };
-      None -> (panic "Node not found");
+      None -> (print "Node not found");
     };
 
     instructionIndex = (% (+ instructionIndex 1) (listSize network.instructions));
     steps = (+ steps 1);
 
     if (== (stringGet current 2) 'Z') {
-      break;
+      loop = false;
     }
   }
 
