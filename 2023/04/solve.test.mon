@@ -1,3 +1,24 @@
+import { arrayCreate, arrayGet, arraySet } from "@array";
+import { assertEqualString } from "@assert";
+import { fileRead, print } from "@io";
+import { _type_List, listFromString, listGet, listPush, listSet, listSize } from "@list";
+import { Vec2, _type_Vec2, max, vec2Add, vec2IsAdjacent } from "@math";
+import {
+  charIsNumeric,
+  stringConcat,
+  stringContainsAt,
+  stringEquals,
+  stringFromNumber,
+  stringGet,
+  stringSize,
+  stringSlice,
+  stringSplitBy,
+  stringToLines,
+  stringToNumber,
+  stringTrim,
+} from "@string";
+import { _type_String } from "@string-base";
+
 data Game = {
   winning: List<i32>,
   numbers: List<i32>,
@@ -26,10 +47,10 @@ let parseInput = (input: String): List<Game> -> {
     let lineParts = (stringSplitBy line ':');
     let sectionParts = (stringSplitBy (listGet lineParts 1) '|');
 
-    (listPush games Game {
+    (listPush games (Game {
       winning: (parseNumberList (listGet sectionParts 0)),
       numbers: (parseNumberList (listGet sectionParts 1)),
-    });
+    }));
   }
 
   return games;
