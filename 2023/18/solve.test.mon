@@ -1,24 +1,90 @@
+import { _type_Array, arrayCreate, arrayGet, arraySet } from "@array";
+import { assertEqual, assertEqualString } from "@assert";
+import { fileRead, print } from "@io";
+import {
+  _type_List,
+  listClone,
+  listFromArray,
+  listFromString,
+  listGet,
+  listPop,
+  listPush,
+  listPushList,
+  listRemove,
+  listSet,
+  listShift,
+  listSize,
+  listSlice,
+} from "@list";
+import { _type_Map, mapCreate, mapEntries, mapGet, mapSet, mapSize } from "@map";
+import {
+  Mat2,
+  Vec2,
+  _type_Mat2,
+  _type_Vec2,
+  lcmMany,
+  mat2Determinant,
+  max,
+  min,
+  vec2Add,
+  vec2Equals,
+  vec2IsAdjacent,
+  vec2ManhattanDistance,
+  vec2Scale,
+} from "@math";
+import { None, Some, _type_Option, optionValue } from "@option";
+import { _type_Range, rangeCreate, rangeEmpty, rangeIntersect, rangeShift } from "@range";
+import {
+  charIsNumeric,
+  charToString,
+  stringBuilderAppend,
+  stringBuilderBuild,
+  stringBuilderCreate,
+  stringConcat,
+  stringContainsAt,
+  stringEquals,
+  stringFromNumber,
+  stringGet,
+  stringSize,
+  stringSlice,
+  stringSplitBy,
+  stringToLines,
+  stringToNumber,
+  stringToNumberI64,
+  stringToNumberU64,
+  stringToUpper,
+  stringTrim,
+} from "@string";
+import { _type_String } from "@string-base";
+
 data Direction =
   | North {}
   | East {}
   | South {}
   | West {}
 
-let directionNorth: Direction = North {};
-let directionEast: Direction = East {};
-let directionSouth: Direction = South {};
-let directionWest: Direction = West {};
-let vec2North: Vec2<i64> = Vec2 { x: 0, y: -1 };
-let vec2East: Vec2<i64> = Vec2 { x: 1, y: 0 };
-let vec2South: Vec2<i64> = Vec2 { x: 0, y: 1 };
-let vec2West: Vec2<i64> = Vec2 { x: -1, y: 0 };
+let directionNorth = (): Direction -> (North {})
+
+let directionEast = (): Direction -> (East {})
+
+let directionSouth = (): Direction -> (South {})
+
+let directionWest = (): Direction -> (West {})
+
+let vec2North = (): Vec2<i64> -> (Vec2 { x: 0, y: -1 })
+
+let vec2East = (): Vec2<i64> -> (Vec2 { x: 1, y: 0 })
+
+let vec2South = (): Vec2<i64> -> (Vec2 { x: 0, y: 1 })
+
+let vec2West = (): Vec2<i64> -> (Vec2 { x: -1, y: 0 })
 
 let directionToVec2 = (direction: Direction): Vec2<i64> -> {
   return match direction {
-    North -> vec2North;
-    East -> vec2East;
-    South -> vec2South;
-    West -> vec2West;
+    North -> (vec2North);
+    East -> (vec2East);
+    South -> (vec2South);
+    West -> (vec2West);
   };
 }
 
@@ -31,23 +97,13 @@ data DigPlanStep = {
 let parseDirection = (input: String): Direction -> {
   let char = (stringGet input 0);
 
-  if (== char 'U') {
-    return directionNorth;
-  }
-
-  if (== char 'R') {
-    return directionEast;
-  }
-
-  if (== char 'D') {
-    return directionSouth;
-  }
-
-  if (== char 'L') {
-    return directionWest;
-  }
-
-  return directionNorth;
+  return case {
+    (== char 'U') -> (directionNorth);
+    (== char 'R') -> (directionEast);
+    (== char 'D') -> (directionSouth);
+    (== char 'L') -> (directionWest);
+    true -> (directionNorth);
+  };
 }
 
 let parseInput = (input: String): List<DigPlanStep> -> {
@@ -59,7 +115,7 @@ let parseInput = (input: String): List<DigPlanStep> -> {
     let direction = (parseDirection (listGet parts 0));
     let distance = (stringToNumberI64 (listGet parts 1));
     let color = (listGet parts 2);
-    let step = DigPlanStep { direction: direction, distance: distance, color: color };
+    let step = (DigPlanStep { direction: direction, distance: distance, color: color });
 
     (listPush steps step);
   }
@@ -95,7 +151,7 @@ let calculateAreaFromSteps = (steps: List<Step>): i64 -> {
 
   let shoelaceArea = 0;
   let borderPoints = 0;
-  let initialPosition = Vec2 { x: 0, y: 0 };
+  let initialPosition = (Vec2 { x: 0, y: 0 });
   let position = initialPosition;
 
   for step in steps {
@@ -104,16 +160,11 @@ let calculateAreaFromSteps = (steps: List<Step>): i64 -> {
     let delta = (vec2Scale step.distance (directionToVec2 step.direction));
     let nextPosition = (vec2Add position delta);
 
-    shoelaceArea = (+ shoelaceArea (mat2Determinant Mat2 { a: position.x, b: nextPosition.x, c: position.y, d: nextPosition.y }));
+    shoelaceArea = (+ shoelaceArea (mat2Determinant (Mat2 { a: position.x, b: nextPosition.x, c: position.y, d: nextPosition.y })));
     position = nextPosition;
   }
 
-  shoelaceArea = (+ shoelaceArea (mat2Determinant Mat2 {
-    a: position.x,
-    b: initialPosition.x,
-    c: position.y,
-    d: initialPosition.y,
-  }));
+  shoelaceArea = (+ shoelaceArea (mat2Determinant (Mat2 { a: position.x, b: initialPosition.x, c: position.y, d: initialPosition.y })));
 
   let area = (/ shoelaceArea 2);
 
@@ -125,7 +176,7 @@ let solvePart1 = (input: String): String -> {
   let steps = [];
 
   for planStep in planSteps {
-    (listPush steps Step { direction: planStep.direction, distance: planStep.distance });
+    (listPush steps (Step { direction: planStep.direction, distance: planStep.distance }));
   }
 
   let result = (calculateAreaFromSteps steps);
@@ -136,17 +187,14 @@ let solvePart1 = (input: String): String -> {
 let solvePart2 = (input: String): String -> {
   let planSteps = (parseInput input);
   let steps = [];
-  let orderedDirections = [directionEast, directionSouth, directionWest, directionNorth];
+  let orderedDirections = [(directionEast), (directionSouth), (directionWest), (directionNorth)];
 
   for planStep in planSteps {
     let distanceHex = (stringSlice planStep.color 2 7);
     let distance = (stringToNumberI64 (stringConcat "0x" (stringToUpper distanceHex)));
     let directionNum = (- (stringGet planStep.color 7) '0');
 
-    (listPush steps Step {
-      direction: (listGet orderedDirections directionNum),
-      distance: distance,
-    });
+    (listPush steps (Step { direction: (listGet orderedDirections directionNum), distance: distance }));
   }
 
   let result = (calculateAreaFromSteps steps);
