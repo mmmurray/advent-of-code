@@ -1,7 +1,92 @@
+import { arrayCreate, arrayGet, arraySet } from "@array";
+import { assertEqualString } from "@assert";
+import { fileRead, print } from "@io";
+import {
+  _type_List,
+  listFromString,
+  listGet,
+  listPush,
+  listPushList,
+  listSet,
+  listSize,
+  listSlice,
+} from "@list";
+import { _type_Map, mapCreate, mapEntries, mapGet, mapSet, mapSize } from "@map";
+import { Vec2, _type_Vec2, max, min, vec2Add, vec2IsAdjacent } from "@math";
+import { optionValue } from "@option";
+import { _type_Range, rangeCreate, rangeEmpty, rangeIntersect, rangeShift } from "@range";
+import {
+  charIsNumeric,
+  stringBuilderAppend,
+  stringBuilderBuild,
+  stringBuilderCreate,
+  stringConcat,
+  stringContainsAt,
+  stringEquals,
+  stringFromNumber,
+  stringGet,
+  stringSize,
+  stringSlice,
+  stringSplitBy,
+  stringToLines,
+  stringToNumber,
+  stringToNumberU64,
+  stringTrim,
+} from "@string";
+import { _type_String } from "@string-base";
+
 data Hand = {
   cards: List<i32>,
   bid: i32,
   score: i32,
+}
+
+let isFiveOfAKind = (countByCard: Map<i32>): boolean -> {
+  let result = false;
+
+  for item1 in (mapEntries countByCard) {
+    if (== item1.value 5) {
+      result = true;
+    }
+  }
+
+  return result;
+}
+
+let isFourOfAKind = (countByCard: Map<i32>): boolean -> {
+  let result = false;
+
+  for item1 in (mapEntries countByCard) {
+    if (== item1.value 4) {
+      result = true;
+    }
+  }
+
+  return result;
+}
+
+let isThreeOfAKind = (countByCard: Map<i32>): boolean -> {
+  let result = false;
+
+  for item1 in (mapEntries countByCard) {
+    if (== item1.value 3) {
+      result = true;
+    }
+  }
+
+  return result;
+}
+
+let isFullHouse = (countByCard: Map<i32>): boolean -> {
+  return (== (mapSize countByCard) 2);
+}
+
+let isTwoPair = (countByCard: Map<i32>): boolean -> {
+  return (== (mapSize countByCard) 3);
+}
+
+let isOnePair = (countByCard: Map<i32>): boolean -> {
+  return (== (mapSize countByCard) 4);
 }
 
 let scoreCards = (cards: List<i32>): i32 -> {
@@ -31,45 +116,18 @@ let scoreCards = (cards: List<i32>): i32 -> {
 
   (mapSet countByCard maxCard (+ maxCount jokers));
 
-  for item1 in (mapEntries countByCard) {
-    if (== item1.value 5) {
-      # Five of a kind
+  let found = false;
+  let result = 0;
 
-      return 7;
-    }
-
-    if (== item1.value 4) {
-      # Four of a kind
-
-      return 6;
-    }
-  }
-
-  if (== (mapSize countByCard) 2) {
-    # Full house
-
-    return 5;
-  }
-
-  for item2 in (mapEntries countByCard) {
-    if (== item2.value 3) {
-      # Three of a kind
-
-      return 4;
-    }
-  }
-
-  if (== (mapSize countByCard) 3) {
-    # Two pair
-
-    return 3;
-  }
-
-  if (== (mapSize countByCard) 4) {
-    # One pair
-
-    return 2;
-  }
+  return case {
+    (isFiveOfAKind countByCard) -> 7;
+    (isFourOfAKind countByCard) -> 6;
+    (isFullHouse countByCard) -> 5;
+    (isThreeOfAKind countByCard) -> 4;
+    (isTwoPair countByCard) -> 3;
+    (isOnePair countByCard) -> 2;
+    true -> 1;
+  };
 
   return 1;
 }
@@ -118,11 +176,7 @@ let parseInput = (input: String, jokers: boolean): List<Hand> -> {
       (listPush cards card);
     }
 
-    let hand = Hand {
-      cards: cards,
-      bid: (stringToNumber bidPart),
-      score: (scoreCards cards),
-    };
+    let hand = (Hand { cards: cards, bid: (stringToNumber bidPart), score: (scoreCards cards) });
 
     (listPush hands hand);
   }
@@ -131,19 +185,26 @@ let parseInput = (input: String, jokers: boolean): List<Hand> -> {
 }
 
 let compareHands = (a: Hand, b: Hand): boolean -> {
-  if (== a.score b.score) {
-    for cardA, cardIndex in a.cards {
-      let cardB = (listGet b.cards cardIndex);
+  return case {
+    (== a.score b.score) -> {
+      let result = false;
+      let loop = true;
 
-      if (!= cardA cardB) {
-        return (> cardA cardB);
+      for cardA, cardIndex in a.cards {
+        if loop {
+          let cardB = (listGet b.cards cardIndex);
+
+          if (!= cardA cardB) {
+            result = (> cardA cardB);
+            loop = false;
+          }
+        }
       }
-    }
 
-    return false;
-  }
-
-  return (> a.score b.score);
+      return result;
+    };
+    true -> (> a.score b.score);
+  };
 }
 
 let sortHands = (hands: List<Hand>): List<Hand> -> {
