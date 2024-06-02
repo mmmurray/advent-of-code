@@ -1,3 +1,22 @@
+import { assertEqualString } from "@assert";
+import { fileRead, print } from "@io";
+import { _type_List, listFromString, listGet, listPush } from "@list";
+import { max } from "@math";
+import {
+  charIsNumeric,
+  stringConcat,
+  stringContainsAt,
+  stringEquals,
+  stringFromNumber,
+  stringSize,
+  stringSlice,
+  stringSplitBy,
+  stringToLines,
+  stringToNumber,
+  stringTrim,
+} from "@string";
+import { _type_String } from "@string-base";
+
 data Selection = {
   red: i32,
   blue: i32,
@@ -11,7 +30,7 @@ data Game = {
 
 let parseSelection = (input: String): Selection -> {
   let valueParts = (stringSplitBy input ',');
-  let selection = Selection { red: 0, blue: 0, green: 0 };
+  let selection = (Selection { red: 0, blue: 0, green: 0 });
 
   for valuePart in valueParts {
     let pairParts = (stringSplitBy (stringTrim valuePart) ' ');
@@ -52,7 +71,7 @@ let parseInputLine = (line: String): Game -> {
     selectionIndex = (+ selectionIndex 1);
   }
 
-  return Game { id: id, selections: selections };
+  return (Game { id: id, selections: selections });
 }
 
 let parseInput = (input: String): List<Game> -> {
@@ -94,7 +113,7 @@ let solvePart2 = (input: String): String -> {
   let result = 0;
 
   for game in games {
-    let minSelection = Selection { red: 0, green: 0, blue: 0 };
+    let minSelection = (Selection { red: 0, green: 0, blue: 0 });
 
     for selection in game.selections {
       minSelection.red = (max minSelection.red selection.red);
