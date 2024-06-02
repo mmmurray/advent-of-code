@@ -1,3 +1,54 @@
+import { _type_Array, arrayCreate, arrayGet, arraySet } from "@array";
+import { assertEqual, assertEqualString } from "@assert";
+import { fileRead, print } from "@io";
+import {
+  _type_List,
+  listClone,
+  listFromArray,
+  listFromString,
+  listGet,
+  listPop,
+  listPush,
+  listPushList,
+  listSet,
+  listSize,
+  listSlice,
+} from "@list";
+import { _type_Map, mapCreate, mapEntries, mapGet, mapSet, mapSize } from "@map";
+import {
+  Vec2,
+  _type_Vec2,
+  lcmMany,
+  max,
+  min,
+  vec2Add,
+  vec2Equals,
+  vec2IsAdjacent,
+  vec2ManhattanDistance,
+} from "@math";
+import { optionValue } from "@option";
+import { _type_Range, rangeCreate, rangeEmpty, rangeIntersect, rangeShift } from "@range";
+import {
+  charIsNumeric,
+  charToString,
+  stringBuilderAppend,
+  stringBuilderBuild,
+  stringBuilderCreate,
+  stringConcat,
+  stringContainsAt,
+  stringEquals,
+  stringFromNumber,
+  stringGet,
+  stringSize,
+  stringSlice,
+  stringSplitBy,
+  stringToLines,
+  stringToNumber,
+  stringToNumberU64,
+  stringTrim,
+} from "@string";
+import { _type_String } from "@string-base";
+
 data Row = {
   conditions: List<i32>,
   damaged: List<i32>,
@@ -24,7 +75,7 @@ let parseRow = (line: String): Row -> {
     damageTotal = (+ damageTotal damage);
   }
 
-  return Row { conditions: conditions, damaged: damaged, damageTotal: damageTotal };
+  return (Row { conditions: conditions, damaged: damaged, damageTotal: damageTotal });
 }
 
 let parseInput = (input: String): List<Row> -> {
@@ -71,10 +122,10 @@ let printRows = (rows: List<Row>): unit -> {
   }
 }
 
-let cacheSpacing: i32 = 30;
+let cacheSpacing = (): i32 -> 30
 
 let createCache = (): Array<i32> -> {
-  let cache = (arrayCreate (* cacheSpacing (* cacheSpacing cacheSpacing)));
+  let cache = (arrayCreate (* (cacheSpacing) (* (cacheSpacing) (cacheSpacing))));
 
   for x, i in (listFromArray cache) {
     (arraySet cache i -1);
@@ -117,44 +168,39 @@ let finalizeConditions = (conditions: List<i32>): List<i32> -> {
   return newConditions;
 }
 
-let isValidPlacement = (conditions: List<i32>, maxDamage: i32, offset: i32, width: i32): boolean -> {
-  if (> (+ offset width) (listSize conditions)) {
-    return false;
-  }
+let conditionsContainDot = (conditions: List<i32>): boolean -> {
+  let result = false;
 
-  let conditionsSlice = (listSlice conditions offset (+ offset width));
-
-  for condition in conditionsSlice {
+  for condition in conditions {
     if (== condition '.') {
-      return false;
+      result = true;
     }
   }
 
+  return result;
+}
+
+let isValidPlacement = (conditions: List<i32>, maxDamage: i32, offset: i32, width: i32): boolean -> {
   let prevIndex = (- offset 1);
-
-  if (&& (>= prevIndex 0) (== (listGet conditions prevIndex) '#')) {
-    return false;
-  }
-
   let nextIndex = (+ offset width);
 
-  if (&& (< nextIndex (- (listSize conditions) 1)) (== (listGet conditions nextIndex) '#')) {
-    return false;
-  }
+  return case {
+    (> (+ offset width) (listSize conditions)) -> false;
+    (conditionsContainDot (listSlice conditions offset (+ offset width))) -> false;
+    (&& (>= prevIndex 0) (== (listGet conditions prevIndex) '#')) -> false;
+    (&& (< nextIndex (- (listSize conditions) 1)) (== (listGet conditions nextIndex) '#')) -> false;
+    true -> {
+      let damageTotal = 0;
 
-  let damageTotal = 0;
+      for condition2 in (placeDamage conditions offset width) {
+        if (== condition2 '#') {
+          damageTotal = (+ damageTotal 1);
+        }
+      }
 
-  for condition2 in (placeDamage conditions offset width) {
-    if (== condition2 '#') {
-      damageTotal = (+ damageTotal 1);
-    }
-  }
-
-  if (> damageTotal maxDamage) {
-    return false;
-  }
-
-  return true;
+      return (<= damageTotal maxDamage);
+    };
+  };
 }
 
 let countArrangementsRec = (cache: Array<i32>, row: Row, offset: i32, damagedIndex: i32): i32 -> {
@@ -166,45 +212,42 @@ let countArrangementsRec = (cache: Array<i32>, row: Row, offset: i32, damagedInd
     }
   }
 
-  let cacheKey = (+ damagedIndex (+ (* cacheSpacing offset) (* damageTotal (* cacheSpacing cacheSpacing))));
+  let cacheKey = (+ damagedIndex (+ (* (cacheSpacing) offset) (* damageTotal (* (cacheSpacing) (cacheSpacing)))));
   let cached = (arrayGet cache cacheKey);
 
-  if (>= cached 0) {
-    return cached;
-  }
+  return case {
+    (>= cached 0) -> cached;
+    (>= offset (listSize row.conditions)) -> 0;
+    true -> {
+      let arrangements = 0;
+      let damageWidth = (listGet row.damaged damagedIndex);
+      let valid = (isValidPlacement row.conditions row.damageTotal offset damageWidth);
 
-  let arrangements = 0;
+      if valid {
+        let nextConditions = (placeDamage row.conditions offset damageWidth);
+        let nextDamagedIndex = (+ damagedIndex 1);
+        let nextOffset = (+ offset (+ damageWidth 1));
 
-  if (>= offset (listSize row.conditions)) {
-    return arrangements;
-  }
+        if (< nextDamagedIndex (listSize row.damaged)) {
+          let newRow = (Row {
+            conditions: nextConditions,
+            damaged: row.damaged,
+            damageTotal: row.damageTotal,
+          });
 
-  let damageWidth = (listGet row.damaged damagedIndex);
-  let valid = (isValidPlacement row.conditions row.damageTotal offset damageWidth);
+          arrangements = (+ arrangements (countArrangementsRec cache newRow nextOffset nextDamagedIndex));
+        } else {
+          arrangements = (+ arrangements 1);
+        }
+      }
 
-  if valid {
-    let nextConditions = (placeDamage row.conditions offset damageWidth);
-    let nextDamagedIndex = (+ damagedIndex 1);
-    let nextOffset = (+ offset (+ damageWidth 1));
+      arrangements = (+ arrangements (countArrangementsRec cache row (+ offset 1) damagedIndex));
 
-    if (< nextDamagedIndex (listSize row.damaged)) {
-      let newRow = Row {
-        conditions: nextConditions,
-        damaged: row.damaged,
-        damageTotal: row.damageTotal,
-      };
+      (arraySet cache cacheKey arrangements);
 
-      arrangements = (+ arrangements (countArrangementsRec cache newRow nextOffset nextDamagedIndex));
-    } else {
-      arrangements = (+ arrangements 1);
-    }
-  }
-
-  arrangements = (+ arrangements (countArrangementsRec cache row (+ offset 1) damagedIndex));
-
-  (arraySet cache cacheKey arrangements);
-
-  return arrangements;
+      return arrangements;
+    };
+  };
 }
 
 let countArrangements = (row: Row): i32 -> {
@@ -212,7 +255,7 @@ let countArrangements = (row: Row): i32 -> {
 }
 
 let unfoldRow = (row: Row): Row -> {
-  return Row {
+  return (Row {
     conditions: [
       ...row.conditions,
       '?',
@@ -232,7 +275,7 @@ let unfoldRow = (row: Row): Row -> {
       ...row.damaged,
     ],
     damageTotal: (* row.damageTotal 5),
-  };
+  });
 }
 
 let unfoldRows = (rows: List<Row>): List<Row> -> {
