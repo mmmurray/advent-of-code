@@ -1,3 +1,17 @@
+import { assertEqualString } from "@assert";
+import { fileRead, print } from "@io";
+import { listFromString } from "@list";
+import {
+  charIsNumeric,
+  stringConcat,
+  stringContainsAt,
+  stringFromNumber,
+  stringToLines,
+  stringToNumber,
+  stringTrim,
+} from "@string";
+import { _type_String } from "@string-base";
+
 let getCalibrationValue1 = (line: String): i32 -> {
   let setFirstDigit = false;
   let firstDigit = 0;
