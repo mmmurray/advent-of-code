@@ -1,3 +1,66 @@
+import { _type_Array, arrayCreate, arrayGet, arraySet } from "@array";
+import { assertEqual, assertEqualString } from "@assert";
+import { fileRead, print } from "@io";
+import {
+  _type_List,
+  listClone,
+  listFromArray,
+  listFromString,
+  listGet,
+  listPop,
+  listPush,
+  listPushList,
+  listSet,
+  listSize,
+  listSlice,
+} from "@list";
+import { _type_Map, mapCreate, mapEntries, mapGet, mapSet, mapSize } from "@map";
+import {
+  Vec2,
+  _type_Vec2,
+  lcmMany,
+  max,
+  min,
+  vec2Add,
+  vec2Equals,
+  vec2IsAdjacent,
+  vec2ManhattanDistance,
+} from "@math";
+import { optionValue } from "@option";
+import { _type_Range, rangeCreate, rangeEmpty, rangeIntersect, rangeShift } from "@range";
+import {
+  charIsNumeric,
+  charToString,
+  stringBuilderAppend,
+  stringBuilderBuild,
+  stringBuilderCreate,
+  stringConcat,
+  stringContainsAt,
+  stringEquals,
+  stringFromNumber,
+  stringGet,
+  stringSize,
+  stringSlice,
+  stringSplitBy,
+  stringToLines,
+  stringToNumber,
+  stringToNumberU64,
+  stringTrim,
+} from "@string";
+import { _type_String } from "@string-base";
+
+let vec2ToString = (v: Vec2<i32>): String -> {
+  let out = (stringBuilderCreate 16);
+
+  (stringBuilderAppend out "[");
+  (stringBuilderAppend out (stringFromNumber v.x));
+  (stringBuilderAppend out ", ");
+  (stringBuilderAppend out (stringFromNumber v.y));
+  (stringBuilderAppend out "]");
+
+  return (stringBuilderBuild out);
+}
+
 data Grid = {
   size: Vec2<i32>,
   cols: List<List<i32> >,
@@ -6,10 +69,10 @@ data Grid = {
 let parseInput = (input: String): Grid -> {
   let lines = (stringToLines (stringTrim input));
   let cols = [];
-  let size = Vec2 { x: (stringSize (listGet lines 0)), y: (listSize lines) };
+  let size = (Vec2 { x: (stringSize (listGet lines 0)), y: (listSize lines) });
 
   for c, colIndex in (listFromString (listGet lines 0)) {
-    let col = (listCreate<i32> size.y);
+    let col = [];
 
     for line in lines {
       (listPush col (stringGet line colIndex));
@@ -18,7 +81,7 @@ let parseInput = (input: String): Grid -> {
     (listPush cols col);
   }
 
-  return Grid { size: size, cols: cols };
+  return (Grid { size: size, cols: cols });
 }
 
 let printGrid = (grid: Grid): unit -> {
@@ -81,7 +144,7 @@ let tiltGrid = (grid: Grid): Grid -> {
     (listPush newCols (tiltColumn col));
   }
 
-  return Grid { size: grid.size, cols: newCols };
+  return (Grid { size: grid.size, cols: newCols });
 }
 
 let calculateLoad = (grid: Grid): i32 -> {
@@ -116,7 +179,7 @@ let rotateGridClockwise = (grid: Grid): Grid -> {
     rowIndex = (- rowIndex 1);
   }
 
-  return Grid { size: size, cols: newCols };
+  return (Grid { size: size, cols: newCols });
 }
 
 let performSpinCycle = (grid: Grid): Grid -> {
@@ -133,27 +196,31 @@ let performSpinCycle = (grid: Grid): Grid -> {
 }
 
 let areColsEqual = (a: List<i32>, b: List<i32>): boolean -> {
+  let result = true;
+
   for v1, i in a {
     let v2 = (listGet b i);
 
     if (!= v1 v2) {
-      return false;
+      result = false;
     }
   }
 
-  return true;
+  return result;
 }
 
 let areGridsEqual = (a: Grid, b: Grid): boolean -> {
+  let result = true;
+
   for c1, i in a.cols {
     let c2 = (listGet b.cols i);
 
     if (!(areColsEqual c1 c2)) {
-      return false;
+      result = false;
     }
   }
 
-  return true;
+  return result;
 }
 
 let solvePart1 = (input: String): String -> {
@@ -170,8 +237,9 @@ let solvePart2 = (input: String): String -> {
   let totalCycles = 1000000000;
   let cycleOffset = -1;
   let i = 0;
+  let loop = false;
 
-  while (< i totalCycles) {
+  while (&& (< cycleOffset 0) (< i totalCycles)) {
     grid = (performSpinCycle grid);
 
     for otherGrid, otherGridIndex in grids {
@@ -180,13 +248,11 @@ let solvePart2 = (input: String): String -> {
       }
     }
 
-    if (> cycleOffset 0) {
-      break;
+    if (< cycleOffset 0) {
+      (listPush grids grid);
+
+      i = (+ i 1);
     }
-
-    (listPush grids grid);
-
-    i = (+ i 1);
   }
 
   let cycleLength = (- (listSize grids) cycleOffset);
