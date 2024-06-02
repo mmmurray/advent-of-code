@@ -1,3 +1,38 @@
+import { arrayCreate, arrayGet, arraySet } from "@array";
+import { assertEqualString } from "@assert";
+import { fileRead, print } from "@io";
+import {
+  _type_List,
+  listFromString,
+  listGet,
+  listPush,
+  listPushList,
+  listSet,
+  listSize,
+  listSlice,
+} from "@list";
+import { Vec2, _type_Vec2, max, min, vec2Add, vec2IsAdjacent } from "@math";
+import { _type_Range, rangeCreate, rangeEmpty, rangeIntersect, rangeShift } from "@range";
+import {
+  charIsNumeric,
+  stringBuilderAppend,
+  stringBuilderBuild,
+  stringBuilderCreate,
+  stringConcat,
+  stringContainsAt,
+  stringEquals,
+  stringFromNumber,
+  stringGet,
+  stringSize,
+  stringSlice,
+  stringSplitBy,
+  stringToLines,
+  stringToNumber,
+  stringToNumberU64,
+  stringTrim,
+} from "@string";
+import { _type_String } from "@string-base";
+
 data Race = {
   time: u64,
   distance: u64,
@@ -27,7 +62,7 @@ let parseInput = (input: String): List<Race> -> {
   let distances = (parseNumberList (listGet (stringSplitBy distancesLine ':') 1));
 
   for time, timeIndex in times {
-    let race = Race { time: time, distance: (listGet distances timeIndex) };
+    let race = (Race { time: time, distance: (listGet distances timeIndex) });
 
     (listPush races race);
   }
@@ -77,10 +112,10 @@ let solvePart2 = (input: String): String -> {
     (stringBuilderAppend combinedDistances (stringFromNumber race.distance));
   }
 
-  let combinedRace = Race {
+  let combinedRace = (Race {
     time: (stringToNumberU64 (stringBuilderBuild combinedTimes)),
     distance: (stringToNumberU64 (stringBuilderBuild combinedDistances)),
-  };
+  });
   let result = (solveRace combinedRace);
 
   return (stringFromNumber result);
