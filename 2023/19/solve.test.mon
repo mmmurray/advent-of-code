@@ -1,3 +1,70 @@
+import { _type_Array, arrayCreate, arrayGet, arraySet } from "@array";
+import { assertEqual, assertEqualString } from "@assert";
+import { fileRead, print } from "@io";
+import {
+  _type_List,
+  listClone,
+  listFromArray,
+  listFromString,
+  listGet,
+  listPop,
+  listPush,
+  listPushList,
+  listRemove,
+  listSet,
+  listShift,
+  listSize,
+  listSlice,
+} from "@list";
+import { _type_Map, mapCreate, mapEntries, mapGet, mapSet, mapSize } from "@map";
+import {
+  Mat2,
+  Vec2,
+  _type_Mat2,
+  _type_Vec2,
+  lcmMany,
+  mat2Determinant,
+  max,
+  min,
+  vec2Add,
+  vec2Equals,
+  vec2IsAdjacent,
+  vec2ManhattanDistance,
+  vec2Scale,
+} from "@math";
+import { None, Some, _type_Option, optionValue } from "@option";
+import { _type_Range, rangeCreate, rangeEmpty, rangeIntersect, rangeShift } from "@range";
+import {
+  charIsNumeric,
+  charToString,
+  stringBuilderAppend,
+  stringBuilderBuild,
+  stringBuilderCreate,
+  stringConcat,
+  stringContains,
+  stringContainsAt,
+  stringEquals,
+  stringFromNumber,
+  stringGet,
+  stringSize,
+  stringSlice,
+  stringSplitBy,
+  stringToLines,
+  stringToNumber,
+  stringToNumberI64,
+  stringToNumberU64,
+  stringToUpper,
+  stringTrim,
+} from "@string";
+import { _type_String } from "@string-base";
+
+let optionExpect = <T>(option: Option<T>): T -> {
+  return match option {
+    Some { value } -> value;
+    None -> (@T 0);
+  };
+}
+
 data Rating = {
   x: i32,
   m: i32,
@@ -43,28 +110,28 @@ let parseWorkflow = (input: String): Workflow -> {
       let conditionParts = (stringSplitBy stepPart ':');
       let conditionPart = (listGet conditionParts 0);
       let target = (listGet conditionParts 1);
-      let step = WorkflowStepConditional {
+      let step = (WorkflowStepConditional {
         target: target,
-        condition: Condition {
+        condition: (Condition {
           property: (stringGet conditionPart 0),
           operator: (stringGet conditionPart 1),
           value: (stringToNumber (stringSlice conditionPart 2 (stringSize conditionPart))),
-        },
-      };
+        }),
+      });
 
       (listPush steps step);
     } else {
-      let step2 = WorkflowStep { target: stepPart };
+      let step2 = (WorkflowStep { target: stepPart });
 
       (listPush steps step2);
     }
   }
 
-  return Workflow { name: name, steps: steps };
+  return (Workflow { name: name, steps: steps });
 }
 
 let parseRating = (input: String): Rating -> {
-  let rating = Rating { x: 0, m: 0, a: 0, s: 0 };
+  let rating = (Rating { x: 0, m: 0, a: 0, s: 0 });
   let inner = (stringSlice input 1 (- (stringSize input) 1));
   let ratingParts = (stringSplitBy inner ',');
 
@@ -113,7 +180,7 @@ let parseInput = (input: String): System -> {
     }
   }
 
-  return System { workflows: workflows, ratings: ratings };
+  return (System { workflows: workflows, ratings: ratings });
 }
 
 let printSystem = (system: System): unit -> {
@@ -166,75 +233,76 @@ let printSystem = (system: System): unit -> {
 }
 
 let doesConditionApply = (condition: Condition, rating: Rating): boolean -> {
-  let propertyValue = 0;
+  let propertyValue = case {
+    (== condition.property 'x') -> rating.x;
+    (== condition.property 'm') -> rating.m;
+    (== condition.property 'a') -> rating.a;
+    true -> rating.s;
+  };
 
-  if (== condition.property 'x') {
-    propertyValue = rating.x;
-  }
-
-  if (== condition.property 'm') {
-    propertyValue = rating.m;
-  }
-
-  if (== condition.property 'a') {
-    propertyValue = rating.a;
-  }
-
-  if (== condition.property 's') {
-    propertyValue = rating.s;
-  }
-
-  if (== condition.operator '>') {
-    return (> propertyValue condition.value);
-  }
-
-  return (< propertyValue condition.value);
+  return case {
+    (== condition.operator '>') -> (> propertyValue condition.value);
+    true -> (< propertyValue condition.value);
+  };
 }
 
 let isPartAccepted = (workflows: Map<Workflow>, rating: Rating): boolean -> {
   let currentWorkflow = "in";
+  let result = false;
+  let loop = true;
 
-  while true {
+  while loop {
     # (print (stringConcat "currentWorkflow: " currentWorkflow))
 
-    if (stringEquals currentWorkflow "A") {
-      return true;
-    }
+    loop = case {
+      (stringEquals currentWorkflow "A") -> {
+        result = true;
 
-    if (stringEquals currentWorkflow "R") {
-      return false;
-    }
-
-    let workflow = (optionExpect (mapGet workflows currentWorkflow));
-
-    for step in workflow.steps {
-      let accepted = false;
-      let rejected = false;
-      let continue = match step {
-        WorkflowStep { target } -> {
-          currentWorkflow = target;
-
-          return false;
-        };
-        WorkflowStepConditional { target, condition } -> {
-          let result = true;
-
-          if (doesConditionApply condition rating) {
-            currentWorkflow = target;
-            result = false;
-          }
-
-          return result;
-        };
+        return false;
       };
+      (stringEquals currentWorkflow "R") -> {
+        result = false;
 
-      if (!continue) {
-        break;
-      }
-    }
+        return false;
+      };
+      true -> {
+        let workflow = (optionExpect (mapGet workflows currentWorkflow));
+        let loop = true;
+
+        for step in workflow.steps {
+          if loop {
+            let accepted = false;
+            let rejected = false;
+            let continue = match step {
+              WorkflowStep { target } -> {
+                currentWorkflow = target;
+
+                return false;
+              };
+              WorkflowStepConditional { target, condition } -> {
+                let inner = true;
+
+                if (doesConditionApply condition rating) {
+                  currentWorkflow = target;
+                  inner = false;
+                }
+
+                return inner;
+              };
+            };
+
+            if (!continue) {
+              loop = false;
+            }
+          }
+        }
+
+        return true;
+      };
+    };
   }
 
-  return false;
+  return result;
 }
 
 let solvePart1 = (input: String): String -> {
