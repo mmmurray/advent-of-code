@@ -1,39 +1,8 @@
-import { arrayCreate, arrayGet, arraySet } from "@array";
 import { assertEqualString } from "@assert";
-import { fileRead, print } from "@io";
-import {
-  _type_List,
-  listFromString,
-  listGet,
-  listPush,
-  listPushList,
-  listSet,
-  listSize,
-  listSlice,
-} from "@list";
-import { _type_Map, mapCreate, mapEntries, mapGet, mapSet, mapSize } from "@map";
-import { Vec2, _type_Vec2, lcmMany, max, min, vec2Add, vec2IsAdjacent } from "@math";
-import { optionValue } from "@option";
-import { _type_Range, rangeCreate, rangeEmpty, rangeIntersect, rangeShift } from "@range";
-import {
-  charIsNumeric,
-  stringBuilderAppend,
-  stringBuilderBuild,
-  stringBuilderCreate,
-  stringConcat,
-  stringContainsAt,
-  stringEquals,
-  stringFromNumber,
-  stringGet,
-  stringSize,
-  stringSlice,
-  stringSplitBy,
-  stringToLines,
-  stringToNumber,
-  stringToNumberU64,
-  stringTrim,
-} from "@string";
+import { _type_List, listGet, listPush, listSize } from "@list";
+import { stringFromNumber, stringSplitBy, stringToLines, stringToNumber, stringTrim } from "@string";
 import { _type_String } from "@string-base";
+import { getValue: getInput } from "./input.txt";
 
 let parseInput = (input: String): List<List<i32> > -> {
   let lines = (stringToLines (stringTrim input));
@@ -131,16 +100,12 @@ let solvePart2 = (input: String): String -> {
 }
 
 let main = (): unit -> {
-  let input = (fileRead "input.txt");
+  let input = (getInput);
   let part1 = (solvePart1 input);
 
-  (print "Part 1:");
-  (print part1);
   (assertEqualString part1 "1877825184");
 
   let part2 = (solvePart2 input);
 
-  (print "Part 2:");
-  (print part2);
   (assertEqualString part2 "1108");
 }

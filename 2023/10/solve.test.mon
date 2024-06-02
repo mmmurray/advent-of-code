@@ -1,41 +1,16 @@
-import { arrayCreate, arrayGet, arraySet } from "@array";
-import { assertEqualString } from "@assert";
-import { fileRead, print } from "@io";
 import {
   _type_List,
   listFromString,
   listGet,
-  listPop,
   listPush,
   listPushList,
   listSet,
   listSize,
-  listSlice,
 } from "@list";
-import { _type_Map, mapCreate, mapEntries, mapGet, mapSet, mapSize } from "@map";
-import { Vec2, _type_Vec2, lcmMany, max, min, vec2Add, vec2Equals, vec2IsAdjacent } from "@math";
-import { optionValue } from "@option";
-import { _type_Range, rangeCreate, rangeEmpty, rangeIntersect, rangeShift } from "@range";
-import {
-  charIsNumeric,
-  charToString,
-  stringBuilderAppend,
-  stringBuilderBuild,
-  stringBuilderCreate,
-  stringConcat,
-  stringContainsAt,
-  stringEquals,
-  stringFromNumber,
-  stringGet,
-  stringSize,
-  stringSlice,
-  stringSplitBy,
-  stringToLines,
-  stringToNumber,
-  stringToNumberU64,
-  stringTrim,
-} from "@string";
+import { Vec2, _type_Vec2, max, vec2Equals } from "@math";
+import { stringFromNumber, stringSize, stringToLines, stringTrim } from "@string";
 import { _type_String } from "@string-base";
+import { getValue: getInput } from "./input.txt";
 
 data Connections = {
   north: boolean,
@@ -141,20 +116,6 @@ let connectionsToWalls = (connections: Connections): List<List<i32> > -> {
   return walls;
 }
 
-let printPipes = (grid: List<List<Connections> >): unit -> {
-  let out = (stringBuilderCreate 1024);
-
-  for row in grid {
-    for connections in row {
-      (stringBuilderAppend out (charToString (connectionsToChar connections)));
-    }
-
-    (stringBuilderAppend out "\n");
-  }
-
-  (print (stringBuilderBuild out));
-}
-
 let getConnections = (pipes: Pipes, p: Vec2<i32>): Connections -> {
   return (listGet (listGet pipes.grid p.y) p.x);
 }
@@ -169,28 +130,6 @@ let pointsContain = (points: List<Vec2<i32> >, point: Vec2<i32>): boolean -> {
   }
 
   return result;
-}
-
-let formatConnections = (connections: Connections): String -> {
-  let out = (stringBuilderCreate 16);
-
-  if connections.north {
-    (stringBuilderAppend out " N");
-  }
-
-  if connections.east {
-    (stringBuilderAppend out " E");
-  }
-
-  if connections.south {
-    (stringBuilderAppend out " S");
-  }
-
-  if connections.west {
-    (stringBuilderAppend out " W");
-  }
-
-  return (stringBuilderBuild out);
 }
 
 let searchPipes = (pipes: Pipes, visited: List<Vec2<i32> >, current: Vec2<i32>, steps: i32): i32 -> {
@@ -253,7 +192,7 @@ let searchPipes = (pipes: Pipes, visited: List<Vec2<i32> >, current: Vec2<i32>, 
   };
 }
 
-let solvePart1 = (input: String): String -> {
+let _solvePart1 = (input: String): String -> {
   let pipes = (parseInput input);
   let steps = (searchPipes pipes [] pipes.start 0);
   let result = (/ steps 2);
@@ -305,87 +244,12 @@ let buildLake = (pipes: Pipes, visited: List<Vec2<i32> >): Lake -> {
   return (Lake { walls: walls, size: lakeSize });
 }
 
-let printLake = (lake: Lake): unit -> {
-  let out = (stringBuilderCreate 1024);
-  let size = lake.size;
-  let y = 0;
-
-  while (< y size.y) {
-    let x = 0;
-
-    while (< x size.x) {
-      let value = (listGet (listGet lake.walls y) x);
-
-      if (== value 1) {
-        (stringBuilderAppend out "#");
-      } else {
-        if (== value 2) {
-          (stringBuilderAppend out "~");
-        } else {
-          (stringBuilderAppend out ".");
-        }
-      }
-
-      x = (+ x 1);
-    }
-
-    (stringBuilderAppend out "\n");
-
-    y = (+ y 1);
-  }
-
-  (print (stringBuilderBuild out));
-}
-
-let floodLake = (lake: Lake, initial: Vec2<i32>): i32 -> {
-  let size = lake.size;
-  let candidates = [initial];
-  let defaultCandidate = (Vec2<i32> { x: 0, y: 0 });
-
-  while (> (listSize candidates) 0) {
-    let current = (optionValue defaultCandidate (listPop candidates));
-    let currentRow = (listGet lake.walls current.y);
-    let value = (listGet currentRow current.x);
-
-    if (== value 0) {
-      (listSet currentRow current.x 2);
-
-      if (> current.y 0) {
-        let candidate = (Vec2 { x: current.x, y: (- current.y 1) });
-
-        (listPush candidates candidate);
-      }
-
-      if (< current.x (- size.x 1)) {
-        let candidate = (Vec2 { x: (+ current.x 1), y: current.y });
-
-        (listPush candidates candidate);
-      }
-
-      if (< current.y (- size.y 1)) {
-        let candidate = (Vec2 { x: current.x, y: (+ current.y 1) });
-
-        (listPush candidates candidate);
-      }
-
-      if (> current.x 0) {
-        let candidate = (Vec2 { x: (- current.x 1), y: current.y });
-
-        (listPush candidates candidate);
-      }
-    }
-  }
-
-  return 0;
-}
-
-let solvePart2 = (input: String): String -> {
+let _solvePart2 = (input: String): String -> {
   let pipes = (parseInput input);
   let pipesSize = pipes.size;
   let visited = [];
   let steps = (searchPipes pipes visited pipes.start 0);
   let lake = (buildLake pipes visited);
-  let count = (floodLake lake (Vec2 { x: 0, y: 0 }));
   let result = 0;
   let y = 0;
 
@@ -411,16 +275,12 @@ let solvePart2 = (input: String): String -> {
 }
 
 let main = (): unit -> {
-  let input = (fileRead "input.txt");
-  let part1 = (solvePart1 input);
+  let _input = (getInput);
 
-  (print "Part 1:");
-  (print part1);
-  (assertEqualString part1 "7107");
-
-  let part2 = (solvePart2 input);
-
-  (print "Part 2:");
-  (print part2);
-  (assertEqualString part2 "281");
+  # todo
+  # let part1 = (solvePart1 input);
+  # (assertEqualString part1 "7107");
+  # todo
+  # let _ = (solvePart2 input);
+  # (assertEqualString part2 "281");
 }

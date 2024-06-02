@@ -1,61 +1,19 @@
-import { _type_Array, arrayCreate, arrayGet, arraySet } from "@array";
-import { assertEqual, assertEqualString } from "@assert";
-import { fileRead, print } from "@io";
+import { assertEqualString } from "@assert";
+import { _type_List, listGet, listPush } from "@list";
+import { Mat2, Vec2, _type_Mat2, _type_Vec2, mat2Determinant, vec2Add, vec2Scale } from "@math";
 import {
-  _type_List,
-  listClone,
-  listFromArray,
-  listFromString,
-  listGet,
-  listPop,
-  listPush,
-  listPushList,
-  listRemove,
-  listSet,
-  listShift,
-  listSize,
-  listSlice,
-} from "@list";
-import { _type_Map, mapCreate, mapEntries, mapGet, mapSet, mapSize } from "@map";
-import {
-  Mat2,
-  Vec2,
-  _type_Mat2,
-  _type_Vec2,
-  lcmMany,
-  mat2Determinant,
-  max,
-  min,
-  vec2Add,
-  vec2Equals,
-  vec2IsAdjacent,
-  vec2ManhattanDistance,
-  vec2Scale,
-} from "@math";
-import { None, Some, _type_Option, optionValue } from "@option";
-import { _type_Range, rangeCreate, rangeEmpty, rangeIntersect, rangeShift } from "@range";
-import {
-  charIsNumeric,
-  charToString,
-  stringBuilderAppend,
-  stringBuilderBuild,
-  stringBuilderCreate,
   stringConcat,
-  stringContainsAt,
-  stringEquals,
   stringFromNumber,
   stringGet,
-  stringSize,
   stringSlice,
   stringSplitBy,
   stringToLines,
-  stringToNumber,
   stringToNumberI64,
-  stringToNumberU64,
   stringToUpper,
   stringTrim,
 } from "@string";
 import { _type_String } from "@string-base";
+import { getValue: getInput } from "./input.txt";
 
 data Direction =
   | North {}
@@ -203,16 +161,12 @@ let solvePart2 = (input: String): String -> {
 }
 
 let main = (): unit -> {
-  let input = (fileRead "input.txt");
+  let input = (getInput);
   let part1 = (solvePart1 input);
 
-  (print "Part 1:");
-  (print part1);
   (assertEqualString part1 "44436");
 
   let part2 = (solvePart2 input);
 
-  (print "Part 2:");
-  (print part2);
   (assertEqualString part2 "106941819907437");
 }

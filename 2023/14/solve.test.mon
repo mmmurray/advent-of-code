@@ -1,65 +1,9 @@
-import { _type_Array, arrayCreate, arrayGet, arraySet } from "@array";
-import { assertEqual, assertEqualString } from "@assert";
-import { fileRead, print } from "@io";
-import {
-  _type_List,
-  listClone,
-  listFromArray,
-  listFromString,
-  listGet,
-  listPop,
-  listPush,
-  listPushList,
-  listSet,
-  listSize,
-  listSlice,
-} from "@list";
-import { _type_Map, mapCreate, mapEntries, mapGet, mapSet, mapSize } from "@map";
-import {
-  Vec2,
-  _type_Vec2,
-  lcmMany,
-  max,
-  min,
-  vec2Add,
-  vec2Equals,
-  vec2IsAdjacent,
-  vec2ManhattanDistance,
-} from "@math";
-import { optionValue } from "@option";
-import { _type_Range, rangeCreate, rangeEmpty, rangeIntersect, rangeShift } from "@range";
-import {
-  charIsNumeric,
-  charToString,
-  stringBuilderAppend,
-  stringBuilderBuild,
-  stringBuilderCreate,
-  stringConcat,
-  stringContainsAt,
-  stringEquals,
-  stringFromNumber,
-  stringGet,
-  stringSize,
-  stringSlice,
-  stringSplitBy,
-  stringToLines,
-  stringToNumber,
-  stringToNumberU64,
-  stringTrim,
-} from "@string";
+import { assertEqualString } from "@assert";
+import { _type_List, listClone, listFromString, listGet, listPush, listSet, listSize } from "@list";
+import { Vec2, _type_Vec2 } from "@math";
+import { stringFromNumber, stringGet, stringSize, stringToLines, stringTrim } from "@string";
 import { _type_String } from "@string-base";
-
-let vec2ToString = (v: Vec2<i32>): String -> {
-  let out = (stringBuilderCreate 16);
-
-  (stringBuilderAppend out "[");
-  (stringBuilderAppend out (stringFromNumber v.x));
-  (stringBuilderAppend out ", ");
-  (stringBuilderAppend out (stringFromNumber v.y));
-  (stringBuilderAppend out "]");
-
-  return (stringBuilderBuild out);
-}
+import { getValue: getInput } from "./input.txt";
 
 data Grid = {
   size: Vec2<i32>,
@@ -71,7 +15,7 @@ let parseInput = (input: String): Grid -> {
   let cols = [];
   let size = (Vec2 { x: (stringSize (listGet lines 0)), y: (listSize lines) });
 
-  for c, colIndex in (listFromString (listGet lines 0)) {
+  for _, colIndex in (listFromString (listGet lines 0)) {
     let col = [];
 
     for line in lines {
@@ -82,35 +26,6 @@ let parseInput = (input: String): Grid -> {
   }
 
   return (Grid { size: size, cols: cols });
-}
-
-let printGrid = (grid: Grid): unit -> {
-  let out = (stringBuilderCreate 1024);
-  let size = grid.size;
-
-  (stringBuilderAppend out "Size: ");
-  (stringBuilderAppend out (vec2ToString size));
-  (stringBuilderAppend out "\n");
-
-  let y = 0;
-
-  while (< y size.y) {
-    let x = 0;
-
-    while (< x size.x) {
-      let value = (listGet (listGet grid.cols x) y);
-
-      (stringBuilderAppend out (charToString value));
-
-      x = (+ x 1);
-    }
-
-    (stringBuilderAppend out "\n");
-
-    y = (+ y 1);
-  }
-
-  (print (stringBuilderBuild out));
 }
 
 let tiltColumn = (col: List<i32>): List<i32> -> {
@@ -237,7 +152,6 @@ let solvePart2 = (input: String): String -> {
   let totalCycles = 1000000000;
   let cycleOffset = -1;
   let i = 0;
-  let loop = false;
 
   while (&& (< cycleOffset 0) (< i totalCycles)) {
     grid = (performSpinCycle grid);
@@ -263,16 +177,12 @@ let solvePart2 = (input: String): String -> {
 }
 
 let main = (): unit -> {
-  let input = (fileRead "input.txt");
+  let input = (getInput);
   let part1 = (solvePart1 input);
 
-  (print "Part 1:");
-  (print part1);
   (assertEqualString part1 "109345");
 
   let part2 = (solvePart2 input);
 
-  (print "Part 2:");
-  (print part2);
   (assertEqualString part2 "112452");
 }

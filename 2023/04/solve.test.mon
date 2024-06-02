@@ -1,23 +1,17 @@
 import { arrayCreate, arrayGet, arraySet } from "@array";
 import { assertEqualString } from "@assert";
-import { fileRead, print } from "@io";
-import { _type_List, listFromString, listGet, listPush, listSet, listSize } from "@list";
-import { Vec2, _type_Vec2, max, vec2Add, vec2IsAdjacent } from "@math";
+import { _type_List, listGet, listPush, listSet, listSize } from "@list";
+import { max } from "@math";
 import {
-  charIsNumeric,
-  stringConcat,
-  stringContainsAt,
-  stringEquals,
   stringFromNumber,
-  stringGet,
   stringSize,
-  stringSlice,
   stringSplitBy,
   stringToLines,
   stringToNumber,
   stringTrim,
 } from "@string";
 import { _type_String } from "@string-base";
+import { getValue: getInput } from "./input.txt";
 
 data Game = {
   winning: List<i32>,
@@ -118,16 +112,12 @@ let solvePart2 = (input: String): String -> {
 }
 
 let main = (): unit -> {
-  let input = (fileRead "input.txt");
+  let input = (getInput);
   let part1 = (solvePart1 input);
 
-  (print "Part 1:");
-  (print part1);
   (assertEqualString part1 "21959");
 
   let part2 = (solvePart2 input);
 
-  (print "Part 2:");
-  (print part2);
   (assertEqualString part2 "5132675");
 }

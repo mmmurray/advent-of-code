@@ -1,11 +1,7 @@
 import { assertEqualString } from "@assert";
-import { fileRead, print } from "@io";
-import { _type_List, listFromString, listGet, listPush } from "@list";
+import { _type_List, listGet, listPush } from "@list";
 import { max } from "@math";
 import {
-  charIsNumeric,
-  stringConcat,
-  stringContainsAt,
   stringEquals,
   stringFromNumber,
   stringSize,
@@ -16,6 +12,7 @@ import {
   stringTrim,
 } from "@string";
 import { _type_String } from "@string-base";
+import { getValue: getInput } from "./input.txt";
 
 data Selection = {
   red: i32,
@@ -130,16 +127,12 @@ let solvePart2 = (input: String): String -> {
 }
 
 let main = (): unit -> {
-  let input = (stringTrim (fileRead "input.txt"));
+  let input = (stringTrim (getInput));
   let part1 = (solvePart1 input);
 
-  (print "Part 1:");
-  (print part1);
   (assertEqualString part1 "1853");
 
   let part2 = (solvePart2 input);
 
-  (print "Part 2:");
-  (print part2);
   (assertEqualString part2 "72706");
 }

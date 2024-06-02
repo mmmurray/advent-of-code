@@ -1,5 +1,4 @@
 import { assertEqualString } from "@assert";
-import { fileRead, print } from "@io";
 import { listFromString } from "@list";
 import {
   charIsNumeric,
@@ -11,6 +10,7 @@ import {
   stringTrim,
 } from "@string";
 import { _type_String } from "@string-base";
+import { getValue: getInput } from "./input.txt";
 
 let getCalibrationValue1 = (line: String): i32 -> {
   let setFirstDigit = false;
@@ -96,16 +96,12 @@ let solvePart2 = (input: String): String -> {
 }
 
 let main = (): unit -> {
-  let input = (stringTrim (fileRead "input.txt"));
+  let input = (stringTrim (getInput));
   let part1 = (solvePart1 input);
 
-  (print "Part 1:");
-  (print part1);
   (assertEqualString part1 "54605");
 
   let part2 = (solvePart2 input);
 
-  (print "Part 2:");
-  (print part2);
   (assertEqualString part2 "55429");
 }

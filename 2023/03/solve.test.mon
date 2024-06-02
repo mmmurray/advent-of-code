@@ -1,22 +1,16 @@
 import { assertEqualString } from "@assert";
-import { fileRead, print } from "@io";
-import { _type_List, listFromString, listGet, listPush } from "@list";
-import { Vec2, _type_Vec2, max, vec2Add, vec2IsAdjacent } from "@math";
+import { _type_List, listPush } from "@list";
+import { Vec2, _type_Vec2, vec2Add, vec2IsAdjacent } from "@math";
 import {
   charIsNumeric,
-  stringConcat,
-  stringContainsAt,
-  stringEquals,
   stringFromNumber,
   stringGet,
   stringSize,
-  stringSlice,
-  stringSplitBy,
   stringToLines,
-  stringToNumber,
   stringTrim,
 } from "@string";
 import { _type_String } from "@string-base";
+import { getValue: getInput } from "./input.txt";
 
 data SchematicSymbol = {
   location: Vec2<i32>,
@@ -155,16 +149,12 @@ let solvePart2 = (input: String): String -> {
 }
 
 let main = (): unit -> {
-  let input = (stringTrim (fileRead "input.txt"));
+  let input = (stringTrim (getInput));
   let part1 = (solvePart1 input);
 
-  (print "Part 1:");
-  (print part1);
   (assertEqualString part1 "525181");
 
   let part2 = (solvePart2 input);
 
-  (print "Part 2:");
-  (print part2);
   (assertEqualString part2 "84289137");
 }

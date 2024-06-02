@@ -1,54 +1,18 @@
 import { _type_Array, arrayCreate, arrayGet, arraySet } from "@array";
-import { assertEqual, assertEqualString } from "@assert";
-import { fileRead, print } from "@io";
+import { assertEqualString } from "@assert";
+import { _type_List, listFromArray, listFromString, listGet, listPush, listRemove } from "@list";
 import {
-  _type_List,
-  listClone,
-  listFromArray,
-  listFromString,
-  listGet,
-  listPop,
-  listPush,
-  listPushList,
-  listRemove,
-  listSet,
-  listSize,
-  listSlice,
-} from "@list";
-import { _type_Map, mapCreate, mapEntries, mapGet, mapSet, mapSize } from "@map";
-import {
-  Vec2,
-  _type_Vec2,
-  lcmMany,
-  max,
-  min,
-  vec2Add,
-  vec2Equals,
-  vec2IsAdjacent,
-  vec2ManhattanDistance,
-} from "@math";
-import { optionValue } from "@option";
-import { _type_Range, rangeCreate, rangeEmpty, rangeIntersect, rangeShift } from "@range";
-import {
-  charIsNumeric,
-  charToString,
-  stringBuilderAppend,
-  stringBuilderBuild,
-  stringBuilderCreate,
-  stringConcat,
-  stringContainsAt,
   stringEquals,
   stringFromNumber,
   stringGet,
   stringSize,
   stringSlice,
   stringSplitBy,
-  stringToLines,
   stringToNumber,
-  stringToNumberU64,
   stringTrim,
 } from "@string";
 import { _type_String } from "@string-base";
+import { getValue: getInput } from "./input.txt";
 
 data Operation =
   | Insert {
@@ -127,36 +91,12 @@ data Box = {
   lenses: List<Lens>,
 }
 
-let printBoxes = (boxes: Array<Box>): unit -> {
-  let out = (stringBuilderCreate 1024);
-
-  for box, boxIndex in (listFromArray boxes) {
-    if (> (listSize box.lenses) 0) {
-      (stringBuilderAppend out "Box ");
-      (stringBuilderAppend out (stringFromNumber boxIndex));
-      (stringBuilderAppend out ":");
-
-      for lens in box.lenses {
-        (stringBuilderAppend out " [");
-        (stringBuilderAppend out lens.label);
-        (stringBuilderAppend out " ");
-        (stringBuilderAppend out (stringFromNumber lens.focalLength));
-        (stringBuilderAppend out "]");
-      }
-
-      (stringBuilderAppend out "\n");
-    }
-  }
-
-  (print (stringBuilderBuild out));
-}
-
 let solvePart2 = (input: String): String -> {
   let sequence = (parseInput input);
   let result = 0;
   let boxes = (arrayCreate 256);
 
-  for x, i in (listFromArray boxes) {
+  for _, i in (listFromArray boxes) {
     let box = (Box { lenses: [] });
 
     (arraySet boxes i box);
@@ -170,7 +110,7 @@ let solvePart2 = (input: String): String -> {
     };
     let boxIndex = (hash stepLabel);
     let box = (arrayGet boxes boxIndex);
-    let m = match stepOperation {
+    let _ = match stepOperation {
       Insert { label, focalLength } -> {
         let replaced = false;
 
@@ -215,16 +155,12 @@ let solvePart2 = (input: String): String -> {
 }
 
 let main = (): unit -> {
-  let input = (fileRead "input.txt");
+  let input = (getInput);
   let part1 = (solvePart1 input);
 
-  (print "Part 1:");
-  (print part1);
   (assertEqualString part1 "509152");
 
   let part2 = (solvePart2 input);
 
-  (print "Part 2:");
-  (print part2);
   (assertEqualString part2 "244403");
 }

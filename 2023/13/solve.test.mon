@@ -1,53 +1,9 @@
-import { _type_Array, arrayCreate, arrayGet, arraySet } from "@array";
-import { assertEqual, assertEqualString } from "@assert";
-import { fileRead, print } from "@io";
-import {
-  _type_List,
-  listClone,
-  listFromArray,
-  listFromString,
-  listGet,
-  listPop,
-  listPush,
-  listPushList,
-  listSet,
-  listSize,
-  listSlice,
-} from "@list";
-import { _type_Map, mapCreate, mapEntries, mapGet, mapSet, mapSize } from "@map";
-import {
-  Vec2,
-  _type_Vec2,
-  lcmMany,
-  max,
-  min,
-  vec2Add,
-  vec2Equals,
-  vec2IsAdjacent,
-  vec2ManhattanDistance,
-} from "@math";
-import { optionValue } from "@option";
-import { _type_Range, rangeCreate, rangeEmpty, rangeIntersect, rangeShift } from "@range";
-import {
-  charIsNumeric,
-  charToString,
-  stringBuilderAppend,
-  stringBuilderBuild,
-  stringBuilderCreate,
-  stringConcat,
-  stringContainsAt,
-  stringEquals,
-  stringFromNumber,
-  stringGet,
-  stringSize,
-  stringSlice,
-  stringSplitBy,
-  stringToLines,
-  stringToNumber,
-  stringToNumberU64,
-  stringTrim,
-} from "@string";
+import { assertEqualString } from "@assert";
+import { _type_List, listFromString, listGet, listPush, listSet } from "@list";
+import { Vec2, _type_Vec2, min } from "@math";
+import { stringFromNumber, stringSize, stringToLines } from "@string";
 import { _type_String } from "@string-base";
+import { getValue: getInput } from "./input.txt";
 
 data Grid = {
   size: Vec2<i32>,
@@ -60,7 +16,7 @@ let parseInput = (input: String): List<Grid> -> {
   let rows = [];
   let size = (Vec2 { x: 0, y: 0 });
 
-  for line, lineIndex in lines {
+  for line in lines {
     if (== (stringSize line) 0) {
       let grid = (Grid { size: size, rows: rows });
 
@@ -232,16 +188,12 @@ let solvePart2 = (input: String): String -> {
 }
 
 let main = (): unit -> {
-  let input = (fileRead "input.txt");
+  let input = (getInput);
   let part1 = (solvePart1 input);
 
-  (print "Part 1:");
-  (print part1);
   (assertEqualString part1 "36015");
 
   let part2 = (solvePart2 input);
 
-  (print "Part 2:");
-  (print part2);
   (assertEqualString part2 "35335");
 }
