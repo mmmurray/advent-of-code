@@ -20,13 +20,13 @@ data Race = {
 
 let parseNumberList = (input: String): List<u64> -> {
   let values = [];
-  let parts = (stringSplitBy input ' ');
+  let parts = stringSplitBy(input, ' ');
 
   for part in parts {
-    if (> (stringSize part) 0) {
-      let num = (stringToNumberU64 part);
+    if (stringSize(part) > 0) {
+      let num = stringToNumberU64(part);
 
-      (listPush values num);
+      listPush(values, num);
     }
   }
 
@@ -35,16 +35,16 @@ let parseNumberList = (input: String): List<u64> -> {
 
 let parseInput = (input: String): List<Race> -> {
   let races = [];
-  let lines = (stringToLines input);
-  let timesLine = (listGet lines 0);
-  let distancesLine = (listGet lines 1);
-  let times = (parseNumberList (listGet (stringSplitBy timesLine ':') 1));
-  let distances = (parseNumberList (listGet (stringSplitBy distancesLine ':') 1));
+  let lines = stringToLines(input);
+  let timesLine = listGet(lines, 0);
+  let distancesLine = listGet(lines, 1);
+  let times = parseNumberList(listGet(stringSplitBy(timesLine, ':'), 1));
+  let distances = parseNumberList(listGet(stringSplitBy(distancesLine, ':'), 1));
 
   for time, timeIndex in times {
-    let race = (Race { time: time, distance: (listGet distances timeIndex) });
+    let race = Race({ time: time, distance: listGet(distances, timeIndex) });
 
-    (listPush races race);
+    listPush(races, race);
   }
 
   return races;
@@ -54,60 +54,60 @@ let solveRace = (race: Race): u64 -> {
   let winningStrategies = 0;
   let holdTime = 0;
 
-  while (<= holdTime race.time) {
+  while (holdTime <= race.time) {
     let speed = holdTime;
-    let remainingTime = (- race.time holdTime);
-    let distance = (* remainingTime speed);
+    let remainingTime = (race.time - holdTime);
+    let distance = (remainingTime * speed);
 
-    if (> distance race.distance) {
-      winningStrategies = (+ winningStrategies 1);
+    if (distance > race.distance) {
+      winningStrategies = (winningStrategies + 1);
     }
 
-    holdTime = (+ holdTime 1);
+    holdTime = (holdTime + 1);
   }
 
   return winningStrategies;
 }
 
 let solvePart1 = (input: String): String -> {
-  let races = (parseInput input);
+  let races = parseInput(input);
   let result = 1;
 
   for race in races {
-    let winningStrategies = (solveRace race);
+    let winningStrategies = solveRace(race);
 
-    result = (* result winningStrategies);
+    result = (result * winningStrategies);
   }
 
-  return (stringFromNumber result);
+  return stringFromNumber(result);
 }
 
 let solvePart2 = (input: String): String -> {
-  let races = (parseInput input);
-  let combinedTimes = (stringBuilderCreate 128);
-  let combinedDistances = (stringBuilderCreate 128);
+  let races = parseInput(input);
+  let combinedTimes = stringBuilderCreate(128);
+  let combinedDistances = stringBuilderCreate(128);
 
   for race in races {
-    (stringBuilderAppend combinedTimes (stringFromNumber race.time));
-    (stringBuilderAppend combinedDistances (stringFromNumber race.distance));
+    stringBuilderAppend(combinedTimes, stringFromNumber(race.time));
+    stringBuilderAppend(combinedDistances, stringFromNumber(race.distance));
   }
 
-  let combinedRace = (Race {
-    time: (stringToNumberU64 (stringBuilderBuild combinedTimes)),
-    distance: (stringToNumberU64 (stringBuilderBuild combinedDistances)),
+  let combinedRace = Race({
+    time: stringToNumberU64(stringBuilderBuild(combinedTimes)),
+    distance: stringToNumberU64(stringBuilderBuild(combinedDistances)),
   });
-  let result = (solveRace combinedRace);
+  let result = solveRace(combinedRace);
 
-  return (stringFromNumber result);
+  return stringFromNumber(result);
 }
 
 let main = (): unit -> {
-  let input = (getInput);
-  let part1 = (solvePart1 input);
+  let input = getInput();
+  let part1 = solvePart1(input);
 
-  (assertEqualString part1 "1413720");
+  assertEqualString(part1, "1413720");
 
-  let part2 = (solvePart2 input);
+  let part2 = solvePart2(input);
 
-  (assertEqualString part2 "30565288");
+  assertEqualString(part2, "30565288");
 }

@@ -21,28 +21,28 @@ data Direction =
   | South {}
   | West {}
 
-let directionNorth = (): Direction -> (North {})
+let directionNorth = (): Direction -> North({})
 
-let directionEast = (): Direction -> (East {})
+let directionEast = (): Direction -> East({})
 
-let directionSouth = (): Direction -> (South {})
+let directionSouth = (): Direction -> South({})
 
-let directionWest = (): Direction -> (West {})
+let directionWest = (): Direction -> West({})
 
-let vec2North = (): Vec2<i64> -> (Vec2 { x: 0, y: -1 })
+let vec2North = (): Vec2<i64> -> Vec2({ x: 0, y: --(1) })
 
-let vec2East = (): Vec2<i64> -> (Vec2 { x: 1, y: 0 })
+let vec2East = (): Vec2<i64> -> Vec2({ x: 1, y: 0 })
 
-let vec2South = (): Vec2<i64> -> (Vec2 { x: 0, y: 1 })
+let vec2South = (): Vec2<i64> -> Vec2({ x: 0, y: 1 })
 
-let vec2West = (): Vec2<i64> -> (Vec2 { x: -1, y: 0 })
+let vec2West = (): Vec2<i64> -> Vec2({ x: --(1), y: 0 })
 
 let directionToVec2 = (direction: Direction): Vec2<i64> -> {
   return match direction {
-    North -> (vec2North);
-    East -> (vec2East);
-    South -> (vec2South);
-    West -> (vec2West);
+    North -> vec2North();
+    East -> vec2East();
+    South -> vec2South();
+    West -> vec2West();
   };
 }
 
@@ -53,29 +53,29 @@ data DigPlanStep = {
 }
 
 let parseDirection = (input: String): Direction -> {
-  let char = (stringGet input 0);
+  let char = stringGet(input, 0);
 
   return case {
-    (== char 'U') -> (directionNorth);
-    (== char 'R') -> (directionEast);
-    (== char 'D') -> (directionSouth);
-    (== char 'L') -> (directionWest);
-    true -> (directionNorth);
+    (char == 'U') -> directionNorth();
+    (char == 'R') -> directionEast();
+    (char == 'D') -> directionSouth();
+    (char == 'L') -> directionWest();
+    true -> directionNorth();
   };
 }
 
 let parseInput = (input: String): List<DigPlanStep> -> {
-  let lines = (stringToLines (stringTrim input));
+  let lines = stringToLines(stringTrim(input));
   let steps = [];
 
   for line in lines {
-    let parts = (stringSplitBy line ' ');
-    let direction = (parseDirection (listGet parts 0));
-    let distance = (stringToNumberI64 (listGet parts 1));
-    let color = (listGet parts 2);
-    let step = (DigPlanStep { direction: direction, distance: distance, color: color });
+    let parts = stringSplitBy(line, ' ');
+    let direction = parseDirection(listGet(parts, 0));
+    let distance = stringToNumberI64(listGet(parts, 1));
+    let color = listGet(parts, 2);
+    let step = DigPlanStep({ direction: direction, distance: distance, color: color });
 
-    (listPush steps step);
+    listPush(steps, step);
   }
 
   return steps;
@@ -109,64 +109,64 @@ let calculateAreaFromSteps = (steps: List<Step>): i64 -> {
 
   let shoelaceArea = 0;
   let borderPoints = 0;
-  let initialPosition = (Vec2 { x: 0, y: 0 });
+  let initialPosition = Vec2({ x: 0, y: 0 });
   let position = initialPosition;
 
   for step in steps {
-    borderPoints = (+ borderPoints step.distance);
+    borderPoints = (borderPoints + step.distance);
 
-    let delta = (vec2Scale step.distance (directionToVec2 step.direction));
-    let nextPosition = (vec2Add position delta);
+    let delta = vec2Scale(step.distance, directionToVec2(step.direction));
+    let nextPosition = vec2Add(position, delta);
 
-    shoelaceArea = (+ shoelaceArea (mat2Determinant (Mat2 { a: position.x, b: nextPosition.x, c: position.y, d: nextPosition.y })));
+    shoelaceArea = (shoelaceArea + mat2Determinant(Mat2({ a: position.x, b: nextPosition.x, c: position.y, d: nextPosition.y })));
     position = nextPosition;
   }
 
-  shoelaceArea = (+ shoelaceArea (mat2Determinant (Mat2 { a: position.x, b: initialPosition.x, c: position.y, d: initialPosition.y })));
+  shoelaceArea = (shoelaceArea + mat2Determinant(Mat2({ a: position.x, b: initialPosition.x, c: position.y, d: initialPosition.y })));
 
-  let area = (/ shoelaceArea 2);
+  let area = (shoelaceArea / 2);
 
-  return (+ (+ area (/ borderPoints 2)) 1);
+  return ((area + (borderPoints / 2)) + 1);
 }
 
 let solvePart1 = (input: String): String -> {
-  let planSteps = (parseInput input);
+  let planSteps = parseInput(input);
   let steps = [];
 
   for planStep in planSteps {
-    (listPush steps (Step { direction: planStep.direction, distance: planStep.distance }));
+    listPush(steps, Step({ direction: planStep.direction, distance: planStep.distance }));
   }
 
-  let result = (calculateAreaFromSteps steps);
+  let result = calculateAreaFromSteps(steps);
 
-  return (stringFromNumber result);
+  return stringFromNumber(result);
 }
 
 let solvePart2 = (input: String): String -> {
-  let planSteps = (parseInput input);
+  let planSteps = parseInput(input);
   let steps = [];
-  let orderedDirections = [(directionEast), (directionSouth), (directionWest), (directionNorth)];
+  let orderedDirections = [directionEast(), directionSouth(), directionWest(), directionNorth()];
 
   for planStep in planSteps {
-    let distanceHex = (stringSlice planStep.color 2 7);
-    let distance = (stringToNumberI64 (stringConcat "0x" (stringToUpper distanceHex)));
-    let directionNum = (- (stringGet planStep.color 7) '0');
+    let distanceHex = stringSlice(planStep.color, 2, 7);
+    let distance = stringToNumberI64(stringConcat("0x", stringToUpper(distanceHex)));
+    let directionNum = (stringGet(planStep.color, 7) - '0');
 
-    (listPush steps (Step { direction: (listGet orderedDirections directionNum), distance: distance }));
+    listPush(steps, Step({ direction: listGet(orderedDirections, directionNum), distance: distance }));
   }
 
-  let result = (calculateAreaFromSteps steps);
+  let result = calculateAreaFromSteps(steps);
 
-  return (stringFromNumber result);
+  return stringFromNumber(result);
 }
 
 let main = (): unit -> {
-  let input = (getInput);
-  let part1 = (solvePart1 input);
+  let input = getInput();
+  let part1 = solvePart1(input);
 
-  (assertEqualString part1 "44436");
+  assertEqualString(part1, "44436");
 
-  let part2 = (solvePart2 input);
+  let part2 = solvePart2(input);
 
-  (assertEqualString part2 "106941819907437");
+  assertEqualString(part2, "106941819907437");
 }

@@ -19,14 +19,14 @@ data Game = {
 }
 
 let parseNumberList = (input: String): List<i32> -> {
-  let parts = (stringSplitBy (stringTrim input) ' ');
+  let parts = stringSplitBy(stringTrim(input), ' ');
   let numbers = [];
 
   for part in parts {
-    let trimmed = (stringTrim part);
+    let trimmed = stringTrim(part);
 
-    if (> (stringSize trimmed) 0) {
-      (listPush numbers (stringToNumber trimmed));
+    if (stringSize(trimmed) > 0) {
+      listPush(numbers, stringToNumber(trimmed));
     }
   }
 
@@ -34,16 +34,16 @@ let parseNumberList = (input: String): List<i32> -> {
 }
 
 let parseInput = (input: String): List<Game> -> {
-  let lines = (stringToLines (stringTrim input));
+  let lines = stringToLines(stringTrim(input));
   let games = [];
 
   for line in lines {
-    let lineParts = (stringSplitBy line ':');
-    let sectionParts = (stringSplitBy (listGet lineParts 1) '|');
+    let lineParts = stringSplitBy(line, ':');
+    let sectionParts = stringSplitBy(listGet(lineParts, 1), '|');
 
-    (listPush games (Game {
-      winning: (parseNumberList (listGet sectionParts 0)),
-      numbers: (parseNumberList (listGet sectionParts 1)),
+    listPush(games, Game({
+      winning: parseNumberList(listGet(sectionParts, 0)),
+      numbers: parseNumberList(listGet(sectionParts, 1)),
     }));
   }
 
@@ -52,29 +52,29 @@ let parseInput = (input: String): List<Game> -> {
 
 let solvePart1 = (input: String): String -> {
   let result = 0;
-  let games = (parseInput input);
+  let games = parseInput(input);
 
   for game, gameIndex in games {
     let score = 0;
 
     for number in game.numbers {
       for needed in game.winning {
-        if (== number needed) {
-          score = (max 1 (* score 2));
+        if (number == needed) {
+          score = max(1, (score * 2));
         }
       }
     }
 
-    result = (+ result score);
+    result = (result + score);
   }
 
-  return (stringFromNumber result);
+  return stringFromNumber(result);
 }
 
 let solvePart2 = (input: String): String -> {
   let result = 0;
-  let games = (parseInput input);
-  let resultByGame = (arrayCreate (listSize games));
+  let games = parseInput(input);
+  let resultByGame = arrayCreate(listSize(games));
   let countByGame = [];
 
   for game, gameIndex in games {
@@ -82,42 +82,42 @@ let solvePart2 = (input: String): String -> {
 
     for number in game.numbers {
       for needed in game.winning {
-        if (== number needed) {
-          gameResult = (+ gameResult 1);
+        if (number == needed) {
+          gameResult = (gameResult + 1);
         }
       }
     }
 
-    (arraySet resultByGame gameIndex gameResult);
-    (listPush countByGame 1);
+    arraySet(resultByGame, gameIndex, gameResult);
+    listPush(countByGame, 1);
   }
 
   for count, gameIndex in countByGame {
-    result = (+ result count);
+    result = (result + count);
 
-    let gameStart = (+ gameIndex 1);
-    let gameEnd = (+ gameStart (arrayGet resultByGame gameIndex));
+    let gameStart = (gameIndex + 1);
+    let gameEnd = (gameStart + arrayGet(resultByGame, gameIndex));
 
-    while (< gameStart gameEnd) {
-      let currentCount = (listGet countByGame gameStart);
-      let newCount = (+ currentCount count);
+    while (gameStart < gameEnd) {
+      let currentCount = listGet(countByGame, gameStart);
+      let newCount = (currentCount + count);
 
-      (listSet countByGame gameStart newCount);
+      listSet(countByGame, gameStart, newCount);
 
-      gameStart = (+ gameStart 1);
+      gameStart = (gameStart + 1);
     }
   }
 
-  return (stringFromNumber result);
+  return stringFromNumber(result);
 }
 
 let main = (): unit -> {
-  let input = (getInput);
-  let part1 = (solvePart1 input);
+  let input = getInput();
+  let part1 = solvePart1(input);
 
-  (assertEqualString part1 "21959");
+  assertEqualString(part1, "21959");
 
-  let part2 = (solvePart2 input);
+  let part2 = solvePart2(input);
 
-  (assertEqualString part2 "5132675");
+  assertEqualString(part2, "5132675");
 }

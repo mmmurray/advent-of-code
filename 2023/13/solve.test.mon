@@ -12,31 +12,31 @@ data Grid = {
 
 let parseInput = (input: String): List<Grid> -> {
   let grids = [];
-  let lines = (stringToLines input);
+  let lines = stringToLines(input);
   let rows = [];
-  let size = (Vec2 { x: 0, y: 0 });
+  let size = Vec2({ x: 0, y: 0 });
 
   for line in lines {
-    if (== (stringSize line) 0) {
-      let grid = (Grid { size: size, rows: rows });
+    if (stringSize(line) == 0) {
+      let grid = Grid({ size: size, rows: rows });
 
-      (listPush grids grid);
+      listPush(grids, grid);
 
       rows = [];
-      size = (Vec2 { x: 0, y: 0 });
+      size = Vec2({ x: 0, y: 0 });
     } else {
-      size.x = (stringSize line);
-      size.y = (+ size.y 1);
+      size.x = stringSize(line);
+      size.y = (size.y + 1);
 
       let row = [];
 
-      for char in (listFromString line) {
-        let isWall = (== char '#');
+      for char in listFromString(line) {
+        let isWall = (char == '#');
 
-        (listPush row isWall);
+        listPush(row, isWall);
       }
 
-      (listPush rows row);
+      listPush(rows, row);
     }
   }
 
@@ -49,82 +49,82 @@ let getReflectionScore = (grid: Grid, notScore: i32): i32 -> {
   let colGap = 1;
   let loop = true;
 
-  while (&& loop (< colGap size.x)) {
-    let reflectCount = (min colGap (- size.x colGap));
+  while (loop && (colGap < size.x)) {
+    let reflectCount = min(colGap, (size.x - colGap));
     let isReflection = true;
     let offset = 0;
 
-    while (< offset reflectCount) {
-      let colA = (- colGap (+ offset 1));
-      let colB = (+ colGap offset);
+    while (offset < reflectCount) {
+      let colA = (colGap - (offset + 1));
+      let colB = (colGap + offset);
       let row = 0;
 
-      while (< row size.y) {
-        let valA = (listGet (listGet grid.rows row) colA);
-        let valB = (listGet (listGet grid.rows row) colB);
+      while (row < size.y) {
+        let valA = listGet(listGet(grid.rows, row), colA);
+        let valB = listGet(listGet(grid.rows, row), colB);
 
-        if (!= (@i32 valA) (@i32 valB)) {
+        if ((@i32 valA) != (@i32 valB)) {
           isReflection = false;
         }
 
-        row = (+ row 1);
+        row = (row + 1);
       }
 
-      offset = (+ offset 1);
+      offset = (offset + 1);
     }
 
     if isReflection {
       let score = colGap;
 
-      if (!= score notScore) {
+      if (score != notScore) {
         result = score;
         loop = false;
       }
     }
 
-    colGap = (+ colGap 1);
+    colGap = (colGap + 1);
   }
 
   return case {
-    (!loop) -> result;
+    !(loop) -> result;
     true -> {
       let rowGap = 1;
       let loop1 = true;
 
-      while (&& loop1 (< rowGap size.y)) {
-        let reflectCount = (min rowGap (- size.y rowGap));
+      while (loop1 && (rowGap < size.y)) {
+        let reflectCount = min(rowGap, (size.y - rowGap));
         let isReflection = true;
         let offset = 0;
 
-        while (< offset reflectCount) {
-          let rowA = (- rowGap (+ offset 1));
-          let rowB = (+ rowGap offset);
+        while (offset < reflectCount) {
+          let rowA = (rowGap - (offset + 1));
+          let rowB = (rowGap + offset);
           let col = 0;
 
-          while (< col size.x) {
-            let valA = (listGet (listGet grid.rows rowA) col);
-            let valB = (listGet (listGet grid.rows rowB) col);
+          while (col < size.x) {
+            let valA = listGet(listGet(grid.rows, rowA), col);
+            let valB = listGet(listGet(grid.rows, rowB), col);
 
-            if (!= (@i32 valA) (@i32 valB)) {
+            if ((@i32 valA) != (@i32 valB)) {
               isReflection = false;
             }
 
-            col = (+ col 1);
+            col = (col + 1);
           }
 
-          offset = (+ offset 1);
+          offset = (offset + 1);
         }
 
         if isReflection {
-          let score = (* rowGap 100);
+          let score = (rowGap * 100);
 
-          if (!= score notScore) {
+          if (score != notScore) {
             result = score;
             loop1 = false;
           }
         }
 
-        rowGap = (+ rowGap 1);
+        rowGap = (rowGap + 1);
       }
 
       return result;
@@ -133,67 +133,67 @@ let getReflectionScore = (grid: Grid, notScore: i32): i32 -> {
 }
 
 let solvePart1 = (input: String): String -> {
-  let grids = (parseInput input);
+  let grids = parseInput(input);
   let result = 0;
 
   for grid in grids {
-    result = (+ result (getReflectionScore grid 0));
+    result = (result + getReflectionScore(grid, 0));
   }
 
-  return (stringFromNumber result);
+  return stringFromNumber(result);
 }
 
 let removeSmudge = (grid: Grid): i32 -> {
-  let result = (getReflectionScore grid 0);
+  let result = getReflectionScore(grid, 0);
   let size = grid.size;
   let y = 0;
   let loop = true;
 
-  while (&& loop (< y size.y)) {
+  while (loop && (y < size.y)) {
     let x = 0;
 
-    while (&& loop (< x size.x)) {
-      let row = (listGet grid.rows y);
-      let value = (listGet row x);
+    while (loop && (x < size.x)) {
+      let row = listGet(grid.rows, y);
+      let value = listGet(row, x);
 
-      (listSet row x (!value));
+      listSet(row, x, !(value));
 
-      let newScore = (getReflectionScore grid result);
+      let newScore = getReflectionScore(grid, result);
 
-      if (> newScore 0) {
+      if (newScore > 0) {
         result = newScore;
         loop = false;
       } else {
-        (listSet row x value);
+        listSet(row, x, value);
 
-        x = (+ x 1);
+        x = (x + 1);
       }
     }
 
-    y = (+ y 1);
+    y = (y + 1);
   }
 
   return result;
 }
 
 let solvePart2 = (input: String): String -> {
-  let grids = (parseInput input);
+  let grids = parseInput(input);
   let result = 0;
 
   for grid in grids {
-    result = (+ result (removeSmudge grid));
+    result = (result + removeSmudge(grid));
   }
 
-  return (stringFromNumber result);
+  return stringFromNumber(result);
 }
 
 let main = (): unit -> {
-  let input = (getInput);
-  let part1 = (solvePart1 input);
+  let input = getInput();
+  let part1 = solvePart1(input);
 
-  (assertEqualString part1 "36015");
+  assertEqualString(part1, "36015");
 
-  let part2 = (solvePart2 input);
+  let part2 = solvePart2(input);
 
-  (assertEqualString part2 "35335");
+  assertEqualString(part2, "35335");
 }

@@ -32,15 +32,15 @@ let optionExpect = <T>(option: Option<T>): T -> {
 }
 
 let vec2ToString = (v: Vec2<i32>): String -> {
-  let out = (stringBuilderCreate 16);
+  let out = stringBuilderCreate(16);
 
-  (stringBuilderAppend out "[");
-  (stringBuilderAppend out (stringFromNumber v.x));
-  (stringBuilderAppend out ", ");
-  (stringBuilderAppend out (stringFromNumber v.y));
-  (stringBuilderAppend out "]");
+  stringBuilderAppend(out, "[");
+  stringBuilderAppend(out, stringFromNumber(v.x));
+  stringBuilderAppend(out, ", ");
+  stringBuilderAppend(out, stringFromNumber(v.y));
+  stringBuilderAppend(out, "]");
 
-  return (stringBuilderBuild out);
+  return stringBuilderBuild(out);
 }
 
 data PriorityQueueHeapEntry<T> = {
@@ -53,31 +53,31 @@ data PriorityQueue<T> = {
 }
 
 let priorityQueueCreate = <T>(): PriorityQueue<T> -> {
-  return (PriorityQueue<T> { heap: [] });
+  return PriorityQueue<T>({ heap: [] });
 }
 
 let priorityQueueSize = <T>(queue: PriorityQueue<T>): i32 -> {
-  return (listSize queue.heap);
+  return listSize(queue.heap);
 }
 
 let priorityQueueInsert = <T>(queue: PriorityQueue<T>, node: T, priority: i32): unit -> {
-  let entry = (PriorityQueueHeapEntry<T> { node: node, priority: priority });
+  let entry = PriorityQueueHeapEntry<T>({ node: node, priority: priority });
 
-  (listPush queue.heap entry);
+  listPush(queue.heap, entry);
 
-  let currentIndex = (- (listSize queue.heap) 1);
+  let currentIndex = (listSize(queue.heap) - 1);
   let loop = true;
 
-  while (&& loop (> currentIndex 0)) {
-    let parentIndex = (/ currentIndex 2);
-    let parent = (listGet queue.heap parentIndex);
-    let current = (listGet queue.heap currentIndex);
+  while (loop && (currentIndex > 0)) {
+    let parentIndex = (currentIndex / 2);
+    let parent = listGet(queue.heap, parentIndex);
+    let current = listGet(queue.heap, currentIndex);
 
-    if (> parent.priority current.priority) {
+    if (parent.priority > current.priority) {
       loop = false;
     } else {
-      (listSet queue.heap parentIndex current);
-      (listSet queue.heap currentIndex parent);
+      listSet(queue.heap, parentIndex, current);
+      listSet(queue.heap, currentIndex, parent);
 
       currentIndex = parentIndex;
     }
@@ -86,81 +86,81 @@ let priorityQueueInsert = <T>(queue: PriorityQueue<T>, node: T, priority: i32): 
 
 let priorityQueueNext = <T>(queue: PriorityQueue<T>): Option<T> -> {
   return case {
-    (== (listSize queue.heap) 0) -> (None {});
-    (== (listSize queue.heap) 1) -> {
-      return match (listShift queue.heap) {
-        Some { value } -> (Some { value: value.node });
-        None -> (None {});
+    (listSize(queue.heap) == 0) -> None({});
+    (listSize(queue.heap) == 1) -> {
+      return match listShift(queue.heap) {
+        Some { value } -> Some({ value: value.node });
+        None -> None({});
       };
     };
     true -> {
-      let highestPriority = (listGet queue.heap 0);
+      let highestPriority = listGet(queue.heap, 0);
 
-      (listSet queue.heap 0 (optionExpect (listPop queue.heap)));
+      listSet(queue.heap, 0, optionExpect(listPop(queue.heap)));
 
       let currentIndex = 0;
       let loop = false;
 
       while loop {
-        let leftChildIndex = (+ (* currentIndex 2) 1);
-        let rightChildIndex = (+ (* currentIndex 2) 2);
-        let current = (listGet queue.heap currentIndex);
-        let swapIndex = -1;
+        let leftChildIndex = ((currentIndex * 2) + 1);
+        let rightChildIndex = ((currentIndex * 2) + 2);
+        let current = listGet(queue.heap, currentIndex);
+        let swapIndex = --(1);
 
-        if (< leftChildIndex (listSize queue.heap)) {
-          let leftChild = (listGet queue.heap leftChildIndex);
+        if (leftChildIndex < listSize(queue.heap)) {
+          let leftChild = listGet(queue.heap, leftChildIndex);
 
-          if (> leftChild.priority current.priority) {
+          if (leftChild.priority > current.priority) {
             swapIndex = leftChildIndex;
           }
         }
 
-        if (< rightChildIndex (listSize queue.heap)) {
-          let leftChild = (listGet queue.heap leftChildIndex);
-          let rightChild = (listGet queue.heap rightChildIndex);
+        if (rightChildIndex < listSize(queue.heap)) {
+          let leftChild = listGet(queue.heap, leftChildIndex);
+          let rightChild = listGet(queue.heap, rightChildIndex);
 
-          if (|| (&& (< swapIndex 0) (> rightChild.priority current.priority)) (&& (>= swapIndex 0) (> rightChild.priority leftChild.priority))) {
+          if (((swapIndex < 0) && (rightChild.priority > current.priority)) || ((swapIndex >= 0) && (rightChild.priority > leftChild.priority))) {
             swapIndex = rightChildIndex;
           }
         }
 
-        if (< swapIndex 0) {
+        if (swapIndex < 0) {
           loop = false;
         } else {
-          (listSet queue.heap currentIndex (listGet queue.heap swapIndex));
-          (listSet queue.heap swapIndex current);
+          listSet(queue.heap, currentIndex, listGet(queue.heap, swapIndex));
+          listSet(queue.heap, swapIndex, current);
 
           currentIndex = swapIndex;
         }
       }
 
-      return (Some { value: highestPriority.node });
+      return Some({ value: highestPriority.node });
     };
   };
 }
 
 let _testPriorityQueue = (): unit -> {
-  let queue = (priorityQueueCreate<i32>);
+  let queue = priorityQueueCreate<i32>();
 
-  (assertEqual (priorityQueueSize queue) 0);
-  (priorityQueueInsert queue 1 10);
-  (priorityQueueInsert queue 2 30);
-  (priorityQueueInsert queue 3 20);
-  (priorityQueueInsert queue 4 5);
-  (priorityQueueInsert queue 5 50);
-  (assertEqual (priorityQueueSize queue) 5);
-  (assertEqual (optionValue 0 (priorityQueueNext queue)) 5);
-  (assertEqual (priorityQueueSize queue) 4);
-  (assertEqual (optionValue 0 (priorityQueueNext queue)) 2);
-  (assertEqual (priorityQueueSize queue) 3);
-  (assertEqual (optionValue 0 (priorityQueueNext queue)) 3);
-  (assertEqual (priorityQueueSize queue) 2);
-  (assertEqual (optionValue 0 (priorityQueueNext queue)) 1);
-  (assertEqual (priorityQueueSize queue) 1);
-  (assertEqual (optionValue 0 (priorityQueueNext queue)) 4);
-  (assertEqual (priorityQueueSize queue) 0);
-  (assertEqual (optionValue 0 (priorityQueueNext queue)) 0);
-  (assertEqual (priorityQueueSize queue) 0);
+  assertEqual(priorityQueueSize(queue), 0);
+  priorityQueueInsert(queue, 1, 10);
+  priorityQueueInsert(queue, 2, 30);
+  priorityQueueInsert(queue, 3, 20);
+  priorityQueueInsert(queue, 4, 5);
+  priorityQueueInsert(queue, 5, 50);
+  assertEqual(priorityQueueSize(queue), 5);
+  assertEqual(optionValue(0, priorityQueueNext(queue)), 5);
+  assertEqual(priorityQueueSize(queue), 4);
+  assertEqual(optionValue(0, priorityQueueNext(queue)), 2);
+  assertEqual(priorityQueueSize(queue), 3);
+  assertEqual(optionValue(0, priorityQueueNext(queue)), 3);
+  assertEqual(priorityQueueSize(queue), 2);
+  assertEqual(optionValue(0, priorityQueueNext(queue)), 1);
+  assertEqual(priorityQueueSize(queue), 1);
+  assertEqual(optionValue(0, priorityQueueNext(queue)), 4);
+  assertEqual(priorityQueueSize(queue), 0);
+  assertEqual(optionValue(0, priorityQueueNext(queue)), 0);
+  assertEqual(priorityQueueSize(queue), 0);
 }
 
 data Grid = {
@@ -169,41 +169,41 @@ data Grid = {
 }
 
 let parseInput = (input: String): Grid -> {
-  let lines = (stringToLines (stringTrim input));
-  let size = (Vec2 { x: (stringSize (listGet lines 0)), y: (listSize lines) });
+  let lines = stringToLines(stringTrim(input));
+  let size = Vec2({ x: stringSize(listGet(lines, 0)), y: listSize(lines) });
   let tiles = [];
 
   for line in lines {
     let tileRow = [];
 
-    for char in (listFromString line) {
-      (listPush tileRow (- char '0'));
+    for char in listFromString(line) {
+      listPush(tileRow, (char - '0'));
     }
 
-    (listPush tiles tileRow);
+    listPush(tiles, tileRow);
   }
 
-  return (Grid { size: size, tiles: tiles });
+  return Grid({ size: size, tiles: tiles });
 }
 
 let gridAdjacent = (grid: Grid, position: Vec2<i32>): List<Vec2<i32> > -> {
   let adjacent = [];
   let size = grid.size;
 
-  if (< position.x (- size.x 1)) {
-    (listPush adjacent (Vec2 { x: (+ position.x 1), y: position.y }));
+  if (position.x < (size.x - 1)) {
+    listPush(adjacent, Vec2({ x: (position.x + 1), y: position.y }));
   }
 
-  if (< position.y (- size.y 1)) {
-    (listPush adjacent (Vec2 { x: position.x, y: (+ position.y 1) }));
+  if (position.y < (size.y - 1)) {
+    listPush(adjacent, Vec2({ x: position.x, y: (position.y + 1) }));
   }
 
-  if (> position.x 0) {
-    (listPush adjacent (Vec2 { x: (- position.x 1), y: position.y }));
+  if (position.x > 0) {
+    listPush(adjacent, Vec2({ x: (position.x - 1), y: position.y }));
   }
 
-  if (> position.y 0) {
-    (listPush adjacent (Vec2 { x: position.x, y: (- position.y 1) }));
+  if (position.y > 0) {
+    listPush(adjacent, Vec2({ x: position.x, y: (position.y - 1) }));
   }
 
   return adjacent;
@@ -217,12 +217,12 @@ let extractShortestPath = (cameFrom: Map<Vec2<i32> >, targetNode: Vec2<i32>): Li
 
   # (print (vec2ToString c))
 
-  (listPush path c);
+  listPush(path, c);
 
   let loop = true;
 
   while loop {
-    let cameFromOption = (mapGet cameFrom (vec2ToString c));
+    let cameFromOption = mapGet(cameFrom, vec2ToString(c));
     let done = match cameFromOption {
       Some -> false;
       None -> true;
@@ -231,9 +231,9 @@ let extractShortestPath = (cameFrom: Map<Vec2<i32> >, targetNode: Vec2<i32>): Li
     if done {
       loop = false;
     } else {
-      c = (optionExpect cameFromOption);
+      c = optionExpect(cameFromOption);
 
-      (listPush path c);
+      listPush(path, c);
 
       # (print (vec2ToString c))
     }
@@ -248,38 +248,38 @@ let exceedsSingleDirectionLimit = (path: List<Vec2<i32> >): boolean -> {
   # (print "exceedsSingleDirectionLimit")
 
   let limit = 5;
-  let size = (listSize path);
+  let size = listSize(path);
 
   return case {
-    (< size limit) -> false;
+    (size < limit) -> false;
     true -> {
       let sameX = true;
       let sameY = true;
       let i = 0;
-      let current = (listGet path i);
+      let current = listGet(path, i);
 
       # (print (stringConcat "Current " (vec2ToString current)))
 
-      i = (+ i 1);
+      i = (i + 1);
 
-      while (< i limit) {
-        let next = (listGet path i);
+      while (i < limit) {
+        let next = listGet(path, i);
 
         # (print (stringConcat "Next " (vec2ToString next)))
 
-        if (!= next.x current.x) {
+        if (next.x != current.x) {
           sameX = false;
         }
 
-        if (!= next.y current.y) {
+        if (next.y != current.y) {
           sameY = false;
         }
 
         current = next;
-        i = (+ i 1);
+        i = (i + 1);
       }
 
-      let result = (|| sameX sameY);
+      let result = (sameX || sameY);
 
       # (print (stringConcat "exceedsSingleDirectionLimit result: " (stringFromNumber result)))
 
@@ -289,26 +289,26 @@ let exceedsSingleDirectionLimit = (path: List<Vec2<i32> >): boolean -> {
 }
 
 let solvePart1 = (input: String): String -> {
-  let grid = (parseInput input);
+  let grid = parseInput(input);
 
   # (printGrid grid [])
 
   let size = grid.size;
-  let startNode = (Vec2 { x: 0, y: 0 });
-  let targetNode = (Vec2 { x: (- size.x 1), y: (- size.y 1) });
-  let openSet = (priorityQueueCreate);
-  let cameFrom = (mapCreate);
-  let gScore = (mapCreate);
+  let startNode = Vec2({ x: 0, y: 0 });
+  let targetNode = Vec2({ x: (size.x - 1), y: (size.y - 1) });
+  let openSet = priorityQueueCreate();
+  let cameFrom = mapCreate();
+  let gScore = mapCreate();
 
-  (priorityQueueInsert openSet startNode 0);
-  (mapSet gScore (vec2ToString startNode) 0);
+  priorityQueueInsert(openSet, startNode, 0);
+  mapSet(gScore, vec2ToString(startNode), 0);
 
   let loop = true;
 
   while loop {
     # (print "~~ STEP ~~")
 
-    let currentOption = (priorityQueueNext openSet);
+    let currentOption = priorityQueueNext(openSet);
     let done = match currentOption {
       Some -> false;
       None -> true;
@@ -317,30 +317,30 @@ let solvePart1 = (input: String): String -> {
     if done {
       loop = false;
     } else {
-      let current = (optionExpect currentOption);
+      let current = optionExpect(currentOption);
 
       # (print (stringConcat "Current: " (vec2ToString current)))
 
-      if (vec2Equals current targetNode) {
+      if vec2Equals(current, targetNode) {
         # (print "Reached target")
 
         loop = false;
       } else {
-        let currentKey = (vec2ToString current);
-        let currentShortestPath = (extractShortestPath cameFrom current);
+        let currentKey = vec2ToString(current);
+        let currentShortestPath = extractShortestPath(cameFrom, current);
 
         # (printGrid grid currentShortestPath)
 
-        for neighbor in (gridAdjacent grid current) {
+        for neighbor in gridAdjacent(grid, current) {
           let viable = true;
 
           for visited in currentShortestPath {
-            if (vec2Equals visited neighbor) {
+            if vec2Equals(visited, neighbor) {
               viable = false;
             }
           }
 
-          if (exceedsSingleDirectionLimit [...currentShortestPath, neighbor]) {
+          if exceedsSingleDirectionLimit([...currentShortestPath, neighbor]) {
             viable = false;
           }
 
@@ -349,23 +349,23 @@ let solvePart1 = (input: String): String -> {
             # (write (@i32 reachedLimit))
             # (print (stringConcat "Neighbor: " (vec2ToString neighbor)))
 
-            let neighborKey = (vec2ToString neighbor);
-            let distance = (listGet (listGet grid.tiles neighbor.y) neighbor.x);
+            let neighborKey = vec2ToString(neighbor);
+            let distance = listGet(listGet(grid.tiles, neighbor.y), neighbor.x);
 
-            if (!viable) {
-              distance = (+ distance 99999);
+            if !(viable) {
+              distance = (distance + 99999);
             }
 
             # (print (stringConcat "Distance: " (stringFromNumber distance)))
 
-            let currentGScore = (optionValue 10000 (mapGet gScore currentKey));
-            let tentativeGScore = (+ currentGScore distance);
-            let neighborGScore = (optionValue 10000 (mapGet gScore neighborKey));
+            let currentGScore = optionValue(10000, mapGet(gScore, currentKey));
+            let tentativeGScore = (currentGScore + distance);
+            let neighborGScore = optionValue(10000, mapGet(gScore, neighborKey));
 
-            if (< tentativeGScore neighborGScore) {
-              (mapSet cameFrom neighborKey current);
-              (mapSet gScore neighborKey tentativeGScore);
-              (priorityQueueInsert openSet neighbor -tentativeGScore);
+            if (tentativeGScore < neighborGScore) {
+              mapSet(cameFrom, neighborKey, current);
+              mapSet(gScore, neighborKey, tentativeGScore);
+              priorityQueueInsert(openSet, neighbor, --(tentativeGScore));
             }
           }
         }
@@ -373,30 +373,30 @@ let solvePart1 = (input: String): String -> {
     }
   }
 
-  let path = (extractShortestPath cameFrom targetNode);
+  let path = extractShortestPath(cameFrom, targetNode);
 
   # (printGrid grid path)
 
   let result = 0;
 
   for position in path {
-    if (!(vec2Equals position startNode)) {
-      let weight = (listGet (listGet grid.tiles position.y) position.x);
+    if !(vec2Equals(position, startNode)) {
+      let weight = listGet(listGet(grid.tiles, position.y), position.x);
 
       # (print (stringConcat "Path " (stringConcat (vec2ToString position) (stringFromNumber weight))))
 
-      result = (+ result weight);
+      result = (result + weight);
     }
   }
 
-  return (stringFromNumber result);
+  return stringFromNumber(result);
 }
 
 let main = (): unit -> {
   # (testPriorityQueue)
 
-  let input = (getExample);
-  let _part1 = (solvePart1 input);
+  let input = getExample();
+  let _part1 = solvePart1(input);
 
   # todo
   # (assertEqualString part1 "102")

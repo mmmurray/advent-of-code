@@ -5,20 +5,20 @@ import { _type_String } from "@string-base";
 import { getValue: getInput } from "./input.txt";
 
 let parseInput = (input: String): List<List<i32> > -> {
-  let lines = (stringToLines (stringTrim input));
+  let lines = stringToLines(stringTrim(input));
   let sequences = [];
 
   for line in lines {
     let sequence = [];
-    let parts = (stringSplitBy line ' ');
+    let parts = stringSplitBy(line, ' ');
 
     for part in parts {
-      let value = (stringToNumber part);
+      let value = stringToNumber(part);
 
-      (listPush sequence value);
+      listPush(sequence, value);
     }
 
-    (listPush sequences sequence);
+    listPush(sequences, sequence);
   }
 
   return sequences;
@@ -28,11 +28,11 @@ let findDeltas = (sequence: List<i32>): List<i32> -> {
   let deltas = [];
 
   for b, index in sequence {
-    if (> index 0) {
-      let a = (listGet sequence (- index 1));
-      let delta = (- b a);
+    if (index > 0) {
+      let a = listGet(sequence, (index - 1));
+      let delta = (b - a);
 
-      (listPush deltas delta);
+      listPush(deltas, delta);
     }
   }
 
@@ -43,7 +43,7 @@ let isSequenceAllZero = (sequence: List<i32>): boolean -> {
   let allZero = true;
 
   for value in sequence {
-    if (!= value 0) {
+    if (value != 0) {
       allZero = false;
     }
   }
@@ -53,59 +53,59 @@ let isSequenceAllZero = (sequence: List<i32>): boolean -> {
 
 let findNextValue = (sequence: List<i32>): i32 -> {
   return case {
-    (isSequenceAllZero sequence) -> 0;
+    isSequenceAllZero(sequence) -> 0;
     true -> {
-      let lastValue = (listGet sequence (- (listSize sequence) 1));
+      let lastValue = listGet(sequence, (listSize(sequence) - 1));
 
-      return (+ lastValue (findNextValue (findDeltas sequence)));
+      return (lastValue + findNextValue(findDeltas(sequence)));
     };
   };
 }
 
 let findPreviousValue = (sequence: List<i32>): i32 -> {
   return case {
-    (isSequenceAllZero sequence) -> 0;
+    isSequenceAllZero(sequence) -> 0;
     true -> {
-      let firstValue = (listGet sequence 0);
+      let firstValue = listGet(sequence, 0);
 
-      return (- firstValue (findPreviousValue (findDeltas sequence)));
+      return (firstValue - findPreviousValue(findDeltas(sequence)));
     };
   };
 }
 
 let solvePart1 = (input: String): String -> {
-  let sequences = (parseInput input);
+  let sequences = parseInput(input);
   let result = 0;
 
   for sequence in sequences {
-    let nextValue = (findNextValue sequence);
+    let nextValue = findNextValue(sequence);
 
-    result = (+ result nextValue);
+    result = (result + nextValue);
   }
 
-  return (stringFromNumber result);
+  return stringFromNumber(result);
 }
 
 let solvePart2 = (input: String): String -> {
-  let sequences = (parseInput input);
+  let sequences = parseInput(input);
   let result = 0;
 
   for sequence in sequences {
-    let previousValue = (findPreviousValue sequence);
+    let previousValue = findPreviousValue(sequence);
 
-    result = (+ result previousValue);
+    result = (result + previousValue);
   }
 
-  return (stringFromNumber result);
+  return stringFromNumber(result);
 }
 
 let main = (): unit -> {
-  let input = (getInput);
-  let part1 = (solvePart1 input);
+  let input = getInput();
+  let part1 = solvePart1(input);
 
-  (assertEqualString part1 "1877825184");
+  assertEqualString(part1, "1877825184");
 
-  let part2 = (solvePart2 input);
+  let part2 = solvePart2(input);
 
-  (assertEqualString part2 "1108");
+  assertEqualString(part2, "1108");
 }

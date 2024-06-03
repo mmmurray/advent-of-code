@@ -62,61 +62,61 @@ data System = {
 }
 
 let parseWorkflow = (input: String): Workflow -> {
-  let workflowParts = (stringSplitBy input '{');
-  let name = (listGet workflowParts 0);
-  let innerPart = (listGet workflowParts 1);
-  let inner = (stringSlice innerPart 0 (- (stringSize innerPart) 1));
+  let workflowParts = stringSplitBy(input, '{');
+  let name = listGet(workflowParts, 0);
+  let innerPart = listGet(workflowParts, 1);
+  let inner = stringSlice(innerPart, 0, (stringSize(innerPart) - 1));
   let steps = [];
-  let stepParts = (stringSplitBy inner ',');
+  let stepParts = stringSplitBy(inner, ',');
 
   for stepPart in stepParts {
-    if (stringContains stepPart ":") {
-      let conditionParts = (stringSplitBy stepPart ':');
-      let conditionPart = (listGet conditionParts 0);
-      let target = (listGet conditionParts 1);
-      let step = (WorkflowStepConditional {
+    if stringContains(stepPart, ":") {
+      let conditionParts = stringSplitBy(stepPart, ':');
+      let conditionPart = listGet(conditionParts, 0);
+      let target = listGet(conditionParts, 1);
+      let step = WorkflowStepConditional({
         target: target,
-        condition: (Condition {
-          property: (stringGet conditionPart 0),
-          operator: (stringGet conditionPart 1),
-          value: (stringToNumber (stringSlice conditionPart 2 (stringSize conditionPart))),
+        condition: Condition({
+          property: stringGet(conditionPart, 0),
+          operator: stringGet(conditionPart, 1),
+          value: stringToNumber(stringSlice(conditionPart, 2, stringSize(conditionPart))),
         }),
       });
 
-      (listPush steps step);
+      listPush(steps, step);
     } else {
-      let step2 = (WorkflowStep { target: stepPart });
+      let step2 = WorkflowStep({ target: stepPart });
 
-      (listPush steps step2);
+      listPush(steps, step2);
     }
   }
 
-  return (Workflow { name: name, steps: steps });
+  return Workflow({ name: name, steps: steps });
 }
 
 let parseRating = (input: String): Rating -> {
-  let rating = (Rating { x: 0, m: 0, a: 0, s: 0 });
-  let inner = (stringSlice input 1 (- (stringSize input) 1));
-  let ratingParts = (stringSplitBy inner ',');
+  let rating = Rating({ x: 0, m: 0, a: 0, s: 0 });
+  let inner = stringSlice(input, 1, (stringSize(input) - 1));
+  let ratingParts = stringSplitBy(inner, ',');
 
   for ratingPart in ratingParts {
-    let propertyParts = (stringSplitBy ratingPart '=');
-    let propertyName = (listGet propertyParts 0);
-    let propertyValue = (stringToNumber (listGet propertyParts 1));
+    let propertyParts = stringSplitBy(ratingPart, '=');
+    let propertyName = listGet(propertyParts, 0);
+    let propertyValue = stringToNumber(listGet(propertyParts, 1));
 
-    if (stringEquals propertyName "x") {
+    if stringEquals(propertyName, "x") {
       rating.x = propertyValue;
     }
 
-    if (stringEquals propertyName "m") {
+    if stringEquals(propertyName, "m") {
       rating.m = propertyValue;
     }
 
-    if (stringEquals propertyName "a") {
+    if stringEquals(propertyName, "a") {
       rating.a = propertyValue;
     }
 
-    if (stringEquals propertyName "s") {
+    if stringEquals(propertyName, "s") {
       rating.s = propertyValue;
     }
   }
@@ -125,88 +125,88 @@ let parseRating = (input: String): Rating -> {
 }
 
 let parseInput = (input: String): System -> {
-  let lines = (stringToLines (stringTrim input));
+  let lines = stringToLines(stringTrim(input));
   let inWorkflowsSection = true;
-  let workflows = (mapCreate);
+  let workflows = mapCreate();
   let ratings = [];
 
   for line in lines {
-    if (== (stringSize line) 0) {
+    if (stringSize(line) == 0) {
       inWorkflowsSection = false;
     } else {
       if inWorkflowsSection {
-        let workflow = (parseWorkflow line);
+        let workflow = parseWorkflow(line);
 
-        (mapSet workflows workflow.name workflow);
+        mapSet(workflows, workflow.name, workflow);
       } else {
-        (listPush ratings (parseRating line));
+        listPush(ratings, parseRating(line));
       }
     }
   }
 
-  return (System { workflows: workflows, ratings: ratings });
+  return System({ workflows: workflows, ratings: ratings });
 }
 
 let _printSystem = (system: System): unit -> {
-  let out = (stringBuilderCreate 1024);
+  let out = stringBuilderCreate(1024);
   let workflows = system.workflows;
 
-  for workflowItem in (mapEntries workflows) {
+  for workflowItem in mapEntries(workflows) {
     let workflow = workflowItem.value;
 
-    (stringBuilderAppend out workflow.name);
-    (stringBuilderAppend out "{");
+    stringBuilderAppend(out, workflow.name);
+    stringBuilderAppend(out, "{");
 
     for step, stepIndex in workflow.steps {
-      if (> stepIndex 0) {
-        (stringBuilderAppend out ",");
+      if (stepIndex > 0) {
+        stringBuilderAppend(out, ",");
       }
 
       let _ = match step {
         WorkflowStep { target } -> {
-          (stringBuilderAppend out target);
+          stringBuilderAppend(out, target);
         };
         WorkflowStepConditional { target, condition } -> {
-          (stringBuilderAppend out (charToString condition.property));
-          (stringBuilderAppend out (charToString condition.operator));
-          (stringBuilderAppend out (stringFromNumber condition.value));
-          (stringBuilderAppend out ":");
-          (stringBuilderAppend out target);
+          stringBuilderAppend(out, charToString(condition.property));
+          stringBuilderAppend(out, charToString(condition.operator));
+          stringBuilderAppend(out, stringFromNumber(condition.value));
+          stringBuilderAppend(out, ":");
+          stringBuilderAppend(out, target);
         };
       };
     }
 
-    (stringBuilderAppend out "}\n");
+    stringBuilderAppend(out, "}\n");
   }
 
-  (stringBuilderAppend out "\n");
+  stringBuilderAppend(out, "\n");
 
   for rating in system.ratings {
-    (stringBuilderAppend out "{x=");
-    (stringBuilderAppend out (stringFromNumber rating.x));
-    (stringBuilderAppend out ",m=");
-    (stringBuilderAppend out (stringFromNumber rating.m));
-    (stringBuilderAppend out ",a=");
-    (stringBuilderAppend out (stringFromNumber rating.a));
-    (stringBuilderAppend out ",s=");
-    (stringBuilderAppend out (stringFromNumber rating.s));
-    (stringBuilderAppend out "}\n");
+    stringBuilderAppend(out, "{x=");
+    stringBuilderAppend(out, stringFromNumber(rating.x));
+    stringBuilderAppend(out, ",m=");
+    stringBuilderAppend(out, stringFromNumber(rating.m));
+    stringBuilderAppend(out, ",a=");
+    stringBuilderAppend(out, stringFromNumber(rating.a));
+    stringBuilderAppend(out, ",s=");
+    stringBuilderAppend(out, stringFromNumber(rating.s));
+    stringBuilderAppend(out, "}\n");
   }
 
-  (print (stringBuilderBuild out));
+  print(stringBuilderBuild(out));
 }
 
 let doesConditionApply = (condition: Condition, rating: Rating): boolean -> {
   let propertyValue = case {
-    (== condition.property 'x') -> rating.x;
-    (== condition.property 'm') -> rating.m;
-    (== condition.property 'a') -> rating.a;
+    (condition.property == 'x') -> rating.x;
+    (condition.property == 'm') -> rating.m;
+    (condition.property == 'a') -> rating.a;
     true -> rating.s;
   };
 
   return case {
-    (== condition.operator '>') -> (> propertyValue condition.value);
-    true -> (< propertyValue condition.value);
+    (condition.operator == '>') -> (propertyValue > condition.value);
+    true -> (propertyValue < condition.value);
   };
 }
 
@@ -219,18 +219,18 @@ let isPartAccepted = (workflows: Map<Workflow>, rating: Rating): boolean -> {
     # (print (stringConcat "currentWorkflow: " currentWorkflow))
 
     loop = case {
-      (stringEquals currentWorkflow "A") -> {
+      stringEquals(currentWorkflow, "A") -> {
         result = true;
 
         return false;
       };
-      (stringEquals currentWorkflow "R") -> {
+      stringEquals(currentWorkflow, "R") -> {
         result = false;
 
         return false;
       };
       true -> {
-        let workflow = (optionExpect (mapGet workflows currentWorkflow));
+        let workflow = optionExpect(mapGet(workflows, currentWorkflow));
         let loop = true;
 
         for step in workflow.steps {
@@ -244,7 +244,7 @@ let isPartAccepted = (workflows: Map<Workflow>, rating: Rating): boolean -> {
               WorkflowStepConditional { target, condition } -> {
                 let inner = true;
 
-                if (doesConditionApply condition rating) {
+                if doesConditionApply(condition, rating) {
                   currentWorkflow = target;
                   inner = false;
                 }
@@ -253,7 +253,7 @@ let isPartAccepted = (workflows: Map<Workflow>, rating: Rating): boolean -> {
               };
             };
 
-            if (!continue) {
+            if !(continue) {
               loop = false;
             }
           }
@@ -268,25 +268,25 @@ let isPartAccepted = (workflows: Map<Workflow>, rating: Rating): boolean -> {
 }
 
 let solvePart1 = (input: String): String -> {
-  let system = (parseInput input);
+  let system = parseInput(input);
   let result = 0;
 
   for rating in system.ratings {
-    if (isPartAccepted system.workflows rating) {
-      let sum = (+ rating.x (+ rating.m (+ rating.a rating.s)));
+    if isPartAccepted(system.workflows, rating) {
+      let sum = (rating.x + (rating.m + (rating.a + rating.s)));
 
-      result = (+ result sum);
+      result = (result + sum);
     }
   }
 
-  return (stringFromNumber result);
+  return stringFromNumber(result);
 }
 
 let main = (): unit -> {
-  let input = (getInput);
-  let part1 = (solvePart1 input);
+  let input = getInput();
+  let part1 = solvePart1(input);
 
-  (assertEqualString part1 "287054");
+  assertEqualString(part1, "287054");
 
   # todo
   # let part2 = (solvePart2 input)

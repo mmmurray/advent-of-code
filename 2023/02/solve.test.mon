@@ -26,23 +26,23 @@ data Game = {
 }
 
 let parseSelection = (input: String): Selection -> {
-  let valueParts = (stringSplitBy input ',');
-  let selection = (Selection { red: 0, blue: 0, green: 0 });
+  let valueParts = stringSplitBy(input, ',');
+  let selection = Selection({ red: 0, blue: 0, green: 0 });
 
   for valuePart in valueParts {
-    let pairParts = (stringSplitBy (stringTrim valuePart) ' ');
-    let value = (stringToNumber (listGet pairParts 0));
-    let color = (listGet pairParts 1);
+    let pairParts = stringSplitBy(stringTrim(valuePart), ' ');
+    let value = stringToNumber(listGet(pairParts, 0));
+    let color = listGet(pairParts, 1);
 
-    if (stringEquals color "red") {
+    if stringEquals(color, "red") {
       selection.red = value;
     }
 
-    if (stringEquals color "green") {
+    if stringEquals(color, "green") {
       selection.green = value;
     }
 
-    if (stringEquals color "blue") {
+    if stringEquals(color, "blue") {
       selection.blue = value;
     }
   }
@@ -51,88 +51,88 @@ let parseSelection = (input: String): Selection -> {
 }
 
 let parseInputLine = (line: String): Game -> {
-  let parts = (stringSplitBy line ':');
-  let gameIdPart = (listGet parts 0);
-  let idPart = (stringSlice gameIdPart 5 (stringSize gameIdPart));
-  let id = (stringToNumber idPart);
+  let parts = stringSplitBy(line, ':');
+  let gameIdPart = listGet(parts, 0);
+  let idPart = stringSlice(gameIdPart, 5, stringSize(gameIdPart));
+  let id = stringToNumber(idPart);
   let selections = [];
-  let selectionsPart = (stringTrim (listGet parts 1));
-  let selectionParts = (stringSplitBy selectionsPart ';');
+  let selectionsPart = stringTrim(listGet(parts, 1));
+  let selectionParts = stringSplitBy(selectionsPart, ';');
   let selectionIndex = 0;
 
   for selectionPart in selectionParts {
-    let selection = (parseSelection selectionPart);
+    let selection = parseSelection(selectionPart);
 
-    (listPush selections selection);
+    listPush(selections, selection);
 
-    selectionIndex = (+ selectionIndex 1);
+    selectionIndex = (selectionIndex + 1);
   }
 
-  return (Game { id: id, selections: selections });
+  return Game({ id: id, selections: selections });
 }
 
 let parseInput = (input: String): List<Game> -> {
-  let lines = (stringToLines input);
+  let lines = stringToLines(input);
   let games = [];
 
   for line in lines {
-    let game = (parseInputLine line);
+    let game = parseInputLine(line);
 
-    (listPush games game);
+    listPush(games, game);
   }
 
   return games;
 }
 
 let solvePart1 = (input: String): String -> {
-  let games = (parseInput input);
+  let games = parseInput(input);
   let result = 0;
 
   for game in games {
     let possible = true;
 
     for selection in game.selections {
-      if (|| (> selection.red 12) (|| (> selection.green 13) (> selection.blue 14))) {
+      if ((selection.red > 12) || ((selection.green > 13) || (selection.blue > 14))) {
         possible = false;
       }
     }
 
     if possible {
-      result = (+ result game.id);
+      result = (result + game.id);
     }
   }
 
-  return (stringFromNumber result);
+  return stringFromNumber(result);
 }
 
 let solvePart2 = (input: String): String -> {
-  let games = (parseInput input);
+  let games = parseInput(input);
   let result = 0;
 
   for game in games {
-    let minSelection = (Selection { red: 0, green: 0, blue: 0 });
+    let minSelection = Selection({ red: 0, green: 0, blue: 0 });
 
     for selection in game.selections {
-      minSelection.red = (max minSelection.red selection.red);
-      minSelection.green = (max minSelection.green selection.green);
-      minSelection.blue = (max minSelection.blue selection.blue);
+      minSelection.red = max(minSelection.red, selection.red);
+      minSelection.green = max(minSelection.green, selection.green);
+      minSelection.blue = max(minSelection.blue, selection.blue);
     }
 
-    let power = (* minSelection.red (* minSelection.blue minSelection.green));
+    let power = (minSelection.red * (minSelection.blue * minSelection.green));
 
-    result = (+ result power);
+    result = (result + power);
   }
 
-  return (stringFromNumber result);
+  return stringFromNumber(result);
 }
 
 let main = (): unit -> {
-  let input = (stringTrim (getInput));
-  let part1 = (solvePart1 input);
+  let input = stringTrim(getInput());
+  let part1 = solvePart1(input);
 
-  (assertEqualString part1 "1853");
+  assertEqualString(part1, "1853");
 
-  let part2 = (solvePart2 input);
+  let part2 = solvePart2(input);
 
-  (assertEqualString part2 "72706");
+  assertEqualString(part2, "72706");
 }
