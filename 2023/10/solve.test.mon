@@ -34,7 +34,7 @@ let charToConnections = (char: i32): Connections -> {
     (char == '7') -> Connections({ north: false, east: false, south: true, west: true });
     (char == 'F') -> Connections({ north: false, east: true, south: true, west: false });
     (char == 'S') -> Connections({ north: true, east: true, south: true, west: true });
-    true -> Connections({ north: false, east: false, south: false, west: false });
+    _ -> Connections({ north: false, east: false, south: false, west: false });
   };
 }
 
@@ -73,7 +73,7 @@ let connectionsToChar = (connections: Connections): i32 -> {
     (connections.west && connections.south) -> '╗';
     (connections.north && connections.west) -> '╝';
     (connections.east && connections.north) -> '╚';
-    true -> ' ';
+    _ -> ' ';
   };
 }
 
@@ -135,7 +135,7 @@ let pointsContain = (points: List<Vec2<i32> >, point: Vec2<i32>): boolean -> {
 let searchPipes = (pipes: Pipes, visited: List<Vec2<i32> >, current: Vec2<i32>, steps: i32): i32 -> {
   return case {
     pointsContain(visited, current) -> steps;
-    true -> {
+    _ -> {
       let currentConnections = getConnections(pipes, current);
 
       listPush(visited, current);

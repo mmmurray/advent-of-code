@@ -54,7 +54,7 @@ let isSequenceAllZero = (sequence: List<i32>): boolean -> {
 let findNextValue = (sequence: List<i32>): i32 -> {
   return case {
     isSequenceAllZero(sequence) -> 0;
-    true -> {
+    _ -> {
       let lastValue = listGet(sequence, (listSize(sequence) - 1));
 
       return (lastValue + findNextValue(findDeltas(sequence)));
@@ -65,7 +65,7 @@ let findNextValue = (sequence: List<i32>): i32 -> {
 let findPreviousValue = (sequence: List<i32>): i32 -> {
   return case {
     isSequenceAllZero(sequence) -> 0;
-    true -> {
+    _ -> {
       let firstValue = listGet(sequence, 0);
 
       return (firstValue - findPreviousValue(findDeltas(sequence)));

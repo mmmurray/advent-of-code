@@ -60,7 +60,7 @@ let parseDirection = (input: String): Direction -> {
     (char == 'R') -> directionEast();
     (char == 'D') -> directionSouth();
     (char == 'L') -> directionWest();
-    true -> directionNorth();
+    _ -> directionNorth();
   };
 }
 

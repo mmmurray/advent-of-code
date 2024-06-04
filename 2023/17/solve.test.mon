@@ -93,7 +93,7 @@ let priorityQueueNext = <T>(queue: PriorityQueue<T>): Option<T> -> {
         None -> None({});
       };
     };
-    true -> {
+    _ -> {
       let highestPriority = listGet(queue.heap, 0);
 
       listSet(queue.heap, 0, optionExpect(listPop(queue.heap)));
@@ -252,7 +252,7 @@ let exceedsSingleDirectionLimit = (path: List<Vec2<i32> >): boolean -> {
 
   return case {
     (size < limit) -> false;
-    true -> {
+    _ -> {
       let sameX = true;
       let sameY = true;
       let i = 0;

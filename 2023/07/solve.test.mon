@@ -101,7 +101,7 @@ let scoreCards = (cards: List<i32>): i32 -> {
     isThreeOfAKind(countByCard) -> 4;
     isTwoPair(countByCard) -> 3;
     isOnePair(countByCard) -> 2;
-    true -> 1;
+    _ -> 1;
   };
 
   return 1;
@@ -178,7 +178,7 @@ let compareHands = (a: Hand, b: Hand): boolean -> {
 
       return result;
     };
-    true -> (a.score > b.score);
+    _ -> (a.score > b.score);
   };
 }
 

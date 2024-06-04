@@ -92,7 +92,7 @@ let parseTile = (char: i32): Tile -> {
     (char == '\\') -> ReflectBackward({});
     (char == '-') -> SplitHorizontal({});
     (char == '|') -> SplitVertical({});
-    true -> Empty({});
+    _ -> Empty({});
   };
 }
 
@@ -126,7 +126,7 @@ let propagate = (grid: Grid, position: Vec2<i32>, direction: Direction): boolean
     (position.y < 0) -> false;
     (position.x >= size.x) -> false;
     (position.y >= size.y) -> false;
-    true -> {
+    _ -> {
       let energizedRow = listGet(grid.energized, position.y);
       let currentEnergizedDirections = listGet(energizedRow, position.x);
       let isSameDirection = false;
@@ -139,7 +139,7 @@ let propagate = (grid: Grid, position: Vec2<i32>, direction: Direction): boolean
 
       return case {
         isSameDirection -> false;
-        true -> {
+        _ -> {
           listSet(energizedRow, position.x, [...currentEnergizedDirections, direction]);
 
           let tile = listGet(listGet(grid.tiles, position.y), position.x);

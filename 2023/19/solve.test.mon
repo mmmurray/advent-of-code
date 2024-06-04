@@ -201,12 +201,12 @@ let doesConditionApply = (condition: Condition, rating: Rating): boolean -> {
     (condition.property == 'x') -> rating.x;
     (condition.property == 'm') -> rating.m;
     (condition.property == 'a') -> rating.a;
-    true -> rating.s;
+    _ -> rating.s;
   };
 
   return case {
     (condition.operator == '>') -> (propertyValue > condition.value);
-    true -> (propertyValue < condition.value);
+    _ -> (propertyValue < condition.value);
   };
 }
 
@@ -229,7 +229,7 @@ let isPartAccepted = (workflows: Map<Workflow>, rating: Rating): boolean -> {
 
         return false;
       };
-      true -> {
+      _ -> {
         let workflow = optionExpect(mapGet(workflows, currentWorkflow));
         let loop = true;
 

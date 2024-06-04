@@ -108,7 +108,7 @@ let isValidPlacement = (conditions: List<i32>, maxDamage: i32, offset: i32, widt
     conditionsContainDot(listSlice(conditions, offset, (offset + width))) -> false;
     ((prevIndex >= 0) && (listGet(conditions, prevIndex) == '#')) -> false;
     ((nextIndex < (listSize(conditions) - 1)) && (listGet(conditions, nextIndex) == '#')) -> false;
-    true -> {
+    _ -> {
       let damageTotal = 0;
 
       for condition2 in placeDamage(conditions, offset, width) {
@@ -137,7 +137,7 @@ let countArrangementsRec = (cache: Array<i32>, row: Row, offset: i32, damagedInd
   return case {
     (cached >= 0) -> cached;
     (offset >= listSize(row.conditions)) -> 0;
-    true -> {
+    _ -> {
       let arrangements = 0;
       let damageWidth = listGet(row.damaged, damagedIndex);
       let valid = isValidPlacement(row.conditions, row.damageTotal, offset, damageWidth);

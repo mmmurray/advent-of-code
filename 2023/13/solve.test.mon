@@ -87,7 +87,7 @@ let getReflectionScore = (grid: Grid, notScore: i32): i32 -> {
 
   return case {
     !(loop) -> result;
-    true -> {
+    _ -> {
       let rowGap = 1;
       let loop1 = true;
 

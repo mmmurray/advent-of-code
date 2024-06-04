@@ -37,7 +37,7 @@ let parseOperation = (input: String): Operation -> {
 
       return Remove({ label: label });
     };
-    true -> {
+    _ -> {
       let parts = stringSplitBy(input, '=');
 
       return Insert({
