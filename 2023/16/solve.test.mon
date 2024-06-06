@@ -12,7 +12,7 @@ data Direction =
   | West {}
 
 let directionEquals = (a: Direction, b: Direction): boolean -> {
-  return match a {
+  match a {
     North -> match b {
       North -> true;
       _ -> false;
@@ -29,7 +29,7 @@ let directionEquals = (a: Direction, b: Direction): boolean -> {
       West -> true;
       _ -> false;
     };
-  };
+  }
 }
 
 let directionNorth = (): Direction -> North({})
@@ -49,12 +49,12 @@ let vec2South = (): Vec2<i32> -> Vec2({ x: 0, y: 1 })
 let vec2West = (): Vec2<i32> -> Vec2({ x: --(1), y: 0 })
 
 let directionToVec2 = (direction: Direction): Vec2<i32> -> {
-  return match direction {
+  match direction {
     North -> vec2North();
     East -> vec2East();
     South -> vec2South();
     West -> vec2West();
-  };
+  }
 }
 
 data Tile =
@@ -83,17 +83,17 @@ let gridClone = (grid: Grid): Grid -> {
     listPush(newEnergized, newEnergizedRow);
   }
 
-  return Grid({ size: grid.size, tiles: grid.tiles, energized: newEnergized });
+  Grid({ size: grid.size, tiles: grid.tiles, energized: newEnergized })
 }
 
 let parseTile = (char: i32): Tile -> {
-  return case {
+  case {
     (char == '/') -> ReflectForward({});
     (char == '\\') -> ReflectBackward({});
     (char == '-') -> SplitHorizontal({});
     (char == '|') -> SplitVertical({});
     _ -> Empty({});
-  };
+  }
 }
 
 let parseInput = (input: String): Grid -> {
@@ -115,13 +115,13 @@ let parseInput = (input: String): Grid -> {
     listPush(energized, energizedRow);
   }
 
-  return Grid({ size: size, tiles: tiles, energized: energized });
+  Grid({ size: size, tiles: tiles, energized: energized })
 }
 
 let propagate = (grid: Grid, position: Vec2<i32>, direction: Direction): boolean -> {
   let size = grid.size;
 
-  return case {
+  case {
     (position.x < 0) -> false;
     (position.y < 0) -> false;
     (position.x >= size.x) -> false;
@@ -137,7 +137,7 @@ let propagate = (grid: Grid, position: Vec2<i32>, direction: Direction): boolean
         }
       }
 
-      return case {
+      case {
         isSameDirection -> false;
         _ -> {
           listSet(energizedRow, position.x, [...currentEnergizedDirections, direction]);
@@ -218,11 +218,11 @@ let propagate = (grid: Grid, position: Vec2<i32>, direction: Direction): boolean
             };
           };
 
-          return false;
+          false
         };
-      };
+      }
     };
-  };
+  }
 }
 
 let countEnergized = (grid: Grid, startPosition: Vec2<i32>, startDirection: Direction): i32 -> {
@@ -240,14 +240,14 @@ let countEnergized = (grid: Grid, startPosition: Vec2<i32>, startDirection: Dire
     }
   }
 
-  return total;
+  total
 }
 
 let solvePart1 = (input: String): String -> {
   let grid = parseInput(input);
   let result = countEnergized(grid, Vec2({ x: 0, y: 0 }), directionEast());
 
-  return stringFromNumber(result);
+  stringFromNumber(result)
 }
 
 let solvePart2 = (input: String): String -> {
@@ -264,7 +264,7 @@ let solvePart2 = (input: String): String -> {
     offset = (offset + 1);
   }
 
-  return stringFromNumber(result);
+  stringFromNumber(result)
 }
 
 let main = (): unit -> {

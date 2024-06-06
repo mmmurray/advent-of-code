@@ -25,7 +25,7 @@ let parseInput = (input: String): Universe -> {
     }
   }
 
-  return Universe({ size: size, galaxies: galaxies });
+  Universe({ size: size, galaxies: galaxies })
 }
 
 let expandUniverse = (universe: Universe, expansionRate: i64): Universe -> {
@@ -94,7 +94,7 @@ let expandUniverse = (universe: Universe, expansionRate: i64): Universe -> {
     listPush(newGalaxies, newGalaxy);
   }
 
-  return Universe({ size: newSize, galaxies: newGalaxies });
+  Universe({ size: newSize, galaxies: newGalaxies })
 }
 
 let sumOfDistancesBetweenGalaxies = (universe: Universe): i64 -> {
@@ -117,7 +117,7 @@ let sumOfDistancesBetweenGalaxies = (universe: Universe): i64 -> {
     i = (i + 1);
   }
 
-  return total;
+  total
 }
 
 let solvePart1 = (input: String): String -> {
@@ -125,7 +125,7 @@ let solvePart1 = (input: String): String -> {
   let universe = expandUniverse(parseInput(input), expansionRate);
   let result = sumOfDistancesBetweenGalaxies(universe);
 
-  return stringFromNumber(result);
+  stringFromNumber(result)
 }
 
 let solvePart2 = (input: String): String -> {
@@ -133,7 +133,7 @@ let solvePart2 = (input: String): String -> {
   let universe = expandUniverse(parseInput(input), expansionRate);
   let result = sumOfDistancesBetweenGalaxies(universe);
 
-  return stringFromNumber(result);
+  stringFromNumber(result)
 }
 
 let main = (): unit -> {

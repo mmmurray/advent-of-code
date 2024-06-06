@@ -40,7 +40,7 @@ let parseInput = (input: String): List<Grid> -> {
     }
   }
 
-  return grids;
+  grids
 }
 
 let getReflectionScore = (grid: Grid, notScore: i32): i32 -> {
@@ -85,7 +85,7 @@ let getReflectionScore = (grid: Grid, notScore: i32): i32 -> {
     colGap = (colGap + 1);
   }
 
-  return case {
+  case {
     !(loop) -> result;
     _ -> {
       let rowGap = 1;
@@ -127,9 +127,9 @@ let getReflectionScore = (grid: Grid, notScore: i32): i32 -> {
         rowGap = (rowGap + 1);
       }
 
-      return result;
+      result
     };
-  };
+  }
 }
 
 let solvePart1 = (input: String): String -> {
@@ -140,7 +140,7 @@ let solvePart1 = (input: String): String -> {
     result = (result + getReflectionScore(grid, 0));
   }
 
-  return stringFromNumber(result);
+  stringFromNumber(result)
 }
 
 let removeSmudge = (grid: Grid): i32 -> {
@@ -173,7 +173,7 @@ let removeSmudge = (grid: Grid): i32 -> {
     y = (y + 1);
   }
 
-  return result;
+  result
 }
 
 let solvePart2 = (input: String): String -> {
@@ -184,7 +184,7 @@ let solvePart2 = (input: String): String -> {
     result = (result + removeSmudge(grid));
   }
 
-  return stringFromNumber(result);
+  stringFromNumber(result)
 }
 
 let main = (): unit -> {

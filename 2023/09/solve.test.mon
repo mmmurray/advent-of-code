@@ -21,7 +21,7 @@ let parseInput = (input: String): List<List<i32> > -> {
     listPush(sequences, sequence);
   }
 
-  return sequences;
+  sequences
 }
 
 let findDeltas = (sequence: List<i32>): List<i32> -> {
@@ -36,7 +36,7 @@ let findDeltas = (sequence: List<i32>): List<i32> -> {
     }
   }
 
-  return deltas;
+  deltas
 }
 
 let isSequenceAllZero = (sequence: List<i32>): boolean -> {
@@ -48,29 +48,29 @@ let isSequenceAllZero = (sequence: List<i32>): boolean -> {
     }
   }
 
-  return allZero;
+  allZero
 }
 
 let findNextValue = (sequence: List<i32>): i32 -> {
-  return case {
+  case {
     isSequenceAllZero(sequence) -> 0;
     _ -> {
       let lastValue = listGet(sequence, (listSize(sequence) - 1));
 
-      return (lastValue + findNextValue(findDeltas(sequence)));
+      (lastValue + findNextValue(findDeltas(sequence)))
     };
-  };
+  }
 }
 
 let findPreviousValue = (sequence: List<i32>): i32 -> {
-  return case {
+  case {
     isSequenceAllZero(sequence) -> 0;
     _ -> {
       let firstValue = listGet(sequence, 0);
 
-      return (firstValue - findPreviousValue(findDeltas(sequence)));
+      (firstValue - findPreviousValue(findDeltas(sequence)))
     };
-  };
+  }
 }
 
 let solvePart1 = (input: String): String -> {
@@ -83,7 +83,7 @@ let solvePart1 = (input: String): String -> {
     result = (result + nextValue);
   }
 
-  return stringFromNumber(result);
+  stringFromNumber(result)
 }
 
 let solvePart2 = (input: String): String -> {
@@ -96,7 +96,7 @@ let solvePart2 = (input: String): String -> {
     result = (result + previousValue);
   }
 
-  return stringFromNumber(result);
+  stringFromNumber(result)
 }
 
 let main = (): unit -> {

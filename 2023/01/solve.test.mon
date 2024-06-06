@@ -30,7 +30,7 @@ let getCalibrationValue1 = (line: String): i32 -> {
     }
   }
 
-  return stringToNumber(stringConcat(stringFromNumber(firstDigit), stringFromNumber(lastDigit)));
+  stringToNumber(stringConcat(stringFromNumber(firstDigit), stringFromNumber(lastDigit)))
 }
 
 let solvePart1 = (input: String): String -> {
@@ -43,7 +43,7 @@ let solvePart1 = (input: String): String -> {
     result = (result + calibrationValue);
   }
 
-  return stringFromNumber(result);
+  stringFromNumber(result)
 }
 
 let digitStrings: List<String> = ["one", "two", "three", "four", "five", "six", "seven", "eight", "nine"];
@@ -79,7 +79,7 @@ let getCalibrationValue2 = (line: String): i32 -> {
     }
   }
 
-  return stringToNumber(stringConcat(stringFromNumber(firstDigit), stringFromNumber(lastDigit)));
+  stringToNumber(stringConcat(stringFromNumber(firstDigit), stringFromNumber(lastDigit)))
 }
 
 let solvePart2 = (input: String): String -> {
@@ -92,7 +92,7 @@ let solvePart2 = (input: String): String -> {
     result = (result + calibrationValue);
   }
 
-  return stringFromNumber(result);
+  stringFromNumber(result)
 }
 
 let main = (): unit -> {

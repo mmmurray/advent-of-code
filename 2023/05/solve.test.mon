@@ -40,14 +40,14 @@ let parseNumberList = (input: String): List<u64> -> {
     listPush(values, num);
   }
 
-  return values;
+  values
 }
 
 let parseSeeds = (input: String): List<u64> -> {
   let inputParts = stringSplitBy(input, ':');
   let values = stringTrim(listGet(inputParts, 1));
 
-  return parseNumberList(values);
+  parseNumberList(values)
 }
 
 let parseInput = (input: String): Almanac -> {
@@ -80,7 +80,7 @@ let parseInput = (input: String): Almanac -> {
     }
   }
 
-  return almanac;
+  almanac
 }
 
 let sortAlmanacMappings = (almanac: Almanac): Almanac -> {
@@ -106,7 +106,7 @@ let sortAlmanacMappings = (almanac: Almanac): Almanac -> {
     }
   }
 
-  return almanac;
+  almanac
 }
 
 let mapPositionToLocation = (almanac: Almanac, position: u64): u64 -> {
@@ -122,7 +122,7 @@ let mapPositionToLocation = (almanac: Almanac, position: u64): u64 -> {
     }
   }
 
-  return value;
+  value
 }
 
 let positionMin: u64 = 0;
@@ -158,7 +158,7 @@ let mapRangeToLocationInCategory = (category: AlmanacCategory, range: Range<u64>
     listPush(ranges, intersectionAfter);
   }
 
-  return ranges;
+  ranges
 }
 
 let mapRangeToLocationInAlmanac = (almanac: Almanac, initialRange: Range<u64>): List<Range<u64> > -> {
@@ -176,7 +176,7 @@ let mapRangeToLocationInAlmanac = (almanac: Almanac, initialRange: Range<u64>): 
     ranges = nextRanges;
   }
 
-  return ranges;
+  ranges
 }
 
 let solvePart1 = (input: String): String -> {
@@ -189,7 +189,7 @@ let solvePart1 = (input: String): String -> {
     result = min(result, location);
   }
 
-  return stringFromNumber(result);
+  stringFromNumber(result)
 }
 
 let solvePart2 = (input: String): String -> {
@@ -215,7 +215,7 @@ let solvePart2 = (input: String): String -> {
     }
   }
 
-  return stringFromNumber(result);
+  stringFromNumber(result)
 }
 
 let main = (): unit -> {

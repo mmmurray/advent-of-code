@@ -73,7 +73,7 @@ let parseInput = (input: String): Schematic -> {
     }
   }
 
-  return schematic;
+  schematic
 }
 
 let solvePart1 = (input: String): String -> {
@@ -104,7 +104,7 @@ let solvePart1 = (input: String): String -> {
     }
   }
 
-  return stringFromNumber(result);
+  stringFromNumber(result)
 }
 
 let solvePart2 = (input: String): String -> {
@@ -145,7 +145,7 @@ let solvePart2 = (input: String): String -> {
     }
   }
 
-  return stringFromNumber(result);
+  stringFromNumber(result)
 }
 
 let main = (): unit -> {

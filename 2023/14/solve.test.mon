@@ -25,7 +25,7 @@ let parseInput = (input: String): Grid -> {
     listPush(cols, col);
   }
 
-  return Grid({ size: size, cols: cols });
+  Grid({ size: size, cols: cols })
 }
 
 let tiltColumn = (col: List<i32>): List<i32> -> {
@@ -49,7 +49,7 @@ let tiltColumn = (col: List<i32>): List<i32> -> {
     }
   }
 
-  return newCol;
+  newCol
 }
 
 let tiltGrid = (grid: Grid): Grid -> {
@@ -59,7 +59,7 @@ let tiltGrid = (grid: Grid): Grid -> {
     listPush(newCols, tiltColumn(col));
   }
 
-  return Grid({ size: grid.size, cols: newCols });
+  Grid({ size: grid.size, cols: newCols })
 }
 
 let calculateLoad = (grid: Grid): i32 -> {
@@ -74,7 +74,7 @@ let calculateLoad = (grid: Grid): i32 -> {
     }
   }
 
-  return totalLoad;
+  totalLoad
 }
 
 let rotateGridClockwise = (grid: Grid): Grid -> {
@@ -94,7 +94,7 @@ let rotateGridClockwise = (grid: Grid): Grid -> {
     rowIndex = (rowIndex - 1);
   }
 
-  return Grid({ size: size, cols: newCols });
+  Grid({ size: size, cols: newCols })
 }
 
 let performSpinCycle = (grid: Grid): Grid -> {
@@ -107,7 +107,7 @@ let performSpinCycle = (grid: Grid): Grid -> {
   grid = tiltGrid(grid);
   grid = rotateGridClockwise(grid);
 
-  return grid;
+  grid
 }
 
 let areColsEqual = (a: List<i32>, b: List<i32>): boolean -> {
@@ -121,7 +121,7 @@ let areColsEqual = (a: List<i32>, b: List<i32>): boolean -> {
     }
   }
 
-  return result;
+  result
 }
 
 let areGridsEqual = (a: Grid, b: Grid): boolean -> {
@@ -135,7 +135,7 @@ let areGridsEqual = (a: Grid, b: Grid): boolean -> {
     }
   }
 
-  return result;
+  result
 }
 
 let solvePart1 = (input: String): String -> {
@@ -143,7 +143,7 @@ let solvePart1 = (input: String): String -> {
   let tiltedGrid = tiltGrid(grid);
   let result = calculateLoad(tiltedGrid);
 
-  return stringFromNumber(result);
+  stringFromNumber(result)
 }
 
 let solvePart2 = (input: String): String -> {
@@ -173,7 +173,7 @@ let solvePart2 = (input: String): String -> {
   let gridIndex = (cycleOffset + (((totalCycles - 1) - cycleOffset) % cycleLength));
   let result = calculateLoad(listGet(grids, gridIndex));
 
-  return stringFromNumber(result);
+  stringFromNumber(result)
 }
 
 let main = (): unit -> {

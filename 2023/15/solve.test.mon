@@ -31,21 +31,21 @@ data Step = {
 let parseOperation = (input: String): Operation -> {
   let lastChar = stringGet(input, (stringSize(input) - 1));
 
-  return case {
+  case {
     (lastChar == '-') -> {
       let label = stringSlice(input, 0, (stringSize(input) - 1));
 
-      return Remove({ label: label });
+      Remove({ label: label })
     };
     _ -> {
       let parts = stringSplitBy(input, '=');
 
-      return Insert({
+      Insert({
         label: listGet(parts, 0),
         focalLength: stringToNumber(listGet(parts, 1)),
-      });
+      })
     };
-  };
+  }
 }
 
 let parseInput = (input: String): List<Step> -> {
@@ -58,7 +58,7 @@ let parseInput = (input: String): List<Step> -> {
     listPush(steps, step);
   }
 
-  return steps;
+  steps
 }
 
 let hash = (value: String): i32 -> {
@@ -68,7 +68,7 @@ let hash = (value: String): i32 -> {
     result = (((result + char) * 17) % 256);
   }
 
-  return result;
+  result
 }
 
 let solvePart1 = (input: String): String -> {
@@ -79,7 +79,7 @@ let solvePart1 = (input: String): String -> {
     result = (result + hash(step.raw));
   }
 
-  return stringFromNumber(result);
+  stringFromNumber(result)
 }
 
 data Lens = {
@@ -151,7 +151,7 @@ let solvePart2 = (input: String): String -> {
     }
   }
 
-  return stringFromNumber(result);
+  stringFromNumber(result)
 }
 
 let main = (): unit -> {

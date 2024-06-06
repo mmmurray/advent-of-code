@@ -25,10 +25,10 @@ import { _type_String } from "@string-base";
 import { getValue: getExample } from "./example.txt";
 
 let optionExpect = <T>(option: Option<T>): T -> {
-  return match option {
+  match option {
     Some { value } -> value;
     None -> (@T 0);
-  };
+  }
 }
 
 let vec2ToString = (v: Vec2<i32>): String -> {
@@ -40,7 +40,7 @@ let vec2ToString = (v: Vec2<i32>): String -> {
   stringBuilderAppend(out, stringFromNumber(v.y));
   stringBuilderAppend(out, "]");
 
-  return stringBuilderBuild(out);
+  stringBuilderBuild(out)
 }
 
 data PriorityQueueHeapEntry<T> = {
@@ -53,11 +53,11 @@ data PriorityQueue<T> = {
 }
 
 let priorityQueueCreate = <T>(): PriorityQueue<T> -> {
-  return PriorityQueue<T>({ heap: [] });
+  PriorityQueue<T>({ heap: [] })
 }
 
 let priorityQueueSize = <T>(queue: PriorityQueue<T>): i32 -> {
-  return listSize(queue.heap);
+  listSize(queue.heap)
 }
 
 let priorityQueueInsert = <T>(queue: PriorityQueue<T>, node: T, priority: i32): unit -> {
@@ -85,13 +85,13 @@ let priorityQueueInsert = <T>(queue: PriorityQueue<T>, node: T, priority: i32): 
 }
 
 let priorityQueueNext = <T>(queue: PriorityQueue<T>): Option<T> -> {
-  return case {
+  case {
     (listSize(queue.heap) == 0) -> None({});
     (listSize(queue.heap) == 1) -> {
-      return match listShift(queue.heap) {
+      match listShift(queue.heap) {
         Some { value } -> Some({ value: value.node });
         None -> None({});
-      };
+      }
     };
     _ -> {
       let highestPriority = listGet(queue.heap, 0);
@@ -134,9 +134,9 @@ let priorityQueueNext = <T>(queue: PriorityQueue<T>): Option<T> -> {
         }
       }
 
-      return Some({ value: highestPriority.node });
+      Some({ value: highestPriority.node })
     };
-  };
+  }
 }
 
 let _testPriorityQueue = (): unit -> {
@@ -183,7 +183,7 @@ let parseInput = (input: String): Grid -> {
     listPush(tiles, tileRow);
   }
 
-  return Grid({ size: size, tiles: tiles });
+  Grid({ size: size, tiles: tiles })
 }
 
 let gridAdjacent = (grid: Grid, position: Vec2<i32>): List<Vec2<i32> > -> {
@@ -206,7 +206,7 @@ let gridAdjacent = (grid: Grid, position: Vec2<i32>): List<Vec2<i32> > -> {
     listPush(adjacent, Vec2({ x: position.x, y: (position.y - 1) }));
   }
 
-  return adjacent;
+  adjacent
 }
 
 let extractShortestPath = (cameFrom: Map<Vec2<i32> >, targetNode: Vec2<i32>): List<Vec2<i32> > -> {
@@ -241,7 +241,7 @@ let extractShortestPath = (cameFrom: Map<Vec2<i32> >, targetNode: Vec2<i32>): Li
 
   # (print "- extractShortestPath")
 
-  return path;
+  path
 }
 
 let exceedsSingleDirectionLimit = (path: List<Vec2<i32> >): boolean -> {
@@ -250,7 +250,7 @@ let exceedsSingleDirectionLimit = (path: List<Vec2<i32> >): boolean -> {
   let limit = 5;
   let size = listSize(path);
 
-  return case {
+  case {
     (size < limit) -> false;
     _ -> {
       let sameX = true;
@@ -283,9 +283,9 @@ let exceedsSingleDirectionLimit = (path: List<Vec2<i32> >): boolean -> {
 
       # (print (stringConcat "exceedsSingleDirectionLimit result: " (stringFromNumber result)))
 
-      return result;
+      result
     };
-  };
+  }
 }
 
 let solvePart1 = (input: String): String -> {
@@ -389,7 +389,7 @@ let solvePart1 = (input: String): String -> {
     }
   }
 
-  return stringFromNumber(result);
+  stringFromNumber(result)
 }
 
 let main = (): unit -> {

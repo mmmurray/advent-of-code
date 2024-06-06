@@ -47,7 +47,7 @@ let parseSelection = (input: String): Selection -> {
     }
   }
 
-  return selection;
+  selection
 }
 
 let parseInputLine = (line: String): Game -> {
@@ -68,7 +68,7 @@ let parseInputLine = (line: String): Game -> {
     selectionIndex = (selectionIndex + 1);
   }
 
-  return Game({ id: id, selections: selections });
+  Game({ id: id, selections: selections })
 }
 
 let parseInput = (input: String): List<Game> -> {
@@ -81,7 +81,7 @@ let parseInput = (input: String): List<Game> -> {
     listPush(games, game);
   }
 
-  return games;
+  games
 }
 
 let solvePart1 = (input: String): String -> {
@@ -102,7 +102,7 @@ let solvePart1 = (input: String): String -> {
     }
   }
 
-  return stringFromNumber(result);
+  stringFromNumber(result)
 }
 
 let solvePart2 = (input: String): String -> {
@@ -123,7 +123,7 @@ let solvePart2 = (input: String): String -> {
     result = (result + power);
   }
 
-  return stringFromNumber(result);
+  stringFromNumber(result)
 }
 
 let main = (): unit -> {

@@ -26,7 +26,7 @@ data Pipes = {
 }
 
 let charToConnections = (char: i32): Connections -> {
-  return case {
+  case {
     (char == '|') -> Connections({ north: true, east: false, south: true, west: false });
     (char == '-') -> Connections({ north: false, east: true, south: false, west: true });
     (char == 'L') -> Connections({ north: true, east: true, south: false, west: false });
@@ -35,7 +35,7 @@ let charToConnections = (char: i32): Connections -> {
     (char == 'F') -> Connections({ north: false, east: true, south: true, west: false });
     (char == 'S') -> Connections({ north: true, east: true, south: true, west: true });
     _ -> Connections({ north: false, east: false, south: false, west: false });
-  };
+  }
 }
 
 let parseInput = (input: String): Pipes -> {
@@ -60,11 +60,11 @@ let parseInput = (input: String): Pipes -> {
     listPush(grid, row);
   }
 
-  return Pipes({ grid: grid, start: start, size: size });
+  Pipes({ grid: grid, start: start, size: size })
 }
 
 let connectionsToChar = (connections: Connections): i32 -> {
-  return case {
+  case {
     (!(connections.north) && (!(connections.east) && (!(connections.south) && !(connections.west)))) -> '.';
     (connections.north && (connections.east && (connections.south && connections.west))) -> 'S';
     (connections.north && connections.south) -> '║';
@@ -74,7 +74,7 @@ let connectionsToChar = (connections: Connections): i32 -> {
     (connections.north && connections.west) -> '╝';
     (connections.east && connections.north) -> '╚';
     _ -> ' ';
-  };
+  }
 }
 
 let connectionsToWalls = (connections: Connections): List<List<i32> > -> {
@@ -113,11 +113,11 @@ let connectionsToWalls = (connections: Connections): List<List<i32> > -> {
     listPushList(walls, [[0, 1, 0], [0, 1, 1], [0, 0, 0]]);
   }
 
-  return walls;
+  walls
 }
 
 let getConnections = (pipes: Pipes, p: Vec2<i32>): Connections -> {
-  return listGet(listGet(pipes.grid, p.y), p.x);
+  listGet(listGet(pipes.grid, p.y), p.x)
 }
 
 let pointsContain = (points: List<Vec2<i32> >, point: Vec2<i32>): boolean -> {
@@ -129,11 +129,11 @@ let pointsContain = (points: List<Vec2<i32> >, point: Vec2<i32>): boolean -> {
     }
   }
 
-  return result;
+  result
 }
 
 let searchPipes = (pipes: Pipes, visited: List<Vec2<i32> >, current: Vec2<i32>, steps: i32): i32 -> {
-  return case {
+  case {
     pointsContain(visited, current) -> steps;
     _ -> {
       let currentConnections = getConnections(pipes, current);
@@ -187,9 +187,9 @@ let searchPipes = (pipes: Pipes, visited: List<Vec2<i32> >, current: Vec2<i32>, 
         }
       }
 
-      return maxSteps;
+      maxSteps
     };
-  };
+  }
 }
 
 let _solvePart1 = (input: String): String -> {
@@ -197,7 +197,7 @@ let _solvePart1 = (input: String): String -> {
   let steps = searchPipes(pipes, [], pipes.start, 0);
   let result = (steps / 2);
 
-  return stringFromNumber(result);
+  stringFromNumber(result)
 }
 
 data Lake = {
@@ -241,7 +241,7 @@ let buildLake = (pipes: Pipes, visited: List<Vec2<i32> >): Lake -> {
     }
   }
 
-  return Lake({ walls: walls, size: lakeSize });
+  Lake({ walls: walls, size: lakeSize })
 }
 
 let _solvePart2 = (input: String): String -> {
@@ -271,7 +271,7 @@ let _solvePart2 = (input: String): String -> {
     y = (y + 1);
   }
 
-  return stringFromNumber(result);
+  stringFromNumber(result)
 }
 
 let main = (): unit -> {

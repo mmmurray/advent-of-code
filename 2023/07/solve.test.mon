@@ -28,7 +28,7 @@ let isFiveOfAKind = (countByCard: Map<i32>): boolean -> {
     }
   }
 
-  return result;
+  result
 }
 
 let isFourOfAKind = (countByCard: Map<i32>): boolean -> {
@@ -40,7 +40,7 @@ let isFourOfAKind = (countByCard: Map<i32>): boolean -> {
     }
   }
 
-  return result;
+  result
 }
 
 let isThreeOfAKind = (countByCard: Map<i32>): boolean -> {
@@ -52,19 +52,19 @@ let isThreeOfAKind = (countByCard: Map<i32>): boolean -> {
     }
   }
 
-  return result;
+  result
 }
 
 let isFullHouse = (countByCard: Map<i32>): boolean -> {
-  return (mapSize(countByCard) == 2);
+  (mapSize(countByCard) == 2)
 }
 
 let isTwoPair = (countByCard: Map<i32>): boolean -> {
-  return (mapSize(countByCard) == 3);
+  (mapSize(countByCard) == 3)
 }
 
 let isOnePair = (countByCard: Map<i32>): boolean -> {
-  return (mapSize(countByCard) == 4);
+  (mapSize(countByCard) == 4)
 }
 
 let scoreCards = (cards: List<i32>): i32 -> {
@@ -94,7 +94,7 @@ let scoreCards = (cards: List<i32>): i32 -> {
 
   mapSet(countByCard, maxCard, (maxCount + jokers));
 
-  return case {
+  case {
     isFiveOfAKind(countByCard) -> 7;
     isFourOfAKind(countByCard) -> 6;
     isFullHouse(countByCard) -> 5;
@@ -102,9 +102,9 @@ let scoreCards = (cards: List<i32>): i32 -> {
     isTwoPair(countByCard) -> 3;
     isOnePair(countByCard) -> 2;
     _ -> 1;
-  };
+  }
 
-  return 1;
+  1
 }
 
 let parseInput = (input: String, jokers: boolean): List<Hand> -> {
@@ -156,11 +156,11 @@ let parseInput = (input: String, jokers: boolean): List<Hand> -> {
     listPush(hands, hand);
   }
 
-  return hands;
+  hands
 }
 
 let compareHands = (a: Hand, b: Hand): boolean -> {
-  return case {
+  case {
     (a.score == b.score) -> {
       let result = false;
       let loop = true;
@@ -176,10 +176,10 @@ let compareHands = (a: Hand, b: Hand): boolean -> {
         }
       }
 
-      return result;
+      result
     };
     _ -> (a.score > b.score);
-  };
+  }
 }
 
 let sortHands = (hands: List<Hand>): List<Hand> -> {
@@ -203,7 +203,7 @@ let sortHands = (hands: List<Hand>): List<Hand> -> {
     endIndex = (endIndex - 1);
   }
 
-  return hands;
+  hands
 }
 
 let scoreHands = (hands: List<Hand>): i32 -> {
@@ -215,19 +215,19 @@ let scoreHands = (hands: List<Hand>): i32 -> {
     result = (result + (rank * hand.bid));
   }
 
-  return result;
+  result
 }
 
 let solvePart1 = (input: String): String -> {
   let hands = sortHands(parseInput(input, false));
 
-  return stringFromNumber(scoreHands(hands));
+  stringFromNumber(scoreHands(hands))
 }
 
 let solvePart2 = (input: String): String -> {
   let hands = sortHands(parseInput(input, true));
 
-  return stringFromNumber(scoreHands(hands));
+  stringFromNumber(scoreHands(hands))
 }
 
 let main = (): unit -> {

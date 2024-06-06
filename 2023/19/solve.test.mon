@@ -23,10 +23,10 @@ import { _type_String } from "@string-base";
 import { getValue: getInput } from "./input.txt";
 
 let optionExpect = <T>(option: Option<T>): T -> {
-  return match option {
+  match option {
     Some { value } -> value;
     None -> (@T 0);
-  };
+  }
 }
 
 data Rating = {
@@ -91,7 +91,7 @@ let parseWorkflow = (input: String): Workflow -> {
     }
   }
 
-  return Workflow({ name: name, steps: steps });
+  Workflow({ name: name, steps: steps })
 }
 
 let parseRating = (input: String): Rating -> {
@@ -121,7 +121,7 @@ let parseRating = (input: String): Rating -> {
     }
   }
 
-  return rating;
+  rating
 }
 
 let parseInput = (input: String): System -> {
@@ -144,7 +144,7 @@ let parseInput = (input: String): System -> {
     }
   }
 
-  return System({ workflows: workflows, ratings: ratings });
+  System({ workflows: workflows, ratings: ratings })
 }
 
 let _printSystem = (system: System): unit -> {
@@ -204,10 +204,10 @@ let doesConditionApply = (condition: Condition, rating: Rating): boolean -> {
     _ -> rating.s;
   };
 
-  return case {
+  case {
     (condition.operator == '>') -> (propertyValue > condition.value);
     _ -> (propertyValue < condition.value);
-  };
+  }
 }
 
 let isPartAccepted = (workflows: Map<Workflow>, rating: Rating): boolean -> {
@@ -222,12 +222,12 @@ let isPartAccepted = (workflows: Map<Workflow>, rating: Rating): boolean -> {
       stringEquals(currentWorkflow, "A") -> {
         result = true;
 
-        return false;
+        false
       };
       stringEquals(currentWorkflow, "R") -> {
         result = false;
 
-        return false;
+        false
       };
       _ -> {
         let workflow = optionExpect(mapGet(workflows, currentWorkflow));
@@ -239,7 +239,7 @@ let isPartAccepted = (workflows: Map<Workflow>, rating: Rating): boolean -> {
               WorkflowStep { target } -> {
                 currentWorkflow = target;
 
-                return false;
+                false
               };
               WorkflowStepConditional { target, condition } -> {
                 let inner = true;
@@ -249,7 +249,7 @@ let isPartAccepted = (workflows: Map<Workflow>, rating: Rating): boolean -> {
                   inner = false;
                 }
 
-                return inner;
+                inner
               };
             };
 
@@ -259,12 +259,12 @@ let isPartAccepted = (workflows: Map<Workflow>, rating: Rating): boolean -> {
           }
         }
 
-        return true;
+        true
       };
     };
   }
 
-  return result;
+  result
 }
 
 let solvePart1 = (input: String): String -> {
@@ -279,7 +279,7 @@ let solvePart1 = (input: String): String -> {
     }
   }
 
-  return stringFromNumber(result);
+  stringFromNumber(result)
 }
 
 let main = (): unit -> {

@@ -38,12 +38,12 @@ let vec2South = (): Vec2<i64> -> Vec2({ x: 0, y: 1 })
 let vec2West = (): Vec2<i64> -> Vec2({ x: --(1), y: 0 })
 
 let directionToVec2 = (direction: Direction): Vec2<i64> -> {
-  return match direction {
+  match direction {
     North -> vec2North();
     East -> vec2East();
     South -> vec2South();
     West -> vec2West();
-  };
+  }
 }
 
 data DigPlanStep = {
@@ -55,13 +55,13 @@ data DigPlanStep = {
 let parseDirection = (input: String): Direction -> {
   let char = stringGet(input, 0);
 
-  return case {
+  case {
     (char == 'U') -> directionNorth();
     (char == 'R') -> directionEast();
     (char == 'D') -> directionSouth();
     (char == 'L') -> directionWest();
     _ -> directionNorth();
-  };
+  }
 }
 
 let parseInput = (input: String): List<DigPlanStep> -> {
@@ -78,7 +78,7 @@ let parseInput = (input: String): List<DigPlanStep> -> {
     listPush(steps, step);
   }
 
-  return steps;
+  steps
 }
 
 data Step = {
@@ -126,7 +126,7 @@ let calculateAreaFromSteps = (steps: List<Step>): i64 -> {
 
   let area = (shoelaceArea / 2);
 
-  return ((area + (borderPoints / 2)) + 1);
+  ((area + (borderPoints / 2)) + 1)
 }
 
 let solvePart1 = (input: String): String -> {
@@ -139,7 +139,7 @@ let solvePart1 = (input: String): String -> {
 
   let result = calculateAreaFromSteps(steps);
 
-  return stringFromNumber(result);
+  stringFromNumber(result)
 }
 
 let solvePart2 = (input: String): String -> {
@@ -157,7 +157,7 @@ let solvePart2 = (input: String): String -> {
 
   let result = calculateAreaFromSteps(steps);
 
-  return stringFromNumber(result);
+  stringFromNumber(result)
 }
 
 let main = (): unit -> {
