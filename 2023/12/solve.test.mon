@@ -257,3 +257,7 @@ let main = (): unit -> {
   # let part2 = (solvePart2 input)
   # (assertEqualString part2 "???")
 }
+
+main()
+
+main()

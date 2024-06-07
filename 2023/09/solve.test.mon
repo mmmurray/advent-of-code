@@ -109,3 +109,7 @@ let main = (): unit -> {
 
   assertEqualString(part2, "1108");
 }
+
+main()
+
+main()
