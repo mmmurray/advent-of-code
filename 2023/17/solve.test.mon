@@ -392,19 +392,13 @@ let solvePart1 = (input: String): String -> {
   stringFromNumber(result)
 }
 
-let main = (): unit -> {
-  # (testPriorityQueue)
+# (testPriorityQueue)
 
-  let input = getExample();
-  let _part1 = solvePart1(input);
+let input = getExample();
+let _part1 = solvePart1(input);
 
-  # todo
-  # (assertEqualString part1 "102")
-  # todo
-  # let part2 = (solvePart2 input)
-  # (assertEqualString part2 "???")
-}
-
-main()
-
-main()
+# todo
+# (assertEqualString part1 "102")
+# todo
+# let part2 = (solvePart2 input)
+# (assertEqualString part2 "???")

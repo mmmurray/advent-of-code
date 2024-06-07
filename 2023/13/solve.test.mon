@@ -187,17 +187,11 @@ let solvePart2 = (input: String): String -> {
   stringFromNumber(result)
 }
 
-let main = (): unit -> {
-  let input = getInput();
-  let part1 = solvePart1(input);
+let input = getInput();
+let part1 = solvePart1(input);
 
-  assertEqualString(part1, "36015");
+assertEqualString(part1, "36015");
 
-  let part2 = solvePart2(input);
+let part2 = solvePart2(input);
 
-  assertEqualString(part2, "35335");
-}
-
-main()
-
-main()
+assertEqualString(part2, "35335");

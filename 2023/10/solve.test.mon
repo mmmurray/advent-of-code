@@ -274,17 +274,11 @@ let _solvePart2 = (input: String): String -> {
   stringFromNumber(result)
 }
 
-let main = (): unit -> {
-  let _input = getInput();
+let _input = getInput();
 
-  # todo
-  # let part1 = (solvePart1 input);
-  # (assertEqualString part1 "7107");
-  # todo
-  # let _ = (solvePart2 input);
-  # (assertEqualString part2 "281");
-}
-
-main()
-
-main()
+# todo
+# let part1 = (solvePart1 input);
+# (assertEqualString part1 "7107");
+# todo
+# let _ = (solvePart2 input);
+# (assertEqualString part2 "281");

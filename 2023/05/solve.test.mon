@@ -218,19 +218,13 @@ let solvePart2 = (input: String): String -> {
   stringFromNumber(result)
 }
 
-let main = (): unit -> {
-  let input = getInput();
-  let _ = solvePart1(input);
+let input = getInput();
+let _ = solvePart1(input);
 
-  # todo
-  # (assertEqualString part1 "282277027");
+# todo
+# (assertEqualString part1 "282277027");
 
-  let _ = solvePart2(input);
+let _ = solvePart2(input);
 
-  # todo
-  # (assertEqualString part2 "11554135");
-}
-
-main()
-
-main()
+# todo
+# (assertEqualString part2 "11554135");
