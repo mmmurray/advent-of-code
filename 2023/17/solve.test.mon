@@ -11,7 +11,7 @@ import {
 } from "@list";
 import { _type_Map, mapCreate } from "@map";
 import { Vec2, _type_Vec2, vec2Equals } from "@math";
-import { None, Some, _type_Option, optionValue } from "@option";
+import { None, Some, _type_Option } from "@option";
 import {
   _type_String,
   stringBuilderAppend,
@@ -150,17 +150,17 @@ let _testPriorityQueue = (): unit -> {
   priorityQueueInsert(queue, 4, 5);
   priorityQueueInsert(queue, 5, 50);
   assertEqual(priorityQueueSize(queue), 5);
-  assertEqual(optionValue(0, priorityQueueNext(queue)), 5);
+  assertEqual((priorityQueueNext(queue)).value(0), 5);
   assertEqual(priorityQueueSize(queue), 4);
-  assertEqual(optionValue(0, priorityQueueNext(queue)), 2);
+  assertEqual((priorityQueueNext(queue)).value(0), 2);
   assertEqual(priorityQueueSize(queue), 3);
-  assertEqual(optionValue(0, priorityQueueNext(queue)), 3);
+  assertEqual((priorityQueueNext(queue)).value(0), 3);
   assertEqual(priorityQueueSize(queue), 2);
-  assertEqual(optionValue(0, priorityQueueNext(queue)), 1);
+  assertEqual((priorityQueueNext(queue)).value(0), 1);
   assertEqual(priorityQueueSize(queue), 1);
-  assertEqual(optionValue(0, priorityQueueNext(queue)), 4);
+  assertEqual((priorityQueueNext(queue)).value(0), 4);
   assertEqual(priorityQueueSize(queue), 0);
-  assertEqual(optionValue(0, priorityQueueNext(queue)), 0);
+  assertEqual((priorityQueueNext(queue)).value(0), 0);
   assertEqual(priorityQueueSize(queue), 0);
 }
 
@@ -359,9 +359,9 @@ let solvePart1 = (input: String): String -> {
 
             # (print (stringConcat "Distance: " (stringFromNumber distance)))
 
-            let currentGScore = optionValue(10000, gScore.get(currentKey));
+            let currentGScore = (gScore.get(currentKey)).value(10000);
             let tentativeGScore = (currentGScore + distance);
-            let neighborGScore = optionValue(10000, gScore.get(neighborKey));
+            let neighborGScore = (gScore.get(neighborKey)).value(10000);
 
             if (tentativeGScore < neighborGScore) {
               cameFrom.set(neighborKey, current);

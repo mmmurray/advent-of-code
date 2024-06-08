@@ -1,7 +1,6 @@
 import { assertEqualString } from "@assert";
 import { _type_List, listFromArray, listGet, listPush, listSet, listSize } from "@list";
 import { _type_Map, mapCreate } from "@map";
-import { optionValue } from "@option";
 import {
   _type_String,
   charIsNumeric,
@@ -77,7 +76,7 @@ let scoreCards = (cards: List<i32>): i32 -> {
       jokers = (jokers + 1);
     } else {
       let key = stringFromNumber(card);
-      let current = optionValue(0, countByCard.get(key));
+      let current = (countByCard.get(key)).value(0);
 
       countByCard.set(key, (current + 1));
     }
