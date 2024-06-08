@@ -14,15 +14,13 @@ import { Vec2, _type_Vec2, vec2Equals } from "@math";
 import { None, Some, _type_Option } from "@option";
 import {
   _type_String,
-  stringBuilderAppend,
-  stringBuilderBuild,
-  stringBuilderCreate,
   stringFromNumber,
   stringSize,
   stringToArray,
   stringToLines,
   stringTrim,
 } from "@string";
+import { stringBuilderCreate } from "@string-builder";
 import { getValue: getExample } from "./example.txt";
 
 let optionExpect = <T>(option: Option<T>): T -> {
@@ -35,13 +33,13 @@ let optionExpect = <T>(option: Option<T>): T -> {
 let vec2ToString = (v: Vec2<i32>): String -> {
   let out = stringBuilderCreate(16);
 
-  stringBuilderAppend(out, "[");
-  stringBuilderAppend(out, stringFromNumber(v.x));
-  stringBuilderAppend(out, ", ");
-  stringBuilderAppend(out, stringFromNumber(v.y));
-  stringBuilderAppend(out, "]");
+  out.append("[");
+  out.append(stringFromNumber(v.x));
+  out.append(", ");
+  out.append(stringFromNumber(v.y));
+  out.append("]");
 
-  stringBuilderBuild(out)
+  out.build()
 }
 
 data PriorityQueueHeapEntry<T> = {

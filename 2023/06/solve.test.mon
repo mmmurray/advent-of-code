@@ -2,15 +2,13 @@ import { assertEqualString } from "@assert";
 import { _type_List, listGet, listPush } from "@list";
 import {
   _type_String,
-  stringBuilderAppend,
-  stringBuilderBuild,
-  stringBuilderCreate,
   stringFromNumber,
   stringSize,
   stringSplitBy,
   stringToLines,
   stringToNumberU64,
 } from "@string";
+import { stringBuilderCreate } from "@string-builder";
 import { getValue: getInput } from "./input.txt";
 
 data Race = {
@@ -88,13 +86,13 @@ let solvePart2 = (input: String): String -> {
   let combinedDistances = stringBuilderCreate(128);
 
   for race in races {
-    stringBuilderAppend(combinedTimes, stringFromNumber(race.time));
-    stringBuilderAppend(combinedDistances, stringFromNumber(race.distance));
+    combinedTimes.append(stringFromNumber(race.time));
+    combinedDistances.append(stringFromNumber(race.distance));
   }
 
   let combinedRace = Race({
-    time: stringToNumberU64(stringBuilderBuild(combinedTimes)),
-    distance: stringToNumberU64(stringBuilderBuild(combinedDistances)),
+    time: stringToNumberU64(combinedTimes.build()),
+    distance: stringToNumberU64(combinedDistances.build()),
   });
   let result = solveRace(combinedRace);
 

@@ -6,9 +6,6 @@ import { _type_Option } from "@option";
 import {
   _type_String,
   charToString,
-  stringBuilderAppend,
-  stringBuilderBuild,
-  stringBuilderCreate,
   stringContains,
   stringEquals,
   stringFromNumber,
@@ -20,6 +17,7 @@ import {
   stringToNumber,
   stringTrim,
 } from "@string";
+import { stringBuilderCreate } from "@string-builder";
 import { getValue: getInput } from "./input.txt";
 
 let optionExpect = <T>(option: Option<T>): T -> {
@@ -154,46 +152,46 @@ let _printSystem = (system: System): unit -> {
   for workflowItem in workflows.entries() {
     let workflow = workflowItem.value;
 
-    stringBuilderAppend(out, workflow.name);
-    stringBuilderAppend(out, "{");
+    out.append(workflow.name);
+    out.append("{");
 
     for step, stepIndex in workflow.steps {
       if (stepIndex > 0) {
-        stringBuilderAppend(out, ",");
+        out.append(",");
       }
 
       let _ = match step {
         WorkflowStep { target } -> {
-          stringBuilderAppend(out, target);
+          out.append(target);
         };
         WorkflowStepConditional { target, condition } -> {
-          stringBuilderAppend(out, charToString(condition.property));
-          stringBuilderAppend(out, charToString(condition.operator));
-          stringBuilderAppend(out, stringFromNumber(condition.value));
-          stringBuilderAppend(out, ":");
-          stringBuilderAppend(out, target);
+          out.append(charToString(condition.property));
+          out.append(charToString(condition.operator));
+          out.append(stringFromNumber(condition.value));
+          out.append(":");
+          out.append(target);
         };
       };
     }
 
-    stringBuilderAppend(out, "}\n");
+    out.append("}\n");
   }
 
-  stringBuilderAppend(out, "\n");
+  out.append("\n");
 
   for rating in system.ratings {
-    stringBuilderAppend(out, "{x=");
-    stringBuilderAppend(out, stringFromNumber(rating.x));
-    stringBuilderAppend(out, ",m=");
-    stringBuilderAppend(out, stringFromNumber(rating.m));
-    stringBuilderAppend(out, ",a=");
-    stringBuilderAppend(out, stringFromNumber(rating.a));
-    stringBuilderAppend(out, ",s=");
-    stringBuilderAppend(out, stringFromNumber(rating.s));
-    stringBuilderAppend(out, "}\n");
+    out.append("{x=");
+    out.append(stringFromNumber(rating.x));
+    out.append(",m=");
+    out.append(stringFromNumber(rating.m));
+    out.append(",a=");
+    out.append(stringFromNumber(rating.a));
+    out.append(",s=");
+    out.append(stringFromNumber(rating.s));
+    out.append("}\n");
   }
 
-  print(stringBuilderBuild(out));
+  print(out.build());
 }
 
 let doesConditionApply = (condition: Condition, rating: Rating): boolean -> {
