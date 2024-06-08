@@ -9,7 +9,7 @@ import {
   listShift,
   listSize,
 } from "@list";
-import { _type_Map, mapCreate, mapSet } from "@map";
+import { _type_Map, mapCreate } from "@map";
 import { Vec2, _type_Vec2, vec2Equals } from "@math";
 import { None, Some, _type_Option, optionValue } from "@option";
 import {
@@ -302,7 +302,7 @@ let solvePart1 = (input: String): String -> {
   let gScore = mapCreate();
 
   priorityQueueInsert(openSet, startNode, 0);
-  mapSet(gScore, vec2ToString(startNode), 0);
+  gScore.set(vec2ToString(startNode), 0);
 
   let loop = true;
 
@@ -364,8 +364,8 @@ let solvePart1 = (input: String): String -> {
             let neighborGScore = optionValue(10000, gScore.get(neighborKey));
 
             if (tentativeGScore < neighborGScore) {
-              mapSet(cameFrom, neighborKey, current);
-              mapSet(gScore, neighborKey, tentativeGScore);
+              cameFrom.set(neighborKey, current);
+              gScore.set(neighborKey, tentativeGScore);
               priorityQueueInsert(openSet, neighbor, --(tentativeGScore));
             }
           }

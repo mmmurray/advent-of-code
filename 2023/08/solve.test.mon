@@ -1,7 +1,7 @@
 import { assertEqualString } from "@assert";
 import { print } from "@io";
 import { _type_List, listFromArray, listGet, listPush, listSize, listSlice } from "@list";
-import { _type_Map, mapCreate, mapSet } from "@map";
+import { _type_Map, mapCreate } from "@map";
 import { lcmMany } from "@math";
 import {
   _type_String,
@@ -48,7 +48,7 @@ let parseInput = (input: String): Network -> {
     let right = stringSlice(nodeLine, 12, 15);
     let node = Node({ left: left, right: right });
 
-    mapSet(nodes, name, node);
+    nodes.set(name, node);
   }
 
   Network({ instructions: instructions, nodes: nodes })

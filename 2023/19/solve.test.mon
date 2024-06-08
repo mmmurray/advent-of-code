@@ -1,7 +1,7 @@
 import { assertEqualString } from "@assert";
 import { print } from "@io";
 import { _type_List, listGet, listPush } from "@list";
-import { _type_Map, mapCreate, mapSet } from "@map";
+import { _type_Map, mapCreate } from "@map";
 import { _type_Option } from "@option";
 import {
   _type_String,
@@ -137,7 +137,7 @@ let parseInput = (input: String): System -> {
       if inWorkflowsSection {
         let workflow = parseWorkflow(line);
 
-        mapSet(workflows, workflow.name, workflow);
+        workflows.set(workflow.name, workflow);
       } else {
         listPush(ratings, parseRating(line));
       }

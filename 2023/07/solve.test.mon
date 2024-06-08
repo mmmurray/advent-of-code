@@ -1,6 +1,6 @@
 import { assertEqualString } from "@assert";
 import { _type_List, listFromArray, listGet, listPush, listSet, listSize } from "@list";
-import { _type_Map, mapCreate, mapSet } from "@map";
+import { _type_Map, mapCreate } from "@map";
 import { optionValue } from "@option";
 import {
   _type_String,
@@ -79,7 +79,7 @@ let scoreCards = (cards: List<i32>): i32 -> {
       let key = stringFromNumber(card);
       let current = optionValue(0, countByCard.get(key));
 
-      mapSet(countByCard, key, (current + 1));
+      countByCard.set(key, (current + 1));
     }
   }
 
@@ -93,7 +93,7 @@ let scoreCards = (cards: List<i32>): i32 -> {
     }
   }
 
-  mapSet(countByCard, maxCard, (maxCount + jokers));
+  countByCard.set(maxCard, (maxCount + jokers));
 
   case {
     isFiveOfAKind(countByCard) -> 7;
