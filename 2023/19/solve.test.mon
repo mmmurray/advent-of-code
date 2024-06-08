@@ -146,7 +146,7 @@ let parseInput = (input: String): System -> {
 }
 
 let _printSystem = (system: System): unit -> {
-  let out = stringBuilderCreate(1024);
+  let out = stringBuilderCreate();
   let workflows = system.workflows;
 
   for workflowItem in workflows.entries() {

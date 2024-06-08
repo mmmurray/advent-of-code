@@ -82,8 +82,8 @@ let solvePart1 = (input: String): String -> {
 
 let solvePart2 = (input: String): String -> {
   let races = parseInput(input);
-  let combinedTimes = stringBuilderCreate(128);
-  let combinedDistances = stringBuilderCreate(128);
+  let combinedTimes = stringBuilderCreate();
+  let combinedDistances = stringBuilderCreate();
 
   for race in races {
     combinedTimes.append(stringFromNumber(race.time));
