@@ -1,6 +1,6 @@
 import { assertEqualString } from "@assert";
 import { _type_List, listFromArray, listGet, listPush, listSet, listSize } from "@list";
-import { _type_Map, mapCreate, mapEntries, mapGet, mapSet, mapSize } from "@map";
+import { _type_Map, mapCreate, mapEntries, mapGet, mapSet } from "@map";
 import { optionValue } from "@option";
 import {
   _type_String,
@@ -57,15 +57,15 @@ let isThreeOfAKind = (countByCard: Map<String, i32>): boolean -> {
 }
 
 let isFullHouse = (countByCard: Map<String, i32>): boolean -> {
-  (mapSize(countByCard) == 2)
+  ((countByCard).size() == 2)
 }
 
 let isTwoPair = (countByCard: Map<String, i32>): boolean -> {
-  (mapSize(countByCard) == 3)
+  ((countByCard).size() == 3)
 }
 
 let isOnePair = (countByCard: Map<String, i32>): boolean -> {
-  (mapSize(countByCard) == 4)
+  ((countByCard).size() == 4)
 }
 
 let scoreCards = (cards: List<i32>): i32 -> {
