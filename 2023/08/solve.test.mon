@@ -1,7 +1,7 @@
 import { assertEqualString } from "@assert";
 import { print } from "@io";
 import { _type_List, listFromArray, listGet, listPush, listSize, listSlice } from "@list";
-import { _type_Map, mapCreate, mapEntries, mapGet, mapSet } from "@map";
+import { _type_Map, mapCreate, mapGet, mapSet } from "@map";
 import { lcmMany } from "@math";
 import {
   _type_String,
@@ -97,7 +97,7 @@ let solvePart2 = (input: String): String -> {
   let nodes = network.nodes;
   let allSteps = [];
 
-  for item in mapEntries(nodes) {
+  for item in nodes.entries() {
     if (stringGet(item.key, 2) == 'A') {
       listPush(allSteps, countSteps(network, item.key));
     }

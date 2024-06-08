@@ -1,7 +1,7 @@
 import { assertEqualString } from "@assert";
 import { print } from "@io";
 import { _type_List, listGet, listPush } from "@list";
-import { _type_Map, mapCreate, mapEntries, mapGet, mapSet } from "@map";
+import { _type_Map, mapCreate, mapGet, mapSet } from "@map";
 import { _type_Option } from "@option";
 import {
   _type_String,
@@ -151,7 +151,7 @@ let _printSystem = (system: System): unit -> {
   let out = stringBuilderCreate(1024);
   let workflows = system.workflows;
 
-  for workflowItem in mapEntries(workflows) {
+  for workflowItem in workflows.entries() {
     let workflow = workflowItem.value;
 
     stringBuilderAppend(out, workflow.name);

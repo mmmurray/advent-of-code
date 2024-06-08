@@ -1,6 +1,6 @@
 import { assertEqualString } from "@assert";
 import { _type_List, listFromArray, listGet, listPush, listSet, listSize } from "@list";
-import { _type_Map, mapCreate, mapEntries, mapGet, mapSet } from "@map";
+import { _type_Map, mapCreate, mapGet, mapSet } from "@map";
 import { optionValue } from "@option";
 import {
   _type_String,
@@ -23,7 +23,7 @@ data Hand = {
 let isFiveOfAKind = (countByCard: Map<String, i32>): boolean -> {
   let result = false;
 
-  for item1 in mapEntries(countByCard) {
+  for item1 in countByCard.entries() {
     if (item1.value == 5) {
       result = true;
     }
@@ -35,7 +35,7 @@ let isFiveOfAKind = (countByCard: Map<String, i32>): boolean -> {
 let isFourOfAKind = (countByCard: Map<String, i32>): boolean -> {
   let result = false;
 
-  for item1 in mapEntries(countByCard) {
+  for item1 in countByCard.entries() {
     if (item1.value == 4) {
       result = true;
     }
@@ -47,7 +47,7 @@ let isFourOfAKind = (countByCard: Map<String, i32>): boolean -> {
 let isThreeOfAKind = (countByCard: Map<String, i32>): boolean -> {
   let result = false;
 
-  for item1 in mapEntries(countByCard) {
+  for item1 in countByCard.entries() {
     if (item1.value == 3) {
       result = true;
     }
@@ -86,7 +86,7 @@ let scoreCards = (cards: List<i32>): i32 -> {
   let maxCount = 0;
   let maxCard = "2";
 
-  for item0 in mapEntries(countByCard) {
+  for item0 in countByCard.entries() {
     if (item0.value > maxCount) {
       maxCount = item0.value;
       maxCard = item0.key;
