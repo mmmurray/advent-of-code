@@ -1,7 +1,7 @@
 import { assertEqualString } from "@assert";
 import { print } from "@io";
 import { _type_List, listGet, listPush } from "@list";
-import { _type_Map, mapCreate, mapGet, mapSet } from "@map";
+import { _type_Map, mapCreate, mapSet } from "@map";
 import { _type_Option } from "@option";
 import {
   _type_String,
@@ -230,7 +230,7 @@ let isPartAccepted = (workflows: Map<String, Workflow>, rating: Rating): boolean
         false
       };
       _ -> {
-        let workflow = optionExpect(mapGet(workflows, currentWorkflow));
+        let workflow = optionExpect(workflows.get(currentWorkflow));
         let loop = true;
 
         for step in workflow.steps {

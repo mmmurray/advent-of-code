@@ -1,7 +1,7 @@
 import { assertEqualString } from "@assert";
 import { print } from "@io";
 import { _type_List, listFromArray, listGet, listPush, listSize, listSlice } from "@list";
-import { _type_Map, mapCreate, mapGet, mapSet } from "@map";
+import { _type_Map, mapCreate, mapSet } from "@map";
 import { lcmMany } from "@math";
 import {
   _type_String,
@@ -62,7 +62,7 @@ let countSteps = (network: Network, start: String): u64 -> {
 
   while loop {
     let instruction = listGet(network.instructions, instructionIndex);
-    let node = mapGet(network.nodes, current);
+    let node = (network.nodes).get(current);
     let _ = match node {
       Some { value } -> {
         if instruction {

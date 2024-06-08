@@ -9,7 +9,7 @@ import {
   listShift,
   listSize,
 } from "@list";
-import { _type_Map, mapCreate, mapGet, mapSet } from "@map";
+import { _type_Map, mapCreate, mapSet } from "@map";
 import { Vec2, _type_Vec2, vec2Equals } from "@math";
 import { None, Some, _type_Option, optionValue } from "@option";
 import {
@@ -223,7 +223,7 @@ let extractShortestPath = (cameFrom: Map<String, Vec2<i32> >, targetNode: Vec2<i
   let loop = true;
 
   while loop {
-    let cameFromOption = mapGet(cameFrom, vec2ToString(c));
+    let cameFromOption = cameFrom.get(vec2ToString(c));
     let done = match cameFromOption {
       Some -> false;
       None -> true;
@@ -359,9 +359,9 @@ let solvePart1 = (input: String): String -> {
 
             # (print (stringConcat "Distance: " (stringFromNumber distance)))
 
-            let currentGScore = optionValue(10000, mapGet(gScore, currentKey));
+            let currentGScore = optionValue(10000, gScore.get(currentKey));
             let tentativeGScore = (currentGScore + distance);
-            let neighborGScore = optionValue(10000, mapGet(gScore, neighborKey));
+            let neighborGScore = optionValue(10000, gScore.get(neighborKey));
 
             if (tentativeGScore < neighborGScore) {
               mapSet(cameFrom, neighborKey, current);
