@@ -1,8 +1,14 @@
 import { assertEqualString } from "@assert";
-import { _type_List, listClone, listFromString, listGet, listPush, listSet, listSize } from "@list";
+import { _type_List, listClone, listFromArray, listGet, listPush, listSet, listSize } from "@list";
 import { Vec2, _type_Vec2, max, vec2Add } from "@math";
-import { stringFromNumber, stringSize, stringToLines, stringTrim } from "@string";
-import { _type_String } from "@string-base";
+import {
+  _type_String,
+  stringFromNumber,
+  stringSize,
+  stringToArray,
+  stringToLines,
+  stringTrim,
+} from "@string";
 import { getValue: getInput } from "./input.txt";
 
 data Direction =
@@ -106,7 +112,7 @@ let parseInput = (input: String): Grid -> {
     let tileRow = [];
     let energizedRow = [];
 
-    for char, x in listFromString(line) {
+    for char, x in listFromArray(stringToArray(line)) {
       listPush(tileRow, parseTile(char));
       listPush(energizedRow, []);
     }

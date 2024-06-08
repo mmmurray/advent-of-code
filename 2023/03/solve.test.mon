@@ -2,6 +2,7 @@ import { assertEqualString } from "@assert";
 import { _type_List, listPush } from "@list";
 import { Vec2, _type_Vec2, vec2Add, vec2IsAdjacent } from "@math";
 import {
+  _type_String,
   charIsNumeric,
   stringFromNumber,
   stringGet,
@@ -9,7 +10,6 @@ import {
   stringToLines,
   stringTrim,
 } from "@string";
-import { _type_String } from "@string-base";
 import { getValue: getInput } from "./input.txt";
 
 data SchematicSymbol = {

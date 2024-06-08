@@ -1,8 +1,15 @@
 import { assertEqualString } from "@assert";
-import { _type_List, listClone, listFromString, listGet, listPush, listSet, listSize } from "@list";
+import { _type_List, listClone, listFromArray, listGet, listPush, listSet, listSize } from "@list";
 import { Vec2, _type_Vec2 } from "@math";
-import { stringFromNumber, stringGet, stringSize, stringToLines, stringTrim } from "@string";
-import { _type_String } from "@string-base";
+import {
+  _type_String,
+  stringFromNumber,
+  stringGet,
+  stringSize,
+  stringToArray,
+  stringToLines,
+  stringTrim,
+} from "@string";
 import { getValue: getInput } from "./input.txt";
 
 data Grid = {
@@ -15,7 +22,7 @@ let parseInput = (input: String): Grid -> {
   let cols = [];
   let size = Vec2({ x: stringSize(listGet(lines, 0)), y: listSize(lines) });
 
-  for _, colIndex in listFromString(listGet(lines, 0)) {
+  for _, colIndex in listFromArray(stringToArray(listGet(lines, 0))) {
     let col = [];
 
     for line in lines {

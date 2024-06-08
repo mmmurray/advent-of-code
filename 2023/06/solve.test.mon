@@ -1,6 +1,7 @@
 import { assertEqualString } from "@assert";
 import { _type_List, listGet, listPush } from "@list";
 import {
+  _type_String,
   stringBuilderAppend,
   stringBuilderBuild,
   stringBuilderCreate,
@@ -10,7 +11,6 @@ import {
   stringToLines,
   stringToNumberU64,
 } from "@string";
-import { _type_String } from "@string-base";
 import { getValue: getInput } from "./input.txt";
 
 data Race = {

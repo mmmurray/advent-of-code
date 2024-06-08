@@ -2,6 +2,7 @@ import { _type_List, listGet, listPush, listPushList, listSet, listSize, listSli
 import { min } from "@math";
 import { _type_Range, rangeCreate, rangeEmpty, rangeIntersect, rangeShift } from "@range";
 import {
+  _type_String,
   stringFromNumber,
   stringGet,
   stringSize,
@@ -10,7 +11,6 @@ import {
   stringToNumberU64,
   stringTrim,
 } from "@string";
-import { _type_String } from "@string-base";
 import { getValue: getInput } from "./input.txt";
 
 data AlmanacMapping = {

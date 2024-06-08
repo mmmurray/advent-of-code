@@ -4,15 +4,21 @@ import {
   _type_List,
   listClone,
   listFromArray,
-  listFromString,
   listGet,
   listPush,
   listSet,
   listSize,
   listSlice,
 } from "@list";
-import { stringFromNumber, stringSplitBy, stringToLines, stringToNumber, stringTrim } from "@string";
-import { _type_String } from "@string-base";
+import {
+  _type_String,
+  stringFromNumber,
+  stringSplitBy,
+  stringToArray,
+  stringToLines,
+  stringToNumber,
+  stringTrim,
+} from "@string";
 import { getValue: getInput } from "./input.txt";
 
 data Row = {
@@ -25,7 +31,7 @@ let parseRow = (line: String): Row -> {
   let parts = stringSplitBy(line, ' ');
   let conditions = [];
 
-  for char in listFromString(listGet(parts, 0)) {
+  for char in listFromArray(stringToArray(listGet(parts, 0))) {
     listPush(conditions, char);
   }
 

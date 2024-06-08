@@ -1,7 +1,13 @@
 import { assertEqualString } from "@assert";
 import { _type_List, listGet, listPush, listSize } from "@list";
-import { stringFromNumber, stringSplitBy, stringToLines, stringToNumber, stringTrim } from "@string";
-import { _type_String } from "@string-base";
+import {
+  _type_String,
+  stringFromNumber,
+  stringSplitBy,
+  stringToLines,
+  stringToNumber,
+  stringTrim,
+} from "@string";
 import { getValue: getInput } from "./input.txt";
 
 let parseInput = (input: String): List<List<i32> > -> {

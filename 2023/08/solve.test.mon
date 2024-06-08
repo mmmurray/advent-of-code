@@ -1,10 +1,17 @@
 import { assertEqualString } from "@assert";
 import { print } from "@io";
-import { _type_List, listFromString, listGet, listPush, listSize, listSlice } from "@list";
+import { _type_List, listFromArray, listGet, listPush, listSize, listSlice } from "@list";
 import { _type_Map, mapCreate, mapEntries, mapGet, mapSet } from "@map";
 import { lcmMany } from "@math";
-import { stringFromNumber, stringGet, stringSlice, stringToLines, stringTrim } from "@string";
-import { _type_String } from "@string-base";
+import {
+  _type_String,
+  stringFromNumber,
+  stringGet,
+  stringSlice,
+  stringToArray,
+  stringToLines,
+  stringTrim,
+} from "@string";
 import { getValue: getInput } from "./input.txt";
 
 data Node = {
@@ -14,7 +21,7 @@ data Node = {
 
 data Network = {
   instructions: List<boolean>,
-  nodes: Map<Node>,
+  nodes: Map<String, Node>,
 }
 
 let parseInput = (input: String): Network -> {
@@ -23,7 +30,7 @@ let parseInput = (input: String): Network -> {
   let lines = stringToLines(stringTrim(input));
   let instructionsLine = listGet(lines, 0);
 
-  for char in listFromString(instructionsLine) {
+  for char in listFromArray(stringToArray(instructionsLine)) {
     let instruction = false;
 
     if (char == 'L') {

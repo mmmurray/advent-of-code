@@ -1,8 +1,7 @@
 import { assertEqualString } from "@assert";
-import { _type_List, listFromString, listGet, listPush, listSet } from "@list";
+import { _type_List, listFromArray, listGet, listPush, listSet } from "@list";
 import { Vec2, _type_Vec2, min } from "@math";
-import { stringFromNumber, stringSize, stringToLines } from "@string";
-import { _type_String } from "@string-base";
+import { _type_String, stringFromNumber, stringSize, stringToArray, stringToLines } from "@string";
 import { getValue: getInput } from "./input.txt";
 
 data Grid = {
@@ -30,7 +29,7 @@ let parseInput = (input: String): List<Grid> -> {
 
       let row = [];
 
-      for char in listFromString(line) {
+      for char in listFromArray(stringToArray(line)) {
         let isWall = (char == '#');
 
         listPush(row, isWall);

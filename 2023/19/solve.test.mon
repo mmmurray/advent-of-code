@@ -4,6 +4,7 @@ import { _type_List, listGet, listPush } from "@list";
 import { _type_Map, mapCreate, mapEntries, mapGet, mapSet } from "@map";
 import { _type_Option } from "@option";
 import {
+  _type_String,
   charToString,
   stringBuilderAppend,
   stringBuilderBuild,
@@ -19,7 +20,6 @@ import {
   stringToNumber,
   stringTrim,
 } from "@string";
-import { _type_String } from "@string-base";
 import { getValue: getInput } from "./input.txt";
 
 let optionExpect = <T>(option: Option<T>): T -> {
@@ -58,7 +58,7 @@ data Workflow = {
 
 data System = {
   ratings: List<Rating>,
-  workflows: Map<Workflow>,
+  workflows: Map<String, Workflow>,
 }
 
 let parseWorkflow = (input: String): Workflow -> {
@@ -210,7 +210,7 @@ let doesConditionApply = (condition: Condition, rating: Rating): boolean -> {
   }
 }
 
-let isPartAccepted = (workflows: Map<Workflow>, rating: Rating): boolean -> {
+let isPartAccepted = (workflows: Map<String, Workflow>, rating: Rating): boolean -> {
   let currentWorkflow = "in";
   let result = false;
   let loop = true;

@@ -1,7 +1,7 @@
 import { assertEqual } from "@assert";
 import {
   _type_List,
-  listFromString,
+  listFromArray,
   listGet,
   listPop,
   listPush,
@@ -13,15 +13,16 @@ import { _type_Map, mapCreate, mapGet, mapSet } from "@map";
 import { Vec2, _type_Vec2, vec2Equals } from "@math";
 import { None, Some, _type_Option, optionValue } from "@option";
 import {
+  _type_String,
   stringBuilderAppend,
   stringBuilderBuild,
   stringBuilderCreate,
   stringFromNumber,
   stringSize,
+  stringToArray,
   stringToLines,
   stringTrim,
 } from "@string";
-import { _type_String } from "@string-base";
 import { getValue: getExample } from "./example.txt";
 
 let optionExpect = <T>(option: Option<T>): T -> {
@@ -176,7 +177,7 @@ let parseInput = (input: String): Grid -> {
   for line in lines {
     let tileRow = [];
 
-    for char in listFromString(line) {
+    for char in listFromArray(stringToArray(line)) {
       listPush(tileRow, (char - '0'));
     }
 
@@ -209,7 +210,7 @@ let gridAdjacent = (grid: Grid, position: Vec2<i32>): List<Vec2<i32> > -> {
   adjacent
 }
 
-let extractShortestPath = (cameFrom: Map<Vec2<i32> >, targetNode: Vec2<i32>): List<Vec2<i32> > -> {
+let extractShortestPath = (cameFrom: Map<String, Vec2<i32> >, targetNode: Vec2<i32>): List<Vec2<i32> > -> {
   # (print "+ extractShortestPath")
 
   let path = [];

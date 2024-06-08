@@ -1,6 +1,6 @@
 import {
   _type_List,
-  listFromString,
+  listFromArray,
   listGet,
   listPush,
   listPushList,
@@ -8,8 +8,14 @@ import {
   listSize,
 } from "@list";
 import { Vec2, _type_Vec2, max, vec2Equals } from "@math";
-import { stringFromNumber, stringSize, stringToLines, stringTrim } from "@string";
-import { _type_String } from "@string-base";
+import {
+  _type_String,
+  stringFromNumber,
+  stringSize,
+  stringToArray,
+  stringToLines,
+  stringTrim,
+} from "@string";
 import { getValue: getInput } from "./input.txt";
 
 data Connections = {
@@ -47,7 +53,7 @@ let parseInput = (input: String): Pipes -> {
   for line, y in lines {
     let row = [];
 
-    for char, x in listFromString(line) {
+    for char, x in listFromArray(stringToArray(line)) {
       let connections = charToConnections(char);
 
       listPush(row, connections);

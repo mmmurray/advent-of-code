@@ -1,15 +1,16 @@
 import { assertEqualString } from "@assert";
-import { listFromString } from "@list";
+import { listFromArray } from "@list";
 import {
+  _type_String,
   charIsNumeric,
   stringConcat,
   stringContainsAt,
   stringFromNumber,
+  stringToArray,
   stringToLines,
   stringToNumber,
   stringTrim,
 } from "@string";
-import { _type_String } from "@string-base";
 import { getValue: getInput } from "./input.txt";
 
 let getCalibrationValue1 = (line: String): i32 -> {
@@ -17,7 +18,7 @@ let getCalibrationValue1 = (line: String): i32 -> {
   let firstDigit = 0;
   let lastDigit = 0;
 
-  for char in listFromString(line) {
+  for char in listFromArray(stringToArray(line)) {
     if charIsNumeric(char) {
       let digit = (char - '0');
 
@@ -53,7 +54,7 @@ let getCalibrationValue2 = (line: String): i32 -> {
   let firstDigit = 0;
   let lastDigit = 0;
 
-  for char, charIndex in listFromString(line) {
+  for char, charIndex in listFromArray(stringToArray(line)) {
     if charIsNumeric(char) {
       let digit = (char - '0');
 

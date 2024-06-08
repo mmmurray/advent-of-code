@@ -1,17 +1,18 @@
 import { _type_Array, arrayCreate, arrayGet, arraySet } from "@array";
 import { assertEqualString } from "@assert";
-import { _type_List, listFromArray, listFromString, listGet, listPush, listRemove } from "@list";
+import { _type_List, listFromArray, listGet, listPush, listRemove } from "@list";
 import {
+  _type_String,
   stringEquals,
   stringFromNumber,
   stringGet,
   stringSize,
   stringSlice,
   stringSplitBy,
+  stringToArray,
   stringToNumber,
   stringTrim,
 } from "@string";
-import { _type_String } from "@string-base";
 import { getValue: getInput } from "./input.txt";
 
 data Operation =
@@ -64,7 +65,7 @@ let parseInput = (input: String): List<Step> -> {
 let hash = (value: String): i32 -> {
   let result = 0;
 
-  for char in listFromString(value) {
+  for char in listFromArray(stringToArray(value)) {
     result = (((result + char) * 17) % 256);
   }
 

@@ -2,6 +2,7 @@ import { assertEqualString } from "@assert";
 import { _type_List, listGet, listPush } from "@list";
 import { Mat2, Vec2, _type_Mat2, _type_Vec2, mat2Determinant, vec2Add, vec2Scale } from "@math";
 import {
+  _type_String,
   stringConcat,
   stringFromNumber,
   stringGet,
@@ -12,7 +13,6 @@ import {
   stringToUpper,
   stringTrim,
 } from "@string";
-import { _type_String } from "@string-base";
 import { getValue: getInput } from "./input.txt";
 
 data Direction =
