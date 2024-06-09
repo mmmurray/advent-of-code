@@ -74,7 +74,7 @@ let parseWorkflow = (input: String): Workflow -> {
       let target = listGet(conditionParts, 1);
       let step = _type_WorkflowStep.WorkflowStepConditional({
         target: target,
-        condition: Condition({
+        condition: _type_Condition.New({
           property: stringGet(conditionPart, 0),
           operator: stringGet(conditionPart, 1),
           value: stringToNumber(stringSlice(conditionPart, 2, stringSize(conditionPart))),
@@ -89,11 +89,11 @@ let parseWorkflow = (input: String): Workflow -> {
     }
   }
 
-  Workflow({ name: name, steps: steps })
+  _type_Workflow.New({ name: name, steps: steps })
 }
 
 let parseRating = (input: String): Rating -> {
-  let rating = Rating({ x: 0, m: 0, a: 0, s: 0 });
+  let rating = _type_Rating.New({ x: 0, m: 0, a: 0, s: 0 });
   let inner = stringSlice(input, 1, (stringSize(input) - 1));
   let ratingParts = stringSplitBy(inner, ',');
 
@@ -142,7 +142,7 @@ let parseInput = (input: String): System -> {
     }
   }
 
-  System({ workflows: workflows, ratings: ratings })
+  _type_System.New({ workflows: workflows, ratings: ratings })
 }
 
 let _printSystem = (system: System): unit -> {

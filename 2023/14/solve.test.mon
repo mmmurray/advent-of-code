@@ -1,6 +1,6 @@
 import { assertEqualString } from "@assert";
 import { _type_List, listClone, listFromArray, listGet, listPush, listSet, listSize } from "@list";
-import { Vec2, _type_Vec2 } from "@math";
+import { _type_Vec2 } from "@math";
 import {
   _type_String,
   stringFromNumber,
@@ -20,7 +20,7 @@ data Grid = {
 let parseInput = (input: String): Grid -> {
   let lines = stringToLines(stringTrim(input));
   let cols = [];
-  let size = Vec2({ x: stringSize(listGet(lines, 0)), y: listSize(lines) });
+  let size = _type_Vec2.New({ x: stringSize(listGet(lines, 0)), y: listSize(lines) });
 
   for _, colIndex in listFromArray(stringToArray(listGet(lines, 0))) {
     let col = [];
@@ -32,7 +32,7 @@ let parseInput = (input: String): Grid -> {
     listPush(cols, col);
   }
 
-  Grid({ size: size, cols: cols })
+  _type_Grid.New({ size: size, cols: cols })
 }
 
 let tiltColumn = (col: List<i32>): List<i32> -> {
@@ -66,7 +66,7 @@ let tiltGrid = (grid: Grid): Grid -> {
     listPush(newCols, tiltColumn(col));
   }
 
-  Grid({ size: grid.size, cols: newCols })
+  _type_Grid.New({ size: grid.size, cols: newCols })
 }
 
 let calculateLoad = (grid: Grid): i32 -> {
@@ -101,7 +101,7 @@ let rotateGridClockwise = (grid: Grid): Grid -> {
     rowIndex = (rowIndex - 1);
   }
 
-  Grid({ size: size, cols: newCols })
+  _type_Grid.New({ size: size, cols: newCols })
 }
 
 let performSpinCycle = (grid: Grid): Grid -> {

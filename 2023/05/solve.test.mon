@@ -52,22 +52,22 @@ let parseSeeds = (input: String): List<u64> -> {
 
 let parseInput = (input: String): Almanac -> {
   let lines = stringToLines(input);
-  let almanac = Almanac({ seeds: parseSeeds(listGet(lines, 0)), categories: [] });
+  let almanac = _type_Almanac.New({ seeds: parseSeeds(listGet(lines, 0)), categories: [] });
   let mappingLines = listSlice(lines, 2, listSize(lines));
-  let category = AlmanacCategory({ mappings: [] });
+  let category = _type_AlmanacCategory.New({ mappings: [] });
 
   for mappingLine in mappingLines {
     if (stringSize(mappingLine) == 0) {
       listPush(almanac.categories, category);
 
-      category = AlmanacCategory({ mappings: [] });
+      category = _type_AlmanacCategory.New({ mappings: [] });
     } else {
       if (stringGet(mappingLine, (stringSize(mappingLine) - 1)) != ':') {
         let values = parseNumberList(mappingLine);
         let destinationStart = listGet(values, 0);
         let sourceStart = listGet(values, 1);
         let rangeLength = listGet(values, 2);
-        let mapping = AlmanacMapping({
+        let mapping = _type_AlmanacMapping.New({
           destinationStart: destinationStart,
           sourceStart: sourceStart,
           rangeLength: rangeLength,

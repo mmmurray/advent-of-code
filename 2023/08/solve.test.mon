@@ -46,12 +46,12 @@ let parseInput = (input: String): Network -> {
     let name = stringSlice(nodeLine, 0, 3);
     let left = stringSlice(nodeLine, 7, 10);
     let right = stringSlice(nodeLine, 12, 15);
-    let node = Node({ left: left, right: right });
+    let node = _type_Node.New({ left: left, right: right });
 
     nodes.set(name, node);
   }
 
-  Network({ instructions: instructions, nodes: nodes })
+  _type_Network.New({ instructions: instructions, nodes: nodes })
 }
 
 let countSteps = (network: Network, start: String): u64 -> {

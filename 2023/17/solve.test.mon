@@ -10,7 +10,7 @@ import {
   listSize,
 } from "@list";
 import { _type_Map, mapCreate } from "@map";
-import { Vec2, _type_Vec2, vec2Equals } from "@math";
+import { _type_Vec2, vec2Equals } from "@math";
 import { _type_Option } from "@option";
 import {
   _type_String,
@@ -52,7 +52,7 @@ data PriorityQueue<T> = {
 }
 
 let priorityQueueCreate = <T>(): PriorityQueue<T> -> {
-  PriorityQueue<T>({ heap: [] })
+  _type_PriorityQueue.New({ heap: [] })
 }
 
 let priorityQueueSize = <T>(queue: PriorityQueue<T>): i32 -> {
@@ -60,7 +60,7 @@ let priorityQueueSize = <T>(queue: PriorityQueue<T>): i32 -> {
 }
 
 let priorityQueueInsert = <T>(queue: PriorityQueue<T>, node: T, priority: i32): unit -> {
-  let entry = PriorityQueueHeapEntry<T>({ node: node, priority: priority });
+  let entry = _type_PriorityQueueHeapEntry.New({ node: node, priority: priority });
 
   listPush(queue.heap, entry);
 
@@ -169,7 +169,7 @@ data Grid = {
 
 let parseInput = (input: String): Grid -> {
   let lines = stringToLines(stringTrim(input));
-  let size = Vec2({ x: stringSize(listGet(lines, 0)), y: listSize(lines) });
+  let size = _type_Vec2.New({ x: stringSize(listGet(lines, 0)), y: listSize(lines) });
   let tiles = [];
 
   for line in lines {
@@ -182,7 +182,7 @@ let parseInput = (input: String): Grid -> {
     listPush(tiles, tileRow);
   }
 
-  Grid({ size: size, tiles: tiles })
+  _type_Grid.New({ size: size, tiles: tiles })
 }
 
 let gridAdjacent = (grid: Grid, position: Vec2<i32>): List<Vec2<i32> > -> {
@@ -190,19 +190,19 @@ let gridAdjacent = (grid: Grid, position: Vec2<i32>): List<Vec2<i32> > -> {
   let size = grid.size;
 
   if (position.x < (size.x - 1)) {
-    listPush(adjacent, Vec2({ x: (position.x + 1), y: position.y }));
+    listPush(adjacent, _type_Vec2.New({ x: (position.x + 1), y: position.y }));
   }
 
   if (position.y < (size.y - 1)) {
-    listPush(adjacent, Vec2({ x: position.x, y: (position.y + 1) }));
+    listPush(adjacent, _type_Vec2.New({ x: position.x, y: (position.y + 1) }));
   }
 
   if (position.x > 0) {
-    listPush(adjacent, Vec2({ x: (position.x - 1), y: position.y }));
+    listPush(adjacent, _type_Vec2.New({ x: (position.x - 1), y: position.y }));
   }
 
   if (position.y > 0) {
-    listPush(adjacent, Vec2({ x: position.x, y: (position.y - 1) }));
+    listPush(adjacent, _type_Vec2.New({ x: position.x, y: (position.y - 1) }));
   }
 
   adjacent
@@ -293,8 +293,8 @@ let solvePart1 = (input: String): String -> {
   # (printGrid grid [])
 
   let size = grid.size;
-  let startNode = Vec2({ x: 0, y: 0 });
-  let targetNode = Vec2({ x: (size.x - 1), y: (size.y - 1) });
+  let startNode = _type_Vec2.New({ x: 0, y: 0 });
+  let targetNode = _type_Vec2.New({ x: (size.x - 1), y: (size.y - 1) });
   let openSet = priorityQueueCreate();
   let cameFrom = mapCreate();
   let gScore = mapCreate();

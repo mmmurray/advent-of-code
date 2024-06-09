@@ -47,7 +47,7 @@ let parseRow = (line: String): Row -> {
     damageTotal = (damageTotal + damage);
   }
 
-  Row({ conditions: conditions, damaged: damaged, damageTotal: damageTotal })
+  _type_Row.New({ conditions: conditions, damaged: damaged, damageTotal: damageTotal })
 }
 
 let parseInput = (input: String): List<Row> -> {
@@ -154,7 +154,7 @@ let countArrangementsRec = (cache: Array<i32>, row: Row, offset: i32, damagedInd
         let nextOffset = (offset + (damageWidth + 1));
 
         if (nextDamagedIndex < listSize(row.damaged)) {
-          let newRow = Row({
+          let newRow = _type_Row.New({
             conditions: nextConditions,
             damaged: row.damaged,
             damageTotal: row.damageTotal,
@@ -180,7 +180,7 @@ let countArrangements = (row: Row): i32 -> {
 }
 
 let unfoldRow = (row: Row): Row -> {
-  Row({
+  _type_Row.New({
     conditions: [
       ...row.conditions,
       '?',

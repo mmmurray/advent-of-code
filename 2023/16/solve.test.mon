@@ -1,6 +1,6 @@
 import { assertEqualString } from "@assert";
 import { _type_List, listClone, listFromArray, listGet, listPush, listSet, listSize } from "@list";
-import { Vec2, _type_Vec2, max, vec2Add } from "@math";
+import { _type_Vec2, max, vec2Add } from "@math";
 import {
   _type_String,
   stringFromNumber,
@@ -46,13 +46,13 @@ let directionSouth = (): Direction -> _type_Direction.South({})
 
 let directionWest = (): Direction -> _type_Direction.West({})
 
-let vec2North = (): Vec2<i32> -> Vec2({ x: 0, y: --(1) })
+let vec2North = (): Vec2<i32> -> _type_Vec2.New({ x: 0, y: --(1) })
 
-let vec2East = (): Vec2<i32> -> Vec2({ x: 1, y: 0 })
+let vec2East = (): Vec2<i32> -> _type_Vec2.New({ x: 1, y: 0 })
 
-let vec2South = (): Vec2<i32> -> Vec2({ x: 0, y: 1 })
+let vec2South = (): Vec2<i32> -> _type_Vec2.New({ x: 0, y: 1 })
 
-let vec2West = (): Vec2<i32> -> Vec2({ x: --(1), y: 0 })
+let vec2West = (): Vec2<i32> -> _type_Vec2.New({ x: --(1), y: 0 })
 
 let directionToVec2 = (direction: Direction): Vec2<i32> -> {
   match direction {
@@ -89,7 +89,7 @@ let gridClone = (grid: Grid): Grid -> {
     listPush(newEnergized, newEnergizedRow);
   }
 
-  Grid({ size: grid.size, tiles: grid.tiles, energized: newEnergized })
+  _type_Grid.New({ size: grid.size, tiles: grid.tiles, energized: newEnergized })
 }
 
 let parseTile = (char: i32): Tile -> {
@@ -104,7 +104,7 @@ let parseTile = (char: i32): Tile -> {
 
 let parseInput = (input: String): Grid -> {
   let lines = stringToLines(stringTrim(input));
-  let size = Vec2({ x: stringSize(listGet(lines, 0)), y: listSize(lines) });
+  let size = _type_Vec2.New({ x: stringSize(listGet(lines, 0)), y: listSize(lines) });
   let tiles = [];
   let energized = [];
 
@@ -121,7 +121,7 @@ let parseInput = (input: String): Grid -> {
     listPush(energized, energizedRow);
   }
 
-  Grid({ size: size, tiles: tiles, energized: energized })
+  _type_Grid.New({ size: size, tiles: tiles, energized: energized })
 }
 
 let propagate = (grid: Grid, position: Vec2<i32>, direction: Direction): boolean -> {
@@ -251,7 +251,7 @@ let countEnergized = (grid: Grid, startPosition: Vec2<i32>, startDirection: Dire
 
 let solvePart1 = (input: String): String -> {
   let grid = parseInput(input);
-  let result = countEnergized(grid, Vec2({ x: 0, y: 0 }), directionEast());
+  let result = countEnergized(grid, _type_Vec2.New({ x: 0, y: 0 }), directionEast());
 
   stringFromNumber(result)
 }
@@ -263,10 +263,10 @@ let solvePart2 = (input: String): String -> {
   let offset = 0;
 
   while (offset < size.x) {
-    result = max(result, countEnergized(grid, Vec2({ x: offset, y: 0 }), directionSouth()));
-    result = max(result, countEnergized(grid, Vec2({ x: offset, y: (size.y - 1) }), directionNorth()));
-    result = max(result, countEnergized(grid, Vec2({ x: 0, y: offset }), directionEast()));
-    result = max(result, countEnergized(grid, Vec2({ x: (size.x - 1), y: offset }), directionWest()));
+    result = max(result, countEnergized(grid, _type_Vec2.New({ x: offset, y: 0 }), directionSouth()));
+    result = max(result, countEnergized(grid, _type_Vec2.New({ x: offset, y: (size.y - 1) }), directionNorth()));
+    result = max(result, countEnergized(grid, _type_Vec2.New({ x: 0, y: offset }), directionEast()));
+    result = max(result, countEnergized(grid, _type_Vec2.New({ x: (size.x - 1), y: offset }), directionWest()));
     offset = (offset + 1);
   }
 

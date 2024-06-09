@@ -1,6 +1,6 @@
 import { assertEqualString } from "@assert";
 import { _type_List, listFromArray, listGet, listPush, listSet } from "@list";
-import { Vec2, _type_Vec2, min } from "@math";
+import { _type_Vec2, min } from "@math";
 import { _type_String, stringFromNumber, stringSize, stringToArray, stringToLines } from "@string";
 import { getValue: getInput } from "./input.txt";
 
@@ -13,16 +13,16 @@ let parseInput = (input: String): List<Grid> -> {
   let grids = [];
   let lines = stringToLines(input);
   let rows = [];
-  let size = Vec2({ x: 0, y: 0 });
+  let size = _type_Vec2.New({ x: 0, y: 0 });
 
   for line in lines {
     if (stringSize(line) == 0) {
-      let grid = Grid({ size: size, rows: rows });
+      let grid = _type_Grid.New({ size: size, rows: rows });
 
       listPush(grids, grid);
 
       rows = [];
-      size = Vec2({ x: 0, y: 0 });
+      size = _type_Vec2.New({ x: 0, y: 0 });
     } else {
       size.x = stringSize(line);
       size.y = (size.y + 1);

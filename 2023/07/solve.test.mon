@@ -151,7 +151,7 @@ let parseInput = (input: String, jokers: boolean): List<Hand> -> {
       listPush(cards, card);
     }
 
-    let hand = Hand({ cards: cards, bid: stringToNumber(bidPart), score: scoreCards(cards) });
+    let hand = _type_Hand.New({ cards: cards, bid: stringToNumber(bidPart), score: scoreCards(cards) });
 
     listPush(hands, hand);
   }

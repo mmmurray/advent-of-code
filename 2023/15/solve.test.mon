@@ -54,7 +54,7 @@ let parseInput = (input: String): List<Step> -> {
   let steps = [];
 
   for part in parts {
-    let step = Step({ raw: part, operation: parseOperation(part) });
+    let step = _type_Step.New({ raw: part, operation: parseOperation(part) });
 
     listPush(steps, step);
   }
@@ -98,7 +98,7 @@ let solvePart2 = (input: String): String -> {
   let boxes = arrayCreate(256);
 
   for _, i in listFromArray(boxes) {
-    let box = Box({ lenses: [] });
+    let box = _type_Box.New({ lenses: [] });
 
     arraySet(boxes, i, box);
   }
@@ -123,7 +123,7 @@ let solvePart2 = (input: String): String -> {
         }
 
         if !(replaced) {
-          let lens = Lens({ label: label, focalLength: focalLength });
+          let lens = _type_Lens.New({ label: label, focalLength: focalLength });
 
           listPush(box.lenses, lens);
         }

@@ -1,6 +1,6 @@
 import { assertEqualString } from "@assert";
 import { _type_List, listFromArray, listGet, listPush, listSize } from "@list";
-import { Vec2, _type_Vec2, vec2Add, vec2ManhattanDistance } from "@math";
+import { _type_Vec2, vec2Add, vec2ManhattanDistance } from "@math";
 import {
   _type_String,
   stringFromNumber,
@@ -19,19 +19,19 @@ data Universe = {
 let parseInput = (input: String): Universe -> {
   let lines = stringToLines(stringTrim(input));
   let galaxies = [];
-  let size = Vec2({ x: (@i64 stringSize(listGet(lines, 0))), y: (@i64 listSize(lines)) });
+  let size = _type_Vec2.New({ x: (@i64 stringSize(listGet(lines, 0))), y: (@i64 listSize(lines)) });
 
   for line, y in lines {
     for char, x in listFromArray(stringToArray(line)) {
       if (char == '#') {
-        let galaxy = Vec2({ x: (@i64 x), y: (@i64 y) });
+        let galaxy = _type_Vec2.New({ x: (@i64 x), y: (@i64 y) });
 
         listPush(galaxies, galaxy);
       }
     }
   }
 
-  Universe({ size: size, galaxies: galaxies })
+  _type_Universe.New({ size: size, galaxies: galaxies })
 }
 
 let expandUniverse = (universe: Universe, expansionRate: i64): Universe -> {
@@ -74,14 +74,14 @@ let expandUniverse = (universe: Universe, expansionRate: i64): Universe -> {
     x = (x + 1);
   }
 
-  let newSize = Vec2({
+  let newSize = _type_Vec2.New({
     x: (size.x + (((@i64 listSize(emptyCols)) * expansionRate) - 1)),
     y: (size.y + (((@i64 listSize(emptyRows)) * expansionRate) - 1)),
   });
   let newGalaxies = [];
 
   for galaxy in universe.galaxies {
-    let redShift = Vec2({ x: 0, y: 0 });
+    let redShift = _type_Vec2.New({ x: 0, y: 0 });
 
     for emptyCol in emptyCols {
       if (emptyCol < galaxy.x) {
@@ -100,7 +100,7 @@ let expandUniverse = (universe: Universe, expansionRate: i64): Universe -> {
     listPush(newGalaxies, newGalaxy);
   }
 
-  Universe({ size: newSize, galaxies: newGalaxies })
+  _type_Universe.New({ size: newSize, galaxies: newGalaxies })
 }
 
 let sumOfDistancesBetweenGalaxies = (universe: Universe): i64 -> {

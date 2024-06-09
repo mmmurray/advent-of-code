@@ -41,7 +41,7 @@ let parseInput = (input: String): List<Game> -> {
     let lineParts = stringSplitBy(line, ':');
     let sectionParts = stringSplitBy(listGet(lineParts, 1), '|');
 
-    listPush(games, Game({
+    listPush(games, _type_Game.New({
       winning: parseNumberList(listGet(sectionParts, 0)),
       numbers: parseNumberList(listGet(sectionParts, 1)),
     }));
