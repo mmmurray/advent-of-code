@@ -1,7 +1,7 @@
 import { assertEqualString } from "@assert";
-import { _type_List, listGet, listPush, listSize } from "@list";
+import { List, listGet, listPush, listSize } from "@list";
 import {
-  _type_String,
+  String,
   stringFromNumber,
   stringSplitBy,
   stringToLines,

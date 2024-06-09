@@ -1,9 +1,9 @@
 import { arrayCreate, arrayGet, arraySet } from "@array";
 import { assertEqualString } from "@assert";
-import { _type_List, listGet, listPush, listSet, listSize } from "@list";
+import { List, listGet, listPush, listSet, listSize } from "@list";
 import { max } from "@math";
 import {
-  _type_String,
+  String,
   stringFromNumber,
   stringSize,
   stringSplitBy,
@@ -41,7 +41,7 @@ let parseInput = (input: String): List<Game> -> {
     let lineParts = stringSplitBy(line, ':');
     let sectionParts = stringSplitBy(listGet(lineParts, 1), '|');
 
-    listPush(games, _type_Game.New({
+    listPush(games, Game.New({
       winning: parseNumberList(listGet(sectionParts, 0)),
       numbers: parseNumberList(listGet(sectionParts, 1)),
     }));

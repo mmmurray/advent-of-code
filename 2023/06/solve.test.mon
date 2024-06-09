@@ -1,7 +1,7 @@
 import { assertEqualString } from "@assert";
-import { _type_List, listGet, listPush } from "@list";
+import { List, listGet, listPush } from "@list";
 import {
-  _type_String,
+  String,
   stringFromNumber,
   stringSize,
   stringSplitBy,
@@ -40,7 +40,7 @@ let parseInput = (input: String): List<Race> -> {
   let distances = parseNumberList(listGet(stringSplitBy(distancesLine, ':'), 1));
 
   for time, timeIndex in times {
-    let race = _type_Race.New({ time: time, distance: listGet(distances, timeIndex) });
+    let race = Race.New({ time: time, distance: listGet(distances, timeIndex) });
 
     listPush(races, race);
   }
@@ -90,7 +90,7 @@ let solvePart2 = (input: String): String -> {
     combinedDistances.append(stringFromNumber(race.distance));
   }
 
-  let combinedRace = _type_Race.New({
+  let combinedRace = Race.New({
     time: stringToNumberU64(combinedTimes.build()),
     distance: stringToNumberU64(combinedDistances.build()),
   });

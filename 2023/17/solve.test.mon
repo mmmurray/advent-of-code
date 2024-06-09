@@ -1,6 +1,6 @@
 import { assertEqual } from "@assert";
 import {
-  _type_List,
+  List,
   listFromArray,
   listGet,
   listPop,
@@ -9,11 +9,11 @@ import {
   listShift,
   listSize,
 } from "@list";
-import { _type_Map, mapCreate } from "@map";
-import { _type_Vec2, vec2Equals } from "@math";
-import { _type_Option } from "@option";
+import { Map, mapCreate } from "@map";
+import { Vec2, vec2Equals } from "@math";
+import { Option } from "@option";
 import {
-  _type_String,
+  String,
   stringFromNumber,
   stringSize,
   stringToArray,
@@ -52,7 +52,7 @@ data PriorityQueue<T> = {
 }
 
 let priorityQueueCreate = <T>(): PriorityQueue<T> -> {
-  _type_PriorityQueue.New({ heap: [] })
+  PriorityQueue.New({ heap: [] })
 }
 
 let priorityQueueSize = <T>(queue: PriorityQueue<T>): i32 -> {
@@ -60,7 +60,7 @@ let priorityQueueSize = <T>(queue: PriorityQueue<T>): i32 -> {
 }
 
 let priorityQueueInsert = <T>(queue: PriorityQueue<T>, node: T, priority: i32): unit -> {
-  let entry = _type_PriorityQueueHeapEntry.New({ node: node, priority: priority });
+  let entry = PriorityQueueHeapEntry.New({ node: node, priority: priority });
 
   listPush(queue.heap, entry);
 
@@ -85,11 +85,11 @@ let priorityQueueInsert = <T>(queue: PriorityQueue<T>, node: T, priority: i32): 
 
 let priorityQueueNext = <T>(queue: PriorityQueue<T>): Option<T> -> {
   case {
-    (listSize(queue.heap) == 0) -> _type_Option.None({});
+    (listSize(queue.heap) == 0) -> Option.None({});
     (listSize(queue.heap) == 1) -> {
       match listShift(queue.heap) {
-        Some { value } -> _type_Option.Some({ value: value.node });
-        None -> _type_Option.None({});
+        Some { value } -> Option.Some({ value: value.node });
+        None -> Option.None({});
       }
     };
     _ -> {
@@ -133,7 +133,7 @@ let priorityQueueNext = <T>(queue: PriorityQueue<T>): Option<T> -> {
         }
       }
 
-      _type_Option.Some({ value: highestPriority.node })
+      Option.Some({ value: highestPriority.node })
     };
   }
 }
@@ -169,7 +169,7 @@ data Grid = {
 
 let parseInput = (input: String): Grid -> {
   let lines = stringToLines(stringTrim(input));
-  let size = _type_Vec2.New({ x: stringSize(listGet(lines, 0)), y: listSize(lines) });
+  let size = Vec2.New({ x: stringSize(listGet(lines, 0)), y: listSize(lines) });
   let tiles = [];
 
   for line in lines {
@@ -182,7 +182,7 @@ let parseInput = (input: String): Grid -> {
     listPush(tiles, tileRow);
   }
 
-  _type_Grid.New({ size: size, tiles: tiles })
+  Grid.New({ size: size, tiles: tiles })
 }
 
 let gridAdjacent = (grid: Grid, position: Vec2<i32>): List<Vec2<i32> > -> {
@@ -190,19 +190,19 @@ let gridAdjacent = (grid: Grid, position: Vec2<i32>): List<Vec2<i32> > -> {
   let size = grid.size;
 
   if (position.x < (size.x - 1)) {
-    listPush(adjacent, _type_Vec2.New({ x: (position.x + 1), y: position.y }));
+    listPush(adjacent, Vec2.New({ x: (position.x + 1), y: position.y }));
   }
 
   if (position.y < (size.y - 1)) {
-    listPush(adjacent, _type_Vec2.New({ x: position.x, y: (position.y + 1) }));
+    listPush(adjacent, Vec2.New({ x: position.x, y: (position.y + 1) }));
   }
 
   if (position.x > 0) {
-    listPush(adjacent, _type_Vec2.New({ x: (position.x - 1), y: position.y }));
+    listPush(adjacent, Vec2.New({ x: (position.x - 1), y: position.y }));
   }
 
   if (position.y > 0) {
-    listPush(adjacent, _type_Vec2.New({ x: position.x, y: (position.y - 1) }));
+    listPush(adjacent, Vec2.New({ x: position.x, y: (position.y - 1) }));
   }
 
   adjacent
@@ -293,8 +293,8 @@ let solvePart1 = (input: String): String -> {
   # (printGrid grid [])
 
   let size = grid.size;
-  let startNode = _type_Vec2.New({ x: 0, y: 0 });
-  let targetNode = _type_Vec2.New({ x: (size.x - 1), y: (size.y - 1) });
+  let startNode = Vec2.New({ x: 0, y: 0 });
+  let targetNode = Vec2.New({ x: (size.x - 1), y: (size.y - 1) });
   let openSet = priorityQueueCreate();
   let cameFrom = mapCreate();
   let gScore = mapCreate();

@@ -1,8 +1,8 @@
 import { assertEqualString } from "@assert";
-import { _type_List, listClone, listFromArray, listGet, listPush, listSet, listSize } from "@list";
-import { _type_Vec2, max, vec2Add } from "@math";
+import { List, listClone, listFromArray, listGet, listPush, listSet, listSize } from "@list";
+import { Vec2, max, vec2Add } from "@math";
 import {
-  _type_String,
+  String,
   stringFromNumber,
   stringSize,
   stringToArray,
@@ -38,21 +38,21 @@ let directionEquals = (a: Direction, b: Direction): boolean -> {
   }
 }
 
-let directionNorth = (): Direction -> _type_Direction.North({})
+let directionNorth = (): Direction -> Direction.North({})
 
-let directionEast = (): Direction -> _type_Direction.East({})
+let directionEast = (): Direction -> Direction.East({})
 
-let directionSouth = (): Direction -> _type_Direction.South({})
+let directionSouth = (): Direction -> Direction.South({})
 
-let directionWest = (): Direction -> _type_Direction.West({})
+let directionWest = (): Direction -> Direction.West({})
 
-let vec2North = (): Vec2<i32> -> _type_Vec2.New({ x: 0, y: --(1) })
+let vec2North = (): Vec2<i32> -> Vec2.New({ x: 0, y: --(1) })
 
-let vec2East = (): Vec2<i32> -> _type_Vec2.New({ x: 1, y: 0 })
+let vec2East = (): Vec2<i32> -> Vec2.New({ x: 1, y: 0 })
 
-let vec2South = (): Vec2<i32> -> _type_Vec2.New({ x: 0, y: 1 })
+let vec2South = (): Vec2<i32> -> Vec2.New({ x: 0, y: 1 })
 
-let vec2West = (): Vec2<i32> -> _type_Vec2.New({ x: --(1), y: 0 })
+let vec2West = (): Vec2<i32> -> Vec2.New({ x: --(1), y: 0 })
 
 let directionToVec2 = (direction: Direction): Vec2<i32> -> {
   match direction {
@@ -89,22 +89,22 @@ let gridClone = (grid: Grid): Grid -> {
     listPush(newEnergized, newEnergizedRow);
   }
 
-  _type_Grid.New({ size: grid.size, tiles: grid.tiles, energized: newEnergized })
+  Grid.New({ size: grid.size, tiles: grid.tiles, energized: newEnergized })
 }
 
 let parseTile = (char: i32): Tile -> {
   case {
-    (char == '/') -> _type_Tile.ReflectForward({});
-    (char == '\\') -> _type_Tile.ReflectBackward({});
-    (char == '-') -> _type_Tile.SplitHorizontal({});
-    (char == '|') -> _type_Tile.SplitVertical({});
-    _ -> _type_Tile.Empty({});
+    (char == '/') -> Tile.ReflectForward({});
+    (char == '\\') -> Tile.ReflectBackward({});
+    (char == '-') -> Tile.SplitHorizontal({});
+    (char == '|') -> Tile.SplitVertical({});
+    _ -> Tile.Empty({});
   }
 }
 
 let parseInput = (input: String): Grid -> {
   let lines = stringToLines(stringTrim(input));
-  let size = _type_Vec2.New({ x: stringSize(listGet(lines, 0)), y: listSize(lines) });
+  let size = Vec2.New({ x: stringSize(listGet(lines, 0)), y: listSize(lines) });
   let tiles = [];
   let energized = [];
 
@@ -121,7 +121,7 @@ let parseInput = (input: String): Grid -> {
     listPush(energized, energizedRow);
   }
 
-  _type_Grid.New({ size: size, tiles: tiles, energized: energized })
+  Grid.New({ size: size, tiles: tiles, energized: energized })
 }
 
 let propagate = (grid: Grid, position: Vec2<i32>, direction: Direction): boolean -> {
@@ -251,7 +251,7 @@ let countEnergized = (grid: Grid, startPosition: Vec2<i32>, startDirection: Dire
 
 let solvePart1 = (input: String): String -> {
   let grid = parseInput(input);
-  let result = countEnergized(grid, _type_Vec2.New({ x: 0, y: 0 }), directionEast());
+  let result = countEnergized(grid, Vec2.New({ x: 0, y: 0 }), directionEast());
 
   stringFromNumber(result)
 }
@@ -263,10 +263,10 @@ let solvePart2 = (input: String): String -> {
   let offset = 0;
 
   while (offset < size.x) {
-    result = max(result, countEnergized(grid, _type_Vec2.New({ x: offset, y: 0 }), directionSouth()));
-    result = max(result, countEnergized(grid, _type_Vec2.New({ x: offset, y: (size.y - 1) }), directionNorth()));
-    result = max(result, countEnergized(grid, _type_Vec2.New({ x: 0, y: offset }), directionEast()));
-    result = max(result, countEnergized(grid, _type_Vec2.New({ x: (size.x - 1), y: offset }), directionWest()));
+    result = max(result, countEnergized(grid, Vec2.New({ x: offset, y: 0 }), directionSouth()));
+    result = max(result, countEnergized(grid, Vec2.New({ x: offset, y: (size.y - 1) }), directionNorth()));
+    result = max(result, countEnergized(grid, Vec2.New({ x: 0, y: offset }), directionEast()));
+    result = max(result, countEnergized(grid, Vec2.New({ x: (size.x - 1), y: offset }), directionWest()));
     offset = (offset + 1);
   }
 

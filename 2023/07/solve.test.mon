@@ -1,8 +1,8 @@
 import { assertEqualString } from "@assert";
-import { _type_List, listFromArray, listGet, listPush, listSet, listSize } from "@list";
-import { _type_Map, mapCreate } from "@map";
+import { List, listFromArray, listGet, listPush, listSet, listSize } from "@list";
+import { Map, mapCreate } from "@map";
 import {
-  _type_String,
+  String,
   charIsNumeric,
   stringFromNumber,
   stringSplitBy,
@@ -151,7 +151,7 @@ let parseInput = (input: String, jokers: boolean): List<Hand> -> {
       listPush(cards, card);
     }
 
-    let hand = _type_Hand.New({ cards: cards, bid: stringToNumber(bidPart), score: scoreCards(cards) });
+    let hand = Hand.New({ cards: cards, bid: stringToNumber(bidPart), score: scoreCards(cards) });
 
     listPush(hands, hand);
   }

@@ -1,8 +1,8 @@
 import { assertEqualString } from "@assert";
-import { _type_List, listPush } from "@list";
-import { _type_Vec2, vec2Add, vec2IsAdjacent } from "@math";
+import { List, listPush } from "@list";
+import { Vec2, vec2Add, vec2IsAdjacent } from "@math";
 import {
-  _type_String,
+  String,
   charIsNumeric,
   stringFromNumber,
   stringGet,
@@ -30,7 +30,7 @@ data Schematic = {
 
 let parseInput = (input: String): Schematic -> {
   let lines = stringToLines(input);
-  let schematic = _type_Schematic.New({ symbols: [], numbers: [] });
+  let schematic = Schematic.New({ symbols: [], numbers: [] });
 
   for line, lineIndex in lines {
     let charIndex = 0;
@@ -42,7 +42,7 @@ let parseInput = (input: String): Schematic -> {
         if charIsNumeric(char) {
           let length = 0;
           let value = 0;
-          let location = _type_Vec2.New({ x: charIndex, y: lineIndex });
+          let location = Vec2.New({ x: charIndex, y: lineIndex });
           let loop = true;
 
           while (loop && (charIndex < stringSize(line))) {
@@ -57,16 +57,13 @@ let parseInput = (input: String): Schematic -> {
             }
           }
 
-          let number = _type_SchematicNumber.New({ location: location, value: value, length: length });
+          let number = SchematicNumber.New({ location: location, value: value, length: length });
 
           listPush(schematic.numbers, number);
 
           charIndex = (charIndex - 1);
         } else {
-          let symbol = _type_SchematicSymbol.New({
-            location: _type_Vec2.New({ x: charIndex, y: lineIndex }),
-            value: char,
-          });
+          let symbol = SchematicSymbol.New({ location: Vec2.New({ x: charIndex, y: lineIndex }), value: char });
 
           listPush(schematic.symbols, symbol);
         }
@@ -88,7 +85,7 @@ let solvePart1 = (input: String): String -> {
     let loop = true;
 
     while (loop && (offsetX < number.length)) {
-      let offset = _type_Vec2.New({ x: offsetX, y: 0 });
+      let offset = Vec2.New({ x: offsetX, y: 0 });
       let position = vec2Add(number.location, offset);
       let found = false;
 
@@ -125,7 +122,7 @@ let solvePart2 = (input: String): String -> {
         let loop = true;
 
         while (loop && (offsetX < number.length)) {
-          let offset = _type_Vec2.New({ x: offsetX, y: 0 });
+          let offset = Vec2.New({ x: offsetX, y: 0 });
           let position = vec2Add(number.location, offset);
 
           if vec2IsAdjacent(position, symbol.location) {

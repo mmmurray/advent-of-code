@@ -1,8 +1,8 @@
 import { assertEqualString } from "@assert";
-import { _type_List, listGet, listPush } from "@list";
+import { List, listGet, listPush } from "@list";
 import { max } from "@math";
 import {
-  _type_String,
+  String,
   stringEquals,
   stringFromNumber,
   stringSize,
@@ -27,7 +27,7 @@ data Game = {
 
 let parseSelection = (input: String): Selection -> {
   let valueParts = stringSplitBy(input, ',');
-  let selection = _type_Selection.New({ red: 0, blue: 0, green: 0 });
+  let selection = Selection.New({ red: 0, blue: 0, green: 0 });
 
   for valuePart in valueParts {
     let pairParts = stringSplitBy(stringTrim(valuePart), ' ');
@@ -68,7 +68,7 @@ let parseInputLine = (line: String): Game -> {
     selectionIndex = (selectionIndex + 1);
   }
 
-  _type_Game.New({ id: id, selections: selections })
+  Game.New({ id: id, selections: selections })
 }
 
 let parseInput = (input: String): List<Game> -> {
@@ -110,7 +110,7 @@ let solvePart2 = (input: String): String -> {
   let result = 0;
 
   for game in games {
-    let minSelection = _type_Selection.New({ red: 0, green: 0, blue: 0 });
+    let minSelection = Selection.New({ red: 0, green: 0, blue: 0 });
 
     for selection in game.selections {
       minSelection.red = max(minSelection.red, selection.red);

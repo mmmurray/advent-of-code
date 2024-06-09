@@ -1,7 +1,7 @@
-import { _type_Array, arrayCreate, arrayGet, arraySet } from "@array";
+import { Array, arrayCreate, arrayGet, arraySet } from "@array";
 import { assertEqual, assertEqualString } from "@assert";
 import {
-  _type_List,
+  List,
   listClone,
   listFromArray,
   listGet,
@@ -11,7 +11,7 @@ import {
   listSlice,
 } from "@list";
 import {
-  _type_String,
+  String,
   stringFromNumber,
   stringSplitBy,
   stringToArray,
@@ -47,7 +47,7 @@ let parseRow = (line: String): Row -> {
     damageTotal = (damageTotal + damage);
   }
 
-  _type_Row.New({ conditions: conditions, damaged: damaged, damageTotal: damageTotal })
+  Row.New({ conditions: conditions, damaged: damaged, damageTotal: damageTotal })
 }
 
 let parseInput = (input: String): List<Row> -> {
@@ -154,7 +154,7 @@ let countArrangementsRec = (cache: Array<i32>, row: Row, offset: i32, damagedInd
         let nextOffset = (offset + (damageWidth + 1));
 
         if (nextDamagedIndex < listSize(row.damaged)) {
-          let newRow = _type_Row.New({
+          let newRow = Row.New({
             conditions: nextConditions,
             damaged: row.damaged,
             damageTotal: row.damageTotal,
@@ -180,7 +180,7 @@ let countArrangements = (row: Row): i32 -> {
 }
 
 let unfoldRow = (row: Row): Row -> {
-  _type_Row.New({
+  Row.New({
     conditions: [
       ...row.conditions,
       '?',

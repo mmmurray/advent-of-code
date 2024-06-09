@@ -1,7 +1,7 @@
 import { assertEqualString } from "@assert";
 import { listFromArray } from "@list";
 import {
-  _type_String,
+  String,
   charIsNumeric,
   stringConcat,
   stringContainsAt,

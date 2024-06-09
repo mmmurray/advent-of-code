@@ -1,10 +1,10 @@
 import { assertEqualString } from "@assert";
 import { print } from "@io";
-import { _type_List, listFromArray, listGet, listPush, listSize, listSlice } from "@list";
-import { _type_Map, mapCreate } from "@map";
+import { List, listFromArray, listGet, listPush, listSize, listSlice } from "@list";
+import { Map, mapCreate } from "@map";
 import { lcmMany } from "@math";
 import {
-  _type_String,
+  String,
   stringFromNumber,
   stringGet,
   stringSlice,
@@ -46,12 +46,12 @@ let parseInput = (input: String): Network -> {
     let name = stringSlice(nodeLine, 0, 3);
     let left = stringSlice(nodeLine, 7, 10);
     let right = stringSlice(nodeLine, 12, 15);
-    let node = _type_Node.New({ left: left, right: right });
+    let node = Node.New({ left: left, right: right });
 
     nodes.set(name, node);
   }
 
-  _type_Network.New({ instructions: instructions, nodes: nodes })
+  Network.New({ instructions: instructions, nodes: nodes })
 }
 
 let countSteps = (network: Network, start: String): u64 -> {

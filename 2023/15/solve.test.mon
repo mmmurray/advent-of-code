@@ -1,8 +1,8 @@
-import { _type_Array, arrayCreate, arrayGet, arraySet } from "@array";
+import { Array, arrayCreate, arrayGet, arraySet } from "@array";
 import { assertEqualString } from "@assert";
-import { _type_List, listFromArray, listGet, listPush, listRemove } from "@list";
+import { List, listFromArray, listGet, listPush, listRemove } from "@list";
 import {
-  _type_String,
+  String,
   stringEquals,
   stringFromNumber,
   stringGet,
@@ -36,12 +36,12 @@ let parseOperation = (input: String): Operation -> {
     (lastChar == '-') -> {
       let label = stringSlice(input, 0, (stringSize(input) - 1));
 
-      _type_Operation.Remove({ label: label })
+      Operation.Remove({ label: label })
     };
     _ -> {
       let parts = stringSplitBy(input, '=');
 
-      _type_Operation.Insert({
+      Operation.Insert({
         label: listGet(parts, 0),
         focalLength: stringToNumber(listGet(parts, 1)),
       })
@@ -54,7 +54,7 @@ let parseInput = (input: String): List<Step> -> {
   let steps = [];
 
   for part in parts {
-    let step = _type_Step.New({ raw: part, operation: parseOperation(part) });
+    let step = Step.New({ raw: part, operation: parseOperation(part) });
 
     listPush(steps, step);
   }
@@ -98,7 +98,7 @@ let solvePart2 = (input: String): String -> {
   let boxes = arrayCreate(256);
 
   for _, i in listFromArray(boxes) {
-    let box = _type_Box.New({ lenses: [] });
+    let box = Box.New({ lenses: [] });
 
     arraySet(boxes, i, box);
   }
@@ -123,7 +123,7 @@ let solvePart2 = (input: String): String -> {
         }
 
         if !(replaced) {
-          let lens = _type_Lens.New({ label: label, focalLength: focalLength });
+          let lens = Lens.New({ label: label, focalLength: focalLength });
 
           listPush(box.lenses, lens);
         }
