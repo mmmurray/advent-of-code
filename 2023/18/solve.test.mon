@@ -21,13 +21,13 @@ data Direction =
   | South {}
   | West {}
 
-let directionNorth = (): Direction -> North({})
+let directionNorth = (): Direction -> _type_Direction.North({})
 
-let directionEast = (): Direction -> East({})
+let directionEast = (): Direction -> _type_Direction.East({})
 
-let directionSouth = (): Direction -> South({})
+let directionSouth = (): Direction -> _type_Direction.South({})
 
-let directionWest = (): Direction -> West({})
+let directionWest = (): Direction -> _type_Direction.West({})
 
 let vec2North = (): Vec2<i64> -> Vec2({ x: 0, y: --(1) })
 

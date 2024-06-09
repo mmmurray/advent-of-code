@@ -11,7 +11,7 @@ import {
 } from "@list";
 import { _type_Map, mapCreate } from "@map";
 import { Vec2, _type_Vec2, vec2Equals } from "@math";
-import { None, Some, _type_Option } from "@option";
+import { _type_Option } from "@option";
 import {
   _type_String,
   stringFromNumber,
@@ -85,11 +85,11 @@ let priorityQueueInsert = <T>(queue: PriorityQueue<T>, node: T, priority: i32): 
 
 let priorityQueueNext = <T>(queue: PriorityQueue<T>): Option<T> -> {
   case {
-    (listSize(queue.heap) == 0) -> None({});
+    (listSize(queue.heap) == 0) -> _type_Option.None({});
     (listSize(queue.heap) == 1) -> {
       match listShift(queue.heap) {
-        Some { value } -> Some({ value: value.node });
-        None -> None({});
+        Some { value } -> _type_Option.Some({ value: value.node });
+        None -> _type_Option.None({});
       }
     };
     _ -> {
@@ -133,7 +133,7 @@ let priorityQueueNext = <T>(queue: PriorityQueue<T>): Option<T> -> {
         }
       }
 
-      Some({ value: highestPriority.node })
+      _type_Option.Some({ value: highestPriority.node })
     };
   }
 }

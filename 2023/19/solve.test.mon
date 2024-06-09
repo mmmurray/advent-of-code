@@ -72,7 +72,7 @@ let parseWorkflow = (input: String): Workflow -> {
       let conditionParts = stringSplitBy(stepPart, ':');
       let conditionPart = listGet(conditionParts, 0);
       let target = listGet(conditionParts, 1);
-      let step = WorkflowStepConditional({
+      let step = _type_WorkflowStep.WorkflowStepConditional({
         target: target,
         condition: Condition({
           property: stringGet(conditionPart, 0),
@@ -83,7 +83,7 @@ let parseWorkflow = (input: String): Workflow -> {
 
       listPush(steps, step);
     } else {
-      let step2 = WorkflowStep({ target: stepPart });
+      let step2 = _type_WorkflowStep.WorkflowStep({ target: stepPart });
 
       listPush(steps, step2);
     }

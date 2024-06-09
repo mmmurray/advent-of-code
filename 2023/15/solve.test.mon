@@ -36,12 +36,12 @@ let parseOperation = (input: String): Operation -> {
     (lastChar == '-') -> {
       let label = stringSlice(input, 0, (stringSize(input) - 1));
 
-      Remove({ label: label })
+      _type_Operation.Remove({ label: label })
     };
     _ -> {
       let parts = stringSplitBy(input, '=');
 
-      Insert({
+      _type_Operation.Insert({
         label: listGet(parts, 0),
         focalLength: stringToNumber(listGet(parts, 1)),
       })

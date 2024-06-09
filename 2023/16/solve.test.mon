@@ -38,13 +38,13 @@ let directionEquals = (a: Direction, b: Direction): boolean -> {
   }
 }
 
-let directionNorth = (): Direction -> North({})
+let directionNorth = (): Direction -> _type_Direction.North({})
 
-let directionEast = (): Direction -> East({})
+let directionEast = (): Direction -> _type_Direction.East({})
 
-let directionSouth = (): Direction -> South({})
+let directionSouth = (): Direction -> _type_Direction.South({})
 
-let directionWest = (): Direction -> West({})
+let directionWest = (): Direction -> _type_Direction.West({})
 
 let vec2North = (): Vec2<i32> -> Vec2({ x: 0, y: --(1) })
 
@@ -94,11 +94,11 @@ let gridClone = (grid: Grid): Grid -> {
 
 let parseTile = (char: i32): Tile -> {
   case {
-    (char == '/') -> ReflectForward({});
-    (char == '\\') -> ReflectBackward({});
-    (char == '-') -> SplitHorizontal({});
-    (char == '|') -> SplitVertical({});
-    _ -> Empty({});
+    (char == '/') -> _type_Tile.ReflectForward({});
+    (char == '\\') -> _type_Tile.ReflectBackward({});
+    (char == '-') -> _type_Tile.SplitHorizontal({});
+    (char == '|') -> _type_Tile.SplitVertical({});
+    _ -> _type_Tile.Empty({});
   }
 }
 
