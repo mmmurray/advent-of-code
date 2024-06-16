@@ -9,7 +9,6 @@ import {
   stringToArray,
   stringToLines,
   stringToNumber,
-  stringTrim,
 } from "@string";
 import { getValue: getInput } from "./input.txt";
 
@@ -96,7 +95,7 @@ let solvePart2 = (input: String): String -> {
   stringFromNumber(result)
 }
 
-let input = stringTrim(getInput());
+let input = (getInput()).trim();
 let part1 = solvePart1(input);
 
 assertEqualString(part1, "54605");

@@ -11,7 +11,6 @@ import {
   stringSplitBy,
   stringToArray,
   stringToNumber,
-  stringTrim,
 } from "@string";
 import { getValue: getInput } from "./input.txt";
 
@@ -47,7 +46,7 @@ let parseOperation = (input: String): Operation -> {
 }
 
 let parseInput = (input: String): List<Step> -> {
-  let parts = stringSplitBy(stringTrim(input), ',');
+  let parts = stringSplitBy(input.trim(), ',');
   let steps = [];
 
   for part in parts {

@@ -2,7 +2,7 @@ import { assertEqualString } from "@assert";
 import { charIsNumeric } from "@char";
 import { List } from "@list";
 import { Vec2, vec2Add, vec2IsAdjacent } from "@math";
-import { String, stringFromNumber, stringGet, stringSize, stringToLines, stringTrim } from "@string";
+import { String, stringFromNumber, stringGet, stringSize, stringToLines } from "@string";
 import { getValue: getInput } from "./input.txt";
 
 data SchematicSymbol = {
@@ -141,7 +141,7 @@ let solvePart2 = (input: String): String -> {
   stringFromNumber(result)
 }
 
-let input = stringTrim(getInput());
+let input = (getInput()).trim();
 let part1 = solvePart1(input);
 
 assertEqualString(part1, "525181");

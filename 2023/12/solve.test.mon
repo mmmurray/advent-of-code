@@ -8,7 +8,6 @@ import {
   stringToArray,
   stringToLines,
   stringToNumber,
-  stringTrim,
 } from "@string";
 import { getValue: getInput } from "./input.txt";
 
@@ -42,7 +41,7 @@ let parseRow = (line: String): Row -> {
 }
 
 let parseInput = (input: String): List<Row> -> {
-  let lines = stringToLines(stringTrim(input));
+  let lines = stringToLines(input.trim());
   let rows = [];
 
   for line in lines {

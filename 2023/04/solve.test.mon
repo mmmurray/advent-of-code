@@ -9,7 +9,6 @@ import {
   stringSplitBy,
   stringToLines,
   stringToNumber,
-  stringTrim,
 } from "@string";
 import { getValue: getInput } from "./input.txt";
 
@@ -19,11 +18,11 @@ data Game = {
 }
 
 let parseNumberList = (input: String): List<i32> -> {
-  let parts = stringSplitBy(stringTrim(input), ' ');
+  let parts = stringSplitBy(input.trim(), ' ');
   let numbers = [];
 
   for part in parts {
-    let trimmed = stringTrim(part);
+    let trimmed = part.trim();
 
     if (stringSize(trimmed) > 0) {
       numbers.push(stringToNumber(trimmed));
@@ -34,7 +33,7 @@ let parseNumberList = (input: String): List<i32> -> {
 }
 
 let parseInput = (input: String): List<Game> -> {
-  let lines = stringToLines(stringTrim(input));
+  let lines = stringToLines(input.trim());
   let games = [];
 
   for line in lines {

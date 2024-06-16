@@ -11,7 +11,6 @@ import {
   stringToLines,
   stringToNumberI64,
   stringToUpper,
-  stringTrim,
 } from "@string";
 import { getValue: getInput } from "./input.txt";
 
@@ -65,7 +64,7 @@ let parseDirection = (input: String): Direction -> {
 }
 
 let parseInput = (input: String): List<DigPlanStep> -> {
-  let lines = stringToLines(stringTrim(input));
+  let lines = stringToLines(input.trim());
   let steps = [];
 
   for line in lines {

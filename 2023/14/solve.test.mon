@@ -8,7 +8,6 @@ import {
   stringSize,
   stringToArray,
   stringToLines,
-  stringTrim,
 } from "@string";
 import { getValue: getInput } from "./input.txt";
 
@@ -18,7 +17,7 @@ data Grid = {
 }
 
 let parseInput = (input: String): Grid -> {
-  let lines = stringToLines(stringTrim(input));
+  let lines = stringToLines(input.trim());
   let cols = [];
   let size = Vec2.New({ x: stringSize(lines.get(0)), y: lines.size() });
 

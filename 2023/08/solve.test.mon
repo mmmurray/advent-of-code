@@ -10,7 +10,6 @@ import {
   stringSlice,
   stringToArray,
   stringToLines,
-  stringTrim,
 } from "@string";
 import { getValue: getInput } from "./input.txt";
 
@@ -27,7 +26,7 @@ data Network = {
 let parseInput = (input: String): Network -> {
   let instructions = [];
   let nodes = mapCreate();
-  let lines = stringToLines(stringTrim(input));
+  let lines = stringToLines(input.trim());
   let instructionsLine = lines.get(0);
 
   for char in listFromArray(stringToArray(instructionsLine)) {

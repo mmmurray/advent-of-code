@@ -1,14 +1,7 @@
 import { assertEqualString } from "@assert";
 import { List, listFromArray } from "@list";
 import { Vec2, max, vec2Add } from "@math";
-import {
-  String,
-  stringFromNumber,
-  stringSize,
-  stringToArray,
-  stringToLines,
-  stringTrim,
-} from "@string";
+import { String, stringFromNumber, stringSize, stringToArray, stringToLines } from "@string";
 import { getValue: getInput } from "./input.txt";
 
 data Direction =
@@ -103,7 +96,7 @@ let parseTile = (char: i32): Tile -> {
 }
 
 let parseInput = (input: String): Grid -> {
-  let lines = stringToLines(stringTrim(input));
+  let lines = stringToLines(input.trim());
   let size = Vec2.New({ x: stringSize(lines.get(0)), y: lines.size() });
   let tiles = [];
   let energized = [];

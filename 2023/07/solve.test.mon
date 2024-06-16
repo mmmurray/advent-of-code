@@ -9,7 +9,6 @@ import {
   stringToArray,
   stringToLines,
   stringToNumber,
-  stringTrim,
 } from "@string";
 import { getValue: getInput } from "./input.txt";
 
@@ -109,7 +108,7 @@ let scoreCards = (cards: List<i32>): i32 -> {
 
 let parseInput = (input: String, jokers: boolean): List<Hand> -> {
   let hands = [];
-  let lines = stringToLines(stringTrim(input));
+  let lines = stringToLines(input.trim());
 
   for line in lines {
     let parts = stringSplitBy(line, ' ');
