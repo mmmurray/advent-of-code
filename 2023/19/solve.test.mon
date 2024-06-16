@@ -5,7 +5,6 @@ import { Map, mapCreate } from "@map";
 import { Option } from "@option";
 import {
   String,
-  stringContains,
   stringEquals,
   stringFromChar,
   stringFromNumber,
@@ -65,7 +64,7 @@ let parseWorkflow = (input: String): Workflow -> {
   let stepParts = inner.splitBy(',');
 
   for stepPart in stepParts {
-    if stringContains(stepPart, ":") {
+    if stepPart.contains(":") {
       let conditionParts = stepPart.splitBy(':');
       let conditionPart = conditionParts.get(0);
       let target = conditionParts.get(1);
