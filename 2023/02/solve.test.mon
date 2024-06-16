@@ -1,7 +1,7 @@
 import { assertEqualString } from "@assert";
 import { List } from "@list";
 import { max } from "@math";
-import { String, stringEquals, stringFromNumber, stringToNumber } from "@string";
+import { String, stringEquals, stringFromNumber } from "@string";
 import { getValue: getInput } from "./input.txt";
 
 data Selection = {
@@ -21,7 +21,7 @@ let parseSelection = (input: String): Selection -> {
 
   for valuePart in valueParts {
     let pairParts = (valuePart.trim()).splitBy(' ');
-    let value = stringToNumber(pairParts.get(0));
+    let value = (pairParts.get(0)).toI32();
     let color = pairParts.get(1);
 
     if stringEquals(color, "red") {
@@ -44,7 +44,7 @@ let parseInputLine = (line: String): Game -> {
   let parts = line.splitBy(':');
   let gameIdPart = parts.get(0);
   let idPart = gameIdPart.slice(5, gameIdPart.size());
-  let id = stringToNumber(idPart);
+  let id = idPart.toI32();
   let selections = [];
   let selectionsPart = (parts.get(1)).trim();
   let selectionParts = selectionsPart.splitBy(';');

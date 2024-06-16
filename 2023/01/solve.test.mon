@@ -1,7 +1,7 @@
 import { assertEqualString } from "@assert";
 import { charIsNumeric } from "@char";
 import { listFromArray } from "@list";
-import { String, stringFromNumber, stringToArray, stringToNumber } from "@string";
+import { String, stringFromNumber, stringToArray } from "@string";
 import { getValue: getInput } from "./input.txt";
 
 let getCalibrationValue1 = (line: String): i32 -> {
@@ -22,7 +22,7 @@ let getCalibrationValue1 = (line: String): i32 -> {
     }
   }
 
-  stringToNumber((stringFromNumber(firstDigit)).concat(stringFromNumber(lastDigit)))
+  ((stringFromNumber(firstDigit)).concat(stringFromNumber(lastDigit))).toI32()
 }
 
 let solvePart1 = (input: String): String -> {
@@ -71,7 +71,7 @@ let getCalibrationValue2 = (line: String): i32 -> {
     }
   }
 
-  stringToNumber((stringFromNumber(firstDigit)).concat(stringFromNumber(lastDigit)))
+  ((stringFromNumber(firstDigit)).concat(stringFromNumber(lastDigit))).toI32()
 }
 
 let solvePart2 = (input: String): String -> {

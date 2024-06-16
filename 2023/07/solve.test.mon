@@ -2,7 +2,7 @@ import { assertEqualString } from "@assert";
 import { charIsNumeric } from "@char";
 import { List, listFromArray } from "@list";
 import { Map, mapCreate } from "@map";
-import { String, stringFromNumber, stringToArray, stringToNumber } from "@string";
+import { String, stringFromNumber, stringToArray } from "@string";
 import { getValue: getInput } from "./input.txt";
 
 data Hand = {
@@ -143,7 +143,7 @@ let parseInput = (input: String, jokers: boolean): List<Hand> -> {
       cards.push(card);
     }
 
-    let hand = Hand.New({ cards: cards, bid: stringToNumber(bidPart), score: scoreCards(cards) });
+    let hand = Hand.New({ cards: cards, bid: bidPart.toI32(), score: scoreCards(cards) });
 
     hands.push(hand);
   }

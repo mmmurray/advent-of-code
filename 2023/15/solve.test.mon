@@ -1,7 +1,7 @@
 import { Array, arrayCreate, arrayGet, arraySet } from "@array";
 import { assertEqualString } from "@assert";
 import { List, listFromArray } from "@list";
-import { String, stringEquals, stringFromNumber, stringToArray, stringToNumber } from "@string";
+import { String, stringEquals, stringFromNumber, stringToArray } from "@string";
 import { getValue: getInput } from "./input.txt";
 
 data Operation =
@@ -30,7 +30,7 @@ let parseOperation = (input: String): Operation -> {
     _ -> {
       let parts = input.splitBy('=');
 
-      Operation.Insert({ label: parts.get(0), focalLength: stringToNumber(parts.get(1)) })
+      Operation.Insert({ label: parts.get(0), focalLength: (parts.get(1)).toI32() })
     };
   }
 }

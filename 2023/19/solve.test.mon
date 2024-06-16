@@ -3,7 +3,7 @@ import { print } from "@io";
 import { List } from "@list";
 import { Map, mapCreate } from "@map";
 import { Option } from "@option";
-import { String, stringEquals, stringFromChar, stringFromNumber, stringToNumber } from "@string";
+import { String, stringEquals, stringFromChar, stringFromNumber } from "@string";
 import { stringBuilderCreate } from "@string-builder";
 import { getValue: getInput } from "./input.txt";
 
@@ -64,7 +64,7 @@ let parseWorkflow = (input: String): Workflow -> {
         condition: Condition.New({
           property: conditionPart.get(0),
           operator: conditionPart.get(1),
-          value: stringToNumber(conditionPart.slice(2, conditionPart.size())),
+          value: (conditionPart.slice(2, conditionPart.size())).toI32(),
         }),
       });
 
@@ -87,7 +87,7 @@ let parseRating = (input: String): Rating -> {
   for ratingPart in ratingParts {
     let propertyParts = ratingPart.splitBy('=');
     let propertyName = propertyParts.get(0);
-    let propertyValue = stringToNumber(propertyParts.get(1));
+    let propertyValue = (propertyParts.get(1)).toI32();
 
     if stringEquals(propertyName, "x") {
       rating.x = propertyValue;

@@ -1,6 +1,6 @@
 import { assertEqualString } from "@assert";
 import { List } from "@list";
-import { String, stringFromNumber, stringToNumber } from "@string";
+import { String, stringFromNumber } from "@string";
 import { getValue: getInput } from "./input.txt";
 
 let parseInput = (input: String): List<List<i32> > -> {
@@ -12,7 +12,7 @@ let parseInput = (input: String): List<List<i32> > -> {
     let parts = line.splitBy(' ');
 
     for part in parts {
-      let value = stringToNumber(part);
+      let value = part.toI32();
 
       sequence.push(value);
     }
