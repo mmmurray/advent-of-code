@@ -1,6 +1,6 @@
 import { List, listFromArray } from "@list";
 import { Vec2, max, vec2Equals } from "@math";
-import { String, stringFromNumber, stringToArray } from "@string";
+import { String, stringFromNumber } from "@string";
 import { getValue: getInput } from "./input.txt";
 
 data Connections = {
@@ -38,7 +38,7 @@ let parseInput = (input: String): Pipes -> {
   for line, y in lines {
     let row = [];
 
-    for char, x in listFromArray(stringToArray(line)) {
+    for char, x in line.toList() {
       let connections = charToConnections(char);
 
       row.push(connections);

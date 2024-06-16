@@ -1,7 +1,7 @@
 import { Array, arrayCreate, arrayGet, arraySet } from "@array";
 import { assertEqual, assertEqualString } from "@assert";
 import { List, listFromArray } from "@list";
-import { String, stringFromNumber, stringToArray } from "@string";
+import { String, stringFromNumber } from "@string";
 import { getValue: getInput } from "./input.txt";
 
 data Row = {
@@ -14,7 +14,7 @@ let parseRow = (line: String): Row -> {
   let parts = line.splitBy(' ');
   let conditions = [];
 
-  for char in listFromArray(stringToArray(parts.get(0))) {
+  for char in (parts.get(0)).toList() {
     conditions.push(char);
   }
 

@@ -3,7 +3,7 @@ import { List, listFromArray } from "@list";
 import { Map, mapCreate } from "@map";
 import { Vec2, vec2Equals } from "@math";
 import { Option } from "@option";
-import { String, stringFromNumber, stringToArray } from "@string";
+import { String, stringFromNumber } from "@string";
 import { stringBuilderCreate } from "@string-builder";
 import { getValue: getExample } from "./example.txt";
 
@@ -159,7 +159,7 @@ let parseInput = (input: String): Grid -> {
   for line in lines {
     let tileRow = [];
 
-    for char in listFromArray(stringToArray(line)) {
+    for char in line.toList() {
       tileRow.push((char - '0'));
     }
 

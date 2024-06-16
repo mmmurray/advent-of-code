@@ -1,7 +1,7 @@
 import { assertEqualString } from "@assert";
 import { charIsNumeric } from "@char";
 import { listFromArray } from "@list";
-import { String, stringFromNumber, stringToArray } from "@string";
+import { String, stringFromNumber } from "@string";
 import { getValue: getInput } from "./input.txt";
 
 let getCalibrationValue1 = (line: String): i32 -> {
@@ -9,7 +9,7 @@ let getCalibrationValue1 = (line: String): i32 -> {
   let firstDigit = 0;
   let lastDigit = 0;
 
-  for char in listFromArray(stringToArray(line)) {
+  for char in line.toList() {
     if charIsNumeric(char) {
       let digit = (char - '0');
 
@@ -45,7 +45,7 @@ let getCalibrationValue2 = (line: String): i32 -> {
   let firstDigit = 0;
   let lastDigit = 0;
 
-  for char, charIndex in listFromArray(stringToArray(line)) {
+  for char, charIndex in line.toList() {
     if charIsNumeric(char) {
       let digit = (char - '0');
 

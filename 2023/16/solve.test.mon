@@ -1,7 +1,7 @@
 import { assertEqualString } from "@assert";
 import { List, listFromArray } from "@list";
 import { Vec2, max, vec2Add } from "@math";
-import { String, stringFromNumber, stringToArray } from "@string";
+import { String, stringFromNumber } from "@string";
 import { getValue: getInput } from "./input.txt";
 
 data Direction =
@@ -105,7 +105,7 @@ let parseInput = (input: String): Grid -> {
     let tileRow = [];
     let energizedRow = [];
 
-    for char, x in listFromArray(stringToArray(line)) {
+    for char, x in line.toList() {
       tileRow.push(parseTile(char));
       energizedRow.push([]);
     }
