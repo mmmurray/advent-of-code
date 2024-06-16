@@ -3,7 +3,7 @@ import { print } from "@io";
 import { List } from "@list";
 import { Map, mapCreate } from "@map";
 import { Option } from "@option";
-import { String, stringEquals, stringFromChar, stringFromNumber } from "@string";
+import { String, stringFromChar, stringFromNumber } from "@string";
 import { stringBuilderCreate } from "@string-builder";
 import { getValue: getInput } from "./input.txt";
 
@@ -89,19 +89,19 @@ let parseRating = (input: String): Rating -> {
     let propertyName = propertyParts.get(0);
     let propertyValue = (propertyParts.get(1)).toI32();
 
-    if stringEquals(propertyName, "x") {
+    if propertyName.equals("x") {
       rating.x = propertyValue;
     }
 
-    if stringEquals(propertyName, "m") {
+    if propertyName.equals("m") {
       rating.m = propertyValue;
     }
 
-    if stringEquals(propertyName, "a") {
+    if propertyName.equals("a") {
       rating.a = propertyValue;
     }
 
-    if stringEquals(propertyName, "s") {
+    if propertyName.equals("s") {
       rating.s = propertyValue;
     }
   }
@@ -202,12 +202,12 @@ let isPartAccepted = (workflows: Map<String, Workflow>, rating: Rating): boolean
 
   while loop {
     loop = case {
-      stringEquals(currentWorkflow, "A") -> {
+      currentWorkflow.equals("A") -> {
         result = true;
 
         false
       };
-      stringEquals(currentWorkflow, "R") -> {
+      currentWorkflow.equals("R") -> {
         result = false;
 
         false

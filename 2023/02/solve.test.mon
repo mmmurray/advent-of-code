@@ -1,7 +1,7 @@
 import { assertEqualString } from "@assert";
 import { List } from "@list";
 import { max } from "@math";
-import { String, stringEquals, stringFromNumber } from "@string";
+import { String, stringFromNumber } from "@string";
 import { getValue: getInput } from "./input.txt";
 
 data Selection = {
@@ -24,15 +24,15 @@ let parseSelection = (input: String): Selection -> {
     let value = (pairParts.get(0)).toI32();
     let color = pairParts.get(1);
 
-    if stringEquals(color, "red") {
+    if color.equals("red") {
       selection.red = value;
     }
 
-    if stringEquals(color, "green") {
+    if color.equals("green") {
       selection.green = value;
     }
 
-    if stringEquals(color, "blue") {
+    if color.equals("blue") {
       selection.blue = value;
     }
   }

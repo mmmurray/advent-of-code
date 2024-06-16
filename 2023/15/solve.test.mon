@@ -1,7 +1,7 @@
 import { Array, arrayCreate, arrayGet, arraySet } from "@array";
 import { assertEqualString } from "@assert";
 import { List, listFromArray } from "@list";
-import { String, stringEquals, stringFromNumber, stringToArray } from "@string";
+import { String, stringFromNumber, stringToArray } from "@string";
 import { getValue: getInput } from "./input.txt";
 
 data Operation =
@@ -102,7 +102,7 @@ let solvePart2 = (input: String): String -> {
         let replaced = false;
 
         for lens, lensIndex in box.lenses {
-          if stringEquals(lens.label, label) {
+          if (lens.label).equals(label) {
             lens.focalLength = focalLength;
             replaced = true;
           }
@@ -118,7 +118,7 @@ let solvePart2 = (input: String): String -> {
         let removeIndex = --(1);
 
         for lens, lensIndex in box.lenses {
-          if stringEquals(lens.label, label) {
+          if (lens.label).equals(label) {
             removeIndex = lensIndex;
           }
         }
