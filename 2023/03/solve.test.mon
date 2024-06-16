@@ -2,7 +2,7 @@ import { assertEqualString } from "@assert";
 import { charIsNumeric } from "@char";
 import { List } from "@list";
 import { Vec2, vec2Add, vec2IsAdjacent } from "@math";
-import { String, stringFromNumber, stringGet, stringSize } from "@string";
+import { String, stringFromNumber, stringGet } from "@string";
 import { getValue: getInput } from "./input.txt";
 
 data SchematicSymbol = {
@@ -28,7 +28,7 @@ let parseInput = (input: String): Schematic -> {
   for line, lineIndex in lines {
     let charIndex = 0;
 
-    while (charIndex < stringSize(line)) {
+    while (charIndex < line.size()) {
       let char = stringGet(line, charIndex);
 
       if (char != '.') {
@@ -38,7 +38,7 @@ let parseInput = (input: String): Schematic -> {
           let location = Vec2.New({ x: charIndex, y: lineIndex });
           let loop = true;
 
-          while (loop && (charIndex < stringSize(line))) {
+          while (loop && (charIndex < line.size())) {
             char = stringGet(line, charIndex);
 
             if charIsNumeric(char) {

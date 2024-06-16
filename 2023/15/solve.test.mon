@@ -6,7 +6,6 @@ import {
   stringEquals,
   stringFromNumber,
   stringGet,
-  stringSize,
   stringToArray,
   stringToNumber,
 } from "@string";
@@ -27,11 +26,11 @@ data Step = {
 }
 
 let parseOperation = (input: String): Operation -> {
-  let lastChar = stringGet(input, (stringSize(input) - 1));
+  let lastChar = stringGet(input, (input.size() - 1));
 
   case {
     (lastChar == '-') -> {
-      let label = input.slice(0, (stringSize(input) - 1));
+      let label = input.slice(0, (input.size() - 1));
 
       Operation.Remove({ label: label })
     };

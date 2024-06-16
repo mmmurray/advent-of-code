@@ -9,7 +9,6 @@ import {
   stringFromChar,
   stringFromNumber,
   stringGet,
-  stringSize,
   stringToNumber,
 } from "@string";
 import { stringBuilderCreate } from "@string-builder";
@@ -58,7 +57,7 @@ let parseWorkflow = (input: String): Workflow -> {
   let workflowParts = input.splitBy('{');
   let name = workflowParts.get(0);
   let innerPart = workflowParts.get(1);
-  let inner = innerPart.slice(0, (stringSize(innerPart) - 1));
+  let inner = innerPart.slice(0, (innerPart.size() - 1));
   let steps = [];
   let stepParts = inner.splitBy(',');
 
@@ -72,7 +71,7 @@ let parseWorkflow = (input: String): Workflow -> {
         condition: Condition.New({
           property: stringGet(conditionPart, 0),
           operator: stringGet(conditionPart, 1),
-          value: stringToNumber(conditionPart.slice(2, stringSize(conditionPart))),
+          value: stringToNumber(conditionPart.slice(2, conditionPart.size())),
         }),
       });
 
@@ -89,7 +88,7 @@ let parseWorkflow = (input: String): Workflow -> {
 
 let parseRating = (input: String): Rating -> {
   let rating = Rating.New({ x: 0, m: 0, a: 0, s: 0 });
-  let inner = input.slice(1, (stringSize(input) - 1));
+  let inner = input.slice(1, (input.size() - 1));
   let ratingParts = inner.splitBy(',');
 
   for ratingPart in ratingParts {
@@ -124,7 +123,7 @@ let parseInput = (input: String): System -> {
   let ratings = [];
 
   for line in lines {
-    if (stringSize(line) == 0) {
+    if (line.size() == 0) {
       inWorkflowsSection = false;
     } else {
       if inWorkflowsSection {

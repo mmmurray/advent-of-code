@@ -1,7 +1,7 @@
 import { assertEqualString } from "@assert";
 import { List } from "@list";
 import { max } from "@math";
-import { String, stringEquals, stringFromNumber, stringSize, stringToNumber } from "@string";
+import { String, stringEquals, stringFromNumber, stringToNumber } from "@string";
 import { getValue: getInput } from "./input.txt";
 
 data Selection = {
@@ -43,7 +43,7 @@ let parseSelection = (input: String): Selection -> {
 let parseInputLine = (line: String): Game -> {
   let parts = line.splitBy(':');
   let gameIdPart = parts.get(0);
-  let idPart = gameIdPart.slice(5, stringSize(gameIdPart));
+  let idPart = gameIdPart.slice(5, gameIdPart.size());
   let id = stringToNumber(idPart);
   let selections = [];
   let selectionsPart = (parts.get(1)).trim();

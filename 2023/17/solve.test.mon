@@ -3,7 +3,7 @@ import { List, listFromArray } from "@list";
 import { Map, mapCreate } from "@map";
 import { Vec2, vec2Equals } from "@math";
 import { Option } from "@option";
-import { String, stringFromNumber, stringSize, stringToArray } from "@string";
+import { String, stringFromNumber, stringToArray } from "@string";
 import { stringBuilderCreate } from "@string-builder";
 import { getValue: getExample } from "./example.txt";
 
@@ -153,7 +153,7 @@ data Grid = {
 
 let parseInput = (input: String): Grid -> {
   let lines = (input.trim()).toLines();
-  let size = Vec2.New({ x: stringSize(lines.get(0)), y: lines.size() });
+  let size = Vec2.New({ x: (lines.get(0)).size(), y: lines.size() });
   let tiles = [];
 
   for line in lines {

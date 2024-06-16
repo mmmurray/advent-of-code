@@ -1,7 +1,7 @@
 import { assertEqualString } from "@assert";
 import { List, listFromArray } from "@list";
 import { Vec2, min } from "@math";
-import { String, stringFromNumber, stringSize, stringToArray } from "@string";
+import { String, stringFromNumber, stringToArray } from "@string";
 import { getValue: getInput } from "./input.txt";
 
 data Grid = {
@@ -16,7 +16,7 @@ let parseInput = (input: String): List<Grid> -> {
   let size = Vec2.New({ x: 0, y: 0 });
 
   for line in lines {
-    if (stringSize(line) == 0) {
+    if (line.size() == 0) {
       let grid = Grid.New({ size: size, rows: rows });
 
       grids.push(grid);
@@ -24,7 +24,7 @@ let parseInput = (input: String): List<Grid> -> {
       rows = [];
       size = Vec2.New({ x: 0, y: 0 });
     } else {
-      size.x = stringSize(line);
+      size.x = line.size();
       size.y = (size.y + 1);
 
       let row = [];
