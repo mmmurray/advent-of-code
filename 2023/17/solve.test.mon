@@ -1,14 +1,5 @@
 import { assertEqual } from "@assert";
-import {
-  List,
-  listFromArray,
-  listGet,
-  listPop,
-  listPush,
-  listSet,
-  listShift,
-  listSize,
-} from "@list";
+import { List, listFromArray, listGet, listPush, listSet, listShift, listSize } from "@list";
 import { Map, mapCreate } from "@map";
 import { Vec2, vec2Equals } from "@math";
 import { Option } from "@option";
@@ -95,7 +86,7 @@ let priorityQueueNext = <T>(queue: PriorityQueue<T>): Option<T> -> {
     _ -> {
       let highestPriority = listGet(queue.heap, 0);
 
-      listSet(queue.heap, 0, optionExpect(listPop(queue.heap)));
+      listSet(queue.heap, 0, optionExpect((queue.heap).pop()));
 
       let currentIndex = 0;
       let loop = false;
