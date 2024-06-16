@@ -1,14 +1,7 @@
 import { Array, arrayCreate, arrayGet, arraySet } from "@array";
 import { assertEqualString } from "@assert";
 import { List, listFromArray } from "@list";
-import {
-  String,
-  stringEquals,
-  stringFromNumber,
-  stringGet,
-  stringToArray,
-  stringToNumber,
-} from "@string";
+import { String, stringEquals, stringFromNumber, stringToArray, stringToNumber } from "@string";
 import { getValue: getInput } from "./input.txt";
 
 data Operation =
@@ -26,7 +19,7 @@ data Step = {
 }
 
 let parseOperation = (input: String): Operation -> {
-  let lastChar = stringGet(input, (input.size() - 1));
+  let lastChar = input.get((input.size() - 1));
 
   case {
     (lastChar == '-') -> {

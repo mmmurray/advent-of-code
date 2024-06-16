@@ -3,7 +3,7 @@ import { print } from "@io";
 import { List, listFromArray } from "@list";
 import { Map, mapCreate } from "@map";
 import { lcmMany } from "@math";
-import { String, stringFromNumber, stringGet, stringToArray } from "@string";
+import { String, stringFromNumber, stringToArray } from "@string";
 import { getValue: getInput } from "./input.txt";
 
 data Node = {
@@ -69,7 +69,7 @@ let countSteps = (network: Network, start: String): u64 -> {
     instructionIndex = ((instructionIndex + 1) % (network.instructions).size());
     steps = (steps + 1);
 
-    if (stringGet(current, 2) == 'Z') {
+    if (current.get(2) == 'Z') {
       loop = false;
     }
   }
@@ -90,7 +90,7 @@ let solvePart2 = (input: String): String -> {
   let allSteps = [];
 
   for item in nodes.entries() {
-    if (stringGet(item.key, 2) == 'A') {
+    if ((item.key).get(2) == 'A') {
       allSteps.push(countSteps(network, item.key));
     }
   }

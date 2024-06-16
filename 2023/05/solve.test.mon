@@ -1,7 +1,7 @@
 import { List } from "@list";
 import { min } from "@math";
 import { Range, rangeCreate, rangeEmpty, rangeIntersect, rangeShift } from "@range";
-import { String, stringFromNumber, stringGet, stringToNumberU64 } from "@string";
+import { String, stringFromNumber, stringToNumberU64 } from "@string";
 import { getValue: getInput } from "./input.txt";
 
 data AlmanacMapping = {
@@ -53,7 +53,7 @@ let parseInput = (input: String): Almanac -> {
 
       category = AlmanacCategory.New({ mappings: [] });
     } else {
-      if (stringGet(mappingLine, (mappingLine.size() - 1)) != ':') {
+      if (mappingLine.get((mappingLine.size() - 1)) != ':') {
         let values = parseNumberList(mappingLine);
         let destinationStart = values.get(0);
         let sourceStart = values.get(1);

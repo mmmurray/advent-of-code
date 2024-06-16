@@ -3,14 +3,7 @@ import { print } from "@io";
 import { List } from "@list";
 import { Map, mapCreate } from "@map";
 import { Option } from "@option";
-import {
-  String,
-  stringEquals,
-  stringFromChar,
-  stringFromNumber,
-  stringGet,
-  stringToNumber,
-} from "@string";
+import { String, stringEquals, stringFromChar, stringFromNumber, stringToNumber } from "@string";
 import { stringBuilderCreate } from "@string-builder";
 import { getValue: getInput } from "./input.txt";
 
@@ -69,8 +62,8 @@ let parseWorkflow = (input: String): Workflow -> {
       let step = WorkflowStep.WorkflowStepConditional({
         target: target,
         condition: Condition.New({
-          property: stringGet(conditionPart, 0),
-          operator: stringGet(conditionPart, 1),
+          property: conditionPart.get(0),
+          operator: conditionPart.get(1),
           value: stringToNumber(conditionPart.slice(2, conditionPart.size())),
         }),
       });

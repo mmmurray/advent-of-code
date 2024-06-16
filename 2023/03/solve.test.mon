@@ -2,7 +2,7 @@ import { assertEqualString } from "@assert";
 import { charIsNumeric } from "@char";
 import { List } from "@list";
 import { Vec2, vec2Add, vec2IsAdjacent } from "@math";
-import { String, stringFromNumber, stringGet } from "@string";
+import { String, stringFromNumber } from "@string";
 import { getValue: getInput } from "./input.txt";
 
 data SchematicSymbol = {
@@ -29,7 +29,7 @@ let parseInput = (input: String): Schematic -> {
     let charIndex = 0;
 
     while (charIndex < line.size()) {
-      let char = stringGet(line, charIndex);
+      let char = line.get(charIndex);
 
       if (char != '.') {
         if charIsNumeric(char) {
@@ -39,7 +39,7 @@ let parseInput = (input: String): Schematic -> {
           let loop = true;
 
           while (loop && (charIndex < line.size())) {
-            char = stringGet(line, charIndex);
+            char = line.get(charIndex);
 
             if charIsNumeric(char) {
               value = ((value * 10) + (char - '0'));

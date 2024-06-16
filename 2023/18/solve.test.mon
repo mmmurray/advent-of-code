@@ -1,7 +1,7 @@
 import { assertEqualString } from "@assert";
 import { List } from "@list";
 import { Mat2, Vec2, mat2Determinant, vec2Add, vec2Scale } from "@math";
-import { String, stringConcat, stringFromNumber, stringGet, stringToNumberI64 } from "@string";
+import { String, stringConcat, stringFromNumber, stringToNumberI64 } from "@string";
 import { getValue: getInput } from "./input.txt";
 
 data Direction =
@@ -42,7 +42,7 @@ data DigPlanStep = {
 }
 
 let parseDirection = (input: String): Direction -> {
-  let char = stringGet(input, 0);
+  let char = input.get(0);
 
   case {
     (char == 'U') -> directionNorth();
@@ -139,7 +139,7 @@ let solvePart2 = (input: String): String -> {
   for planStep in planSteps {
     let distanceHex = (planStep.color).slice(2, 7);
     let distance = stringToNumberI64(stringConcat("0x", distanceHex.toUpper()));
-    let directionNum = (stringGet(planStep.color, 7) - '0');
+    let directionNum = ((planStep.color).get(7) - '0');
 
     steps.push(Step.New({ direction: orderedDirections.get(directionNum), distance: distance }));
   }
