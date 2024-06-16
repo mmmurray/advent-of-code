@@ -1,6 +1,6 @@
 import { assertEqualString } from "@assert";
 import { List } from "@list";
-import { String, stringFromNumber, stringToNumberU64 } from "@string";
+import { String, stringFromNumber } from "@string";
 import { stringBuilderCreate } from "@string-builder";
 import { getValue: getInput } from "./input.txt";
 
@@ -15,7 +15,7 @@ let parseNumberList = (input: String): List<u64> -> {
 
   for part in parts {
     if (part.size() > 0) {
-      let num = stringToNumberU64(part);
+      let num = part.toU64();
 
       values.push(num);
     }
@@ -84,8 +84,8 @@ let solvePart2 = (input: String): String -> {
   }
 
   let combinedRace = Race.New({
-    time: stringToNumberU64(combinedTimes.build()),
-    distance: stringToNumberU64(combinedDistances.build()),
+    time: (combinedTimes.build()).toU64(),
+    distance: (combinedDistances.build()).toU64(),
   });
   let result = solveRace(combinedRace);
 
