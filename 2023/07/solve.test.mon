@@ -2,7 +2,7 @@ import { assertEqualString } from "@assert";
 import { charIsNumeric } from "@char";
 import { List, listFromArray } from "@list";
 import { Map, mapCreate } from "@map";
-import { String, stringFromNumber, stringSplitBy, stringToArray, stringToNumber } from "@string";
+import { String, stringFromNumber, stringToArray, stringToNumber } from "@string";
 import { getValue: getInput } from "./input.txt";
 
 data Hand = {
@@ -104,7 +104,7 @@ let parseInput = (input: String, jokers: boolean): List<Hand> -> {
   let lines = (input.trim()).toLines();
 
   for line in lines {
-    let parts = stringSplitBy(line, ' ');
+    let parts = line.splitBy(' ');
     let cardsPart = parts.get(0);
     let bidPart = parts.get(1);
     let cards = [];

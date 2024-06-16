@@ -1,6 +1,6 @@
 import { assertEqualString } from "@assert";
 import { List } from "@list";
-import { String, stringFromNumber, stringSize, stringSplitBy, stringToNumberU64 } from "@string";
+import { String, stringFromNumber, stringSize, stringToNumberU64 } from "@string";
 import { stringBuilderCreate } from "@string-builder";
 import { getValue: getInput } from "./input.txt";
 
@@ -11,7 +11,7 @@ data Race = {
 
 let parseNumberList = (input: String): List<u64> -> {
   let values = [];
-  let parts = stringSplitBy(input, ' ');
+  let parts = input.splitBy(' ');
 
   for part in parts {
     if (stringSize(part) > 0) {
@@ -29,8 +29,8 @@ let parseInput = (input: String): List<Race> -> {
   let lines = (input).toLines();
   let timesLine = lines.get(0);
   let distancesLine = lines.get(1);
-  let times = parseNumberList((stringSplitBy(timesLine, ':')).get(1));
-  let distances = parseNumberList((stringSplitBy(distancesLine, ':')).get(1));
+  let times = parseNumberList((timesLine.splitBy(':')).get(1));
+  let distances = parseNumberList((distancesLine.splitBy(':')).get(1));
 
   for time, timeIndex in times {
     let race = Race.New({ time: time, distance: distances.get(timeIndex) });

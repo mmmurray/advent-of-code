@@ -2,7 +2,7 @@ import { arrayCreate, arrayGet, arraySet } from "@array";
 import { assertEqualString } from "@assert";
 import { List } from "@list";
 import { max } from "@math";
-import { String, stringFromNumber, stringSize, stringSplitBy, stringToNumber } from "@string";
+import { String, stringFromNumber, stringSize, stringToNumber } from "@string";
 import { getValue: getInput } from "./input.txt";
 
 data Game = {
@@ -11,7 +11,7 @@ data Game = {
 }
 
 let parseNumberList = (input: String): List<i32> -> {
-  let parts = stringSplitBy(input.trim(), ' ');
+  let parts = (input.trim()).splitBy(' ');
   let numbers = [];
 
   for part in parts {
@@ -30,8 +30,8 @@ let parseInput = (input: String): List<Game> -> {
   let games = [];
 
   for line in lines {
-    let lineParts = stringSplitBy(line, ':');
-    let sectionParts = stringSplitBy(lineParts.get(1), '|');
+    let lineParts = line.splitBy(':');
+    let sectionParts = (lineParts.get(1)).splitBy('|');
 
     games.push(Game.New({
       winning: parseNumberList(sectionParts.get(0)),

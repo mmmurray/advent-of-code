@@ -12,7 +12,6 @@ import {
   stringGet,
   stringSize,
   stringSlice,
-  stringSplitBy,
   stringToNumber,
 } from "@string";
 import { stringBuilderCreate } from "@string-builder";
@@ -58,16 +57,16 @@ data System = {
 }
 
 let parseWorkflow = (input: String): Workflow -> {
-  let workflowParts = stringSplitBy(input, '{');
+  let workflowParts = input.splitBy('{');
   let name = workflowParts.get(0);
   let innerPart = workflowParts.get(1);
   let inner = stringSlice(innerPart, 0, (stringSize(innerPart) - 1));
   let steps = [];
-  let stepParts = stringSplitBy(inner, ',');
+  let stepParts = inner.splitBy(',');
 
   for stepPart in stepParts {
     if stringContains(stepPart, ":") {
-      let conditionParts = stringSplitBy(stepPart, ':');
+      let conditionParts = stepPart.splitBy(':');
       let conditionPart = conditionParts.get(0);
       let target = conditionParts.get(1);
       let step = WorkflowStep.WorkflowStepConditional({
@@ -93,10 +92,10 @@ let parseWorkflow = (input: String): Workflow -> {
 let parseRating = (input: String): Rating -> {
   let rating = Rating.New({ x: 0, m: 0, a: 0, s: 0 });
   let inner = stringSlice(input, 1, (stringSize(input) - 1));
-  let ratingParts = stringSplitBy(inner, ',');
+  let ratingParts = inner.splitBy(',');
 
   for ratingPart in ratingParts {
-    let propertyParts = stringSplitBy(ratingPart, '=');
+    let propertyParts = ratingPart.splitBy('=');
     let propertyName = propertyParts.get(0);
     let propertyValue = stringToNumber(propertyParts.get(1));
 

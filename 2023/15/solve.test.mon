@@ -8,7 +8,6 @@ import {
   stringGet,
   stringSize,
   stringSlice,
-  stringSplitBy,
   stringToArray,
   stringToNumber,
 } from "@string";
@@ -38,7 +37,7 @@ let parseOperation = (input: String): Operation -> {
       Operation.Remove({ label: label })
     };
     _ -> {
-      let parts = stringSplitBy(input, '=');
+      let parts = input.splitBy('=');
 
       Operation.Insert({ label: parts.get(0), focalLength: stringToNumber(parts.get(1)) })
     };
@@ -46,7 +45,7 @@ let parseOperation = (input: String): Operation -> {
 }
 
 let parseInput = (input: String): List<Step> -> {
-  let parts = stringSplitBy(input.trim(), ',');
+  let parts = (input.trim()).splitBy(',');
   let steps = [];
 
   for part in parts {

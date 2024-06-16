@@ -7,7 +7,6 @@ import {
   stringFromNumber,
   stringSize,
   stringSlice,
-  stringSplitBy,
   stringToNumber,
 } from "@string";
 import { getValue: getInput } from "./input.txt";
@@ -24,11 +23,11 @@ data Game = {
 }
 
 let parseSelection = (input: String): Selection -> {
-  let valueParts = stringSplitBy(input, ',');
+  let valueParts = input.splitBy(',');
   let selection = Selection.New({ red: 0, blue: 0, green: 0 });
 
   for valuePart in valueParts {
-    let pairParts = stringSplitBy(valuePart.trim(), ' ');
+    let pairParts = (valuePart.trim()).splitBy(' ');
     let value = stringToNumber(pairParts.get(0));
     let color = pairParts.get(1);
 
@@ -49,13 +48,13 @@ let parseSelection = (input: String): Selection -> {
 }
 
 let parseInputLine = (line: String): Game -> {
-  let parts = stringSplitBy(line, ':');
+  let parts = line.splitBy(':');
   let gameIdPart = parts.get(0);
   let idPart = stringSlice(gameIdPart, 5, stringSize(gameIdPart));
   let id = stringToNumber(idPart);
   let selections = [];
   let selectionsPart = (parts.get(1)).trim();
-  let selectionParts = stringSplitBy(selectionsPart, ';');
+  let selectionParts = selectionsPart.splitBy(';');
   let selectionIndex = 0;
 
   for selectionPart in selectionParts {

@@ -1,7 +1,7 @@
 import { Array, arrayCreate, arrayGet, arraySet } from "@array";
 import { assertEqual, assertEqualString } from "@assert";
 import { List, listFromArray } from "@list";
-import { String, stringFromNumber, stringSplitBy, stringToArray, stringToNumber } from "@string";
+import { String, stringFromNumber, stringToArray, stringToNumber } from "@string";
 import { getValue: getInput } from "./input.txt";
 
 data Row = {
@@ -11,7 +11,7 @@ data Row = {
 }
 
 let parseRow = (line: String): Row -> {
-  let parts = stringSplitBy(line, ' ');
+  let parts = line.splitBy(' ');
   let conditions = [];
 
   for char in listFromArray(stringToArray(parts.get(0))) {
@@ -19,7 +19,7 @@ let parseRow = (line: String): Row -> {
   }
 
   let damaged = [];
-  let damagedParts = stringSplitBy(parts.get(1), ',');
+  let damagedParts = (parts.get(1)).splitBy(',');
   let damageTotal = 0;
 
   for damagedPart in damagedParts {

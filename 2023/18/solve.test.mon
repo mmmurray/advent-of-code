@@ -7,7 +7,6 @@ import {
   stringFromNumber,
   stringGet,
   stringSlice,
-  stringSplitBy,
   stringToNumberI64,
 } from "@string";
 import { getValue: getInput } from "./input.txt";
@@ -66,7 +65,7 @@ let parseInput = (input: String): List<DigPlanStep> -> {
   let steps = [];
 
   for line in lines {
-    let parts = stringSplitBy(line, ' ');
+    let parts = line.splitBy(' ');
     let direction = parseDirection(parts.get(0));
     let distance = stringToNumberI64(parts.get(1));
     let color = parts.get(2);

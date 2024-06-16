@@ -1,14 +1,7 @@
 import { List } from "@list";
 import { min } from "@math";
 import { Range, rangeCreate, rangeEmpty, rangeIntersect, rangeShift } from "@range";
-import {
-  String,
-  stringFromNumber,
-  stringGet,
-  stringSize,
-  stringSplitBy,
-  stringToNumberU64,
-} from "@string";
+import { String, stringFromNumber, stringGet, stringSize, stringToNumberU64 } from "@string";
 import { getValue: getInput } from "./input.txt";
 
 data AlmanacMapping = {
@@ -30,7 +23,7 @@ data Almanac = {
 
 let parseNumberList = (input: String): List<u64> -> {
   let values = [];
-  let parts = stringSplitBy(input, ' ');
+  let parts = input.splitBy(' ');
 
   for part in parts {
     let num = stringToNumberU64(part);
@@ -42,7 +35,7 @@ let parseNumberList = (input: String): List<u64> -> {
 }
 
 let parseSeeds = (input: String): List<u64> -> {
-  let inputParts = stringSplitBy(input, ':');
+  let inputParts = input.splitBy(':');
   let values = (inputParts.get(1)).trim();
 
   parseNumberList(values)
