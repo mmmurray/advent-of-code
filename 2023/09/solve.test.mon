@@ -1,5 +1,5 @@
 import { assertEqualString } from "@assert";
-import { List, listGet, listPush } from "@list";
+import { List, listGet } from "@list";
 import {
   String,
   stringFromNumber,
@@ -21,10 +21,10 @@ let parseInput = (input: String): List<List<i32> > -> {
     for part in parts {
       let value = stringToNumber(part);
 
-      listPush(sequence, value);
+      sequence.push(value);
     }
 
-    listPush(sequences, sequence);
+    sequences.push(sequence);
   }
 
   sequences
@@ -38,7 +38,7 @@ let findDeltas = (sequence: List<i32>): List<i32> -> {
       let a = listGet(sequence, (index - 1));
       let delta = (b - a);
 
-      listPush(deltas, delta);
+      deltas.push(delta);
     }
   }
 

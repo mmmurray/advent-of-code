@@ -1,5 +1,5 @@
 import { assertEqual } from "@assert";
-import { List, listFromArray, listGet, listPush, listSet } from "@list";
+import { List, listFromArray, listGet, listSet } from "@list";
 import { Map, mapCreate } from "@map";
 import { Vec2, vec2Equals } from "@math";
 import { Option } from "@option";
@@ -53,7 +53,7 @@ let priorityQueueSize = <T>(queue: PriorityQueue<T>): i32 -> {
 let priorityQueueInsert = <T>(queue: PriorityQueue<T>, node: T, priority: i32): unit -> {
   let entry = PriorityQueueHeapEntry.New({ node: node, priority: priority });
 
-  listPush(queue.heap, entry);
+  (queue.heap).push(entry);
 
   let currentIndex = ((queue.heap).size() - 1);
   let loop = true;
@@ -167,10 +167,10 @@ let parseInput = (input: String): Grid -> {
     let tileRow = [];
 
     for char in listFromArray(stringToArray(line)) {
-      listPush(tileRow, (char - '0'));
+      tileRow.push((char - '0'));
     }
 
-    listPush(tiles, tileRow);
+    tiles.push(tileRow);
   }
 
   Grid.New({ size: size, tiles: tiles })
@@ -181,19 +181,19 @@ let gridAdjacent = (grid: Grid, position: Vec2<i32>): List<Vec2<i32> > -> {
   let size = grid.size;
 
   if (position.x < (size.x - 1)) {
-    listPush(adjacent, Vec2.New({ x: (position.x + 1), y: position.y }));
+    adjacent.push(Vec2.New({ x: (position.x + 1), y: position.y }));
   }
 
   if (position.y < (size.y - 1)) {
-    listPush(adjacent, Vec2.New({ x: position.x, y: (position.y + 1) }));
+    adjacent.push(Vec2.New({ x: position.x, y: (position.y + 1) }));
   }
 
   if (position.x > 0) {
-    listPush(adjacent, Vec2.New({ x: (position.x - 1), y: position.y }));
+    adjacent.push(Vec2.New({ x: (position.x - 1), y: position.y }));
   }
 
   if (position.y > 0) {
-    listPush(adjacent, Vec2.New({ x: position.x, y: (position.y - 1) }));
+    adjacent.push(Vec2.New({ x: position.x, y: (position.y - 1) }));
   }
 
   adjacent
@@ -207,7 +207,7 @@ let extractShortestPath = (cameFrom: Map<String, Vec2<i32> >, targetNode: Vec2<i
 
   # (print (vec2ToString c))
 
-  listPush(path, c);
+  path.push(c);
 
   let loop = true;
 
@@ -223,7 +223,7 @@ let extractShortestPath = (cameFrom: Map<String, Vec2<i32> >, targetNode: Vec2<i
     } else {
       c = optionExpect(cameFromOption);
 
-      listPush(path, c);
+      path.push(c);
 
       # (print (vec2ToString c))
     }

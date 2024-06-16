@@ -1,5 +1,5 @@
 import { assertEqualString } from "@assert";
-import { List, listFromArray, listGet, listPush, listSet } from "@list";
+import { List, listFromArray, listGet, listSet } from "@list";
 import { Vec2 } from "@math";
 import {
   String,
@@ -26,10 +26,10 @@ let parseInput = (input: String): Grid -> {
     let col = [];
 
     for line in lines {
-      listPush(col, stringGet(line, colIndex));
+      col.push(stringGet(line, colIndex));
     }
 
-    listPush(cols, col);
+    cols.push(col);
   }
 
   Grid.New({ size: size, cols: cols })
@@ -63,7 +63,7 @@ let tiltGrid = (grid: Grid): Grid -> {
   let newCols = [];
 
   for col in grid.cols {
-    listPush(newCols, tiltColumn(col));
+    newCols.push(tiltColumn(col));
   }
 
   Grid.New({ size: grid.size, cols: newCols })
@@ -93,10 +93,10 @@ let rotateGridClockwise = (grid: Grid): Grid -> {
     let newCol = [];
 
     for col, colIndex in grid.cols {
-      listPush(newCol, listGet(col, rowIndex));
+      newCol.push(listGet(col, rowIndex));
     }
 
-    listPush(newCols, newCol);
+    newCols.push(newCol);
 
     rowIndex = (rowIndex - 1);
   }
@@ -170,7 +170,7 @@ let solvePart2 = (input: String): String -> {
     }
 
     if (cycleOffset < 0) {
-      listPush(grids, grid);
+      grids.push(grid);
 
       i = (i + 1);
     }

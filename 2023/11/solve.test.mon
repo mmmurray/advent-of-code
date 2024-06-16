@@ -1,5 +1,5 @@
 import { assertEqualString } from "@assert";
-import { List, listFromArray, listGet, listPush } from "@list";
+import { List, listFromArray, listGet } from "@list";
 import { Vec2, vec2Add, vec2ManhattanDistance } from "@math";
 import {
   String,
@@ -26,7 +26,7 @@ let parseInput = (input: String): Universe -> {
       if (char == '#') {
         let galaxy = Vec2.New({ x: (@i64 x), y: (@i64 y) });
 
-        listPush(galaxies, galaxy);
+        galaxies.push(galaxy);
       }
     }
   }
@@ -49,7 +49,7 @@ let expandUniverse = (universe: Universe, expansionRate: i64): Universe -> {
     }
 
     if empty {
-      listPush(emptyRows, y);
+      emptyRows.push(y);
     }
 
     y = (y + 1);
@@ -68,7 +68,7 @@ let expandUniverse = (universe: Universe, expansionRate: i64): Universe -> {
     }
 
     if empty {
-      listPush(emptyCols, x);
+      emptyCols.push(x);
     }
 
     x = (x + 1);
@@ -97,7 +97,7 @@ let expandUniverse = (universe: Universe, expansionRate: i64): Universe -> {
 
     let newGalaxy = vec2Add(galaxy, redShift);
 
-    listPush(newGalaxies, newGalaxy);
+    newGalaxies.push(newGalaxy);
   }
 
   Universe.New({ size: newSize, galaxies: newGalaxies })

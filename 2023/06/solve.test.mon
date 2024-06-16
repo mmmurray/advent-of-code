@@ -1,5 +1,5 @@
 import { assertEqualString } from "@assert";
-import { List, listGet, listPush } from "@list";
+import { List, listGet } from "@list";
 import {
   String,
   stringFromNumber,
@@ -24,7 +24,7 @@ let parseNumberList = (input: String): List<u64> -> {
     if (stringSize(part) > 0) {
       let num = stringToNumberU64(part);
 
-      listPush(values, num);
+      values.push(num);
     }
   }
 
@@ -42,7 +42,7 @@ let parseInput = (input: String): List<Race> -> {
   for time, timeIndex in times {
     let race = Race.New({ time: time, distance: listGet(distances, timeIndex) });
 
-    listPush(races, race);
+    races.push(race);
   }
 
   races

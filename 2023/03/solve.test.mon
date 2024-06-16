@@ -1,5 +1,5 @@
 import { assertEqualString } from "@assert";
-import { List, listPush } from "@list";
+import { List } from "@list";
 import { Vec2, vec2Add, vec2IsAdjacent } from "@math";
 import {
   String,
@@ -59,13 +59,13 @@ let parseInput = (input: String): Schematic -> {
 
           let number = SchematicNumber.New({ location: location, value: value, length: length });
 
-          listPush(schematic.numbers, number);
+          (schematic.numbers).push(number);
 
           charIndex = (charIndex - 1);
         } else {
           let symbol = SchematicSymbol.New({ location: Vec2.New({ x: charIndex, y: lineIndex }), value: char });
 
-          listPush(schematic.symbols, symbol);
+          (schematic.symbols).push(symbol);
         }
       }
 

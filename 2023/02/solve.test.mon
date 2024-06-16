@@ -1,5 +1,5 @@
 import { assertEqualString } from "@assert";
-import { List, listGet, listPush } from "@list";
+import { List, listGet } from "@list";
 import { max } from "@math";
 import {
   String,
@@ -63,7 +63,7 @@ let parseInputLine = (line: String): Game -> {
   for selectionPart in selectionParts {
     let selection = parseSelection(selectionPart);
 
-    listPush(selections, selection);
+    selections.push(selection);
 
     selectionIndex = (selectionIndex + 1);
   }
@@ -78,7 +78,7 @@ let parseInput = (input: String): List<Game> -> {
   for line in lines {
     let game = parseInputLine(line);
 
-    listPush(games, game);
+    games.push(game);
   }
 
   games

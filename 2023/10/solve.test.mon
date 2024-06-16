@@ -1,4 +1,4 @@
-import { List, listFromArray, listGet, listPush, listSet } from "@list";
+import { List, listFromArray, listGet, listSet } from "@list";
 import { Vec2, max, vec2Equals } from "@math";
 import {
   String,
@@ -48,14 +48,14 @@ let parseInput = (input: String): Pipes -> {
     for char, x in listFromArray(stringToArray(line)) {
       let connections = charToConnections(char);
 
-      listPush(row, connections);
+      row.push(connections);
 
       if (char == 'S') {
         start = Vec2.New({ x: x, y: y });
       }
     }
 
-    listPush(grid, row);
+    grid.push(row);
   }
 
   Pipes.New({ grid: grid, start: start, size: size })
@@ -136,7 +136,7 @@ let searchPipes = (pipes: Pipes, visited: List<Vec2<i32> >, current: Vec2<i32>, 
     _ -> {
       let currentConnections = getConnections(pipes, current);
 
-      listPush(visited, current);
+      visited.push(current);
 
       let size = pipes.size;
       let maxSteps = steps;
@@ -214,12 +214,12 @@ let buildLake = (pipes: Pipes, visited: List<Vec2<i32> >): Lake -> {
     let x = 0;
 
     while (x < lakeSize.x) {
-      listPush(row, 0);
+      row.push(0);
 
       x = (x + 1);
     }
 
-    listPush(walls, row);
+    walls.push(row);
 
     y = (y + 1);
   }

@@ -1,5 +1,5 @@
 import { assertEqualString } from "@assert";
-import { List, listFromArray, listGet, listPush, listSet } from "@list";
+import { List, listFromArray, listGet, listSet } from "@list";
 import { Vec2, min } from "@math";
 import { String, stringFromNumber, stringSize, stringToArray, stringToLines } from "@string";
 import { getValue: getInput } from "./input.txt";
@@ -19,7 +19,7 @@ let parseInput = (input: String): List<Grid> -> {
     if (stringSize(line) == 0) {
       let grid = Grid.New({ size: size, rows: rows });
 
-      listPush(grids, grid);
+      grids.push(grid);
 
       rows = [];
       size = Vec2.New({ x: 0, y: 0 });
@@ -32,10 +32,10 @@ let parseInput = (input: String): List<Grid> -> {
       for char in listFromArray(stringToArray(line)) {
         let isWall = (char == '#');
 
-        listPush(row, isWall);
+        row.push(isWall);
       }
 
-      listPush(rows, row);
+      rows.push(row);
     }
   }
 

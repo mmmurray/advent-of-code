@@ -1,6 +1,6 @@
 import { assertEqualString } from "@assert";
 import { print } from "@io";
-import { List, listFromArray, listGet, listPush } from "@list";
+import { List, listFromArray, listGet } from "@list";
 import { Map, mapCreate } from "@map";
 import { lcmMany } from "@math";
 import {
@@ -37,7 +37,7 @@ let parseInput = (input: String): Network -> {
       instruction = true;
     }
 
-    listPush(instructions, instruction);
+    instructions.push(instruction);
   }
 
   let nodesLines = lines.slice(2, lines.size());
@@ -99,7 +99,7 @@ let solvePart2 = (input: String): String -> {
 
   for item in nodes.entries() {
     if (stringGet(item.key, 2) == 'A') {
-      listPush(allSteps, countSteps(network, item.key));
+      allSteps.push(countSteps(network, item.key));
     }
   }
 

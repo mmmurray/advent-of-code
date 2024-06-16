@@ -1,6 +1,6 @@
 import { Array, arrayCreate, arrayGet, arraySet } from "@array";
 import { assertEqual, assertEqualString } from "@assert";
-import { List, listFromArray, listGet, listPush, listSet } from "@list";
+import { List, listFromArray, listGet, listSet } from "@list";
 import {
   String,
   stringFromNumber,
@@ -23,7 +23,7 @@ let parseRow = (line: String): Row -> {
   let conditions = [];
 
   for char in listFromArray(stringToArray(listGet(parts, 0))) {
-    listPush(conditions, char);
+    conditions.push(char);
   }
 
   let damaged = [];
@@ -33,7 +33,7 @@ let parseRow = (line: String): Row -> {
   for damagedPart in damagedParts {
     let damage = stringToNumber(damagedPart);
 
-    listPush(damaged, damage);
+    damaged.push(damage);
 
     damageTotal = (damageTotal + damage);
   }
@@ -46,7 +46,7 @@ let parseInput = (input: String): List<Row> -> {
   let rows = [];
 
   for line in lines {
-    listPush(rows, parseRow(line));
+    rows.push(parseRow(line));
   }
 
   rows
@@ -198,7 +198,7 @@ let unfoldRows = (rows: List<Row>): List<Row> -> {
   let newRows = [];
 
   for row in rows {
-    listPush(newRows, unfoldRow(row));
+    newRows.push(unfoldRow(row));
   }
 
   newRows

@@ -1,6 +1,6 @@
 import { assertEqualString } from "@assert";
 import { print } from "@io";
-import { List, listGet, listPush } from "@list";
+import { List, listGet } from "@list";
 import { Map, mapCreate } from "@map";
 import { Option } from "@option";
 import {
@@ -81,11 +81,11 @@ let parseWorkflow = (input: String): Workflow -> {
         }),
       });
 
-      listPush(steps, step);
+      steps.push(step);
     } else {
       let step2 = WorkflowStep.WorkflowStep({ target: stepPart });
 
-      listPush(steps, step2);
+      steps.push(step2);
     }
   }
 
@@ -137,7 +137,7 @@ let parseInput = (input: String): System -> {
 
         workflows.set(workflow.name, workflow);
       } else {
-        listPush(ratings, parseRating(line));
+        ratings.push(parseRating(line));
       }
     }
   }

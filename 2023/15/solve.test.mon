@@ -1,6 +1,6 @@
 import { Array, arrayCreate, arrayGet, arraySet } from "@array";
 import { assertEqualString } from "@assert";
-import { List, listFromArray, listGet, listPush } from "@list";
+import { List, listFromArray, listGet } from "@list";
 import {
   String,
   stringEquals,
@@ -56,7 +56,7 @@ let parseInput = (input: String): List<Step> -> {
   for part in parts {
     let step = Step.New({ raw: part, operation: parseOperation(part) });
 
-    listPush(steps, step);
+    steps.push(step);
   }
 
   steps
@@ -125,7 +125,7 @@ let solvePart2 = (input: String): String -> {
         if !(replaced) {
           let lens = Lens.New({ label: label, focalLength: focalLength });
 
-          listPush(box.lenses, lens);
+          (box.lenses).push(lens);
         }
       };
       Remove { label } -> {

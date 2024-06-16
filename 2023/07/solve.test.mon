@@ -1,5 +1,5 @@
 import { assertEqualString } from "@assert";
-import { List, listFromArray, listGet, listPush, listSet } from "@list";
+import { List, listFromArray, listGet, listSet } from "@list";
 import { Map, mapCreate } from "@map";
 import {
   String,
@@ -148,12 +148,12 @@ let parseInput = (input: String, jokers: boolean): List<Hand> -> {
         card = (cardChar - '0');
       }
 
-      listPush(cards, card);
+      cards.push(card);
     }
 
     let hand = Hand.New({ cards: cards, bid: stringToNumber(bidPart), score: scoreCards(cards) });
 
-    listPush(hands, hand);
+    hands.push(hand);
   }
 
   hands

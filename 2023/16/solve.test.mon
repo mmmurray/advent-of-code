@@ -1,5 +1,5 @@
 import { assertEqualString } from "@assert";
-import { List, listFromArray, listGet, listPush, listSet } from "@list";
+import { List, listFromArray, listGet, listSet } from "@list";
 import { Vec2, max, vec2Add } from "@math";
 import {
   String,
@@ -83,10 +83,10 @@ let gridClone = (grid: Grid): Grid -> {
     let newEnergizedRow = [];
 
     for x in energizedRow {
-      listPush(newEnergizedRow, x.clone());
+      newEnergizedRow.push(x.clone());
     }
 
-    listPush(newEnergized, newEnergizedRow);
+    newEnergized.push(newEnergizedRow);
   }
 
   Grid.New({ size: grid.size, tiles: grid.tiles, energized: newEnergized })
@@ -113,12 +113,12 @@ let parseInput = (input: String): Grid -> {
     let energizedRow = [];
 
     for char, x in listFromArray(stringToArray(line)) {
-      listPush(tileRow, parseTile(char));
-      listPush(energizedRow, []);
+      tileRow.push(parseTile(char));
+      energizedRow.push([]);
     }
 
-    listPush(tiles, tileRow);
-    listPush(energized, energizedRow);
+    tiles.push(tileRow);
+    energized.push(energizedRow);
   }
 
   Grid.New({ size: size, tiles: tiles, energized: energized })
