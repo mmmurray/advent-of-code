@@ -7,7 +7,6 @@ import {
   stringFromNumber,
   stringGet,
   stringSize,
-  stringSlice,
   stringToArray,
   stringToNumber,
 } from "@string";
@@ -32,7 +31,7 @@ let parseOperation = (input: String): Operation -> {
 
   case {
     (lastChar == '-') -> {
-      let label = stringSlice(input, 0, (stringSize(input) - 1));
+      let label = input.slice(0, (stringSize(input) - 1));
 
       Operation.Remove({ label: label })
     };

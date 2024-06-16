@@ -1,14 +1,7 @@
 import { assertEqualString } from "@assert";
 import { List } from "@list";
 import { Mat2, Vec2, mat2Determinant, vec2Add, vec2Scale } from "@math";
-import {
-  String,
-  stringConcat,
-  stringFromNumber,
-  stringGet,
-  stringSlice,
-  stringToNumberI64,
-} from "@string";
+import { String, stringConcat, stringFromNumber, stringGet, stringToNumberI64 } from "@string";
 import { getValue: getInput } from "./input.txt";
 
 data Direction =
@@ -144,7 +137,7 @@ let solvePart2 = (input: String): String -> {
   let orderedDirections = [directionEast(), directionSouth(), directionWest(), directionNorth()];
 
   for planStep in planSteps {
-    let distanceHex = stringSlice(planStep.color, 2, 7);
+    let distanceHex = (planStep.color).slice(2, 7);
     let distance = stringToNumberI64(stringConcat("0x", distanceHex.toUpper()));
     let directionNum = (stringGet(planStep.color, 7) - '0');
 

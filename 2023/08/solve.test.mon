@@ -3,7 +3,7 @@ import { print } from "@io";
 import { List, listFromArray } from "@list";
 import { Map, mapCreate } from "@map";
 import { lcmMany } from "@math";
-import { String, stringFromNumber, stringGet, stringSlice, stringToArray } from "@string";
+import { String, stringFromNumber, stringGet, stringToArray } from "@string";
 import { getValue: getInput } from "./input.txt";
 
 data Node = {
@@ -35,9 +35,9 @@ let parseInput = (input: String): Network -> {
   let nodesLines = lines.slice(2, lines.size());
 
   for nodeLine in nodesLines {
-    let name = stringSlice(nodeLine, 0, 3);
-    let left = stringSlice(nodeLine, 7, 10);
-    let right = stringSlice(nodeLine, 12, 15);
+    let name = nodeLine.slice(0, 3);
+    let left = nodeLine.slice(7, 10);
+    let right = nodeLine.slice(12, 15);
     let node = Node.New({ left: left, right: right });
 
     nodes.set(name, node);
