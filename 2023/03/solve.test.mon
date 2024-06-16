@@ -1,15 +1,8 @@
 import { assertEqualString } from "@assert";
+import { charIsNumeric } from "@char";
 import { List } from "@list";
 import { Vec2, vec2Add, vec2IsAdjacent } from "@math";
-import {
-  String,
-  charIsNumeric,
-  stringFromNumber,
-  stringGet,
-  stringSize,
-  stringToLines,
-  stringTrim,
-} from "@string";
+import { String, stringFromNumber, stringGet, stringSize, stringToLines, stringTrim } from "@string";
 import { getValue: getInput } from "./input.txt";
 
 data SchematicSymbol = {

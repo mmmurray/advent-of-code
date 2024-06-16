@@ -1,8 +1,8 @@
 import { assertEqualString } from "@assert";
+import { charIsNumeric } from "@char";
 import { listFromArray } from "@list";
 import {
   String,
-  charIsNumeric,
   stringConcat,
   stringContainsAt,
   stringFromNumber,

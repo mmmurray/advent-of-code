@@ -1,9 +1,9 @@
 import { assertEqualString } from "@assert";
+import { charIsNumeric } from "@char";
 import { List, listFromArray } from "@list";
 import { Map, mapCreate } from "@map";
 import {
   String,
-  charIsNumeric,
   stringFromNumber,
   stringSplitBy,
   stringToArray,
