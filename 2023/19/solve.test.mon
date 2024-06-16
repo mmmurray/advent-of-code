@@ -201,8 +201,6 @@ let isPartAccepted = (workflows: Map<String, Workflow>, rating: Rating): boolean
   let loop = true;
 
   while loop {
-    # (print (stringConcat "currentWorkflow: " currentWorkflow))
-
     loop = case {
       stringEquals(currentWorkflow, "A") -> {
         result = true;
