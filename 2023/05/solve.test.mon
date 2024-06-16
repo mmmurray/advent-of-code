@@ -1,4 +1,4 @@
-import { List, listGet, listPush, listPushList, listSet } from "@list";
+import { List, listGet, listPush, listSet } from "@list";
 import { min } from "@math";
 import { Range, rangeCreate, rangeEmpty, rangeIntersect, rangeShift } from "@range";
 import {
@@ -170,7 +170,7 @@ let mapRangeToLocationInAlmanac = (almanac: Almanac, initialRange: Range<u64>): 
     let nextRanges = [];
 
     for range in ranges {
-      listPushList(nextRanges, mapRangeToLocationInCategory(category, range));
+      nextRanges.pushList(mapRangeToLocationInCategory(category, range));
     }
 
     ranges = nextRanges;

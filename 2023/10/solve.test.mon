@@ -1,4 +1,4 @@
-import { List, listFromArray, listGet, listPush, listPushList, listSet } from "@list";
+import { List, listFromArray, listGet, listPush, listSet } from "@list";
 import { Vec2, max, vec2Equals } from "@math";
 import {
   String,
@@ -80,35 +80,35 @@ let connectionsToWalls = (connections: Connections): List<List<i32> > -> {
   let char = connectionsToChar(connections);
 
   if (char == '.') {
-    listPushList(walls, [[0, 0, 0], [0, 0, 0], [0, 0, 0]]);
+    walls.pushList([[0, 0, 0], [0, 0, 0], [0, 0, 0]]);
   }
 
   if (char == 'S') {
-    listPushList(walls, [[0, 1, 0], [1, 1, 1], [0, 1, 0]]);
+    walls.pushList([[0, 1, 0], [1, 1, 1], [0, 1, 0]]);
   }
 
   if (char == '║') {
-    listPushList(walls, [[0, 1, 0], [0, 1, 0], [0, 1, 0]]);
+    walls.pushList([[0, 1, 0], [0, 1, 0], [0, 1, 0]]);
   }
 
   if (char == '═') {
-    listPushList(walls, [[0, 0, 0], [1, 1, 1], [0, 0, 0]]);
+    walls.pushList([[0, 0, 0], [1, 1, 1], [0, 0, 0]]);
   }
 
   if (char == '╔') {
-    listPushList(walls, [[0, 0, 0], [0, 1, 1], [0, 1, 0]]);
+    walls.pushList([[0, 0, 0], [0, 1, 1], [0, 1, 0]]);
   }
 
   if (char == '╗') {
-    listPushList(walls, [[0, 0, 0], [1, 1, 0], [0, 1, 0]]);
+    walls.pushList([[0, 0, 0], [1, 1, 0], [0, 1, 0]]);
   }
 
   if (char == '╝') {
-    listPushList(walls, [[0, 1, 0], [1, 1, 0], [0, 0, 0]]);
+    walls.pushList([[0, 1, 0], [1, 1, 0], [0, 0, 0]]);
   }
 
   if (char == '╚') {
-    listPushList(walls, [[0, 1, 0], [0, 1, 1], [0, 0, 0]]);
+    walls.pushList([[0, 1, 0], [0, 1, 1], [0, 0, 0]]);
   }
 
   walls
