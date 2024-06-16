@@ -1,5 +1,5 @@
 import { assertEqualString } from "@assert";
-import { List, listFromArray, listGet, listSet } from "@list";
+import { List, listFromArray, listGet } from "@list";
 import { Vec2, min } from "@math";
 import { String, stringFromNumber, stringSize, stringToArray, stringToLines } from "@string";
 import { getValue: getInput } from "./input.txt";
@@ -155,7 +155,7 @@ let removeSmudge = (grid: Grid): i32 -> {
       let row = listGet(grid.rows, y);
       let value = listGet(row, x);
 
-      listSet(row, x, !(value));
+      row.set(x, !(value));
 
       let newScore = getReflectionScore(grid, result);
 
@@ -163,7 +163,7 @@ let removeSmudge = (grid: Grid): i32 -> {
         result = newScore;
         loop = false;
       } else {
-        listSet(row, x, value);
+        row.set(x, value);
 
         x = (x + 1);
       }

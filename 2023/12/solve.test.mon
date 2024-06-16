@@ -1,6 +1,6 @@
 import { Array, arrayCreate, arrayGet, arraySet } from "@array";
 import { assertEqual, assertEqualString } from "@assert";
-import { List, listFromArray, listGet, listSet } from "@list";
+import { List, listFromArray, listGet } from "@list";
 import {
   String,
   stringFromNumber,
@@ -69,15 +69,15 @@ let placeDamage = (conditions: List<i32>, offset: i32, width: i32): List<i32> ->
 
   for condition, index in conditions {
     if (condition == '?') {
-      listSet(newConditions, index, '.');
+      newConditions.set(index, '.');
     }
 
     if (index >= offset) {
-      listSet(newConditions, index, '#');
+      newConditions.set(index, '#');
     }
 
     if (index >= (offset + width)) {
-      listSet(newConditions, index, listGet(conditions, index));
+      newConditions.set(index, listGet(conditions, index));
     }
   }
 

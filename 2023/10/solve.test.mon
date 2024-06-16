@@ -1,4 +1,4 @@
-import { List, listFromArray, listGet, listSet } from "@list";
+import { List, listFromArray, listGet } from "@list";
 import { Vec2, max, vec2Equals } from "@math";
 import {
   String,
@@ -233,7 +233,7 @@ let buildLake = (pipes: Pipes, visited: List<Vec2<i32> >): Lake -> {
         if (wall == 1) {
           let row = listGet(walls, ((p.y * 3) + dy));
 
-          listSet(row, ((p.x * 3) + dx), 1);
+          row.set(((p.x * 3) + dx), 1);
         }
       }
     }

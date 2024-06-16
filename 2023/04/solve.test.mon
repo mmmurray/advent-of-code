@@ -1,6 +1,6 @@
 import { arrayCreate, arrayGet, arraySet } from "@array";
 import { assertEqualString } from "@assert";
-import { List, listGet, listSet } from "@list";
+import { List, listGet } from "@list";
 import { max } from "@math";
 import {
   String,
@@ -102,7 +102,7 @@ let solvePart2 = (input: String): String -> {
       let currentCount = listGet(countByGame, gameStart);
       let newCount = (currentCount + count);
 
-      listSet(countByGame, gameStart, newCount);
+      countByGame.set(gameStart, newCount);
 
       gameStart = (gameStart + 1);
     }

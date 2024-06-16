@@ -1,4 +1,4 @@
-import { List, listGet, listSet } from "@list";
+import { List, listGet } from "@list";
 import { min } from "@math";
 import { Range, rangeCreate, rangeEmpty, rangeIntersect, rangeShift } from "@range";
 import {
@@ -95,8 +95,8 @@ let sortAlmanacMappings = (almanac: Almanac): Almanac -> {
         let b = listGet(category.mappings, (index + 1));
 
         if (a.sourceStart > b.sourceStart) {
-          listSet(category.mappings, index, b);
-          listSet(category.mappings, (index + 1), a);
+          (category.mappings).set(index, b);
+          (category.mappings).set((index + 1), a);
         }
 
         index = (index + 1);

@@ -1,5 +1,5 @@
 import { assertEqualString } from "@assert";
-import { List, listFromArray, listGet, listSet } from "@list";
+import { List, listFromArray, listGet } from "@list";
 import { Vec2, max, vec2Add } from "@math";
 import {
   String,
@@ -146,7 +146,7 @@ let propagate = (grid: Grid, position: Vec2<i32>, direction: Direction): boolean
       case {
         isSameDirection -> false;
         _ -> {
-          listSet(energizedRow, position.x, [...currentEnergizedDirections, direction]);
+          energizedRow.set(position.x, [...currentEnergizedDirections, direction]);
 
           let tile = listGet(listGet(grid.tiles, position.y), position.x);
           let directionVec = directionToVec2(direction);

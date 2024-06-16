@@ -1,5 +1,5 @@
 import { assertEqualString } from "@assert";
-import { List, listFromArray, listGet, listSet } from "@list";
+import { List, listFromArray, listGet } from "@list";
 import { Vec2 } from "@math";
 import {
   String,
@@ -43,15 +43,15 @@ let tiltColumn = (col: List<i32>): List<i32> -> {
     if (tile == '#') {
       nextFreeIndex = (colIndex + 1);
 
-      listSet(newCol, colIndex, '#');
+      newCol.set(colIndex, '#');
     } else {
       if (tile == 'O') {
-        listSet(newCol, colIndex, '.');
-        listSet(newCol, nextFreeIndex, 'O');
+        newCol.set(colIndex, '.');
+        newCol.set(nextFreeIndex, 'O');
 
         nextFreeIndex = (nextFreeIndex + 1);
       } else {
-        listSet(newCol, colIndex, '.');
+        newCol.set(colIndex, '.');
       }
     }
   }

@@ -1,5 +1,5 @@
 import { assertEqualString } from "@assert";
-import { List, listFromArray, listGet, listSet } from "@list";
+import { List, listFromArray, listGet } from "@list";
 import { Map, mapCreate } from "@map";
 import {
   String,
@@ -193,8 +193,8 @@ let sortHands = (hands: List<Hand>): List<Hand> -> {
       let b = listGet(hands, (index + 1));
 
       if compareHands(a, b) {
-        listSet(hands, index, b);
-        listSet(hands, (index + 1), a);
+        hands.set(index, b);
+        hands.set((index + 1), a);
       }
 
       index = (index + 1);
