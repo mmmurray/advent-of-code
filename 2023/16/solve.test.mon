@@ -1,5 +1,5 @@
 import { assertEqualString } from "@assert";
-import { List, listClone, listFromArray, listGet, listPush, listSet, listSize } from "@list";
+import { List, listFromArray, listGet, listPush, listSet, listSize } from "@list";
 import { Vec2, max, vec2Add } from "@math";
 import {
   String,
@@ -83,7 +83,7 @@ let gridClone = (grid: Grid): Grid -> {
     let newEnergizedRow = [];
 
     for x in energizedRow {
-      listPush(newEnergizedRow, listClone(x));
+      listPush(newEnergizedRow, x.clone());
     }
 
     listPush(newEnergized, newEnergizedRow);

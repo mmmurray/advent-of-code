@@ -1,5 +1,5 @@
 import { assertEqualString } from "@assert";
-import { List, listClone, listFromArray, listGet, listPush, listSet, listSize } from "@list";
+import { List, listFromArray, listGet, listPush, listSet, listSize } from "@list";
 import { Vec2 } from "@math";
 import {
   String,
@@ -36,7 +36,7 @@ let parseInput = (input: String): Grid -> {
 }
 
 let tiltColumn = (col: List<i32>): List<i32> -> {
-  let newCol = listClone(col);
+  let newCol = col.clone();
   let nextFreeIndex = 0;
 
   for tile, colIndex in col {

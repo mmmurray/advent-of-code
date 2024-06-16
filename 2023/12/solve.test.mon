@@ -1,6 +1,6 @@
 import { Array, arrayCreate, arrayGet, arraySet } from "@array";
 import { assertEqual, assertEqualString } from "@assert";
-import { List, listClone, listFromArray, listGet, listPush, listSet, listSize } from "@list";
+import { List, listFromArray, listGet, listPush, listSet, listSize } from "@list";
 import {
   String,
   stringFromNumber,
@@ -65,7 +65,7 @@ let createCache = (): Array<i32> -> {
 }
 
 let placeDamage = (conditions: List<i32>, offset: i32, width: i32): List<i32> -> {
-  let newConditions = listClone(conditions);
+  let newConditions = conditions.clone();
 
   for condition, index in conditions {
     if (condition == '?') {
