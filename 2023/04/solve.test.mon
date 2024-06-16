@@ -1,6 +1,6 @@
 import { arrayCreate, arrayGet, arraySet } from "@array";
 import { assertEqualString } from "@assert";
-import { List, listGet, listPush, listSet, listSize } from "@list";
+import { List, listGet, listPush, listSet } from "@list";
 import { max } from "@math";
 import {
   String,
@@ -74,7 +74,7 @@ let solvePart1 = (input: String): String -> {
 let solvePart2 = (input: String): String -> {
   let result = 0;
   let games = parseInput(input);
-  let resultByGame = arrayCreate(listSize(games));
+  let resultByGame = arrayCreate(games.size());
   let countByGame = [];
 
   for game, gameIndex in games {

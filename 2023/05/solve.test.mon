@@ -1,4 +1,4 @@
-import { List, listGet, listPush, listPushList, listSet, listSize } from "@list";
+import { List, listGet, listPush, listPushList, listSet } from "@list";
 import { min } from "@math";
 import { Range, rangeCreate, rangeEmpty, rangeIntersect, rangeShift } from "@range";
 import {
@@ -53,7 +53,7 @@ let parseSeeds = (input: String): List<u64> -> {
 let parseInput = (input: String): Almanac -> {
   let lines = stringToLines(input);
   let almanac = Almanac.New({ seeds: parseSeeds(listGet(lines, 0)), categories: [] });
-  let mappingLines = lines.slice(2, listSize(lines));
+  let mappingLines = lines.slice(2, lines.size());
   let category = AlmanacCategory.New({ mappings: [] });
 
   for mappingLine in mappingLines {
@@ -85,7 +85,7 @@ let parseInput = (input: String): Almanac -> {
 
 let sortAlmanacMappings = (almanac: Almanac): Almanac -> {
   for category in almanac.categories {
-    let endIndex = (listSize(category.mappings) - 1);
+    let endIndex = ((category.mappings).size() - 1);
 
     while (endIndex > 0) {
       let index = 0;
@@ -133,7 +133,7 @@ let mapRangeToLocationInCategory = (category: AlmanacCategory, range: Range<u64>
   let position = positionMin;
   let mappingIndex = 0;
 
-  while (mappingIndex < listSize(category.mappings)) {
+  while (mappingIndex < (category.mappings).size()) {
     let mapping = listGet(category.mappings, mappingIndex);
     let mappingRange = mapping.sourceRange;
     let intersectionBefore = rangeIntersect(range, rangeCreate(position, mappingRange.start));

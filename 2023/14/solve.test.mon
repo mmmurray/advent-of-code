@@ -1,5 +1,5 @@
 import { assertEqualString } from "@assert";
-import { List, listFromArray, listGet, listPush, listSet, listSize } from "@list";
+import { List, listFromArray, listGet, listPush, listSet } from "@list";
 import { Vec2 } from "@math";
 import {
   String,
@@ -20,7 +20,7 @@ data Grid = {
 let parseInput = (input: String): Grid -> {
   let lines = stringToLines(stringTrim(input));
   let cols = [];
-  let size = Vec2.New({ x: stringSize(listGet(lines, 0)), y: listSize(lines) });
+  let size = Vec2.New({ x: stringSize(listGet(lines, 0)), y: lines.size() });
 
   for _, colIndex in listFromArray(stringToArray(listGet(lines, 0))) {
     let col = [];
@@ -176,7 +176,7 @@ let solvePart2 = (input: String): String -> {
     }
   }
 
-  let cycleLength = (listSize(grids) - cycleOffset);
+  let cycleLength = (grids.size() - cycleOffset);
   let gridIndex = (cycleOffset + (((totalCycles - 1) - cycleOffset) % cycleLength));
   let result = calculateLoad(listGet(grids, gridIndex));
 

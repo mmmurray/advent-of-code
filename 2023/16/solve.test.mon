@@ -1,5 +1,5 @@
 import { assertEqualString } from "@assert";
-import { List, listFromArray, listGet, listPush, listSet, listSize } from "@list";
+import { List, listFromArray, listGet, listPush, listSet } from "@list";
 import { Vec2, max, vec2Add } from "@math";
 import {
   String,
@@ -104,7 +104,7 @@ let parseTile = (char: i32): Tile -> {
 
 let parseInput = (input: String): Grid -> {
   let lines = stringToLines(stringTrim(input));
-  let size = Vec2.New({ x: stringSize(listGet(lines, 0)), y: listSize(lines) });
+  let size = Vec2.New({ x: stringSize(listGet(lines, 0)), y: lines.size() });
   let tiles = [];
   let energized = [];
 
@@ -240,7 +240,7 @@ let countEnergized = (grid: Grid, startPosition: Vec2<i32>, startDirection: Dire
 
   for row in newGrid.energized {
     for col in row {
-      if (listSize(col) > 0) {
+      if (col.size() > 0) {
         total = (total + 1);
       }
     }

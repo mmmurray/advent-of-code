@@ -1,5 +1,5 @@
 import { assertEqual } from "@assert";
-import { List, listFromArray, listGet, listPush, listSet, listSize } from "@list";
+import { List, listFromArray, listGet, listPush, listSet } from "@list";
 import { Map, mapCreate } from "@map";
 import { Vec2, vec2Equals } from "@math";
 import { Option } from "@option";
@@ -47,7 +47,7 @@ let priorityQueueCreate = <T>(): PriorityQueue<T> -> {
 }
 
 let priorityQueueSize = <T>(queue: PriorityQueue<T>): i32 -> {
-  listSize(queue.heap)
+  (queue.heap).size()
 }
 
 let priorityQueueInsert = <T>(queue: PriorityQueue<T>, node: T, priority: i32): unit -> {
@@ -55,7 +55,7 @@ let priorityQueueInsert = <T>(queue: PriorityQueue<T>, node: T, priority: i32): 
 
   listPush(queue.heap, entry);
 
-  let currentIndex = (listSize(queue.heap) - 1);
+  let currentIndex = ((queue.heap).size() - 1);
   let loop = true;
 
   while (loop && (currentIndex > 0)) {
@@ -76,8 +76,8 @@ let priorityQueueInsert = <T>(queue: PriorityQueue<T>, node: T, priority: i32): 
 
 let priorityQueueNext = <T>(queue: PriorityQueue<T>): Option<T> -> {
   case {
-    (listSize(queue.heap) == 0) -> Option.None({});
-    (listSize(queue.heap) == 1) -> {
+    ((queue.heap).size() == 0) -> Option.None({});
+    ((queue.heap).size() == 1) -> {
       match (queue.heap).shift() {
         Some { value } -> Option.Some({ value: value.node });
         None -> Option.None({});
@@ -97,7 +97,7 @@ let priorityQueueNext = <T>(queue: PriorityQueue<T>): Option<T> -> {
         let current = listGet(queue.heap, currentIndex);
         let swapIndex = --(1);
 
-        if (leftChildIndex < listSize(queue.heap)) {
+        if (leftChildIndex < (queue.heap).size()) {
           let leftChild = listGet(queue.heap, leftChildIndex);
 
           if (leftChild.priority > current.priority) {
@@ -105,7 +105,7 @@ let priorityQueueNext = <T>(queue: PriorityQueue<T>): Option<T> -> {
           }
         }
 
-        if (rightChildIndex < listSize(queue.heap)) {
+        if (rightChildIndex < (queue.heap).size()) {
           let leftChild = listGet(queue.heap, leftChildIndex);
           let rightChild = listGet(queue.heap, rightChildIndex);
 
@@ -160,7 +160,7 @@ data Grid = {
 
 let parseInput = (input: String): Grid -> {
   let lines = stringToLines(stringTrim(input));
-  let size = Vec2.New({ x: stringSize(listGet(lines, 0)), y: listSize(lines) });
+  let size = Vec2.New({ x: stringSize(listGet(lines, 0)), y: lines.size() });
   let tiles = [];
 
   for line in lines {
@@ -238,7 +238,7 @@ let exceedsSingleDirectionLimit = (path: List<Vec2<i32> >): boolean -> {
   # (print "exceedsSingleDirectionLimit")
 
   let limit = 5;
-  let size = listSize(path);
+  let size = path.size();
 
   case {
     (size < limit) -> false;

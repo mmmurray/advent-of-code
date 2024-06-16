@@ -1,6 +1,6 @@
 import { Array, arrayCreate, arrayGet, arraySet } from "@array";
 import { assertEqual, assertEqualString } from "@assert";
-import { List, listFromArray, listGet, listPush, listSet, listSize } from "@list";
+import { List, listFromArray, listGet, listPush, listSet } from "@list";
 import {
   String,
   stringFromNumber,
@@ -101,10 +101,10 @@ let isValidPlacement = (conditions: List<i32>, maxDamage: i32, offset: i32, widt
   let nextIndex = (offset + width);
 
   case {
-    ((offset + width) > listSize(conditions)) -> false;
+    ((offset + width) > conditions.size()) -> false;
     conditionsContainDot(conditions.slice(offset, (offset + width))) -> false;
     ((prevIndex >= 0) && (listGet(conditions, prevIndex) == '#')) -> false;
-    ((nextIndex < (listSize(conditions) - 1)) && (listGet(conditions, nextIndex) == '#')) -> false;
+    ((nextIndex < (conditions.size() - 1)) && (listGet(conditions, nextIndex) == '#')) -> false;
     _ -> {
       let damageTotal = 0;
 
@@ -133,7 +133,7 @@ let countArrangementsRec = (cache: Array<i32>, row: Row, offset: i32, damagedInd
 
   case {
     (cached >= 0) -> cached;
-    (offset >= listSize(row.conditions)) -> 0;
+    (offset >= (row.conditions).size()) -> 0;
     _ -> {
       let arrangements = 0;
       let damageWidth = listGet(row.damaged, damagedIndex);
@@ -144,7 +144,7 @@ let countArrangementsRec = (cache: Array<i32>, row: Row, offset: i32, damagedInd
         let nextDamagedIndex = (damagedIndex + 1);
         let nextOffset = (offset + (damageWidth + 1));
 
-        if (nextDamagedIndex < listSize(row.damaged)) {
+        if (nextDamagedIndex < (row.damaged).size()) {
           let newRow = Row.New({
             conditions: nextConditions,
             damaged: row.damaged,

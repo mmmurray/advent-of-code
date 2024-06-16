@@ -1,5 +1,5 @@
 import { assertEqualString } from "@assert";
-import { List, listGet, listPush, listSize } from "@list";
+import { List, listGet, listPush } from "@list";
 import {
   String,
   stringFromNumber,
@@ -61,7 +61,7 @@ let findNextValue = (sequence: List<i32>): i32 -> {
   case {
     isSequenceAllZero(sequence) -> 0;
     _ -> {
-      let lastValue = listGet(sequence, (listSize(sequence) - 1));
+      let lastValue = listGet(sequence, (sequence.size() - 1));
 
       (lastValue + findNextValue(findDeltas(sequence)))
     };

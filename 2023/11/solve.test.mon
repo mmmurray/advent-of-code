@@ -1,5 +1,5 @@
 import { assertEqualString } from "@assert";
-import { List, listFromArray, listGet, listPush, listSize } from "@list";
+import { List, listFromArray, listGet, listPush } from "@list";
 import { Vec2, vec2Add, vec2ManhattanDistance } from "@math";
 import {
   String,
@@ -19,7 +19,7 @@ data Universe = {
 let parseInput = (input: String): Universe -> {
   let lines = stringToLines(stringTrim(input));
   let galaxies = [];
-  let size = Vec2.New({ x: (@i64 stringSize(listGet(lines, 0))), y: (@i64 listSize(lines)) });
+  let size = Vec2.New({ x: (@i64 stringSize(listGet(lines, 0))), y: (@i64 lines.size()) });
 
   for line, y in lines {
     for char, x in listFromArray(stringToArray(line)) {
@@ -75,8 +75,8 @@ let expandUniverse = (universe: Universe, expansionRate: i64): Universe -> {
   }
 
   let newSize = Vec2.New({
-    x: (size.x + (((@i64 listSize(emptyCols)) * expansionRate) - 1)),
-    y: (size.y + (((@i64 listSize(emptyRows)) * expansionRate) - 1)),
+    x: (size.x + (((@i64 emptyCols.size()) * expansionRate) - 1)),
+    y: (size.y + (((@i64 emptyRows.size()) * expansionRate) - 1)),
   });
   let newGalaxies = [];
 
@@ -105,7 +105,7 @@ let expandUniverse = (universe: Universe, expansionRate: i64): Universe -> {
 
 let sumOfDistancesBetweenGalaxies = (universe: Universe): i64 -> {
   let total = 0;
-  let count = listSize(universe.galaxies);
+  let count = (universe.galaxies).size();
   let i = 0;
 
   while (i < (count - 1)) {
