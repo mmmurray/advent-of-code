@@ -1,6 +1,6 @@
 import { Array, arrayCreate, arrayGet, arraySet } from "@array";
 import { assertEqualString } from "@assert";
-import { List, listFromArray, listGet, listPush, listRemove } from "@list";
+import { List, listFromArray, listGet, listPush } from "@list";
 import {
   String,
   stringEquals,
@@ -138,7 +138,7 @@ let solvePart2 = (input: String): String -> {
         }
 
         if (removeIndex >= 0) {
-          listRemove(box.lenses, removeIndex);
+          (box.lenses).remove(removeIndex);
         }
       };
     };
