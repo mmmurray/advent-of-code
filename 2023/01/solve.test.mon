@@ -1,14 +1,7 @@
 import { assertEqualString } from "@assert";
 import { charIsNumeric } from "@char";
 import { listFromArray } from "@list";
-import {
-  String,
-  stringConcat,
-  stringContainsAt,
-  stringFromNumber,
-  stringToArray,
-  stringToNumber,
-} from "@string";
+import { String, stringConcat, stringFromNumber, stringToArray, stringToNumber } from "@string";
 import { getValue: getInput } from "./input.txt";
 
 let getCalibrationValue1 = (line: String): i32 -> {
@@ -64,7 +57,7 @@ let getCalibrationValue2 = (line: String): i32 -> {
       }
     } else {
       for digitString, digitStringIndex in digitStrings {
-        if stringContainsAt(line, digitString, charIndex) {
+        if line.containsAt(digitString, charIndex) {
           let digit2 = (digitStringIndex + 1);
 
           lastDigit = digit2;
