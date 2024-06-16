@@ -7,7 +7,6 @@ import {
   stringGet,
   stringSize,
   stringSplitBy,
-  stringToLines,
   stringToNumberU64,
 } from "@string";
 import { getValue: getInput } from "./input.txt";
@@ -50,7 +49,7 @@ let parseSeeds = (input: String): List<u64> -> {
 }
 
 let parseInput = (input: String): Almanac -> {
-  let lines = stringToLines(input);
+  let lines = (input).toLines();
   let almanac = Almanac.New({ seeds: parseSeeds(lines.get(0)), categories: [] });
   let mappingLines = lines.slice(2, lines.size());
   let category = AlmanacCategory.New({ mappings: [] });

@@ -1,14 +1,7 @@
 import { Array, arrayCreate, arrayGet, arraySet } from "@array";
 import { assertEqual, assertEqualString } from "@assert";
 import { List, listFromArray } from "@list";
-import {
-  String,
-  stringFromNumber,
-  stringSplitBy,
-  stringToArray,
-  stringToLines,
-  stringToNumber,
-} from "@string";
+import { String, stringFromNumber, stringSplitBy, stringToArray, stringToNumber } from "@string";
 import { getValue: getInput } from "./input.txt";
 
 data Row = {
@@ -41,7 +34,7 @@ let parseRow = (line: String): Row -> {
 }
 
 let parseInput = (input: String): List<Row> -> {
-  let lines = stringToLines(input.trim());
+  let lines = (input.trim()).toLines();
   let rows = [];
 
   for line in lines {

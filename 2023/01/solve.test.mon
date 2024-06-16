@@ -7,7 +7,6 @@ import {
   stringContainsAt,
   stringFromNumber,
   stringToArray,
-  stringToLines,
   stringToNumber,
 } from "@string";
 import { getValue: getInput } from "./input.txt";
@@ -34,7 +33,7 @@ let getCalibrationValue1 = (line: String): i32 -> {
 }
 
 let solvePart1 = (input: String): String -> {
-  let lines = stringToLines(input);
+  let lines = (input).toLines();
   let result = 0;
 
   for line in lines {
@@ -83,7 +82,7 @@ let getCalibrationValue2 = (line: String): i32 -> {
 }
 
 let solvePart2 = (input: String): String -> {
-  let lines = stringToLines(input);
+  let lines = (input).toLines();
   let result = 0;
 
   for line in lines {

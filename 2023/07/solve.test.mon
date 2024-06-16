@@ -2,14 +2,7 @@ import { assertEqualString } from "@assert";
 import { charIsNumeric } from "@char";
 import { List, listFromArray } from "@list";
 import { Map, mapCreate } from "@map";
-import {
-  String,
-  stringFromNumber,
-  stringSplitBy,
-  stringToArray,
-  stringToLines,
-  stringToNumber,
-} from "@string";
+import { String, stringFromNumber, stringSplitBy, stringToArray, stringToNumber } from "@string";
 import { getValue: getInput } from "./input.txt";
 
 data Hand = {
@@ -108,7 +101,7 @@ let scoreCards = (cards: List<i32>): i32 -> {
 
 let parseInput = (input: String, jokers: boolean): List<Hand> -> {
   let hands = [];
-  let lines = stringToLines(input.trim());
+  let lines = (input.trim()).toLines();
 
   for line in lines {
     let parts = stringSplitBy(line, ' ');

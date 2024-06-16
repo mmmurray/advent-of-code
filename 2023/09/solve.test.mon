@@ -1,10 +1,10 @@
 import { assertEqualString } from "@assert";
 import { List } from "@list";
-import { String, stringFromNumber, stringSplitBy, stringToLines, stringToNumber } from "@string";
+import { String, stringFromNumber, stringSplitBy, stringToNumber } from "@string";
 import { getValue: getInput } from "./input.txt";
 
 let parseInput = (input: String): List<List<i32> > -> {
-  let lines = stringToLines(input.trim());
+  let lines = (input.trim()).toLines();
   let sequences = [];
 
   for line in lines {

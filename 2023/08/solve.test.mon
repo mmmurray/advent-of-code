@@ -3,14 +3,7 @@ import { print } from "@io";
 import { List, listFromArray } from "@list";
 import { Map, mapCreate } from "@map";
 import { lcmMany } from "@math";
-import {
-  String,
-  stringFromNumber,
-  stringGet,
-  stringSlice,
-  stringToArray,
-  stringToLines,
-} from "@string";
+import { String, stringFromNumber, stringGet, stringSlice, stringToArray } from "@string";
 import { getValue: getInput } from "./input.txt";
 
 data Node = {
@@ -26,7 +19,7 @@ data Network = {
 let parseInput = (input: String): Network -> {
   let instructions = [];
   let nodes = mapCreate();
-  let lines = stringToLines(input.trim());
+  let lines = (input.trim()).toLines();
   let instructionsLine = lines.get(0);
 
   for char in listFromArray(stringToArray(instructionsLine)) {

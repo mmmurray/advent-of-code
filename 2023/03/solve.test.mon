@@ -2,7 +2,7 @@ import { assertEqualString } from "@assert";
 import { charIsNumeric } from "@char";
 import { List } from "@list";
 import { Vec2, vec2Add, vec2IsAdjacent } from "@math";
-import { String, stringFromNumber, stringGet, stringSize, stringToLines } from "@string";
+import { String, stringFromNumber, stringGet, stringSize } from "@string";
 import { getValue: getInput } from "./input.txt";
 
 data SchematicSymbol = {
@@ -22,7 +22,7 @@ data Schematic = {
 }
 
 let parseInput = (input: String): Schematic -> {
-  let lines = stringToLines(input);
+  let lines = (input).toLines();
   let schematic = Schematic.New({ symbols: [], numbers: [] });
 
   for line, lineIndex in lines {

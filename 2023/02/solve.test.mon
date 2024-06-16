@@ -8,7 +8,6 @@ import {
   stringSize,
   stringSlice,
   stringSplitBy,
-  stringToLines,
   stringToNumber,
 } from "@string";
 import { getValue: getInput } from "./input.txt";
@@ -71,7 +70,7 @@ let parseInputLine = (line: String): Game -> {
 }
 
 let parseInput = (input: String): List<Game> -> {
-  let lines = stringToLines(input);
+  let lines = (input).toLines();
   let games = [];
 
   for line in lines {

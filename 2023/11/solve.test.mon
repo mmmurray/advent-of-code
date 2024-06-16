@@ -1,7 +1,7 @@
 import { assertEqualString } from "@assert";
 import { List, listFromArray } from "@list";
 import { Vec2, vec2Add, vec2ManhattanDistance } from "@math";
-import { String, stringFromNumber, stringSize, stringToArray, stringToLines } from "@string";
+import { String, stringFromNumber, stringSize, stringToArray } from "@string";
 import { getValue: getInput } from "./input.txt";
 
 data Universe = {
@@ -10,7 +10,7 @@ data Universe = {
 }
 
 let parseInput = (input: String): Universe -> {
-  let lines = stringToLines(input.trim());
+  let lines = (input.trim()).toLines();
   let galaxies = [];
   let size = Vec2.New({ x: (@i64 stringSize(lines.get(0))), y: (@i64 lines.size()) });
 

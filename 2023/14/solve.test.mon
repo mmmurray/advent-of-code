@@ -1,14 +1,7 @@
 import { assertEqualString } from "@assert";
 import { List, listFromArray } from "@list";
 import { Vec2 } from "@math";
-import {
-  String,
-  stringFromNumber,
-  stringGet,
-  stringSize,
-  stringToArray,
-  stringToLines,
-} from "@string";
+import { String, stringFromNumber, stringGet, stringSize, stringToArray } from "@string";
 import { getValue: getInput } from "./input.txt";
 
 data Grid = {
@@ -17,7 +10,7 @@ data Grid = {
 }
 
 let parseInput = (input: String): Grid -> {
-  let lines = stringToLines(input.trim());
+  let lines = (input.trim()).toLines();
   let cols = [];
   let size = Vec2.New({ x: stringSize(lines.get(0)), y: lines.size() });
 
