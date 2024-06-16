@@ -1,15 +1,6 @@
 import { Array, arrayCreate, arrayGet, arraySet } from "@array";
 import { assertEqual, assertEqualString } from "@assert";
-import {
-  List,
-  listClone,
-  listFromArray,
-  listGet,
-  listPush,
-  listSet,
-  listSize,
-  listSlice,
-} from "@list";
+import { List, listClone, listFromArray, listGet, listPush, listSet, listSize } from "@list";
 import {
   String,
   stringFromNumber,
@@ -111,7 +102,7 @@ let isValidPlacement = (conditions: List<i32>, maxDamage: i32, offset: i32, widt
 
   case {
     ((offset + width) > listSize(conditions)) -> false;
-    conditionsContainDot(listSlice(conditions, offset, (offset + width))) -> false;
+    conditionsContainDot(conditions.slice(offset, (offset + width))) -> false;
     ((prevIndex >= 0) && (listGet(conditions, prevIndex) == '#')) -> false;
     ((nextIndex < (listSize(conditions) - 1)) && (listGet(conditions, nextIndex) == '#')) -> false;
     _ -> {

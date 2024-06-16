@@ -1,6 +1,6 @@
 import { assertEqualString } from "@assert";
 import { print } from "@io";
-import { List, listFromArray, listGet, listPush, listSize, listSlice } from "@list";
+import { List, listFromArray, listGet, listPush, listSize } from "@list";
 import { Map, mapCreate } from "@map";
 import { lcmMany } from "@math";
 import {
@@ -40,7 +40,7 @@ let parseInput = (input: String): Network -> {
     listPush(instructions, instruction);
   }
 
-  let nodesLines = listSlice(lines, 2, listSize(lines));
+  let nodesLines = lines.slice(2, listSize(lines));
 
   for nodeLine in nodesLines {
     let name = stringSlice(nodeLine, 0, 3);

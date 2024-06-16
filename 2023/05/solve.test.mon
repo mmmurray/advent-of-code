@@ -1,4 +1,4 @@
-import { List, listGet, listPush, listPushList, listSet, listSize, listSlice } from "@list";
+import { List, listGet, listPush, listPushList, listSet, listSize } from "@list";
 import { min } from "@math";
 import { Range, rangeCreate, rangeEmpty, rangeIntersect, rangeShift } from "@range";
 import {
@@ -53,7 +53,7 @@ let parseSeeds = (input: String): List<u64> -> {
 let parseInput = (input: String): Almanac -> {
   let lines = stringToLines(input);
   let almanac = Almanac.New({ seeds: parseSeeds(listGet(lines, 0)), categories: [] });
-  let mappingLines = listSlice(lines, 2, listSize(lines));
+  let mappingLines = lines.slice(2, listSize(lines));
   let category = AlmanacCategory.New({ mappings: [] });
 
   for mappingLine in mappingLines {
