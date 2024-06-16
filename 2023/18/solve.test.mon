@@ -10,7 +10,6 @@ import {
   stringSplitBy,
   stringToLines,
   stringToNumberI64,
-  stringToUpper,
 } from "@string";
 import { getValue: getInput } from "./input.txt";
 
@@ -148,7 +147,7 @@ let solvePart2 = (input: String): String -> {
 
   for planStep in planSteps {
     let distanceHex = stringSlice(planStep.color, 2, 7);
-    let distance = stringToNumberI64(stringConcat("0x", stringToUpper(distanceHex)));
+    let distance = stringToNumberI64(stringConcat("0x", distanceHex.toUpper()));
     let directionNum = (stringGet(planStep.color, 7) - '0');
 
     steps.push(Step.New({ direction: orderedDirections.get(directionNum), distance: distance }));
