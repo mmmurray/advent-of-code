@@ -1,5 +1,5 @@
 import { assertEqualString } from "@assert";
-import { List, listGet } from "@list";
+import { List } from "@list";
 import {
   String,
   stringFromNumber,
@@ -34,13 +34,13 @@ let parseNumberList = (input: String): List<u64> -> {
 let parseInput = (input: String): List<Race> -> {
   let races = [];
   let lines = stringToLines(input);
-  let timesLine = listGet(lines, 0);
-  let distancesLine = listGet(lines, 1);
-  let times = parseNumberList(listGet(stringSplitBy(timesLine, ':'), 1));
-  let distances = parseNumberList(listGet(stringSplitBy(distancesLine, ':'), 1));
+  let timesLine = lines.get(0);
+  let distancesLine = lines.get(1);
+  let times = parseNumberList((stringSplitBy(timesLine, ':')).get(1));
+  let distances = parseNumberList((stringSplitBy(distancesLine, ':')).get(1));
 
   for time, timeIndex in times {
-    let race = Race.New({ time: time, distance: listGet(distances, timeIndex) });
+    let race = Race.New({ time: time, distance: distances.get(timeIndex) });
 
     races.push(race);
   }

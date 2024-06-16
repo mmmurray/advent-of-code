@@ -1,6 +1,6 @@
 import { Array, arrayCreate, arrayGet, arraySet } from "@array";
 import { assertEqual, assertEqualString } from "@assert";
-import { List, listFromArray, listGet } from "@list";
+import { List, listFromArray } from "@list";
 import {
   String,
   stringFromNumber,
@@ -22,12 +22,12 @@ let parseRow = (line: String): Row -> {
   let parts = stringSplitBy(line, ' ');
   let conditions = [];
 
-  for char in listFromArray(stringToArray(listGet(parts, 0))) {
+  for char in listFromArray(stringToArray(parts.get(0))) {
     conditions.push(char);
   }
 
   let damaged = [];
-  let damagedParts = stringSplitBy(listGet(parts, 1), ',');
+  let damagedParts = stringSplitBy(parts.get(1), ',');
   let damageTotal = 0;
 
   for damagedPart in damagedParts {
@@ -77,7 +77,7 @@ let placeDamage = (conditions: List<i32>, offset: i32, width: i32): List<i32> ->
     }
 
     if (index >= (offset + width)) {
-      newConditions.set(index, listGet(conditions, index));
+      newConditions.set(index, conditions.get(index));
     }
   }
 
@@ -103,8 +103,8 @@ let isValidPlacement = (conditions: List<i32>, maxDamage: i32, offset: i32, widt
   case {
     ((offset + width) > conditions.size()) -> false;
     conditionsContainDot(conditions.slice(offset, (offset + width))) -> false;
-    ((prevIndex >= 0) && (listGet(conditions, prevIndex) == '#')) -> false;
-    ((nextIndex < (conditions.size() - 1)) && (listGet(conditions, nextIndex) == '#')) -> false;
+    ((prevIndex >= 0) && (conditions.get(prevIndex) == '#')) -> false;
+    ((nextIndex < (conditions.size() - 1)) && (conditions.get(nextIndex) == '#')) -> false;
     _ -> {
       let damageTotal = 0;
 
@@ -136,7 +136,7 @@ let countArrangementsRec = (cache: Array<i32>, row: Row, offset: i32, damagedInd
     (offset >= (row.conditions).size()) -> 0;
     _ -> {
       let arrangements = 0;
-      let damageWidth = listGet(row.damaged, damagedIndex);
+      let damageWidth = (row.damaged).get(damagedIndex);
       let valid = isValidPlacement(row.conditions, row.damageTotal, offset, damageWidth);
 
       if valid {

@@ -1,5 +1,5 @@
 import { assertEqualString } from "@assert";
-import { List, listFromArray, listGet } from "@list";
+import { List, listFromArray } from "@list";
 import { Vec2, max, vec2Add } from "@math";
 import {
   String,
@@ -104,7 +104,7 @@ let parseTile = (char: i32): Tile -> {
 
 let parseInput = (input: String): Grid -> {
   let lines = stringToLines(stringTrim(input));
-  let size = Vec2.New({ x: stringSize(listGet(lines, 0)), y: lines.size() });
+  let size = Vec2.New({ x: stringSize(lines.get(0)), y: lines.size() });
   let tiles = [];
   let energized = [];
 
@@ -133,8 +133,8 @@ let propagate = (grid: Grid, position: Vec2<i32>, direction: Direction): boolean
     (position.x >= size.x) -> false;
     (position.y >= size.y) -> false;
     _ -> {
-      let energizedRow = listGet(grid.energized, position.y);
-      let currentEnergizedDirections = listGet(energizedRow, position.x);
+      let energizedRow = (grid.energized).get(position.y);
+      let currentEnergizedDirections = energizedRow.get(position.x);
       let isSameDirection = false;
 
       for currentEnergizedDirection in currentEnergizedDirections {
@@ -148,7 +148,7 @@ let propagate = (grid: Grid, position: Vec2<i32>, direction: Direction): boolean
         _ -> {
           energizedRow.set(position.x, [...currentEnergizedDirections, direction]);
 
-          let tile = listGet(listGet(grid.tiles, position.y), position.x);
+          let tile = ((grid.tiles).get(position.y)).get(position.x);
           let directionVec = directionToVec2(direction);
           let _ = match tile {
             Empty -> {

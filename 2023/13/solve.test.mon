@@ -1,5 +1,5 @@
 import { assertEqualString } from "@assert";
-import { List, listFromArray, listGet } from "@list";
+import { List, listFromArray } from "@list";
 import { Vec2, min } from "@math";
 import { String, stringFromNumber, stringSize, stringToArray, stringToLines } from "@string";
 import { getValue: getInput } from "./input.txt";
@@ -59,8 +59,8 @@ let getReflectionScore = (grid: Grid, notScore: i32): i32 -> {
       let row = 0;
 
       while (row < size.y) {
-        let valA = listGet(listGet(grid.rows, row), colA);
-        let valB = listGet(listGet(grid.rows, row), colB);
+        let valA = ((grid.rows).get(row)).get(colA);
+        let valB = ((grid.rows).get(row)).get(colB);
 
         if ((@i32 valA) != (@i32 valB)) {
           isReflection = false;
@@ -101,8 +101,8 @@ let getReflectionScore = (grid: Grid, notScore: i32): i32 -> {
           let col = 0;
 
           while (col < size.x) {
-            let valA = listGet(listGet(grid.rows, rowA), col);
-            let valB = listGet(listGet(grid.rows, rowB), col);
+            let valA = ((grid.rows).get(rowA)).get(col);
+            let valB = ((grid.rows).get(rowB)).get(col);
 
             if ((@i32 valA) != (@i32 valB)) {
               isReflection = false;
@@ -152,8 +152,8 @@ let removeSmudge = (grid: Grid): i32 -> {
     let x = 0;
 
     while (loop && (x < size.x)) {
-      let row = listGet(grid.rows, y);
-      let value = listGet(row, x);
+      let row = (grid.rows).get(y);
+      let value = row.get(x);
 
       row.set(x, !(value));
 

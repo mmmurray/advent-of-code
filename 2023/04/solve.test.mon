@@ -1,6 +1,6 @@
 import { arrayCreate, arrayGet, arraySet } from "@array";
 import { assertEqualString } from "@assert";
-import { List, listGet } from "@list";
+import { List } from "@list";
 import { max } from "@math";
 import {
   String,
@@ -39,11 +39,11 @@ let parseInput = (input: String): List<Game> -> {
 
   for line in lines {
     let lineParts = stringSplitBy(line, ':');
-    let sectionParts = stringSplitBy(listGet(lineParts, 1), '|');
+    let sectionParts = stringSplitBy(lineParts.get(1), '|');
 
     games.push(Game.New({
-      winning: parseNumberList(listGet(sectionParts, 0)),
-      numbers: parseNumberList(listGet(sectionParts, 1)),
+      winning: parseNumberList(sectionParts.get(0)),
+      numbers: parseNumberList(sectionParts.get(1)),
     }));
   }
 
@@ -99,7 +99,7 @@ let solvePart2 = (input: String): String -> {
     let gameEnd = (gameStart + arrayGet(resultByGame, gameIndex));
 
     while (gameStart < gameEnd) {
-      let currentCount = listGet(countByGame, gameStart);
+      let currentCount = countByGame.get(gameStart);
       let newCount = (currentCount + count);
 
       countByGame.set(gameStart, newCount);

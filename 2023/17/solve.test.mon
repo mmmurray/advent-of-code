@@ -1,5 +1,5 @@
 import { assertEqual } from "@assert";
-import { List, listFromArray, listGet } from "@list";
+import { List, listFromArray } from "@list";
 import { Map, mapCreate } from "@map";
 import { Vec2, vec2Equals } from "@math";
 import { Option } from "@option";
@@ -60,8 +60,8 @@ let priorityQueueInsert = <T>(queue: PriorityQueue<T>, node: T, priority: i32): 
 
   while (loop && (currentIndex > 0)) {
     let parentIndex = (currentIndex / 2);
-    let parent = listGet(queue.heap, parentIndex);
-    let current = listGet(queue.heap, currentIndex);
+    let parent = (queue.heap).get(parentIndex);
+    let current = (queue.heap).get(currentIndex);
 
     if (parent.priority > current.priority) {
       loop = false;
@@ -84,7 +84,7 @@ let priorityQueueNext = <T>(queue: PriorityQueue<T>): Option<T> -> {
       }
     };
     _ -> {
-      let highestPriority = listGet(queue.heap, 0);
+      let highestPriority = (queue.heap).get(0);
 
       (queue.heap).set(0, optionExpect((queue.heap).pop()));
 
@@ -94,11 +94,11 @@ let priorityQueueNext = <T>(queue: PriorityQueue<T>): Option<T> -> {
       while loop {
         let leftChildIndex = ((currentIndex * 2) + 1);
         let rightChildIndex = ((currentIndex * 2) + 2);
-        let current = listGet(queue.heap, currentIndex);
+        let current = (queue.heap).get(currentIndex);
         let swapIndex = --(1);
 
         if (leftChildIndex < (queue.heap).size()) {
-          let leftChild = listGet(queue.heap, leftChildIndex);
+          let leftChild = (queue.heap).get(leftChildIndex);
 
           if (leftChild.priority > current.priority) {
             swapIndex = leftChildIndex;
@@ -106,8 +106,8 @@ let priorityQueueNext = <T>(queue: PriorityQueue<T>): Option<T> -> {
         }
 
         if (rightChildIndex < (queue.heap).size()) {
-          let leftChild = listGet(queue.heap, leftChildIndex);
-          let rightChild = listGet(queue.heap, rightChildIndex);
+          let leftChild = (queue.heap).get(leftChildIndex);
+          let rightChild = (queue.heap).get(rightChildIndex);
 
           if (((swapIndex < 0) && (rightChild.priority > current.priority)) || ((swapIndex >= 0) && (rightChild.priority > leftChild.priority))) {
             swapIndex = rightChildIndex;
@@ -117,7 +117,7 @@ let priorityQueueNext = <T>(queue: PriorityQueue<T>): Option<T> -> {
         if (swapIndex < 0) {
           loop = false;
         } else {
-          (queue.heap).set(currentIndex, listGet(queue.heap, swapIndex));
+          (queue.heap).set(currentIndex, (queue.heap).get(swapIndex));
           (queue.heap).set(swapIndex, current);
 
           currentIndex = swapIndex;
@@ -160,7 +160,7 @@ data Grid = {
 
 let parseInput = (input: String): Grid -> {
   let lines = stringToLines(stringTrim(input));
-  let size = Vec2.New({ x: stringSize(listGet(lines, 0)), y: lines.size() });
+  let size = Vec2.New({ x: stringSize(lines.get(0)), y: lines.size() });
   let tiles = [];
 
   for line in lines {
@@ -246,14 +246,14 @@ let exceedsSingleDirectionLimit = (path: List<Vec2<i32> >): boolean -> {
       let sameX = true;
       let sameY = true;
       let i = 0;
-      let current = listGet(path, i);
+      let current = path.get(i);
 
       # (print (stringConcat "Current " (vec2ToString current)))
 
       i = (i + 1);
 
       while (i < limit) {
-        let next = listGet(path, i);
+        let next = path.get(i);
 
         # (print (stringConcat "Next " (vec2ToString next)))
 
@@ -340,7 +340,7 @@ let solvePart1 = (input: String): String -> {
             # (print (stringConcat "Neighbor: " (vec2ToString neighbor)))
 
             let neighborKey = vec2ToString(neighbor);
-            let distance = listGet(listGet(grid.tiles, neighbor.y), neighbor.x);
+            let distance = ((grid.tiles).get(neighbor.y)).get(neighbor.x);
 
             if !(viable) {
               distance = (distance + 99999);
@@ -371,7 +371,7 @@ let solvePart1 = (input: String): String -> {
 
   for position in path {
     if !(vec2Equals(position, startNode)) {
-      let weight = listGet(listGet(grid.tiles, position.y), position.x);
+      let weight = ((grid.tiles).get(position.y)).get(position.x);
 
       # (print (stringConcat "Path " (stringConcat (vec2ToString position) (stringFromNumber weight))))
 

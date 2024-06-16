@@ -1,5 +1,5 @@
 import { assertEqualString } from "@assert";
-import { List, listGet } from "@list";
+import { List } from "@list";
 import { Mat2, Vec2, mat2Determinant, vec2Add, vec2Scale } from "@math";
 import {
   String,
@@ -70,9 +70,9 @@ let parseInput = (input: String): List<DigPlanStep> -> {
 
   for line in lines {
     let parts = stringSplitBy(line, ' ');
-    let direction = parseDirection(listGet(parts, 0));
-    let distance = stringToNumberI64(listGet(parts, 1));
-    let color = listGet(parts, 2);
+    let direction = parseDirection(parts.get(0));
+    let distance = stringToNumberI64(parts.get(1));
+    let color = parts.get(2);
     let step = DigPlanStep.New({ direction: direction, distance: distance, color: color });
 
     steps.push(step);
@@ -152,7 +152,7 @@ let solvePart2 = (input: String): String -> {
     let distance = stringToNumberI64(stringConcat("0x", stringToUpper(distanceHex)));
     let directionNum = (stringGet(planStep.color, 7) - '0');
 
-    steps.push(Step.New({ direction: listGet(orderedDirections, directionNum), distance: distance }));
+    steps.push(Step.New({ direction: orderedDirections.get(directionNum), distance: distance }));
   }
 
   let result = calculateAreaFromSteps(steps);

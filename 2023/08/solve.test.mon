@@ -1,6 +1,6 @@
 import { assertEqualString } from "@assert";
 import { print } from "@io";
-import { List, listFromArray, listGet } from "@list";
+import { List, listFromArray } from "@list";
 import { Map, mapCreate } from "@map";
 import { lcmMany } from "@math";
 import {
@@ -28,7 +28,7 @@ let parseInput = (input: String): Network -> {
   let instructions = [];
   let nodes = mapCreate();
   let lines = stringToLines(stringTrim(input));
-  let instructionsLine = listGet(lines, 0);
+  let instructionsLine = lines.get(0);
 
   for char in listFromArray(stringToArray(instructionsLine)) {
     let instruction = false;
@@ -61,7 +61,7 @@ let countSteps = (network: Network, start: String): u64 -> {
   let loop = true;
 
   while loop {
-    let instruction = listGet(network.instructions, instructionIndex);
+    let instruction = (network.instructions).get(instructionIndex);
     let node = (network.nodes).get(current);
     let _ = match node {
       Some { value } -> {

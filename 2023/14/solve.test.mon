@@ -1,5 +1,5 @@
 import { assertEqualString } from "@assert";
-import { List, listFromArray, listGet } from "@list";
+import { List, listFromArray } from "@list";
 import { Vec2 } from "@math";
 import {
   String,
@@ -20,9 +20,9 @@ data Grid = {
 let parseInput = (input: String): Grid -> {
   let lines = stringToLines(stringTrim(input));
   let cols = [];
-  let size = Vec2.New({ x: stringSize(listGet(lines, 0)), y: lines.size() });
+  let size = Vec2.New({ x: stringSize(lines.get(0)), y: lines.size() });
 
-  for _, colIndex in listFromArray(stringToArray(listGet(lines, 0))) {
+  for _, colIndex in listFromArray(stringToArray(lines.get(0))) {
     let col = [];
 
     for line in lines {
@@ -93,7 +93,7 @@ let rotateGridClockwise = (grid: Grid): Grid -> {
     let newCol = [];
 
     for col, colIndex in grid.cols {
-      newCol.push(listGet(col, rowIndex));
+      newCol.push(col.get(rowIndex));
     }
 
     newCols.push(newCol);
@@ -121,7 +121,7 @@ let areColsEqual = (a: List<i32>, b: List<i32>): boolean -> {
   let result = true;
 
   for v1, i in a {
-    let v2 = listGet(b, i);
+    let v2 = b.get(i);
 
     if (v1 != v2) {
       result = false;
@@ -135,7 +135,7 @@ let areGridsEqual = (a: Grid, b: Grid): boolean -> {
   let result = true;
 
   for c1, i in a.cols {
-    let c2 = listGet(b.cols, i);
+    let c2 = (b.cols).get(i);
 
     if !(areColsEqual(c1, c2)) {
       result = false;
@@ -178,7 +178,7 @@ let solvePart2 = (input: String): String -> {
 
   let cycleLength = (grids.size() - cycleOffset);
   let gridIndex = (cycleOffset + (((totalCycles - 1) - cycleOffset) % cycleLength));
-  let result = calculateLoad(listGet(grids, gridIndex));
+  let result = calculateLoad(grids.get(gridIndex));
 
   stringFromNumber(result)
 }

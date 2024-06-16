@@ -1,5 +1,5 @@
 import { assertEqualString } from "@assert";
-import { List, listFromArray, listGet } from "@list";
+import { List, listFromArray } from "@list";
 import { Vec2, vec2Add, vec2ManhattanDistance } from "@math";
 import {
   String,
@@ -19,7 +19,7 @@ data Universe = {
 let parseInput = (input: String): Universe -> {
   let lines = stringToLines(stringTrim(input));
   let galaxies = [];
-  let size = Vec2.New({ x: (@i64 stringSize(listGet(lines, 0))), y: (@i64 lines.size()) });
+  let size = Vec2.New({ x: (@i64 stringSize(lines.get(0))), y: (@i64 lines.size()) });
 
   for line, y in lines {
     for char, x in listFromArray(stringToArray(line)) {
@@ -112,8 +112,8 @@ let sumOfDistancesBetweenGalaxies = (universe: Universe): i64 -> {
     let j = (i + 1);
 
     while (j < count) {
-      let galaxy1 = listGet(universe.galaxies, i);
-      let galaxy2 = listGet(universe.galaxies, j);
+      let galaxy1 = (universe.galaxies).get(i);
+      let galaxy2 = (universe.galaxies).get(j);
       let distance = vec2ManhattanDistance(galaxy1, galaxy2);
 
       total = (total + distance);

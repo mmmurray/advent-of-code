@@ -1,5 +1,5 @@
 import { assertEqualString } from "@assert";
-import { List, listGet } from "@list";
+import { List } from "@list";
 import { max } from "@math";
 import {
   String,
@@ -31,8 +31,8 @@ let parseSelection = (input: String): Selection -> {
 
   for valuePart in valueParts {
     let pairParts = stringSplitBy(stringTrim(valuePart), ' ');
-    let value = stringToNumber(listGet(pairParts, 0));
-    let color = listGet(pairParts, 1);
+    let value = stringToNumber(pairParts.get(0));
+    let color = pairParts.get(1);
 
     if stringEquals(color, "red") {
       selection.red = value;
@@ -52,11 +52,11 @@ let parseSelection = (input: String): Selection -> {
 
 let parseInputLine = (line: String): Game -> {
   let parts = stringSplitBy(line, ':');
-  let gameIdPart = listGet(parts, 0);
+  let gameIdPart = parts.get(0);
   let idPart = stringSlice(gameIdPart, 5, stringSize(gameIdPart));
   let id = stringToNumber(idPart);
   let selections = [];
-  let selectionsPart = stringTrim(listGet(parts, 1));
+  let selectionsPart = stringTrim(parts.get(1));
   let selectionParts = stringSplitBy(selectionsPart, ';');
   let selectionIndex = 0;
 

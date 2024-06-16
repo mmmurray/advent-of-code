@@ -1,6 +1,6 @@
 import { Array, arrayCreate, arrayGet, arraySet } from "@array";
 import { assertEqualString } from "@assert";
-import { List, listFromArray, listGet } from "@list";
+import { List, listFromArray } from "@list";
 import {
   String,
   stringEquals,
@@ -41,10 +41,7 @@ let parseOperation = (input: String): Operation -> {
     _ -> {
       let parts = stringSplitBy(input, '=');
 
-      Operation.Insert({
-        label: listGet(parts, 0),
-        focalLength: stringToNumber(listGet(parts, 1)),
-      })
+      Operation.Insert({ label: parts.get(0), focalLength: stringToNumber(parts.get(1)) })
     };
   }
 }

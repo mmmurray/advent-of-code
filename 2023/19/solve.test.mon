@@ -1,6 +1,6 @@
 import { assertEqualString } from "@assert";
 import { print } from "@io";
-import { List, listGet } from "@list";
+import { List } from "@list";
 import { Map, mapCreate } from "@map";
 import { Option } from "@option";
 import {
@@ -61,8 +61,8 @@ data System = {
 
 let parseWorkflow = (input: String): Workflow -> {
   let workflowParts = stringSplitBy(input, '{');
-  let name = listGet(workflowParts, 0);
-  let innerPart = listGet(workflowParts, 1);
+  let name = workflowParts.get(0);
+  let innerPart = workflowParts.get(1);
   let inner = stringSlice(innerPart, 0, (stringSize(innerPart) - 1));
   let steps = [];
   let stepParts = stringSplitBy(inner, ',');
@@ -70,8 +70,8 @@ let parseWorkflow = (input: String): Workflow -> {
   for stepPart in stepParts {
     if stringContains(stepPart, ":") {
       let conditionParts = stringSplitBy(stepPart, ':');
-      let conditionPart = listGet(conditionParts, 0);
-      let target = listGet(conditionParts, 1);
+      let conditionPart = conditionParts.get(0);
+      let target = conditionParts.get(1);
       let step = WorkflowStep.WorkflowStepConditional({
         target: target,
         condition: Condition.New({
@@ -99,8 +99,8 @@ let parseRating = (input: String): Rating -> {
 
   for ratingPart in ratingParts {
     let propertyParts = stringSplitBy(ratingPart, '=');
-    let propertyName = listGet(propertyParts, 0);
-    let propertyValue = stringToNumber(listGet(propertyParts, 1));
+    let propertyName = propertyParts.get(0);
+    let propertyValue = stringToNumber(propertyParts.get(1));
 
     if stringEquals(propertyName, "x") {
       rating.x = propertyValue;

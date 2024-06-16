@@ -1,5 +1,5 @@
 import { assertEqualString } from "@assert";
-import { List, listFromArray, listGet } from "@list";
+import { List, listFromArray } from "@list";
 import { Map, mapCreate } from "@map";
 import {
   String,
@@ -113,8 +113,8 @@ let parseInput = (input: String, jokers: boolean): List<Hand> -> {
 
   for line in lines {
     let parts = stringSplitBy(line, ' ');
-    let cardsPart = listGet(parts, 0);
-    let bidPart = listGet(parts, 1);
+    let cardsPart = parts.get(0);
+    let bidPart = parts.get(1);
     let cards = [];
 
     for cardChar in listFromArray(stringToArray(cardsPart)) {
@@ -167,7 +167,7 @@ let compareHands = (a: Hand, b: Hand): boolean -> {
 
       for cardA, cardIndex in a.cards {
         if loop {
-          let cardB = listGet(b.cards, cardIndex);
+          let cardB = (b.cards).get(cardIndex);
 
           if (cardA != cardB) {
             result = (cardA > cardB);
@@ -189,8 +189,8 @@ let sortHands = (hands: List<Hand>): List<Hand> -> {
     let index = 0;
 
     while (index < endIndex) {
-      let a = listGet(hands, index);
-      let b = listGet(hands, (index + 1));
+      let a = hands.get(index);
+      let b = hands.get((index + 1));
 
       if compareHands(a, b) {
         hands.set(index, b);

@@ -1,4 +1,4 @@
-import { List, listGet } from "@list";
+import { List } from "@list";
 import { min } from "@math";
 import { Range, rangeCreate, rangeEmpty, rangeIntersect, rangeShift } from "@range";
 import {
@@ -45,14 +45,14 @@ let parseNumberList = (input: String): List<u64> -> {
 
 let parseSeeds = (input: String): List<u64> -> {
   let inputParts = stringSplitBy(input, ':');
-  let values = stringTrim(listGet(inputParts, 1));
+  let values = stringTrim(inputParts.get(1));
 
   parseNumberList(values)
 }
 
 let parseInput = (input: String): Almanac -> {
   let lines = stringToLines(input);
-  let almanac = Almanac.New({ seeds: parseSeeds(listGet(lines, 0)), categories: [] });
+  let almanac = Almanac.New({ seeds: parseSeeds(lines.get(0)), categories: [] });
   let mappingLines = lines.slice(2, lines.size());
   let category = AlmanacCategory.New({ mappings: [] });
 
@@ -64,9 +64,9 @@ let parseInput = (input: String): Almanac -> {
     } else {
       if (stringGet(mappingLine, (stringSize(mappingLine) - 1)) != ':') {
         let values = parseNumberList(mappingLine);
-        let destinationStart = listGet(values, 0);
-        let sourceStart = listGet(values, 1);
-        let rangeLength = listGet(values, 2);
+        let destinationStart = values.get(0);
+        let sourceStart = values.get(1);
+        let rangeLength = values.get(2);
         let mapping = AlmanacMapping.New({
           destinationStart: destinationStart,
           sourceStart: sourceStart,
@@ -91,8 +91,8 @@ let sortAlmanacMappings = (almanac: Almanac): Almanac -> {
       let index = 0;
 
       while (index < endIndex) {
-        let a = listGet(category.mappings, index);
-        let b = listGet(category.mappings, (index + 1));
+        let a = (category.mappings).get(index);
+        let b = (category.mappings).get((index + 1));
 
         if (a.sourceStart > b.sourceStart) {
           (category.mappings).set(index, b);
@@ -134,7 +134,7 @@ let mapRangeToLocationInCategory = (category: AlmanacCategory, range: Range<u64>
   let mappingIndex = 0;
 
   while (mappingIndex < (category.mappings).size()) {
-    let mapping = listGet(category.mappings, mappingIndex);
+    let mapping = (category.mappings).get(mappingIndex);
     let mappingRange = mapping.sourceRange;
     let intersectionBefore = rangeIntersect(range, rangeCreate(position, mappingRange.start));
 
@@ -198,7 +198,7 @@ let solvePart2 = (input: String): String -> {
 
   for seedStart, seedIndex in almanac.seeds {
     if ((seedIndex % 2) == 0) {
-      let seedCount = listGet(almanac.seeds, (seedIndex + 1));
+      let seedCount = (almanac.seeds).get((seedIndex + 1));
       let seedEnd = (seedStart + seedCount);
 
       ranges.push(rangeCreate(seedStart, seedEnd));
