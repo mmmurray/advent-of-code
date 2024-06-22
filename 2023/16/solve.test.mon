@@ -131,9 +131,12 @@ let propagate = (grid: Grid, position: Vec2<i32>, direction: Direction): boolean
       let isSameDirection = false;
 
       for currentEnergizedDirection in currentEnergizedDirections {
-        if directionEquals(currentEnergizedDirection, direction) {
-          isSameDirection = true;
-        }
+        let _ = case {
+          directionEquals(currentEnergizedDirection, direction) -> {
+            isSameDirection = true;
+          };
+          _ -> {};
+        };
       }
 
       case {
@@ -233,9 +236,12 @@ let countEnergized = (grid: Grid, startPosition: Vec2<i32>, startDirection: Dire
 
   for row in newGrid.energized {
     for col in row {
-      if (col.size() > 0) {
-        total = (total + 1);
-      }
+      let _ = case {
+        (col.size() > 0) -> {
+          total = (total + 1);
+        };
+        _ -> {};
+      };
     }
   }
 

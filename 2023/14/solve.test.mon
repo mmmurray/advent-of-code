@@ -32,20 +32,26 @@ let tiltColumn = (col: List<i32>): List<i32> -> {
   let nextFreeIndex = 0;
 
   for tile, colIndex in col {
-    if (tile == '#') {
-      nextFreeIndex = (colIndex + 1);
+    let _ = case {
+      (tile == '#') -> {
+        nextFreeIndex = (colIndex + 1);
 
-      newCol.set(colIndex, '#');
-    } else {
-      if (tile == 'O') {
-        newCol.set(colIndex, '.');
-        newCol.set(nextFreeIndex, 'O');
+        newCol.set(colIndex, '#');
+      };
+      _ -> {
+        let _ = case {
+          (tile == 'O') -> {
+            newCol.set(colIndex, '.');
+            newCol.set(nextFreeIndex, 'O');
 
-        nextFreeIndex = (nextFreeIndex + 1);
-      } else {
-        newCol.set(colIndex, '.');
-      }
-    }
+            nextFreeIndex = (nextFreeIndex + 1);
+          };
+          _ -> {
+            newCol.set(colIndex, '.');
+          };
+        };
+      };
+    };
   }
 
   newCol
@@ -67,9 +73,12 @@ let calculateLoad = (grid: Grid): i32 -> {
 
   for col in grid.cols {
     for tile, rowIndex in col {
-      if (tile == 'O') {
-        totalLoad = (totalLoad + (size.y - rowIndex));
-      }
+      let _ = case {
+        (tile == 'O') -> {
+          totalLoad = (totalLoad + (size.y - rowIndex));
+        };
+        _ -> {};
+      };
     }
   }
 
@@ -114,10 +123,12 @@ let areColsEqual = (a: List<i32>, b: List<i32>): boolean -> {
 
   for v1, i in a {
     let v2 = b.get(i);
-
-    if (v1 != v2) {
-      result = false;
-    }
+    let _ = case {
+      (v1 != v2) -> {
+        result = false;
+      };
+      _ -> {};
+    };
   }
 
   result
@@ -128,10 +139,12 @@ let areGridsEqual = (a: Grid, b: Grid): boolean -> {
 
   for c1, i in a.cols {
     let c2 = (b.cols).get(i);
-
-    if !(areColsEqual(c1, c2)) {
-      result = false;
-    }
+    let _ = case {
+      !(areColsEqual(c1, c2)) -> {
+        result = false;
+      };
+      _ -> {};
+    };
   }
 
   result
@@ -156,16 +169,22 @@ let solvePart2 = (input: String): String -> {
     grid = performSpinCycle(grid);
 
     for otherGrid, otherGridIndex in grids {
-      if areGridsEqual(grid, otherGrid) {
-        cycleOffset = otherGridIndex;
-      }
+      let _ = case {
+        areGridsEqual(grid, otherGrid) -> {
+          cycleOffset = otherGridIndex;
+        };
+        _ -> {};
+      };
     }
 
-    if (cycleOffset < 0) {
-      grids.push(grid);
+    let _ = case {
+      (cycleOffset < 0) -> {
+        grids.push(grid);
 
-      i = (i + 1);
-    }
+        i = (i + 1);
+      };
+      _ -> {};
+    };
   }
 
   let cycleLength = (grids.size() - cycleOffset);

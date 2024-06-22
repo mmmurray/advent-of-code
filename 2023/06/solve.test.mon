@@ -14,11 +14,14 @@ let parseNumberList = (input: String): List<u64> -> {
   let parts = input.splitBy(' ');
 
   for part in parts {
-    if (part.size() > 0) {
-      let num = part.toU64();
+    let _ = case {
+      (part.size() > 0) -> {
+        let num = part.toU64();
 
-      values.push(num);
-    }
+        values.push(num);
+      };
+      _ -> {};
+    };
   }
 
   values
@@ -49,10 +52,12 @@ let solveRace = (race: Race): u64 -> {
     let speed = holdTime;
     let remainingTime = (race.time - holdTime);
     let distance = (remainingTime * speed);
-
-    if (distance > race.distance) {
-      winningStrategies = (winningStrategies + 1);
-    }
+    let _ = case {
+      (distance > race.distance) -> {
+        winningStrategies = (winningStrategies + 1);
+      };
+      _ -> {};
+    };
 
     holdTime = (holdTime + 1);
   }

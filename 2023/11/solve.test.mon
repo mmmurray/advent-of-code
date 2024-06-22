@@ -16,11 +16,14 @@ let parseInput = (input: String): Universe -> {
 
   for line, y in lines {
     for char, x in line.toList() {
-      if (char == '#') {
-        let galaxy = Vec2.New({ x: (@i64 x), y: (@i64 y) });
+      let _ = case {
+        (char == '#') -> {
+          let galaxy = Vec2.New({ x: (@i64 x), y: (@i64 y) });
 
-        galaxies.push(galaxy);
-      }
+          galaxies.push(galaxy);
+        };
+        _ -> {};
+      };
     }
   }
 
@@ -36,14 +39,20 @@ let expandUniverse = (universe: Universe, expansionRate: i64): Universe -> {
     let empty = true;
 
     for galaxy in universe.galaxies {
-      if (galaxy.y == y) {
-        empty = false;
-      }
+      let _ = case {
+        (galaxy.y == y) -> {
+          empty = false;
+        };
+        _ -> {};
+      };
     }
 
-    if empty {
-      emptyRows.push(y);
-    }
+    let _ = case {
+      empty -> {
+        emptyRows.push(y);
+      };
+      _ -> {};
+    };
 
     y = (y + 1);
   }
@@ -55,14 +64,20 @@ let expandUniverse = (universe: Universe, expansionRate: i64): Universe -> {
     let empty = true;
 
     for galaxy in universe.galaxies {
-      if (galaxy.x == x) {
-        empty = false;
-      }
+      let _ = case {
+        (galaxy.x == x) -> {
+          empty = false;
+        };
+        _ -> {};
+      };
     }
 
-    if empty {
-      emptyCols.push(x);
-    }
+    let _ = case {
+      empty -> {
+        emptyCols.push(x);
+      };
+      _ -> {};
+    };
 
     x = (x + 1);
   }
@@ -77,15 +92,21 @@ let expandUniverse = (universe: Universe, expansionRate: i64): Universe -> {
     let redShift = Vec2.New({ x: 0, y: 0 });
 
     for emptyCol in emptyCols {
-      if (emptyCol < galaxy.x) {
-        redShift.x = (redShift.x + (expansionRate - 1));
-      }
+      let _ = case {
+        (emptyCol < galaxy.x) -> {
+          redShift.x = (redShift.x + (expansionRate - 1));
+        };
+        _ -> {};
+      };
     }
 
     for emptyRow in emptyRows {
-      if (emptyRow < galaxy.y) {
-        redShift.y = (redShift.y + (expansionRate - 1));
-      }
+      let _ = case {
+        (emptyRow < galaxy.y) -> {
+          redShift.y = (redShift.y + (expansionRate - 1));
+        };
+        _ -> {};
+      };
     }
 
     let newGalaxy = vec2Add(galaxy, redShift);

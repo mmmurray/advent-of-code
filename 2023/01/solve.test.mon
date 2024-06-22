@@ -10,16 +10,22 @@ let getCalibrationValue1 = (line: String): i32 -> {
   let lastDigit = 0;
 
   for char in line.toList() {
-    if charIsNumeric(char) {
-      let digit = (char - '0');
+    let _ = case {
+      charIsNumeric(char) -> {
+        let digit = (char - '0');
 
-      lastDigit = digit;
+        lastDigit = digit;
 
-      if !(setFirstDigit) {
-        firstDigit = digit;
-        setFirstDigit = true;
-      }
-    }
+        let _ = case {
+          !(setFirstDigit) -> {
+            firstDigit = digit;
+            setFirstDigit = true;
+          };
+          _ -> {};
+        };
+      };
+      _ -> {};
+    };
   }
 
   ((stringFromNumber(firstDigit)).concat(stringFromNumber(lastDigit))).toI32()
@@ -46,29 +52,41 @@ let getCalibrationValue2 = (line: String): i32 -> {
   let lastDigit = 0;
 
   for char, charIndex in line.toList() {
-    if charIsNumeric(char) {
-      let digit = (char - '0');
+    let _ = case {
+      charIsNumeric(char) -> {
+        let digit = (char - '0');
 
-      lastDigit = digit;
+        lastDigit = digit;
 
-      if !(setFirstDigit) {
-        firstDigit = digit;
-        setFirstDigit = true;
-      }
-    } else {
-      for digitString, digitStringIndex in digitStrings {
-        if line.containsAt(digitString, charIndex) {
-          let digit2 = (digitStringIndex + 1);
-
-          lastDigit = digit2;
-
-          if !(setFirstDigit) {
-            firstDigit = digit2;
+        let _ = case {
+          !(setFirstDigit) -> {
+            firstDigit = digit;
             setFirstDigit = true;
-          }
+          };
+          _ -> {};
+        };
+      };
+      _ -> {
+        for digitString, digitStringIndex in digitStrings {
+          let _ = case {
+            line.containsAt(digitString, charIndex) -> {
+              let digit2 = (digitStringIndex + 1);
+
+              lastDigit = digit2;
+
+              let _ = case {
+                !(setFirstDigit) -> {
+                  firstDigit = digit2;
+                  setFirstDigit = true;
+                };
+                _ -> {};
+              };
+            };
+            _ -> {};
+          };
         }
-      }
-    }
+      };
+    };
   }
 
   ((stringFromNumber(firstDigit)).concat(stringFromNumber(lastDigit))).toI32()

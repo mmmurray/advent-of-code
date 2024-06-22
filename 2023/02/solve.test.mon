@@ -23,18 +23,24 @@ let parseSelection = (input: String): Selection -> {
     let pairParts = (valuePart.trim()).splitBy(' ');
     let value = (pairParts.get(0)).toI32();
     let color = pairParts.get(1);
-
-    if color.equals("red") {
-      selection.red = value;
-    }
-
-    if color.equals("green") {
-      selection.green = value;
-    }
-
-    if color.equals("blue") {
-      selection.blue = value;
-    }
+    let _ = case {
+      color.equals("red") -> {
+        selection.red = value;
+      };
+      _ -> {};
+    };
+    let _ = case {
+      color.equals("green") -> {
+        selection.green = value;
+      };
+      _ -> {};
+    };
+    let _ = case {
+      color.equals("blue") -> {
+        selection.blue = value;
+      };
+      _ -> {};
+    };
   }
 
   selection
@@ -82,14 +88,20 @@ let solvePart1 = (input: String): String -> {
     let possible = true;
 
     for selection in game.selections {
-      if ((selection.red > 12) || ((selection.green > 13) || (selection.blue > 14))) {
-        possible = false;
-      }
+      let _ = case {
+        ((selection.red > 12) || ((selection.green > 13) || (selection.blue > 14))) -> {
+          possible = false;
+        };
+        _ -> {};
+      };
     }
 
-    if possible {
-      result = (result + game.id);
-    }
+    let _ = case {
+      possible -> {
+        result = (result + game.id);
+      };
+      _ -> {};
+    };
   }
 
   stringFromNumber(result)

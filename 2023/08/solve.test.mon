@@ -24,10 +24,12 @@ let parseInput = (input: String): Network -> {
 
   for char in instructionsLine.toList() {
     let instruction = false;
-
-    if (char == 'L') {
-      instruction = true;
-    }
+    let _ = case {
+      (char == 'L') -> {
+        instruction = true;
+      };
+      _ -> {};
+    };
 
     instructions.push(instruction);
   }
@@ -57,11 +59,14 @@ let countSteps = (network: Network, start: String): u64 -> {
     let node = (network.nodes).get(current);
     let _ = match node {
       Some { value } -> {
-        if instruction {
-          current = value.left;
-        } else {
-          current = value.right;
-        }
+        let _ = case {
+          instruction -> {
+            current = value.left;
+          };
+          _ -> {
+            current = value.right;
+          };
+        };
       };
       None -> print("Node not found");
     };
@@ -69,9 +74,12 @@ let countSteps = (network: Network, start: String): u64 -> {
     instructionIndex = ((instructionIndex + 1) % (network.instructions).size());
     steps = (steps + 1);
 
-    if (current.get(2) == 'Z') {
-      loop = false;
-    }
+    let _ = case {
+      (current.get(2) == 'Z') -> {
+        loop = false;
+      };
+      _ -> {};
+    };
   }
 
   steps
@@ -90,9 +98,12 @@ let solvePart2 = (input: String): String -> {
   let allSteps = [];
 
   for item in nodes.entries() {
-    if ((item.key).get(2) == 'A') {
-      allSteps.push(countSteps(network, item.key));
-    }
+    let _ = case {
+      ((item.key).get(2) == 'A') -> {
+        allSteps.push(countSteps(network, item.key));
+      };
+      _ -> {};
+    };
   }
 
   let result = lcmMany(allSteps);

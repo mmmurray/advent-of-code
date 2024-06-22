@@ -55,25 +55,28 @@ let parseWorkflow = (input: String): Workflow -> {
   let stepParts = inner.splitBy(',');
 
   for stepPart in stepParts {
-    if stepPart.contains(":") {
-      let conditionParts = stepPart.splitBy(':');
-      let conditionPart = conditionParts.get(0);
-      let target = conditionParts.get(1);
-      let step = WorkflowStep.WorkflowStepConditional({
-        target: target,
-        condition: Condition.New({
-          property: conditionPart.get(0),
-          operator: conditionPart.get(1),
-          value: (conditionPart.slice(2, conditionPart.size())).toI32(),
-        }),
-      });
+    let _ = case {
+      stepPart.contains(":") -> {
+        let conditionParts = stepPart.splitBy(':');
+        let conditionPart = conditionParts.get(0);
+        let target = conditionParts.get(1);
+        let step = WorkflowStep.WorkflowStepConditional({
+          target: target,
+          condition: Condition.New({
+            property: conditionPart.get(0),
+            operator: conditionPart.get(1),
+            value: (conditionPart.slice(2, conditionPart.size())).toI32(),
+          }),
+        });
 
-      steps.push(step);
-    } else {
-      let step2 = WorkflowStep.WorkflowStep({ target: stepPart });
+        steps.push(step);
+      };
+      _ -> {
+        let step2 = WorkflowStep.WorkflowStep({ target: stepPart });
 
-      steps.push(step2);
-    }
+        steps.push(step2);
+      };
+    };
   }
 
   Workflow.New({ name: name, steps: steps })
@@ -88,22 +91,30 @@ let parseRating = (input: String): Rating -> {
     let propertyParts = ratingPart.splitBy('=');
     let propertyName = propertyParts.get(0);
     let propertyValue = (propertyParts.get(1)).toI32();
-
-    if propertyName.equals("x") {
-      rating.x = propertyValue;
-    }
-
-    if propertyName.equals("m") {
-      rating.m = propertyValue;
-    }
-
-    if propertyName.equals("a") {
-      rating.a = propertyValue;
-    }
-
-    if propertyName.equals("s") {
-      rating.s = propertyValue;
-    }
+    let _ = case {
+      propertyName.equals("x") -> {
+        rating.x = propertyValue;
+      };
+      _ -> {};
+    };
+    let _ = case {
+      propertyName.equals("m") -> {
+        rating.m = propertyValue;
+      };
+      _ -> {};
+    };
+    let _ = case {
+      propertyName.equals("a") -> {
+        rating.a = propertyValue;
+      };
+      _ -> {};
+    };
+    let _ = case {
+      propertyName.equals("s") -> {
+        rating.s = propertyValue;
+      };
+      _ -> {};
+    };
   }
 
   rating
@@ -116,17 +127,23 @@ let parseInput = (input: String): System -> {
   let ratings = [];
 
   for line in lines {
-    if (line.size() == 0) {
-      inWorkflowsSection = false;
-    } else {
-      if inWorkflowsSection {
-        let workflow = parseWorkflow(line);
+    let _ = case {
+      (line.size() == 0) -> {
+        inWorkflowsSection = false;
+      };
+      _ -> {
+        let _ = case {
+          inWorkflowsSection -> {
+            let workflow = parseWorkflow(line);
 
-        workflows.set(workflow.name, workflow);
-      } else {
-        ratings.push(parseRating(line));
-      }
-    }
+            workflows.set(workflow.name, workflow);
+          };
+          _ -> {
+            ratings.push(parseRating(line));
+          };
+        };
+      };
+    };
   }
 
   System.New({ workflows: workflows, ratings: ratings })
@@ -143,10 +160,12 @@ let _printSystem = (system: System): unit -> {
     out.append("{");
 
     for step, stepIndex in workflow.steps {
-      if (stepIndex > 0) {
-        out.append(",");
-      }
-
+      let _ = case {
+        (stepIndex > 0) -> {
+          out.append(",");
+        };
+        _ -> {};
+      };
       let _ = match step {
         WorkflowStep { target } -> {
           out.append(target);
@@ -217,29 +236,36 @@ let isPartAccepted = (workflows: Map<String, Workflow>, rating: Rating): boolean
         let loop = true;
 
         for step in workflow.steps {
-          if loop {
-            let continue = match step {
-              WorkflowStep { target } -> {
-                currentWorkflow = target;
-
-                false
-              };
-              WorkflowStepConditional { target, condition } -> {
-                let inner = true;
-
-                if doesConditionApply(condition, rating) {
+          let _ = case {
+            loop -> {
+              let continue = match step {
+                WorkflowStep { target } -> {
                   currentWorkflow = target;
-                  inner = false;
-                }
 
-                inner
+                  false
+                };
+                WorkflowStepConditional { target, condition } -> {
+                  let inner = true;
+                  let _ = case {
+                    doesConditionApply(condition, rating) -> {
+                      currentWorkflow = target;
+                      inner = false;
+                    };
+                    _ -> {};
+                  };
+
+                  inner
+                };
+              };
+              let _ = case {
+                !(continue) -> {
+                  loop = false;
+                };
+                _ -> {};
               };
             };
-
-            if !(continue) {
-              loop = false;
-            }
-          }
+            _ -> {};
+          };
         }
 
         true
@@ -255,11 +281,14 @@ let solvePart1 = (input: String): String -> {
   let result = 0;
 
   for rating in system.ratings {
-    if isPartAccepted(system.workflows, rating) {
-      let sum = (rating.x + (rating.m + (rating.a + rating.s)));
+    let _ = case {
+      isPartAccepted(system.workflows, rating) -> {
+        let sum = (rating.x + (rating.m + (rating.a + rating.s)));
 
-      result = (result + sum);
-    }
+        result = (result + sum);
+      };
+      _ -> {};
+    };
   }
 
   stringFromNumber(result)

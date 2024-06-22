@@ -30,37 +30,48 @@ let parseInput = (input: String): Schematic -> {
 
     while (charIndex < line.size()) {
       let char = line.get(charIndex);
+      let _ = case {
+        (char != '.') -> {
+          let _ = case {
+            charIsNumeric(char) -> {
+              let length = 0;
+              let value = 0;
+              let location = Vec2.New({ x: charIndex, y: lineIndex });
+              let loop = true;
 
-      if (char != '.') {
-        if charIsNumeric(char) {
-          let length = 0;
-          let value = 0;
-          let location = Vec2.New({ x: charIndex, y: lineIndex });
-          let loop = true;
+              while (loop && (charIndex < line.size())) {
+                char = line.get(charIndex);
 
-          while (loop && (charIndex < line.size())) {
-            char = line.get(charIndex);
+                let _ = case {
+                  charIsNumeric(char) -> {
+                    value = ((value * 10) + (char - '0'));
+                    length = (1 + length);
+                    charIndex = (charIndex + 1);
+                  };
+                  _ -> {
+                    loop = false;
+                  };
+                };
+              }
 
-            if charIsNumeric(char) {
-              value = ((value * 10) + (char - '0'));
-              length = (1 + length);
-              charIndex = (charIndex + 1);
-            } else {
-              loop = false;
-            }
-          }
+              let number = SchematicNumber.New({ location: location, value: value, length: length });
 
-          let number = SchematicNumber.New({ location: location, value: value, length: length });
+              (schematic.numbers).push(number);
 
-          (schematic.numbers).push(number);
+              charIndex = (charIndex - 1);
+            };
+            _ -> {
+              let symbol = SchematicSymbol.New({
+                location: Vec2.New({ x: charIndex, y: lineIndex }),
+                value: char,
+              });
 
-          charIndex = (charIndex - 1);
-        } else {
-          let symbol = SchematicSymbol.New({ location: Vec2.New({ x: charIndex, y: lineIndex }), value: char });
-
-          (schematic.symbols).push(symbol);
-        }
-      }
+              (schematic.symbols).push(symbol);
+            };
+          };
+        };
+        _ -> {};
+      };
 
       charIndex = (charIndex + 1);
     }
@@ -83,17 +94,23 @@ let solvePart1 = (input: String): String -> {
       let found = false;
 
       for symbol in schematic.symbols {
-        if vec2IsAdjacent(position, symbol.location) {
-          found = true;
-        }
+        let _ = case {
+          vec2IsAdjacent(position, symbol.location) -> {
+            found = true;
+          };
+          _ -> {};
+        };
       }
 
-      if found {
-        result = (result + number.value);
-        loop = false;
-      } else {
-        offsetX = (offsetX + 1);
-      }
+      let _ = case {
+        found -> {
+          result = (result + number.value);
+          loop = false;
+        };
+        _ -> {
+          offsetX = (offsetX + 1);
+        };
+      };
     }
   }
 
@@ -105,37 +122,48 @@ let solvePart2 = (input: String): String -> {
   let schematic = parseInput(input);
 
   for symbol in schematic.symbols {
-    if (symbol.value == '*') {
-      let adjacentCount = 0;
-      let adjacentProduct = 1;
+    let _ = case {
+      (symbol.value == '*') -> {
+        let adjacentCount = 0;
+        let adjacentProduct = 1;
 
-      for number in schematic.numbers {
-        let adjacent = false;
-        let offsetX = 0;
-        let loop = true;
+        for number in schematic.numbers {
+          let adjacent = false;
+          let offsetX = 0;
+          let loop = true;
 
-        while (loop && (offsetX < number.length)) {
-          let offset = Vec2.New({ x: offsetX, y: 0 });
-          let position = vec2Add(number.location, offset);
-
-          if vec2IsAdjacent(position, symbol.location) {
-            adjacent = true;
-            loop = false;
-          } else {
-            offsetX = (offsetX + 1);
+          while (loop && (offsetX < number.length)) {
+            let offset = Vec2.New({ x: offsetX, y: 0 });
+            let position = vec2Add(number.location, offset);
+            let _ = case {
+              vec2IsAdjacent(position, symbol.location) -> {
+                adjacent = true;
+                loop = false;
+              };
+              _ -> {
+                offsetX = (offsetX + 1);
+              };
+            };
           }
+
+          let _ = case {
+            adjacent -> {
+              adjacentCount = (adjacentCount + 1);
+              adjacentProduct = (adjacentProduct * number.value);
+            };
+            _ -> {};
+          };
         }
 
-        if adjacent {
-          adjacentCount = (adjacentCount + 1);
-          adjacentProduct = (adjacentProduct * number.value);
-        }
-      }
-
-      if (adjacentCount == 2) {
-        result = (result + adjacentProduct);
-      }
-    }
+        let _ = case {
+          (adjacentCount == 2) -> {
+            result = (result + adjacentProduct);
+          };
+          _ -> {};
+        };
+      };
+      _ -> {};
+    };
   }
 
   stringFromNumber(result)

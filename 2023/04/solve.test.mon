@@ -16,10 +16,12 @@ let parseNumberList = (input: String): List<i32> -> {
 
   for part in parts {
     let trimmed = part.trim();
-
-    if (trimmed.size() > 0) {
-      numbers.push(trimmed.toI32());
-    }
+    let _ = case {
+      (trimmed.size() > 0) -> {
+        numbers.push(trimmed.toI32());
+      };
+      _ -> {};
+    };
   }
 
   numbers
@@ -51,9 +53,12 @@ let solvePart1 = (input: String): String -> {
 
     for number in game.numbers {
       for needed in game.winning {
-        if (number == needed) {
-          score = max(1, (score * 2));
-        }
+        let _ = case {
+          (number == needed) -> {
+            score = max(1, (score * 2));
+          };
+          _ -> {};
+        };
       }
     }
 
@@ -74,9 +79,12 @@ let solvePart2 = (input: String): String -> {
 
     for number in game.numbers {
       for needed in game.winning {
-        if (number == needed) {
-          gameResult = (gameResult + 1);
-        }
+        let _ = case {
+          (number == needed) -> {
+            gameResult = (gameResult + 1);
+          };
+          _ -> {};
+        };
       }
     }
 

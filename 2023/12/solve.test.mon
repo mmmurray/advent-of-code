@@ -60,17 +60,24 @@ let placeDamage = (conditions: List<i32>, offset: i32, width: i32): List<i32> ->
   let newConditions = conditions.clone();
 
   for condition, index in conditions {
-    if (condition == '?') {
-      newConditions.set(index, '.');
-    }
-
-    if (index >= offset) {
-      newConditions.set(index, '#');
-    }
-
-    if (index >= (offset + width)) {
-      newConditions.set(index, conditions.get(index));
-    }
+    let _ = case {
+      (condition == '?') -> {
+        newConditions.set(index, '.');
+      };
+      _ -> {};
+    };
+    let _ = case {
+      (index >= offset) -> {
+        newConditions.set(index, '#');
+      };
+      _ -> {};
+    };
+    let _ = case {
+      (index >= (offset + width)) -> {
+        newConditions.set(index, conditions.get(index));
+      };
+      _ -> {};
+    };
   }
 
   newConditions
@@ -80,9 +87,12 @@ let conditionsContainDot = (conditions: List<i32>): boolean -> {
   let result = false;
 
   for condition in conditions {
-    if (condition == '.') {
-      result = true;
-    }
+    let _ = case {
+      (condition == '.') -> {
+        result = true;
+      };
+      _ -> {};
+    };
   }
 
   result
@@ -101,9 +111,12 @@ let isValidPlacement = (conditions: List<i32>, maxDamage: i32, offset: i32, widt
       let damageTotal = 0;
 
       for condition2 in placeDamage(conditions, offset, width) {
-        if (condition2 == '#') {
-          damageTotal = (damageTotal + 1);
-        }
+        let _ = case {
+          (condition2 == '#') -> {
+            damageTotal = (damageTotal + 1);
+          };
+          _ -> {};
+        };
       }
 
       (damageTotal <= maxDamage)
@@ -115,9 +128,12 @@ let countArrangementsRec = (cache: Array<i32>, row: Row, offset: i32, damagedInd
   let damageTotal = 0;
 
   for condition2 in row.conditions {
-    if (condition2 == '#') {
-      damageTotal = (damageTotal + 1);
-    }
+    let _ = case {
+      (condition2 == '#') -> {
+        damageTotal = (damageTotal + 1);
+      };
+      _ -> {};
+    };
   }
 
   let cacheKey = (damagedIndex + ((cacheSpacing() * offset) + (damageTotal * (cacheSpacing() * cacheSpacing()))));
@@ -130,24 +146,28 @@ let countArrangementsRec = (cache: Array<i32>, row: Row, offset: i32, damagedInd
       let arrangements = 0;
       let damageWidth = (row.damaged).get(damagedIndex);
       let valid = isValidPlacement(row.conditions, row.damageTotal, offset, damageWidth);
+      let _ = case {
+        valid -> {
+          let nextConditions = placeDamage(row.conditions, offset, damageWidth);
+          let nextDamagedIndex = (damagedIndex + 1);
+          let nextOffset = (offset + (damageWidth + 1));
+          let _ = case {
+            (nextDamagedIndex < (row.damaged).size()) -> {
+              let newRow = Row.New({
+                conditions: nextConditions,
+                damaged: row.damaged,
+                damageTotal: row.damageTotal,
+              });
 
-      if valid {
-        let nextConditions = placeDamage(row.conditions, offset, damageWidth);
-        let nextDamagedIndex = (damagedIndex + 1);
-        let nextOffset = (offset + (damageWidth + 1));
-
-        if (nextDamagedIndex < (row.damaged).size()) {
-          let newRow = Row.New({
-            conditions: nextConditions,
-            damaged: row.damaged,
-            damageTotal: row.damageTotal,
-          });
-
-          arrangements = (arrangements + countArrangementsRec(cache, newRow, nextOffset, nextDamagedIndex));
-        } else {
-          arrangements = (arrangements + 1);
-        }
-      }
+              arrangements = (arrangements + countArrangementsRec(cache, newRow, nextOffset, nextDamagedIndex));
+            };
+            _ -> {
+              arrangements = (arrangements + 1);
+            };
+          };
+        };
+        _ -> {};
+      };
 
       arrangements = (arrangements + countArrangementsRec(cache, row, (offset + 1), damagedIndex));
 

@@ -102,30 +102,42 @@ let solvePart2 = (input: String): String -> {
         let replaced = false;
 
         for lens, lensIndex in box.lenses {
-          if (lens.label).equals(label) {
-            lens.focalLength = focalLength;
-            replaced = true;
-          }
+          let _ = case {
+            (lens.label).equals(label) -> {
+              lens.focalLength = focalLength;
+              replaced = true;
+            };
+            _ -> {};
+          };
         }
 
-        if !(replaced) {
-          let lens = Lens.New({ label: label, focalLength: focalLength });
+        let _ = case {
+          !(replaced) -> {
+            let lens = Lens.New({ label: label, focalLength: focalLength });
 
-          (box.lenses).push(lens);
-        }
+            (box.lenses).push(lens);
+          };
+          _ -> {};
+        };
       };
       Remove { label } -> {
         let removeIndex = --(1);
 
         for lens, lensIndex in box.lenses {
-          if (lens.label).equals(label) {
-            removeIndex = lensIndex;
-          }
+          let _ = case {
+            (lens.label).equals(label) -> {
+              removeIndex = lensIndex;
+            };
+            _ -> {};
+          };
         }
 
-        if (removeIndex >= 0) {
-          (box.lenses).remove(removeIndex);
-        }
+        let _ = case {
+          (removeIndex >= 0) -> {
+            (box.lenses).remove(removeIndex);
+          };
+          _ -> {};
+        };
       };
     };
   }

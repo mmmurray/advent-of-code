@@ -43,9 +43,12 @@ let parseInput = (input: String): Pipes -> {
 
       row.push(connections);
 
-      if (char == 'S') {
-        start = Vec2.New({ x: x, y: y });
-      }
+      let _ = case {
+        (char == 'S') -> {
+          start = Vec2.New({ x: x, y: y });
+        };
+        _ -> {};
+      };
     }
 
     grid.push(row);
@@ -71,38 +74,54 @@ let connectionsToChar = (connections: Connections): i32 -> {
 let connectionsToWalls = (connections: Connections): List<List<i32> > -> {
   let walls = [];
   let char = connectionsToChar(connections);
-
-  if (char == '.') {
-    walls.pushList([[0, 0, 0], [0, 0, 0], [0, 0, 0]]);
-  }
-
-  if (char == 'S') {
-    walls.pushList([[0, 1, 0], [1, 1, 1], [0, 1, 0]]);
-  }
-
-  if (char == '║') {
-    walls.pushList([[0, 1, 0], [0, 1, 0], [0, 1, 0]]);
-  }
-
-  if (char == '═') {
-    walls.pushList([[0, 0, 0], [1, 1, 1], [0, 0, 0]]);
-  }
-
-  if (char == '╔') {
-    walls.pushList([[0, 0, 0], [0, 1, 1], [0, 1, 0]]);
-  }
-
-  if (char == '╗') {
-    walls.pushList([[0, 0, 0], [1, 1, 0], [0, 1, 0]]);
-  }
-
-  if (char == '╝') {
-    walls.pushList([[0, 1, 0], [1, 1, 0], [0, 0, 0]]);
-  }
-
-  if (char == '╚') {
-    walls.pushList([[0, 1, 0], [0, 1, 1], [0, 0, 0]]);
-  }
+  let _ = case {
+    (char == '.') -> {
+      walls.pushList([[0, 0, 0], [0, 0, 0], [0, 0, 0]]);
+    };
+    _ -> {};
+  };
+  let _ = case {
+    (char == 'S') -> {
+      walls.pushList([[0, 1, 0], [1, 1, 1], [0, 1, 0]]);
+    };
+    _ -> {};
+  };
+  let _ = case {
+    (char == '║') -> {
+      walls.pushList([[0, 1, 0], [0, 1, 0], [0, 1, 0]]);
+    };
+    _ -> {};
+  };
+  let _ = case {
+    (char == '═') -> {
+      walls.pushList([[0, 0, 0], [1, 1, 1], [0, 0, 0]]);
+    };
+    _ -> {};
+  };
+  let _ = case {
+    (char == '╔') -> {
+      walls.pushList([[0, 0, 0], [0, 1, 1], [0, 1, 0]]);
+    };
+    _ -> {};
+  };
+  let _ = case {
+    (char == '╗') -> {
+      walls.pushList([[0, 0, 0], [1, 1, 0], [0, 1, 0]]);
+    };
+    _ -> {};
+  };
+  let _ = case {
+    (char == '╝') -> {
+      walls.pushList([[0, 1, 0], [1, 1, 0], [0, 0, 0]]);
+    };
+    _ -> {};
+  };
+  let _ = case {
+    (char == '╚') -> {
+      walls.pushList([[0, 1, 0], [0, 1, 1], [0, 0, 0]]);
+    };
+    _ -> {};
+  };
 
   walls
 }
@@ -115,9 +134,12 @@ let pointsContain = (points: List<Vec2<i32> >, point: Vec2<i32>): boolean -> {
   let result = false;
 
   for other in points {
-    if vec2Equals(point, other) {
-      let result = true;
-    }
+    let _ = case {
+      vec2Equals(point, other) -> {
+        let result = true;
+      };
+      _ -> {};
+    };
   }
 
   result
@@ -133,50 +155,66 @@ let searchPipes = (pipes: Pipes, visited: List<Vec2<i32> >, current: Vec2<i32>, 
 
       let size = pipes.size;
       let maxSteps = steps;
+      let _ = case {
+        (current.y > 0) -> {
+          let candidate = Vec2.New({ x: current.x, y: (current.y - 1) });
+          let candidateConnections = getConnections(pipes, candidate);
+          let _ = case {
+            (currentConnections.north && candidateConnections.south) -> {
+              let nextSteps = searchPipes(pipes, visited, candidate, (steps + 1));
 
-      if (current.y > 0) {
-        let candidate = Vec2.New({ x: current.x, y: (current.y - 1) });
-        let candidateConnections = getConnections(pipes, candidate);
+              maxSteps = max(maxSteps, nextSteps);
+            };
+            _ -> {};
+          };
+        };
+        _ -> {};
+      };
+      let _ = case {
+        (current.x < (size.x - 1)) -> {
+          let candidate = Vec2.New({ x: (current.x + 1), y: current.y });
+          let candidateConnections = getConnections(pipes, candidate);
+          let _ = case {
+            (currentConnections.east && candidateConnections.west) -> {
+              let nextSteps = searchPipes(pipes, visited, candidate, (steps + 1));
 
-        if (currentConnections.north && candidateConnections.south) {
-          let nextSteps = searchPipes(pipes, visited, candidate, (steps + 1));
+              maxSteps = max(maxSteps, nextSteps);
+            };
+            _ -> {};
+          };
+        };
+        _ -> {};
+      };
+      let _ = case {
+        (current.y < (size.y - 1)) -> {
+          let candidate = Vec2.New({ x: current.x, y: (current.y + 1) });
+          let candidateConnections = getConnections(pipes, candidate);
+          let _ = case {
+            (currentConnections.south && candidateConnections.north) -> {
+              let nextSteps = searchPipes(pipes, visited, candidate, (steps + 1));
 
-          maxSteps = max(maxSteps, nextSteps);
-        }
-      }
+              maxSteps = max(maxSteps, nextSteps);
+            };
+            _ -> {};
+          };
+        };
+        _ -> {};
+      };
+      let _ = case {
+        (current.x > 0) -> {
+          let candidate = Vec2.New({ x: (current.x - 1), y: current.y });
+          let candidateConnections = getConnections(pipes, candidate);
+          let _ = case {
+            (currentConnections.west && candidateConnections.east) -> {
+              let nextSteps = searchPipes(pipes, visited, candidate, (steps + 1));
 
-      if (current.x < (size.x - 1)) {
-        let candidate = Vec2.New({ x: (current.x + 1), y: current.y });
-        let candidateConnections = getConnections(pipes, candidate);
-
-        if (currentConnections.east && candidateConnections.west) {
-          let nextSteps = searchPipes(pipes, visited, candidate, (steps + 1));
-
-          maxSteps = max(maxSteps, nextSteps);
-        }
-      }
-
-      if (current.y < (size.y - 1)) {
-        let candidate = Vec2.New({ x: current.x, y: (current.y + 1) });
-        let candidateConnections = getConnections(pipes, candidate);
-
-        if (currentConnections.south && candidateConnections.north) {
-          let nextSteps = searchPipes(pipes, visited, candidate, (steps + 1));
-
-          maxSteps = max(maxSteps, nextSteps);
-        }
-      }
-
-      if (current.x > 0) {
-        let candidate = Vec2.New({ x: (current.x - 1), y: current.y });
-        let candidateConnections = getConnections(pipes, candidate);
-
-        if (currentConnections.west && candidateConnections.east) {
-          let nextSteps = searchPipes(pipes, visited, candidate, (steps + 1));
-
-          maxSteps = max(maxSteps, nextSteps);
-        }
-      }
+              maxSteps = max(maxSteps, nextSteps);
+            };
+            _ -> {};
+          };
+        };
+        _ -> {};
+      };
 
       maxSteps
     };
@@ -223,11 +261,14 @@ let buildLake = (pipes: Pipes, visited: List<Vec2<i32> >): Lake -> {
 
     for crow, dy in connectionsWalls {
       for wall, dx in crow {
-        if (wall == 1) {
-          let row = walls.get(((p.y * 3) + dy));
+        let _ = case {
+          (wall == 1) -> {
+            let row = walls.get(((p.y * 3) + dy));
 
-          row.set(((p.x * 3) + dx), 1);
-        }
+            row.set(((p.x * 3) + dx), 1);
+          };
+          _ -> {};
+        };
       }
     }
   }
@@ -251,10 +292,12 @@ let _solvePart2 = (input: String): String -> {
       let lx = ((x * 3) + 1);
       let ly = ((y * 3) + 1);
       let lv = ((lake.walls).get(ly)).get(lx);
-
-      if (lv == 0) {
-        result = (result + 1);
-      }
+      let _ = case {
+        (lv == 0) -> {
+          result = (result + 1);
+        };
+        _ -> {};
+      };
 
       x = (x + 1);
     }
