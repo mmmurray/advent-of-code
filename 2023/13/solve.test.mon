@@ -6,7 +6,7 @@ import { getValue: getInput } from "./input.txt";
 
 data Grid = {
   size: Vec2<i32>,
-  rows: List<List<boolean> >,
+  rows: List<List<boolean>>,
 }
 
 let parseInput = (input: String): List<Grid> -> {

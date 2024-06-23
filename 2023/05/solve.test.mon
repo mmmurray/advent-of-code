@@ -130,7 +130,7 @@ let mapPositionToLocation = (almanac: Almanac, position: u64): u64 -> {
 let positionMin: u64 = 0;
 let positionMax: u64 = 999999999;
 
-let mapRangeToLocationInCategory = (category: AlmanacCategory, range: Range<u64>): List<Range<u64> > -> {
+let mapRangeToLocationInCategory = (category: AlmanacCategory, range: Range<u64>): List<Range<u64>> -> {
   let ranges = [];
   let position = positionMin;
   let mappingIndex = 0;
@@ -168,7 +168,7 @@ let mapRangeToLocationInCategory = (category: AlmanacCategory, range: Range<u64>
   ranges
 }
 
-let mapRangeToLocationInAlmanac = (almanac: Almanac, initialRange: Range<u64>): List<Range<u64> > -> {
+let mapRangeToLocationInAlmanac = (almanac: Almanac, initialRange: Range<u64>): List<Range<u64>> -> {
   let ranges = [];
 
   ranges.push(initialRange);

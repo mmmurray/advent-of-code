@@ -6,7 +6,7 @@ import { getValue: getInput } from "./input.txt";
 
 data Universe = {
   size: Vec2<i64>,
-  galaxies: List<Vec2<i64> >,
+  galaxies: List<Vec2<i64>>,
 }
 
 let parseInput = (input: String): Universe -> {

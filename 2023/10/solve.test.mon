@@ -12,7 +12,7 @@ data Connections = {
 
 data Pipes = {
   start: Vec2<i32>,
-  grid: List<List<Connections> >,
+  grid: List<List<Connections>>,
   size: Vec2<i32>,
 }
 
@@ -71,7 +71,7 @@ let connectionsToChar = (connections: Connections): i32 -> {
   }
 }
 
-let connectionsToWalls = (connections: Connections): List<List<i32> > -> {
+let connectionsToWalls = (connections: Connections): List<List<i32>> -> {
   let walls = [];
   let char = connectionsToChar(connections);
   let _ = case {
@@ -130,7 +130,7 @@ let getConnections = (pipes: Pipes, p: Vec2<i32>): Connections -> {
   ((pipes.grid).get(p.y)).get(p.x)
 }
 
-let pointsContain = (points: List<Vec2<i32> >, point: Vec2<i32>): boolean -> {
+let pointsContain = (points: List<Vec2<i32>>, point: Vec2<i32>): boolean -> {
   let result = false;
 
   for other in points {
@@ -145,7 +145,7 @@ let pointsContain = (points: List<Vec2<i32> >, point: Vec2<i32>): boolean -> {
   result
 }
 
-let searchPipes = (pipes: Pipes, visited: List<Vec2<i32> >, current: Vec2<i32>, steps: i32): i32 -> {
+let searchPipes = (pipes: Pipes, visited: List<Vec2<i32>>, current: Vec2<i32>, steps: i32): i32 -> {
   case {
     pointsContain(visited, current) -> steps;
     _ -> {
@@ -230,11 +230,11 @@ let _solvePart1 = (input: String): String -> {
 }
 
 data Lake = {
-  walls: List<List<i32> >,
+  walls: List<List<i32>>,
   size: Vec2<i32>,
 }
 
-let buildLake = (pipes: Pipes, visited: List<Vec2<i32> >): Lake -> {
+let buildLake = (pipes: Pipes, visited: List<Vec2<i32>>): Lake -> {
   let walls = [];
   let pipesSize = pipes.size;
   let lakeSize = Vec2.New({ x: (pipesSize.x * 3), y: (pipesSize.y * 3) });

@@ -65,8 +65,8 @@ data Tile =
 
 data Grid = {
   size: Vec2<i32>,
-  tiles: List<List<Tile> >,
-  energized: List<List<List<Direction> > >,
+  tiles: List<List<Tile>>,
+  energized: List<List<List<Direction>>>,
 }
 
 let gridClone = (grid: Grid): Grid -> {

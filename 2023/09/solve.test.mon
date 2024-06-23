@@ -3,7 +3,7 @@ import { List } from "@list";
 import { String, stringFromNumber } from "@string";
 import { getValue: getInput } from "./input.txt";
 
-let parseInput = (input: String): List<List<i32> > -> {
+let parseInput = (input: String): List<List<i32>> -> {
   let lines = (input.trim()).toLines();
   let sequences = [];
 

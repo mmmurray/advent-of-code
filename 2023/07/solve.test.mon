@@ -79,7 +79,7 @@ let scoreCards = (cards: List<i32>): i32 -> {
       };
       _ -> {
         let key = stringFromNumber(card);
-        let current = (countByCard.get(key)).value(0);
+        let current = (countByCard.get(key)).or(0);
 
         countByCard.set(key, (current + 1));
       };
