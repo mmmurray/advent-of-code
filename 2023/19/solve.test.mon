@@ -7,13 +7,6 @@ import { String, stringFromChar, stringFromNumber } from "@string";
 import { stringBuilderCreate } from "@string-builder";
 import { getValue: getInput } from "./input.txt";
 
-let optionExpect = <T>(option: Option<T>): T -> {
-  match option {
-    Some { value } -> value;
-    None -> (@T 0);
-  }
-}
-
 data Rating = {
   x: i32,
   m: i32,
@@ -45,6 +38,8 @@ data System = {
   ratings: List<Rating>,
   workflows: Map<String, Workflow>,
 }
+
+let workflowDefault = (): Workflow -> Workflow.New({ name: "", steps: [] })
 
 let parseWorkflow = (input: String): Workflow -> {
   let workflowParts = input.splitBy('{');
@@ -232,7 +227,7 @@ let isPartAccepted = (workflows: Map<String, Workflow>, rating: Rating): boolean
         false
       };
       _ -> {
-        let workflow = optionExpect(workflows.get(currentWorkflow));
+        let workflow = (workflows.get(currentWorkflow)).or(workflowDefault());
         let loop = true;
 
         for step in workflow.steps {
