@@ -1,4 +1,4 @@
-import { assertEqualString } from "@assert";
+import { assertEqual } from "@assert";
 import { List } from "@list";
 import { String, stringFromNumber } from "@string";
 import { stringBuilderCreate } from "@string-builder";
@@ -100,8 +100,8 @@ let solvePart2 = (input: String): String -> {
 let input = getInput();
 let part1 = solvePart1(input);
 
-assertEqualString(part1, "1413720");
+assertEqual(part1, "1413720");
 
 let part2 = solvePart2(input);
 
-assertEqualString(part2, "30565288");
+assertEqual(part2, "30565288");

@@ -1,4 +1,4 @@
-import { assertEqualString } from "@assert";
+import { assertEqual } from "@assert";
 import { charIsNumeric } from "@char";
 import { listFromArray } from "@list";
 import { String, stringFromNumber } from "@string";
@@ -108,8 +108,8 @@ let solvePart2 = (input: String): String -> {
 let input = (getInput()).trim();
 let part1 = solvePart1(input);
 
-assertEqualString(part1, "54605");
+assertEqual(part1, "54605");
 
 let part2 = solvePart2(input);
 
-assertEqualString(part2, "55429");
+assertEqual(part2, "55429");

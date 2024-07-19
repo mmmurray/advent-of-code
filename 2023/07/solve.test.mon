@@ -1,4 +1,4 @@
-import { assertEqualString } from "@assert";
+import { assertEqual } from "@assert";
 import { charIsNumeric } from "@char";
 import { List, listFromArray } from "@list";
 import { Map, mapCreate } from "@map";
@@ -262,8 +262,8 @@ let solvePart2 = (input: String): String -> {
 let input = getInput();
 let part1 = solvePart1(input);
 
-assertEqualString(part1, "245794640");
+assertEqual(part1, "245794640");
 
 let part2 = solvePart2(input);
 
-assertEqualString(part2, "247899149");
+assertEqual(part2, "247899149");

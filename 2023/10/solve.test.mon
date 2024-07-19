@@ -312,7 +312,7 @@ let _input = getInput();
 
 # todo
 # let part1 = (solvePart1 input);
-# (assertEqualString part1 "7107");
+# (assertEqual part1 "7107");
 # todo
 # let _ = (solvePart2 input);
-# (assertEqualString part2 "281");
+# (assertEqual part2 "281");

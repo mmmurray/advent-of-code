@@ -1,5 +1,5 @@
 import { arrayCreate, arrayGet, arraySet } from "@array";
-import { assertEqualString } from "@assert";
+import { assertEqual } from "@assert";
 import { List } from "@list";
 import { max } from "@math";
 import { String, stringFromNumber } from "@string";
@@ -114,8 +114,8 @@ let solvePart2 = (input: String): String -> {
 let input = getInput();
 let part1 = solvePart1(input);
 
-assertEqualString(part1, "21959");
+assertEqual(part1, "21959");
 
 let part2 = solvePart2(input);
 
-assertEqualString(part2, "5132675");
+assertEqual(part2, "5132675");

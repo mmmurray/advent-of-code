@@ -1,4 +1,4 @@
-import { assertEqualString } from "@assert";
+import { assertEqual } from "@assert";
 import { List } from "@list";
 import { Mat2, Vec2, mat2Determinant, vec2Add, vec2Scale } from "@math";
 import { String, stringFromNumber } from "@string";
@@ -152,8 +152,8 @@ let solvePart2 = (input: String): String -> {
 let input = getInput();
 let part1 = solvePart1(input);
 
-assertEqualString(part1, "44436");
+assertEqual(part1, "44436");
 
 let part2 = solvePart2(input);
 
-assertEqualString(part2, "106941819907437");
+assertEqual(part2, "106941819907437");

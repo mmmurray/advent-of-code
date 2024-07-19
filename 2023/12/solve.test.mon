@@ -1,5 +1,5 @@
 import { Array, arrayCreate, arrayGet, arraySet } from "@array";
-import { assertEqual, assertEqualString } from "@assert";
+import { assertEqual } from "@assert";
 import { List, listFromArray } from "@list";
 import { String, stringFromNumber } from "@string";
 import { getValue: getInput } from "./input.txt";
@@ -259,8 +259,8 @@ testCountArrangements();
 let input = getInput();
 let part1 = solvePart1(input);
 
-assertEqualString(part1, "7204");
+assertEqual(part1, "7204");
 
 # todo
 # let part2 = (solvePart2 input)
-# (assertEqualString part2 "???")
+# (assertEqual part2 "???")

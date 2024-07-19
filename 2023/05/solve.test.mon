@@ -232,9 +232,9 @@ let input = getInput();
 let _ = solvePart1(input);
 
 # todo
-# (assertEqualString part1 "282277027");
+# (assertEqual part1 "282277027");
 
 let _ = solvePart2(input);
 
 # todo
-# (assertEqualString part2 "11554135");
+# (assertEqual part2 "11554135");
