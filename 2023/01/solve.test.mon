@@ -44,9 +44,8 @@ let solvePart1 = (input: String): String -> {
   stringFromNumber(result)
 }
 
-let digitStrings: List<String> = ["one", "two", "three", "four", "five", "six", "seven", "eight", "nine"];
-
 let getCalibrationValue2 = (line: String): i32 -> {
+  let digitStrings = ["one", "two", "three", "four", "five", "six", "seven", "eight", "nine"];
   let setFirstDigit = false;
   let firstDigit = 0;
   let lastDigit = 0;
