@@ -22,7 +22,7 @@ data Schematic = {
 }
 
 let parseInput = (input: String): Schematic -> {
-  let lines = (input).toLines();
+  let lines = input.toLines();
   let schematic = Schematic.New({ symbols: [], numbers: [] });
 
   for line, lineIndex in lines {
@@ -56,7 +56,7 @@ let parseInput = (input: String): Schematic -> {
 
               let number = SchematicNumber.New({ location: location, value: value, length: length });
 
-              (schematic.numbers).push(number);
+              schematic.numbers.push(number);
 
               charIndex = (charIndex - 1);
             };
@@ -66,7 +66,7 @@ let parseInput = (input: String): Schematic -> {
                 value: char,
               });
 
-              (schematic.symbols).push(symbol);
+              schematic.symbols.push(symbol);
             };
           };
         };

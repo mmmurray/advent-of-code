@@ -55,8 +55,8 @@ let countSteps = (network: Network, start: String): u64 -> {
   let loop = true;
 
   while loop {
-    let instruction = (network.instructions).get(instructionIndex);
-    let node = (network.nodes).get(current);
+    let instruction = network.instructions.get(instructionIndex);
+    let node = network.nodes.get(current);
     let _ = match node {
       Some { value } -> {
         let _ = case {
@@ -71,7 +71,7 @@ let countSteps = (network: Network, start: String): u64 -> {
       None -> print("Node not found");
     };
 
-    instructionIndex = ((instructionIndex + 1) % (network.instructions).size());
+    instructionIndex = ((instructionIndex + 1) % network.instructions.size());
     steps = (steps + 1);
 
     let _ = case {
@@ -99,7 +99,7 @@ let solvePart2 = (input: String): String -> {
 
   for item in nodes.entries() {
     let _ = case {
-      ((item.key).get(2) == 'A') -> {
+      (item.key.get(2) == 'A') -> {
         allSteps.push(countSteps(network, item.key));
       };
       _ -> {};

@@ -11,7 +11,7 @@ data Grid = {
 
 let parseInput = (input: String): List<Grid> -> {
   let grids = [];
-  let lines = (input).toLines();
+  let lines = input.toLines();
   let rows = [];
   let size = Vec2.New({ x: 0, y: 0 });
 
@@ -62,8 +62,8 @@ let getReflectionScore = (grid: Grid, notScore: i32): i32 -> {
       let row = 0;
 
       while (row < size.y) {
-        let valA = ((grid.rows).get(row)).get(colA);
-        let valB = ((grid.rows).get(row)).get(colB);
+        let valA = (grid.rows.get(row)).get(colA);
+        let valB = (grid.rows.get(row)).get(colB);
         let _ = case {
           ((@i32 valA) != (@i32 valB)) -> {
             isReflection = false;
@@ -111,8 +111,8 @@ let getReflectionScore = (grid: Grid, notScore: i32): i32 -> {
           let col = 0;
 
           while (col < size.x) {
-            let valA = ((grid.rows).get(rowA)).get(col);
-            let valB = ((grid.rows).get(rowB)).get(col);
+            let valA = (grid.rows.get(rowA)).get(col);
+            let valB = (grid.rows.get(rowB)).get(col);
             let _ = case {
               ((@i32 valA) != (@i32 valB)) -> {
                 isReflection = false;
@@ -169,7 +169,7 @@ let removeSmudge = (grid: Grid): i32 -> {
     let x = 0;
 
     while (loop && (x < size.x)) {
-      let row = (grid.rows).get(y);
+      let row = grid.rows.get(y);
       let value = row.get(x);
 
       row.set(x, !(value));

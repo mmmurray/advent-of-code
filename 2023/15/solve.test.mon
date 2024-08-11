@@ -103,7 +103,7 @@ let solvePart2 = (input: String): String -> {
 
         for lens, lensIndex in box.lenses {
           let _ = case {
-            (lens.label).equals(label) -> {
+            lens.label.equals(label) -> {
               lens.focalLength = focalLength;
               replaced = true;
             };
@@ -115,7 +115,7 @@ let solvePart2 = (input: String): String -> {
           !(replaced) -> {
             let lens = Lens.New({ label: label, focalLength: focalLength });
 
-            (box.lenses).push(lens);
+            box.lenses.push(lens);
           };
           _ -> {};
         };
@@ -125,7 +125,7 @@ let solvePart2 = (input: String): String -> {
 
         for lens, lensIndex in box.lenses {
           let _ = case {
-            (lens.label).equals(label) -> {
+            lens.label.equals(label) -> {
               removeIndex = lensIndex;
             };
             _ -> {};
@@ -134,7 +134,7 @@ let solvePart2 = (input: String): String -> {
 
         let _ = case {
           (removeIndex >= 0) -> {
-            (box.lenses).remove(removeIndex);
+            box.lenses.remove(removeIndex);
           };
           _ -> {};
         };

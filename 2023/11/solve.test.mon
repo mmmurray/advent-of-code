@@ -119,15 +119,15 @@ let expandUniverse = (universe: Universe, expansionRate: i64): Universe -> {
 
 let sumOfDistancesBetweenGalaxies = (universe: Universe): i64 -> {
   let total = 0;
-  let count = (universe.galaxies).size();
+  let count = universe.galaxies.size();
   let i = 0;
 
   while (i < (count - 1)) {
     let j = (i + 1);
 
     while (j < count) {
-      let galaxy1 = (universe.galaxies).get(i);
-      let galaxy2 = (universe.galaxies).get(j);
+      let galaxy1 = universe.galaxies.get(i);
+      let galaxy2 = universe.galaxies.get(j);
       let distance = vec2ManhattanDistance(galaxy1, galaxy2);
 
       total = (total + distance);

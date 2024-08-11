@@ -138,7 +138,7 @@ let areGridsEqual = (a: Grid, b: Grid): boolean -> {
   let result = true;
 
   for c1, i in a.cols {
-    let c2 = (b.cols).get(i);
+    let c2 = b.cols.get(i);
     let _ = case {
       !(areColsEqual(c1, c2)) -> {
         result = false;

@@ -141,10 +141,10 @@ let countArrangementsRec = (cache: Array<i32>, row: Row, offset: i32, damagedInd
 
   case {
     (cached >= 0) -> cached;
-    (offset >= (row.conditions).size()) -> 0;
+    (offset >= row.conditions.size()) -> 0;
     _ -> {
       let arrangements = 0;
-      let damageWidth = (row.damaged).get(damagedIndex);
+      let damageWidth = row.damaged.get(damagedIndex);
       let valid = isValidPlacement(row.conditions, row.damageTotal, offset, damageWidth);
       let _ = case {
         valid -> {
@@ -152,7 +152,7 @@ let countArrangementsRec = (cache: Array<i32>, row: Row, offset: i32, damagedInd
           let nextDamagedIndex = (damagedIndex + 1);
           let nextOffset = (offset + (damageWidth + 1));
           let _ = case {
-            (nextDamagedIndex < (row.damaged).size()) -> {
+            (nextDamagedIndex < row.damaged.size()) -> {
               let newRow = Row.New({
                 conditions: nextConditions,
                 damaged: row.damaged,

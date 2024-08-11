@@ -127,7 +127,7 @@ let connectionsToWalls = (connections: Connections): List<List<i32>> -> {
 }
 
 let getConnections = (pipes: Pipes, p: Vec2<i32>): Connections -> {
-  ((pipes.grid).get(p.y)).get(p.x)
+  (pipes.grid.get(p.y)).get(p.x)
 }
 
 let pointsContain = (points: List<Vec2<i32>>, point: Vec2<i32>): boolean -> {
@@ -291,7 +291,7 @@ let _solvePart2 = (input: String): String -> {
     while (x < pipesSize.x) {
       let lx = ((x * 3) + 1);
       let ly = ((y * 3) + 1);
-      let lv = ((lake.walls).get(ly)).get(lx);
+      let lv = (lake.walls.get(ly)).get(lx);
       let _ = case {
         (lv == 0) -> {
           result = (result + 1);

@@ -126,7 +126,7 @@ let propagate = (grid: Grid, position: Vec2<i32>, direction: Direction): boolean
     (position.x >= size.x) -> false;
     (position.y >= size.y) -> false;
     _ -> {
-      let energizedRow = (grid.energized).get(position.y);
+      let energizedRow = grid.energized.get(position.y);
       let currentEnergizedDirections = energizedRow.get(position.x);
       let isSameDirection = false;
 
@@ -144,7 +144,7 @@ let propagate = (grid: Grid, position: Vec2<i32>, direction: Direction): boolean
         _ -> {
           energizedRow.set(position.x, [...currentEnergizedDirections, direction]);
 
-          let tile = ((grid.tiles).get(position.y)).get(position.x);
+          let tile = (grid.tiles.get(position.y)).get(position.x);
           let directionVec = directionToVec2(direction);
           let _ = match tile {
             Empty -> {

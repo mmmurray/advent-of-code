@@ -68,7 +68,7 @@ let parseInputLine = (line: String): Game -> {
 }
 
 let parseInput = (input: String): List<Game> -> {
-  let lines = (input).toLines();
+  let lines = input.toLines();
   let games = [];
 
   for line in lines {

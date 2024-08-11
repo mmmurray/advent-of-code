@@ -137,9 +137,9 @@ let solvePart2 = (input: String): String -> {
   let orderedDirections = [directionEast(), directionSouth(), directionWest(), directionNorth()];
 
   for planStep in planSteps {
-    let distanceHex = (planStep.color).slice(2, 7);
-    let distance = (("0x").concat(distanceHex.toUpper())).toI64();
-    let directionNum = ((planStep.color).get(7) - '0');
+    let distanceHex = planStep.color.slice(2, 7);
+    let distance = ("0x".concat(distanceHex.toUpper())).toI64();
+    let directionNum = (planStep.color.get(7) - '0');
 
     steps.push(Step.New({ direction: orderedDirections.get(directionNum), distance: distance }));
   }
