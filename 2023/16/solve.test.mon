@@ -87,10 +87,10 @@ let gridClone = (grid: Grid): Grid -> {
 
 let parseTile = (char: i32): Tile -> {
   case {
-    (char == '/') -> Tile.ReflectForward({});
-    (char == '\\') -> Tile.ReflectBackward({});
-    (char == '-') -> Tile.SplitHorizontal({});
-    (char == '|') -> Tile.SplitVertical({});
+    char == '/' -> Tile.ReflectForward({});
+    char == '\\' -> Tile.ReflectBackward({});
+    char == '-' -> Tile.SplitHorizontal({});
+    char == '|' -> Tile.SplitVertical({});
     _ -> Tile.Empty({});
   }
 }
@@ -121,10 +121,10 @@ let propagate = (grid: Grid, position: Vec2<i32>, direction: Direction): boolean
   let size = grid.size;
 
   case {
-    (position.x < 0) -> false;
-    (position.y < 0) -> false;
-    (position.x >= size.x) -> false;
-    (position.y >= size.y) -> false;
+    position.x < 0 -> false;
+    position.y < 0 -> false;
+    position.x >= size.x -> false;
+    position.y >= size.y -> false;
     _ -> {
       let energizedRow = grid.energized.get(position.y);
       let currentEnergizedDirections = energizedRow.get(position.x);
@@ -237,8 +237,8 @@ let countEnergized = (grid: Grid, startPosition: Vec2<i32>, startDirection: Dire
   for row in newGrid.energized {
     for col in row {
       let _ = case {
-        (col.size() > 0) -> {
-          total = (total + 1);
+        col.size() > 0 -> {
+          total = total + 1;
         };
         _ -> {};
       };
@@ -261,12 +261,12 @@ let solvePart2 = (input: String): String -> {
   let result = 0;
   let offset = 0;
 
-  while (offset < size.x) {
+  while offset < size.x {
     result = max(result, countEnergized(grid, Vec2.New({ x: offset, y: 0 }), directionSouth()));
-    result = max(result, countEnergized(grid, Vec2.New({ x: offset, y: (size.y - 1) }), directionNorth()));
+    result = max(result, countEnergized(grid, Vec2.New({ x: offset, y: size.y - 1 }), directionNorth()));
     result = max(result, countEnergized(grid, Vec2.New({ x: 0, y: offset }), directionEast()));
-    result = max(result, countEnergized(grid, Vec2.New({ x: (size.x - 1), y: offset }), directionWest()));
-    offset = (offset + 1);
+    result = max(result, countEnergized(grid, Vec2.New({ x: size.x - 1, y: offset }), directionWest()));
+    offset = offset + 1;
   }
 
   stringFromNumber(result)

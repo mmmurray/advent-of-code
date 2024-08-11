@@ -45,10 +45,10 @@ let parseDirection = (input: String): Direction -> {
   let char = input.get(0);
 
   case {
-    (char == 'U') -> directionNorth();
-    (char == 'R') -> directionEast();
-    (char == 'D') -> directionSouth();
-    (char == 'L') -> directionWest();
+    char == 'U' -> directionNorth();
+    char == 'R' -> directionEast();
+    char == 'D' -> directionSouth();
+    char == 'L' -> directionWest();
     _ -> directionNorth();
   }
 }
@@ -102,20 +102,20 @@ let calculateAreaFromSteps = (steps: List<Step>): i64 -> {
   let position = initialPosition;
 
   for step in steps {
-    borderPoints = (borderPoints + step.distance);
+    borderPoints = borderPoints + step.distance;
 
     let delta = vec2Scale(step.distance, directionToVec2(step.direction));
     let nextPosition = vec2Add(position, delta);
 
-    shoelaceArea = (shoelaceArea + mat2Determinant(Mat2.New({ a: position.x, b: nextPosition.x, c: position.y, d: nextPosition.y })));
+    shoelaceArea = shoelaceArea + mat2Determinant(Mat2.New({ a: position.x, b: nextPosition.x, c: position.y, d: nextPosition.y }));
     position = nextPosition;
   }
 
-  shoelaceArea = (shoelaceArea + mat2Determinant(Mat2.New({ a: position.x, b: initialPosition.x, c: position.y, d: initialPosition.y })));
+  shoelaceArea = shoelaceArea + mat2Determinant(Mat2.New({ a: position.x, b: initialPosition.x, c: position.y, d: initialPosition.y }));
 
-  let area = (shoelaceArea / 2);
+  let area = shoelaceArea / 2;
 
-  ((area + (borderPoints / 2)) + 1)
+  (area + (borderPoints / 2)) + 1
 }
 
 let solvePart1 = (input: String): String -> {
@@ -139,7 +139,7 @@ let solvePart2 = (input: String): String -> {
   for planStep in planSteps {
     let distanceHex = planStep.color.slice(2, 7);
     let distance = ("0x".concat(distanceHex.toUpper())).toI64();
-    let directionNum = (planStep.color.get(7) - '0');
+    let directionNum = planStep.color.get(7) - '0';
 
     steps.push(Step.New({ direction: orderedDirections.get(directionNum), distance: distance }));
   }

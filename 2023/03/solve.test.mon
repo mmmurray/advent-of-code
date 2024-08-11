@@ -28,10 +28,10 @@ let parseInput = (input: String): Schematic -> {
   for line, lineIndex in lines {
     let charIndex = 0;
 
-    while (charIndex < line.size()) {
+    while charIndex < line.size() {
       let char = line.get(charIndex);
       let _ = case {
-        (char != '.') -> {
+        char != '.' -> {
           let _ = case {
             charIsNumeric(char) -> {
               let length = 0;
@@ -39,14 +39,14 @@ let parseInput = (input: String): Schematic -> {
               let location = Vec2.New({ x: charIndex, y: lineIndex });
               let loop = true;
 
-              while (loop && (charIndex < line.size())) {
+              while loop && (charIndex < line.size()) {
                 char = line.get(charIndex);
 
                 let _ = case {
                   charIsNumeric(char) -> {
-                    value = ((value * 10) + (char - '0'));
-                    length = (1 + length);
-                    charIndex = (charIndex + 1);
+                    value = (value * 10) + (char - '0');
+                    length = 1 + length;
+                    charIndex = charIndex + 1;
                   };
                   _ -> {
                     loop = false;
@@ -58,7 +58,7 @@ let parseInput = (input: String): Schematic -> {
 
               schematic.numbers.push(number);
 
-              charIndex = (charIndex - 1);
+              charIndex = charIndex - 1;
             };
             _ -> {
               let symbol = SchematicSymbol.New({
@@ -73,7 +73,7 @@ let parseInput = (input: String): Schematic -> {
         _ -> {};
       };
 
-      charIndex = (charIndex + 1);
+      charIndex = charIndex + 1;
     }
   }
 
@@ -88,7 +88,7 @@ let solvePart1 = (input: String): String -> {
     let offsetX = 0;
     let loop = true;
 
-    while (loop && (offsetX < number.length)) {
+    while loop && (offsetX < number.length) {
       let offset = Vec2.New({ x: offsetX, y: 0 });
       let position = vec2Add(number.location, offset);
       let found = false;
@@ -104,11 +104,11 @@ let solvePart1 = (input: String): String -> {
 
       let _ = case {
         found -> {
-          result = (result + number.value);
+          result = result + number.value;
           loop = false;
         };
         _ -> {
-          offsetX = (offsetX + 1);
+          offsetX = offsetX + 1;
         };
       };
     }
@@ -123,7 +123,7 @@ let solvePart2 = (input: String): String -> {
 
   for symbol in schematic.symbols {
     let _ = case {
-      (symbol.value == '*') -> {
+      symbol.value == '*' -> {
         let adjacentCount = 0;
         let adjacentProduct = 1;
 
@@ -132,7 +132,7 @@ let solvePart2 = (input: String): String -> {
           let offsetX = 0;
           let loop = true;
 
-          while (loop && (offsetX < number.length)) {
+          while loop && (offsetX < number.length) {
             let offset = Vec2.New({ x: offsetX, y: 0 });
             let position = vec2Add(number.location, offset);
             let _ = case {
@@ -141,23 +141,23 @@ let solvePart2 = (input: String): String -> {
                 loop = false;
               };
               _ -> {
-                offsetX = (offsetX + 1);
+                offsetX = offsetX + 1;
               };
             };
           }
 
           let _ = case {
             adjacent -> {
-              adjacentCount = (adjacentCount + 1);
-              adjacentProduct = (adjacentProduct * number.value);
+              adjacentCount = adjacentCount + 1;
+              adjacentProduct = adjacentProduct * number.value;
             };
             _ -> {};
           };
         }
 
         let _ = case {
-          (adjacentCount == 2) -> {
-            result = (result + adjacentProduct);
+          adjacentCount == 2 -> {
+            result = result + adjacentProduct;
           };
           _ -> {};
         };

@@ -61,7 +61,7 @@ let parseInputLine = (line: String): Game -> {
 
     selections.push(selection);
 
-    selectionIndex = (selectionIndex + 1);
+    selectionIndex = selectionIndex + 1;
   }
 
   Game.New({ id: id, selections: selections })
@@ -89,7 +89,7 @@ let solvePart1 = (input: String): String -> {
 
     for selection in game.selections {
       let _ = case {
-        ((selection.red > 12) || ((selection.green > 13) || (selection.blue > 14))) -> {
+        (selection.red > 12) || ((selection.green > 13) || (selection.blue > 14)) -> {
           possible = false;
         };
         _ -> {};
@@ -98,7 +98,7 @@ let solvePart1 = (input: String): String -> {
 
     let _ = case {
       possible -> {
-        result = (result + game.id);
+        result = result + game.id;
       };
       _ -> {};
     };
@@ -120,9 +120,9 @@ let solvePart2 = (input: String): String -> {
       minSelection.blue = max(minSelection.blue, selection.blue);
     }
 
-    let power = (minSelection.red * (minSelection.blue * minSelection.green));
+    let power = minSelection.red * (minSelection.blue * minSelection.green);
 
-    result = (result + power);
+    result = result + power;
   }
 
   stringFromNumber(result)

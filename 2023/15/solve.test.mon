@@ -22,7 +22,7 @@ let parseOperation = (input: String): Operation -> {
   let lastChar = input.get((input.size() - 1));
 
   case {
-    (lastChar == '-') -> {
+    lastChar == '-' -> {
       let label = input.slice(0, (input.size() - 1));
 
       Operation.Remove({ label: label })
@@ -52,7 +52,7 @@ let hash = (value: String): i32 -> {
   let result = 0;
 
   for char in value.toList() {
-    result = (((result + char) * 17) % 256);
+    result = ((result + char) * 17) % 256;
   }
 
   result
@@ -63,7 +63,7 @@ let solvePart1 = (input: String): String -> {
   let result = 0;
 
   for step in sequence {
-    result = (result + hash(step.raw));
+    result = result + hash(step.raw);
   }
 
   stringFromNumber(result)
@@ -133,7 +133,7 @@ let solvePart2 = (input: String): String -> {
         }
 
         let _ = case {
-          (removeIndex >= 0) -> {
+          removeIndex >= 0 -> {
             box.lenses.remove(removeIndex);
           };
           _ -> {};
@@ -144,9 +144,9 @@ let solvePart2 = (input: String): String -> {
 
   for box, boxIndex in listFromArray(boxes) {
     for lens, lensIndex in box.lenses {
-      let focussingPower = ((boxIndex + 1) * ((lensIndex + 1) * lens.focalLength));
+      let focussingPower = (boxIndex + 1) * ((lensIndex + 1) * lens.focalLength);
 
-      result = (result + focussingPower);
+      result = result + focussingPower;
     }
   }
 

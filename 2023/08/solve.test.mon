@@ -25,7 +25,7 @@ let parseInput = (input: String): Network -> {
   for char in instructionsLine.toList() {
     let instruction = false;
     let _ = case {
-      (char == 'L') -> {
+      char == 'L' -> {
         instruction = true;
       };
       _ -> {};
@@ -71,11 +71,11 @@ let countSteps = (network: Network, start: String): u64 -> {
       None -> print("Node not found");
     };
 
-    instructionIndex = ((instructionIndex + 1) % network.instructions.size());
-    steps = (steps + 1);
+    instructionIndex = (instructionIndex + 1) % network.instructions.size();
+    steps = steps + 1;
 
     let _ = case {
-      (current.get(2) == 'Z') -> {
+      current.get(2) == 'Z' -> {
         loop = false;
       };
       _ -> {};
@@ -99,7 +99,7 @@ let solvePart2 = (input: String): String -> {
 
   for item in nodes.entries() {
     let _ = case {
-      (item.key.get(2) == 'A') -> {
+      item.key.get(2) == 'A' -> {
         allSteps.push(countSteps(network, item.key));
       };
       _ -> {};

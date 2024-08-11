@@ -16,7 +16,7 @@ let isFiveOfAKind = (countByCard: Map<String, i32>): boolean -> {
 
   for item1 in countByCard.entries() {
     let _ = case {
-      (item1.value == 5) -> {
+      item1.value == 5 -> {
         result = true;
       };
       _ -> {};
@@ -31,7 +31,7 @@ let isFourOfAKind = (countByCard: Map<String, i32>): boolean -> {
 
   for item1 in countByCard.entries() {
     let _ = case {
-      (item1.value == 4) -> {
+      item1.value == 4 -> {
         result = true;
       };
       _ -> {};
@@ -46,7 +46,7 @@ let isThreeOfAKind = (countByCard: Map<String, i32>): boolean -> {
 
   for item1 in countByCard.entries() {
     let _ = case {
-      (item1.value == 3) -> {
+      item1.value == 3 -> {
         result = true;
       };
       _ -> {};
@@ -57,15 +57,15 @@ let isThreeOfAKind = (countByCard: Map<String, i32>): boolean -> {
 }
 
 let isFullHouse = (countByCard: Map<String, i32>): boolean -> {
-  (countByCard.size() == 2)
+  countByCard.size() == 2
 }
 
 let isTwoPair = (countByCard: Map<String, i32>): boolean -> {
-  (countByCard.size() == 3)
+  countByCard.size() == 3
 }
 
 let isOnePair = (countByCard: Map<String, i32>): boolean -> {
-  (countByCard.size() == 4)
+  countByCard.size() == 4
 }
 
 let scoreCards = (cards: List<i32>): i32 -> {
@@ -74,8 +74,8 @@ let scoreCards = (cards: List<i32>): i32 -> {
 
   for card in cards {
     let _ = case {
-      (card == 1) -> {
-        jokers = (jokers + 1);
+      card == 1 -> {
+        jokers = jokers + 1;
       };
       _ -> {
         let key = stringFromNumber(card);
@@ -91,7 +91,7 @@ let scoreCards = (cards: List<i32>): i32 -> {
 
   for item0 in countByCard.entries() {
     let _ = case {
-      (item0.value > maxCount) -> {
+      item0.value > maxCount -> {
         maxCount = item0.value;
         maxCard = item0.key;
       };
@@ -127,25 +127,25 @@ let parseInput = (input: String, jokers: boolean): List<Hand> -> {
     for cardChar in cardsPart.toList() {
       let card = 0;
       let _ = case {
-        (cardChar == 'A') -> {
+        cardChar == 'A' -> {
           card = 14;
         };
         _ -> {};
       };
       let _ = case {
-        (cardChar == 'K') -> {
+        cardChar == 'K' -> {
           card = 13;
         };
         _ -> {};
       };
       let _ = case {
-        (cardChar == 'Q') -> {
+        cardChar == 'Q' -> {
           card = 12;
         };
         _ -> {};
       };
       let _ = case {
-        (cardChar == 'J') -> {
+        cardChar == 'J' -> {
           let _ = case {
             jokers -> {
               card = 1;
@@ -158,14 +158,14 @@ let parseInput = (input: String, jokers: boolean): List<Hand> -> {
         _ -> {};
       };
       let _ = case {
-        (cardChar == 'T') -> {
+        cardChar == 'T' -> {
           card = 10;
         };
         _ -> {};
       };
       let _ = case {
         charIsNumeric(cardChar) -> {
-          card = (cardChar - '0');
+          card = cardChar - '0';
         };
         _ -> {};
       };
@@ -183,7 +183,7 @@ let parseInput = (input: String, jokers: boolean): List<Hand> -> {
 
 let compareHands = (a: Hand, b: Hand): boolean -> {
   case {
-    (a.score == b.score) -> {
+    a.score == b.score -> {
       let result = false;
       let loop = true;
 
@@ -192,8 +192,8 @@ let compareHands = (a: Hand, b: Hand): boolean -> {
           loop -> {
             let cardB = b.cards.get(cardIndex);
             let _ = case {
-              (cardA != cardB) -> {
-                result = (cardA > cardB);
+              cardA != cardB -> {
+                result = cardA > cardB;
                 loop = false;
               };
               _ -> {};
@@ -205,17 +205,17 @@ let compareHands = (a: Hand, b: Hand): boolean -> {
 
       result
     };
-    _ -> (a.score > b.score);
+    _ -> a.score > b.score;
   }
 }
 
 let sortHands = (hands: List<Hand>): List<Hand> -> {
-  let endIndex = (hands.size() - 1);
+  let endIndex = hands.size() - 1;
 
-  while (endIndex > 0) {
+  while endIndex > 0 {
     let index = 0;
 
-    while (index < endIndex) {
+    while index < endIndex {
       let a = hands.get(index);
       let b = hands.get((index + 1));
       let _ = case {
@@ -226,10 +226,10 @@ let sortHands = (hands: List<Hand>): List<Hand> -> {
         _ -> {};
       };
 
-      index = (index + 1);
+      index = index + 1;
     }
 
-    endIndex = (endIndex - 1);
+    endIndex = endIndex - 1;
   }
 
   hands
@@ -239,9 +239,9 @@ let scoreHands = (hands: List<Hand>): i32 -> {
   let result = 0;
 
   for hand, handIndex in hands {
-    let rank = (handIndex + 1);
+    let rank = handIndex + 1;
 
-    result = (result + (rank * hand.bid));
+    result = result + (rank * hand.bid);
   }
 
   result

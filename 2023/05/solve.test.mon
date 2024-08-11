@@ -49,14 +49,14 @@ let parseInput = (input: String): Almanac -> {
 
   for mappingLine in mappingLines {
     let _ = case {
-      (mappingLine.size() == 0) -> {
+      mappingLine.size() == 0 -> {
         almanac.categories.push(category);
 
         category = AlmanacCategory.New({ mappings: [] });
       };
       _ -> {
         let _ = case {
-          (mappingLine.get((mappingLine.size() - 1)) != ':') -> {
+          mappingLine.get((mappingLine.size() - 1)) != ':' -> {
             let values = parseNumberList(mappingLine);
             let destinationStart = values.get(0);
             let sourceStart = values.get(1);
@@ -82,26 +82,26 @@ let parseInput = (input: String): Almanac -> {
 
 let sortAlmanacMappings = (almanac: Almanac): Almanac -> {
   for category in almanac.categories {
-    let endIndex = (category.mappings.size() - 1);
+    let endIndex = category.mappings.size() - 1;
 
-    while (endIndex > 0) {
+    while endIndex > 0 {
       let index = 0;
 
-      while (index < endIndex) {
+      while index < endIndex {
         let a = category.mappings.get(index);
         let b = category.mappings.get((index + 1));
         let _ = case {
-          (a.sourceStart > b.sourceStart) -> {
+          a.sourceStart > b.sourceStart -> {
             category.mappings.set(index, b);
             category.mappings.set((index + 1), a);
           };
           _ -> {};
         };
 
-        index = (index + 1);
+        index = index + 1;
       }
 
-      endIndex = (endIndex - 1);
+      endIndex = endIndex - 1;
     }
   }
 
@@ -115,8 +115,8 @@ let mapPositionToLocation = (almanac: Almanac, position: u64): u64 -> {
   for category in almanac.categories {
     for mapping in category.mappings {
       let _ = case {
-        (loop && ((value >= mapping.sourceStart) && (value < (mapping.sourceStart + mapping.rangeLength)))) -> {
-          value = (value + mapping.offset);
+        loop && ((value >= mapping.sourceStart) && (value < (mapping.sourceStart + mapping.rangeLength))) -> {
+          value = value + mapping.offset;
           loop = false;
         };
         _ -> {};
@@ -135,7 +135,7 @@ let mapRangeToLocationInCategory = (category: AlmanacCategory, range: Range<u64>
   let position = positionMin;
   let mappingIndex = 0;
 
-  while (mappingIndex < category.mappings.size()) {
+  while mappingIndex < category.mappings.size() {
     let mapping = category.mappings.get(mappingIndex);
     let mappingRange = mapping.sourceRange;
     let intersectionBefore = rangeIntersect(range, rangeCreate(position, mappingRange.start));
@@ -154,7 +154,7 @@ let mapRangeToLocationInCategory = (category: AlmanacCategory, range: Range<u64>
     };
 
     position = mappingRange.end;
-    mappingIndex = (mappingIndex + 1);
+    mappingIndex = mappingIndex + 1;
   }
 
   let intersectionAfter = rangeIntersect(range, rangeCreate(position, positionMax));
@@ -205,9 +205,9 @@ let solvePart2 = (input: String): String -> {
 
   for seedStart, seedIndex in almanac.seeds {
     let _ = case {
-      ((seedIndex % 2) == 0) -> {
+      (seedIndex % 2) == 0 -> {
         let seedCount = almanac.seeds.get((seedIndex + 1));
-        let seedEnd = (seedStart + seedCount);
+        let seedEnd = seedStart + seedCount;
 
         ranges.push(rangeCreate(seedStart, seedEnd));
       };

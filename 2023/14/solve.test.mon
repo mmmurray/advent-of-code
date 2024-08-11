@@ -33,18 +33,18 @@ let tiltColumn = (col: List<i32>): List<i32> -> {
 
   for tile, colIndex in col {
     let _ = case {
-      (tile == '#') -> {
-        nextFreeIndex = (colIndex + 1);
+      tile == '#' -> {
+        nextFreeIndex = colIndex + 1;
 
         newCol.set(colIndex, '#');
       };
       _ -> {
         let _ = case {
-          (tile == 'O') -> {
+          tile == 'O' -> {
             newCol.set(colIndex, '.');
             newCol.set(nextFreeIndex, 'O');
 
-            nextFreeIndex = (nextFreeIndex + 1);
+            nextFreeIndex = nextFreeIndex + 1;
           };
           _ -> {
             newCol.set(colIndex, '.');
@@ -74,8 +74,8 @@ let calculateLoad = (grid: Grid): i32 -> {
   for col in grid.cols {
     for tile, rowIndex in col {
       let _ = case {
-        (tile == 'O') -> {
-          totalLoad = (totalLoad + (size.y - rowIndex));
+        tile == 'O' -> {
+          totalLoad = totalLoad + (size.y - rowIndex);
         };
         _ -> {};
       };
@@ -88,9 +88,9 @@ let calculateLoad = (grid: Grid): i32 -> {
 let rotateGridClockwise = (grid: Grid): Grid -> {
   let newCols = [];
   let size = grid.size;
-  let rowIndex = (size.y - 1);
+  let rowIndex = size.y - 1;
 
-  while (rowIndex >= 0) {
+  while rowIndex >= 0 {
     let newCol = [];
 
     for col, colIndex in grid.cols {
@@ -99,7 +99,7 @@ let rotateGridClockwise = (grid: Grid): Grid -> {
 
     newCols.push(newCol);
 
-    rowIndex = (rowIndex - 1);
+    rowIndex = rowIndex - 1;
   }
 
   Grid.New({ size: size, cols: newCols })
@@ -124,7 +124,7 @@ let areColsEqual = (a: List<i32>, b: List<i32>): boolean -> {
   for v1, i in a {
     let v2 = b.get(i);
     let _ = case {
-      (v1 != v2) -> {
+      v1 != v2 -> {
         result = false;
       };
       _ -> {};
@@ -165,7 +165,7 @@ let solvePart2 = (input: String): String -> {
   let cycleOffset = --(1);
   let i = 0;
 
-  while ((cycleOffset < 0) && (i < totalCycles)) {
+  while (cycleOffset < 0) && (i < totalCycles) {
     grid = performSpinCycle(grid);
 
     for otherGrid, otherGridIndex in grids {
@@ -178,17 +178,17 @@ let solvePart2 = (input: String): String -> {
     }
 
     let _ = case {
-      (cycleOffset < 0) -> {
+      cycleOffset < 0 -> {
         grids.push(grid);
 
-        i = (i + 1);
+        i = i + 1;
       };
       _ -> {};
     };
   }
 
-  let cycleLength = (grids.size() - cycleOffset);
-  let gridIndex = (cycleOffset + (((totalCycles - 1) - cycleOffset) % cycleLength));
+  let cycleLength = grids.size() - cycleOffset;
+  let gridIndex = cycleOffset + (((totalCycles - 1) - cycleOffset) % cycleLength);
   let result = calculateLoad(grids.get(gridIndex));
 
   stringFromNumber(result)

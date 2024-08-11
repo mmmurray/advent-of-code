@@ -27,7 +27,7 @@ let parseRow = (line: String): Row -> {
 
     damaged.push(damage);
 
-    damageTotal = (damageTotal + damage);
+    damageTotal = damageTotal + damage;
   }
 
   Row.New({ conditions: conditions, damaged: damaged, damageTotal: damageTotal })
@@ -61,19 +61,19 @@ let placeDamage = (conditions: List<i32>, offset: i32, width: i32): List<i32> ->
 
   for condition, index in conditions {
     let _ = case {
-      (condition == '?') -> {
+      condition == '?' -> {
         newConditions.set(index, '.');
       };
       _ -> {};
     };
     let _ = case {
-      (index >= offset) -> {
+      index >= offset -> {
         newConditions.set(index, '#');
       };
       _ -> {};
     };
     let _ = case {
-      (index >= (offset + width)) -> {
+      index >= (offset + width) -> {
         newConditions.set(index, conditions.get(index));
       };
       _ -> {};
@@ -88,7 +88,7 @@ let conditionsContainDot = (conditions: List<i32>): boolean -> {
 
   for condition in conditions {
     let _ = case {
-      (condition == '.') -> {
+      condition == '.' -> {
         result = true;
       };
       _ -> {};
@@ -99,27 +99,27 @@ let conditionsContainDot = (conditions: List<i32>): boolean -> {
 }
 
 let isValidPlacement = (conditions: List<i32>, maxDamage: i32, offset: i32, width: i32): boolean -> {
-  let prevIndex = (offset - 1);
-  let nextIndex = (offset + width);
+  let prevIndex = offset - 1;
+  let nextIndex = offset + width;
 
   case {
-    ((offset + width) > conditions.size()) -> false;
+    (offset + width) > conditions.size() -> false;
     conditionsContainDot(conditions.slice(offset, (offset + width))) -> false;
-    ((prevIndex >= 0) && (conditions.get(prevIndex) == '#')) -> false;
-    ((nextIndex < (conditions.size() - 1)) && (conditions.get(nextIndex) == '#')) -> false;
+    (prevIndex >= 0) && (conditions.get(prevIndex) == '#') -> false;
+    (nextIndex < (conditions.size() - 1)) && (conditions.get(nextIndex) == '#') -> false;
     _ -> {
       let damageTotal = 0;
 
       for condition2 in placeDamage(conditions, offset, width) {
         let _ = case {
-          (condition2 == '#') -> {
-            damageTotal = (damageTotal + 1);
+          condition2 == '#' -> {
+            damageTotal = damageTotal + 1;
           };
           _ -> {};
         };
       }
 
-      (damageTotal <= maxDamage)
+      damageTotal <= maxDamage
     };
   }
 }
@@ -129,19 +129,19 @@ let countArrangementsRec = (cache: Array<i32>, row: Row, offset: i32, damagedInd
 
   for condition2 in row.conditions {
     let _ = case {
-      (condition2 == '#') -> {
-        damageTotal = (damageTotal + 1);
+      condition2 == '#' -> {
+        damageTotal = damageTotal + 1;
       };
       _ -> {};
     };
   }
 
-  let cacheKey = (damagedIndex + ((cacheSpacing() * offset) + (damageTotal * (cacheSpacing() * cacheSpacing()))));
+  let cacheKey = damagedIndex + ((cacheSpacing() * offset) + (damageTotal * (cacheSpacing() * cacheSpacing())));
   let cached = arrayGet(cache, cacheKey);
 
   case {
-    (cached >= 0) -> cached;
-    (offset >= row.conditions.size()) -> 0;
+    cached >= 0 -> cached;
+    offset >= row.conditions.size() -> 0;
     _ -> {
       let arrangements = 0;
       let damageWidth = row.damaged.get(damagedIndex);
@@ -149,27 +149,27 @@ let countArrangementsRec = (cache: Array<i32>, row: Row, offset: i32, damagedInd
       let _ = case {
         valid -> {
           let nextConditions = placeDamage(row.conditions, offset, damageWidth);
-          let nextDamagedIndex = (damagedIndex + 1);
-          let nextOffset = (offset + (damageWidth + 1));
+          let nextDamagedIndex = damagedIndex + 1;
+          let nextOffset = offset + (damageWidth + 1);
           let _ = case {
-            (nextDamagedIndex < row.damaged.size()) -> {
+            nextDamagedIndex < row.damaged.size() -> {
               let newRow = Row.New({
                 conditions: nextConditions,
                 damaged: row.damaged,
                 damageTotal: row.damageTotal,
               });
 
-              arrangements = (arrangements + countArrangementsRec(cache, newRow, nextOffset, nextDamagedIndex));
+              arrangements = arrangements + countArrangementsRec(cache, newRow, nextOffset, nextDamagedIndex);
             };
             _ -> {
-              arrangements = (arrangements + 1);
+              arrangements = arrangements + 1;
             };
           };
         };
         _ -> {};
       };
 
-      arrangements = (arrangements + countArrangementsRec(cache, row, (offset + 1), damagedIndex));
+      arrangements = arrangements + countArrangementsRec(cache, row, (offset + 1), damagedIndex);
 
       arraySet(cache, cacheKey, arrangements);
 
@@ -237,7 +237,7 @@ let solvePart1 = (input: String): String -> {
   let result = 0;
 
   for row in rows {
-    result = (result + countArrangements(row));
+    result = result + countArrangements(row);
   }
 
   stringFromNumber(result)
@@ -248,7 +248,7 @@ let _solvePart2 = (input: String): String -> {
   let result = 0;
 
   for row in rows {
-    result = (result + countArrangements(row));
+    result = result + countArrangements(row);
   }
 
   stringFromNumber(result)

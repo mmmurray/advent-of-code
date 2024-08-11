@@ -123,7 +123,7 @@ let parseInput = (input: String): System -> {
 
   for line in lines {
     let _ = case {
-      (line.size() == 0) -> {
+      line.size() == 0 -> {
         inWorkflowsSection = false;
       };
       _ -> {
@@ -156,7 +156,7 @@ let _printSystem = (system: System): unit -> {
 
     for step, stepIndex in workflow.steps {
       let _ = case {
-        (stepIndex > 0) -> {
+        stepIndex > 0 -> {
           out.append(",");
         };
         _ -> {};
@@ -197,15 +197,15 @@ let _printSystem = (system: System): unit -> {
 
 let doesConditionApply = (condition: Condition, rating: Rating): boolean -> {
   let propertyValue = case {
-    (condition.property == 'x') -> rating.x;
-    (condition.property == 'm') -> rating.m;
-    (condition.property == 'a') -> rating.a;
+    condition.property == 'x' -> rating.x;
+    condition.property == 'm' -> rating.m;
+    condition.property == 'a' -> rating.a;
     _ -> rating.s;
   };
 
   case {
-    (condition.operator == '>') -> (propertyValue > condition.value);
-    _ -> (propertyValue < condition.value);
+    condition.operator == '>' -> propertyValue > condition.value;
+    _ -> propertyValue < condition.value;
   }
 }
 
@@ -278,9 +278,9 @@ let solvePart1 = (input: String): String -> {
   for rating in system.ratings {
     let _ = case {
       isPartAccepted(system.workflows, rating) -> {
-        let sum = (rating.x + (rating.m + (rating.a + rating.s)));
+        let sum = rating.x + (rating.m + (rating.a + rating.s));
 
-        result = (result + sum);
+        result = result + sum;
       };
       _ -> {};
     };

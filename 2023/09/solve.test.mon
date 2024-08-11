@@ -28,9 +28,9 @@ let findDeltas = (sequence: List<i32>): List<i32> -> {
 
   for b, index in sequence {
     let _ = case {
-      (index > 0) -> {
+      index > 0 -> {
         let a = sequence.get((index - 1));
-        let delta = (b - a);
+        let delta = b - a;
 
         deltas.push(delta);
       };
@@ -46,7 +46,7 @@ let isSequenceAllZero = (sequence: List<i32>): boolean -> {
 
   for value in sequence {
     let _ = case {
-      (value != 0) -> {
+      value != 0 -> {
         allZero = false;
       };
       _ -> {};
@@ -62,7 +62,7 @@ let findNextValue = (sequence: List<i32>): i32 -> {
     _ -> {
       let lastValue = sequence.get((sequence.size() - 1));
 
-      (lastValue + findNextValue(findDeltas(sequence)))
+      lastValue + findNextValue(findDeltas(sequence))
     };
   }
 }
@@ -73,7 +73,7 @@ let findPreviousValue = (sequence: List<i32>): i32 -> {
     _ -> {
       let firstValue = sequence.get(0);
 
-      (firstValue - findPreviousValue(findDeltas(sequence)))
+      firstValue - findPreviousValue(findDeltas(sequence))
     };
   }
 }
@@ -85,7 +85,7 @@ let solvePart1 = (input: String): String -> {
   for sequence in sequences {
     let nextValue = findNextValue(sequence);
 
-    result = (result + nextValue);
+    result = result + nextValue;
   }
 
   stringFromNumber(result)
@@ -98,7 +98,7 @@ let solvePart2 = (input: String): String -> {
   for sequence in sequences {
     let previousValue = findPreviousValue(sequence);
 
-    result = (result + previousValue);
+    result = result + previousValue;
   }
 
   stringFromNumber(result)
