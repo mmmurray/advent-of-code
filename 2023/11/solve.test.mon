@@ -12,13 +12,13 @@ data Universe = {
 let parseInput = (input: String): Universe -> {
   let lines = (input.trim()).toLines();
   let galaxies = [];
-  let size = Vec2.New({ x: (@i64 (lines.get(0)).size()), y: (@i64 lines.size()) });
+  let size = Vec2.New({ x: $i64((lines.get(0)).size()), y: $i64(lines.size()) });
 
   for line, y in lines {
     for char, x in line.toList() {
       let _ = case {
         char == '#' -> {
-          let galaxy = Vec2.New({ x: (@i64 x), y: (@i64 y) });
+          let galaxy = Vec2.New({ x: $i64(x), y: $i64(y) });
 
           galaxies.push(galaxy);
         };
@@ -83,8 +83,8 @@ let expandUniverse = (universe: Universe, expansionRate: i64): Universe -> {
   }
 
   let newSize = Vec2.New({
-    x: (size.x + (((@i64 emptyCols.size()) * expansionRate) - 1)),
-    y: (size.y + (((@i64 emptyRows.size()) * expansionRate) - 1)),
+    x: (size.x + (($i64(emptyCols.size()) * expansionRate) - 1)),
+    y: (size.y + (($i64(emptyRows.size()) * expansionRate) - 1)),
   });
   let newGalaxies = [];
 

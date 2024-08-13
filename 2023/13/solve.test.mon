@@ -65,7 +65,7 @@ let getReflectionScore = (grid: Grid, notScore: i32): i32 -> {
         let valA = (grid.rows.get(row)).get(colA);
         let valB = (grid.rows.get(row)).get(colB);
         let _ = case {
-          (@i32 valA) != (@i32 valB) -> {
+          $i32(valA) != $i32(valB) -> {
             isReflection = false;
           };
           _ -> {};
@@ -114,7 +114,7 @@ let getReflectionScore = (grid: Grid, notScore: i32): i32 -> {
             let valA = (grid.rows.get(rowA)).get(col);
             let valB = (grid.rows.get(rowB)).get(col);
             let _ = case {
-              (@i32 valA) != (@i32 valB) -> {
+              $i32(valA) != $i32(valB) -> {
                 isReflection = false;
               };
               _ -> {};
