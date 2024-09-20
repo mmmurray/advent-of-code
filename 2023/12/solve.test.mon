@@ -4,11 +4,7 @@ import { List, listFromArray } from "@list";
 import { String, stringFromNumber } from "@string";
 import { getValue: getInput } from "./input.txt";
 
-data Row = {
-  conditions: List<i32>,
-  damaged: List<i32>,
-  damageTotal: i32,
-}
+data Row = { conditions: List<i32>, damageTotal: i32, damaged: List<i32> }
 
 let parseRow = (line: String): Row -> {
   let parts = line.splitBy(' ');

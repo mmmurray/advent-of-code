@@ -4,10 +4,7 @@ import { Vec2, min } from "@math";
 import { String, stringFromNumber } from "@string";
 import { getValue: getInput } from "./input.txt";
 
-data Grid = {
-  size: Vec2<i32>,
-  rows: List<List<boolean>>,
-}
+data Grid = { rows: List<List<boolean>>, size: Vec2<i32> }
 
 let parseInput = (input: String): List<Grid> -> {
   let grids = [];

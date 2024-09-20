@@ -4,10 +4,7 @@ import { Vec2, vec2Add, vec2ManhattanDistance } from "@math";
 import { String, stringFromNumber } from "@string";
 import { getValue: getInput } from "./input.txt";
 
-data Universe = {
-  size: Vec2<i64>,
-  galaxies: List<Vec2<i64>>,
-}
+data Universe = { galaxies: List<Vec2<i64>>, size: Vec2<i64> }
 
 let parseInput = (input: String): Universe -> {
   let lines = (input.trim()).toLines();

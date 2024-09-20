@@ -5,18 +5,18 @@ import { String, stringFromNumber } from "@string";
 import { getValue: getInput } from "./input.txt";
 
 data Direction =
-  | North {}
-  | East {}
-  | South {}
-  | West {}
+  | North
+  | East
+  | South
+  | West
 
-let directionNorth = (): Direction -> Direction.North({})
+let directionNorth = (): Direction -> Direction.North()
 
-let directionEast = (): Direction -> Direction.East({})
+let directionEast = (): Direction -> Direction.East()
 
-let directionSouth = (): Direction -> Direction.South({})
+let directionSouth = (): Direction -> Direction.South()
 
-let directionWest = (): Direction -> Direction.West({})
+let directionWest = (): Direction -> Direction.West()
 
 let vec2North = (): Vec2<i64> -> Vec2.New({ x: 0, y: --(1) })
 
@@ -35,11 +35,7 @@ let directionToVec2 = (direction: Direction): Vec2<i64> -> {
   }
 }
 
-data DigPlanStep = {
-  direction: Direction,
-  distance: i64,
-  color: String,
-}
+data DigPlanStep = { color: String, direction: Direction, distance: i64 }
 
 let parseDirection = (input: String): Direction -> {
   let char = input.get(0);
@@ -70,10 +66,7 @@ let parseInput = (input: String): List<DigPlanStep> -> {
   steps
 }
 
-data Step = {
-  direction: Direction,
-  distance: i64,
-}
+data Step = { direction: Direction, distance: i64 }
 
 let calculateAreaFromSteps = (steps: List<Step>): i64 -> {
   # Shoelace formula (https://en.wikipedia.org/wiki/Shoelace_formula#Example)

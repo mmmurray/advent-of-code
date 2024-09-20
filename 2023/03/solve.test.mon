@@ -5,21 +5,11 @@ import { Vec2, vec2Add, vec2IsAdjacent } from "@math";
 import { String, stringFromNumber } from "@string";
 import { getValue: getInput } from "./input.txt";
 
-data SchematicSymbol = {
-  location: Vec2<i32>,
-  value: i32,
-}
+data SchematicSymbol = { location: Vec2<i32>, value: i32 }
 
-data SchematicNumber = {
-  location: Vec2<i32>,
-  value: i32,
-  length: i32,
-}
+data SchematicNumber = { length: i32, location: Vec2<i32>, value: i32 }
 
-data Schematic = {
-  symbols: List<SchematicSymbol>,
-  numbers: List<SchematicNumber>,
-}
+data Schematic = { numbers: List<SchematicNumber>, symbols: List<SchematicSymbol> }
 
 let parseInput = (input: String): Schematic -> {
   let lines = input.toLines();

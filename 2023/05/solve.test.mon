@@ -4,22 +4,11 @@ import { Range, rangeCreate, rangeEmpty, rangeIntersect, rangeShift } from "@ran
 import { String, stringFromNumber } from "@string";
 import { getValue: getInput } from "./input.txt";
 
-data AlmanacMapping = {
-  destinationStart: u64,
-  sourceStart: u64,
-  rangeLength: u64,
-  sourceRange: Range<u64>,
-  offset: u64,
-}
+data AlmanacMapping = { destinationStart: u64, offset: u64, rangeLength: u64, sourceRange: Range<u64>, sourceStart: u64 }
 
-data AlmanacCategory = {
-  mappings: List<AlmanacMapping>,
-}
+data AlmanacCategory = { mappings: List<AlmanacMapping> }
 
-data Almanac = {
-  seeds: List<u64>,
-  categories: List<AlmanacCategory>,
-}
+data Almanac = { categories: List<AlmanacCategory>, seeds: List<u64> }
 
 let parseNumberList = (input: String): List<u64> -> {
   let values = [];
@@ -127,10 +116,9 @@ let mapPositionToLocation = (almanac: Almanac, position: u64): u64 -> {
   value
 }
 
-let positionMin = 0;
-let positionMax = 999999999;
-
 let mapRangeToLocationInCategory = (category: AlmanacCategory, range: Range<u64>): List<Range<u64>> -> {
+  let positionMin = 0;
+  let positionMax = 999999999;
   let ranges = [];
   let position = positionMin;
   let mappingIndex = 0;

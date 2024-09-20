@@ -5,10 +5,10 @@ import { String, stringFromNumber } from "@string";
 import { getValue: getInput } from "./input.txt";
 
 data Direction =
-  | North {}
-  | East {}
-  | South {}
-  | West {}
+  | North
+  | East
+  | South
+  | West
 
 let directionEquals = (a: Direction, b: Direction): boolean -> {
   match a {
@@ -31,13 +31,13 @@ let directionEquals = (a: Direction, b: Direction): boolean -> {
   }
 }
 
-let directionNorth = (): Direction -> Direction.North({})
+let directionNorth = (): Direction -> Direction.North()
 
-let directionEast = (): Direction -> Direction.East({})
+let directionEast = (): Direction -> Direction.East()
 
-let directionSouth = (): Direction -> Direction.South({})
+let directionSouth = (): Direction -> Direction.South()
 
-let directionWest = (): Direction -> Direction.West({})
+let directionWest = (): Direction -> Direction.West()
 
 let vec2North = (): Vec2<i32> -> Vec2.New({ x: 0, y: --(1) })
 
@@ -57,17 +57,13 @@ let directionToVec2 = (direction: Direction): Vec2<i32> -> {
 }
 
 data Tile =
-  | Empty {}
-  | ReflectForward {}
-  | ReflectBackward {}
-  | SplitHorizontal {}
-  | SplitVertical {}
+  | Empty
+  | ReflectForward
+  | ReflectBackward
+  | SplitHorizontal
+  | SplitVertical
 
-data Grid = {
-  size: Vec2<i32>,
-  tiles: List<List<Tile>>,
-  energized: List<List<List<Direction>>>,
-}
+data Grid = { energized: List<List<List<Direction>>>, size: Vec2<i32>, tiles: List<List<Tile>> }
 
 let gridClone = (grid: Grid): Grid -> {
   let newEnergized = [];
@@ -87,11 +83,11 @@ let gridClone = (grid: Grid): Grid -> {
 
 let parseTile = (char: i32): Tile -> {
   case {
-    char == '/' -> Tile.ReflectForward({});
-    char == '\\' -> Tile.ReflectBackward({});
-    char == '-' -> Tile.SplitHorizontal({});
-    char == '|' -> Tile.SplitVertical({});
-    _ -> Tile.Empty({});
+    char == '/' -> Tile.ReflectForward();
+    char == '\\' -> Tile.ReflectBackward();
+    char == '-' -> Tile.SplitHorizontal();
+    char == '|' -> Tile.SplitVertical();
+    _ -> Tile.Empty();
   }
 }
 

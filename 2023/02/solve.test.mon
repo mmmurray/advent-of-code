@@ -4,16 +4,9 @@ import { max } from "@math";
 import { String, stringFromNumber } from "@string";
 import { getValue: getInput } from "./input.txt";
 
-data Selection = {
-  red: i32,
-  blue: i32,
-  green: i32,
-}
+data Selection = { blue: i32, green: i32, red: i32 }
 
-data Game = {
-  id: i32,
-  selections: List<Selection>,
-}
+data Game = { id: i32, selections: List<Selection> }
 
 let parseSelection = (input: String): Selection -> {
   let valueParts = input.splitBy(',');

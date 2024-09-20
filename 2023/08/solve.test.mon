@@ -6,15 +6,9 @@ import { lcmMany } from "@math";
 import { String, stringFromNumber } from "@string";
 import { getValue: getInput } from "./input.txt";
 
-data Node = {
-  left: String,
-  right: String,
-}
+data Node = { left: String, right: String }
 
-data Network = {
-  instructions: List<boolean>,
-  nodes: Map<String, Node>,
-}
+data Network = { instructions: List<boolean>, nodes: Map<String, Node> }
 
 let parseInput = (input: String): Network -> {
   let instructions = [];
@@ -58,7 +52,7 @@ let countSteps = (network: Network, start: String): u64 -> {
     let instruction = network.instructions.get(instructionIndex);
     let node = network.nodes.get(current);
     let _ = match node {
-      Some { value } -> {
+      Some({ value }) -> {
         let _ = case {
           instruction -> {
             current = value.left;

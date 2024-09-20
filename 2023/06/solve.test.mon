@@ -4,10 +4,7 @@ import { String, stringFromNumber } from "@string";
 import { stringBuilderCreate } from "@string-builder";
 import { getValue: getInput } from "./input.txt";
 
-data Race = {
-  time: u64,
-  distance: u64,
-}
+data Race = { distance: u64, time: u64 }
 
 let parseNumberList = (input: String): List<u64> -> {
   let values = [];

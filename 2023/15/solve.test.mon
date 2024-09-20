@@ -5,18 +5,10 @@ import { String, stringFromNumber } from "@string";
 import { getValue: getInput } from "./input.txt";
 
 data Operation =
-  | Insert {
-      label: String,
-      focalLength: i32,
-    }
-  | Remove {
-      label: String,
-    }
+  | Insert({ focalLength: i32, label: String })
+  | Remove({ label: String })
 
-data Step = {
-  raw: String,
-  operation: Operation,
-}
+data Step = { operation: Operation, raw: String }
 
 let parseOperation = (input: String): Operation -> {
   let lastChar = input.get((input.size() - 1));
@@ -69,14 +61,9 @@ let solvePart1 = (input: String): String -> {
   stringFromNumber(result)
 }
 
-data Lens = {
-  label: String,
-  focalLength: i32,
-}
+data Lens = { focalLength: i32, label: String }
 
-data Box = {
-  lenses: List<Lens>,
-}
+data Box = { lenses: List<Lens> }
 
 let solvePart2 = (input: String): String -> {
   let sequence = parseInput(input);
@@ -92,13 +79,13 @@ let solvePart2 = (input: String): String -> {
   for step in sequence {
     let stepOperation = step.operation;
     let stepLabel = match stepOperation {
-      Insert { label } -> label;
-      Remove { label } -> label;
+      Insert({ label }) -> label;
+      Remove({ label }) -> label;
     };
     let boxIndex = hash(stepLabel);
     let box = arrayGet(boxes, boxIndex);
     let _ = match stepOperation {
-      Insert { label, focalLength } -> {
+      Insert({ label, focalLength }) -> {
         let replaced = false;
 
         for lens, lensIndex in box.lenses {
@@ -120,7 +107,7 @@ let solvePart2 = (input: String): String -> {
           _ -> {};
         };
       };
-      Remove { label } -> {
+      Remove({ label }) -> {
         let removeIndex = --(1);
 
         for lens, lensIndex in box.lenses {

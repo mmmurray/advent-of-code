@@ -5,10 +5,7 @@ import { max } from "@math";
 import { String, stringFromNumber } from "@string";
 import { getValue: getInput } from "./input.txt";
 
-data Game = {
-  winning: List<i32>,
-  numbers: List<i32>,
-}
+data Game = { numbers: List<i32>, winning: List<i32> }
 
 let parseNumberList = (input: String): List<i32> -> {
   let parts = (input.trim()).splitBy(' ');

@@ -7,37 +7,17 @@ import { String, stringFromChar, stringFromNumber } from "@string";
 import { stringBuilderCreate } from "@string-builder";
 import { getValue: getInput } from "./input.txt";
 
-data Rating = {
-  x: i32,
-  m: i32,
-  a: i32,
-  s: i32,
-}
+data Rating = { a: i32, m: i32, s: i32, x: i32 }
 
-data Condition = {
-  property: i32,
-  operator: i32,
-  value: i32,
-}
+data Condition = { operator: i32, property: i32, value: i32 }
 
 data WorkflowStep =
-  | WorkflowStep {
-      target: String,
-    }
-  | WorkflowStepConditional {
-      target: String,
-      condition: Condition,
-    }
+  | WorkflowStep({ target: String })
+  | WorkflowStepConditional({ condition: Condition, target: String })
 
-data Workflow = {
-  name: String,
-  steps: List<WorkflowStep>,
-}
+data Workflow = { name: String, steps: List<WorkflowStep> }
 
-data System = {
-  ratings: List<Rating>,
-  workflows: Map<String, Workflow>,
-}
+data System = { ratings: List<Rating>, workflows: Map<String, Workflow> }
 
 let workflowDefault = (): Workflow -> Workflow.New({ name: "", steps: [] })
 
@@ -162,10 +142,10 @@ let _printSystem = (system: System): unit -> {
         _ -> {};
       };
       let _ = match step {
-        WorkflowStep { target } -> {
+        WorkflowStep({ target }) -> {
           out.append(target);
         };
-        WorkflowStepConditional { target, condition } -> {
+        WorkflowStepConditional({ target, condition }) -> {
           out.append(stringFromChar(condition.property));
           out.append(stringFromChar(condition.operator));
           out.append(stringFromNumber(condition.value));
@@ -234,12 +214,12 @@ let isPartAccepted = (workflows: Map<String, Workflow>, rating: Rating): boolean
           let _ = case {
             loop -> {
               let continue = match step {
-                WorkflowStep { target } -> {
+                WorkflowStep({ target }) -> {
                   currentWorkflow = target;
 
                   false
                 };
-                WorkflowStepConditional { target, condition } -> {
+                WorkflowStepConditional({ target, condition }) -> {
                   let inner = true;
                   let _ = case {
                     doesConditionApply(condition, rating) -> {

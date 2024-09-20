@@ -5,11 +5,7 @@ import { Map, mapCreate } from "@map";
 import { String, stringFromNumber } from "@string";
 import { getValue: getInput } from "./input.txt";
 
-data Hand = {
-  cards: List<i32>,
-  bid: i32,
-  score: i32,
-}
+data Hand = { bid: i32, cards: List<i32>, score: i32 }
 
 let isFiveOfAKind = (countByCard: Map<String, i32>): boolean -> {
   let result = false;

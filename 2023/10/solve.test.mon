@@ -3,18 +3,9 @@ import { Vec2, max, vec2Equals } from "@math";
 import { String, stringFromNumber } from "@string";
 import { getValue: getInput } from "./input.txt";
 
-data Connections = {
-  north: boolean,
-  east: boolean,
-  south: boolean,
-  west: boolean,
-}
+data Connections = { east: boolean, north: boolean, south: boolean, west: boolean }
 
-data Pipes = {
-  start: Vec2<i32>,
-  grid: List<List<Connections>>,
-  size: Vec2<i32>,
-}
+data Pipes = { grid: List<List<Connections>>, size: Vec2<i32>, start: Vec2<i32> }
 
 let charToConnections = (char: i32): Connections -> {
   case {
@@ -229,10 +220,7 @@ let _solvePart1 = (input: String): String -> {
   stringFromNumber(result)
 }
 
-data Lake = {
-  walls: List<List<i32>>,
-  size: Vec2<i32>,
-}
+data Lake = { size: Vec2<i32>, walls: List<List<i32>> }
 
 let buildLake = (pipes: Pipes, visited: List<Vec2<i32>>): Lake -> {
   let walls = [];
