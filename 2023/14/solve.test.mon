@@ -30,21 +30,21 @@ let tilt-column = (col: list<i32>): list<i32> -> {
 
   for tile, col-index in col {
     let _ = case {
-      tile == '#' -> {
+      tile ==  '#'  -> {
         next-free-index = col-index + 1;
 
-        new-col.set(col-index, '#');
+        new-col.set(col-index,  '#' );
       };
       _ -> {
         let _ = case {
-          tile == 'O' -> {
-            new-col.set(col-index, '.');
-            new-col.set(next-free-index, 'O');
+          tile ==  'O'  -> {
+            new-col.set(col-index,  '.' );
+            new-col.set(next-free-index,  'O' );
 
             next-free-index = next-free-index + 1;
           };
           _ -> {
-            new-col.set(col-index, '.');
+            new-col.set(col-index,  '.' );
           };
         };
       };
@@ -71,7 +71,7 @@ let calculate-load = (g: grid): i32 -> {
   for col in g.cols {
     for tile, row-index in col {
       let _ = case {
-        tile == 'O' -> {
+        tile ==  'O'  -> {
           total-load = total-load + (size.y - row-index);
         };
         _ -> {};

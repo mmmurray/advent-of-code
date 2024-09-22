@@ -1,5 +1,5 @@
 import { list, list-from-array } from "@list";
-import { vec2, max, vec2-equals } from "@math";
+import { max, vec2, vec2-equals } from "@math";
 import { string, string-from-number } from "@string";
 import { get-value: get-input } from "./input.txt";
 
@@ -9,13 +9,13 @@ data pipes = { grid: list<list<connections>>, size: vec2<i32>, start: vec2<i32> 
 
 let char-to-connections = (char: i32): connections -> {
   case {
-    char == '|' -> connections.new({ north: true, east: false, south: true, west: false });
-    char == '-' -> connections.new({ north: false, east: true, south: false, west: true });
-    char == 'L' -> connections.new({ north: true, east: true, south: false, west: false });
-    char == 'J' -> connections.new({ north: true, east: false, south: false, west: true });
-    char == '7' -> connections.new({ north: false, east: false, south: true, west: true });
-    char == 'F' -> connections.new({ north: false, east: true, south: true, west: false });
-    char == 'S' -> connections.new({ north: true, east: true, south: true, west: true });
+    char ==  '|'  -> connections.new({ north: true, east: false, south: true, west: false });
+    char ==  '-'  -> connections.new({ north: false, east: true, south: false, west: true });
+    char ==  'L'  -> connections.new({ north: true, east: true, south: false, west: false });
+    char ==  'J'  -> connections.new({ north: true, east: false, south: false, west: true });
+    char ==  '7'  -> connections.new({ north: false, east: false, south: true, west: true });
+    char ==  'F'  -> connections.new({ north: false, east: true, south: true, west: false });
+    char ==  'S'  -> connections.new({ north: true, east: true, south: true, west: true });
     _ -> connections.new({ north: false, east: false, south: false, west: false });
   }
 }
@@ -35,7 +35,7 @@ let parse-input = (input: string): pipes -> {
       row.push(connections);
 
       let _ = case {
-        char == 'S' -> {
+        char ==  'S'  -> {
           start = vec2.new({ x: x, y: y });
         };
         _ -> {};
@@ -50,15 +50,15 @@ let parse-input = (input: string): pipes -> {
 
 let connections-to-char = (cs: connections): i32 -> {
   case {
-    !(cs.north) && (!(cs.east) && (!(cs.south) && !(cs.west))) -> '.';
-    cs.north && (cs.east && (cs.south && cs.west)) -> 'S';
-    cs.north && cs.south -> '║';
-    cs.east && cs.west -> '═';
-    cs.south && cs.east -> '╔';
-    cs.west && cs.south -> '╗';
-    cs.north && cs.west -> '╝';
-    cs.east && cs.north -> '╚';
-    _ -> ' ';
+    !(cs.north) && (!(cs.east) && (!(cs.south) && !(cs.west))) ->  '.' ;
+    cs.north && (cs.east && (cs.south && cs.west)) ->  'S' ;
+    cs.north && cs.south ->  '║' ;
+    cs.east && cs.west ->  '═' ;
+    cs.south && cs.east ->  '╔' ;
+    cs.west && cs.south ->  '╗' ;
+    cs.north && cs.west ->  '╝' ;
+    cs.east && cs.north ->  '╚' ;
+    _ ->  ' ' ;
   }
 }
 
@@ -66,49 +66,49 @@ let connections-to-walls = (cs: connections): list<list<i32>> -> {
   let walls = [];
   let char = connections-to-char(cs);
   let _ = case {
-    char == '.' -> {
+    char ==  '.'  -> {
       walls.push-list([[0, 0, 0], [0, 0, 0], [0, 0, 0]]);
     };
     _ -> {};
   };
   let _ = case {
-    char == 'S' -> {
+    char ==  'S'  -> {
       walls.push-list([[0, 1, 0], [1, 1, 1], [0, 1, 0]]);
     };
     _ -> {};
   };
   let _ = case {
-    char == '║' -> {
+    char ==  '║'  -> {
       walls.push-list([[0, 1, 0], [0, 1, 0], [0, 1, 0]]);
     };
     _ -> {};
   };
   let _ = case {
-    char == '═' -> {
+    char ==  '═'  -> {
       walls.push-list([[0, 0, 0], [1, 1, 1], [0, 0, 0]]);
     };
     _ -> {};
   };
   let _ = case {
-    char == '╔' -> {
+    char ==  '╔'  -> {
       walls.push-list([[0, 0, 0], [0, 1, 1], [0, 1, 0]]);
     };
     _ -> {};
   };
   let _ = case {
-    char == '╗' -> {
+    char ==  '╗'  -> {
       walls.push-list([[0, 0, 0], [1, 1, 0], [0, 1, 0]]);
     };
     _ -> {};
   };
   let _ = case {
-    char == '╝' -> {
+    char ==  '╝'  -> {
       walls.push-list([[0, 1, 0], [1, 1, 0], [0, 0, 0]]);
     };
     _ -> {};
   };
   let _ = case {
-    char == '╚' -> {
+    char ==  '╚'  -> {
       walls.push-list([[0, 1, 0], [0, 1, 1], [0, 0, 0]]);
     };
     _ -> {};

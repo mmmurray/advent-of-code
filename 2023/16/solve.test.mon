@@ -1,6 +1,6 @@
 import { assert-equal } from "@assert";
 import { list, list-from-array } from "@list";
-import { vec2, max, vec2-add } from "@math";
+import { max, vec2, vec2-add } from "@math";
 import { string, string-from-number } from "@string";
 import { get-value: get-input } from "./input.txt";
 
@@ -83,10 +83,10 @@ let grid-clone = (g: grid): grid -> {
 
 let parse-tile = (char: i32): tile -> {
   case {
-    char == '/' -> tile.reflect-forward();
-    char == '\\' -> tile.reflect-backward();
-    char == '-' -> tile.split-horizontal();
-    char == '|' -> tile.split-vertical();
+    char ==  '/'  -> tile.reflect-forward();
+    char ==  '\\'  -> tile.reflect-backward();
+    char ==  '-'  -> tile.split-horizontal();
+    char ==  '|'  -> tile.split-vertical();
     _ -> tile.empty();
   }
 }

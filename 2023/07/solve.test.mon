@@ -115,7 +115,7 @@ let parse-input = (input: string, jokers: boolean): list<hand> -> {
   let lines = (input.trim()).to-lines();
 
   for line in lines {
-    let parts = line.split-by(' ');
+    let parts = line.split-by( ' ' );
     let cards-part = parts.get(0);
     let bid-part = parts.get(1);
     let cards = [];
@@ -123,25 +123,25 @@ let parse-input = (input: string, jokers: boolean): list<hand> -> {
     for card-char in cards-part.to-list() {
       let card = 0;
       let _ = case {
-        card-char == 'A' -> {
+        card-char ==  'A'  -> {
           card = 14;
         };
         _ -> {};
       };
       let _ = case {
-        card-char == 'K' -> {
+        card-char ==  'K'  -> {
           card = 13;
         };
         _ -> {};
       };
       let _ = case {
-        card-char == 'Q' -> {
+        card-char ==  'Q'  -> {
           card = 12;
         };
         _ -> {};
       };
       let _ = case {
-        card-char == 'J' -> {
+        card-char ==  'J'  -> {
           let _ = case {
             jokers -> {
               card = 1;
@@ -154,14 +154,14 @@ let parse-input = (input: string, jokers: boolean): list<hand> -> {
         _ -> {};
       };
       let _ = case {
-        card-char == 'T' -> {
+        card-char ==  'T'  -> {
           card = 10;
         };
         _ -> {};
       };
       let _ = case {
         char-is-numeric(card-char) -> {
-          card = card-char - '0';
+          card = card-char -  '0' ;
         };
         _ -> {};
       };

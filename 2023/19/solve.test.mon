@@ -22,17 +22,17 @@ data system = { ratings: list<rating>, workflows: map<string, workflow> }
 let workflow-default = (): workflow -> workflow.new({ name: "", steps: [] })
 
 let parse-workflow = (input: string): workflow -> {
-  let workflow-parts = input.split-by('{');
+  let workflow-parts = input.split-by( '{' );
   let name = workflow-parts.get(0);
   let inner-part = workflow-parts.get(1);
   let inner = inner-part.slice(0, (inner-part.size() - 1));
   let steps = [];
-  let step-parts = inner.split-by(',');
+  let step-parts = inner.split-by( ',' );
 
   for step-part in step-parts {
     let _ = case {
       step-part.contains(":") -> {
-        let condition-parts = step-part.split-by(':');
+        let condition-parts = step-part.split-by( ':' );
         let condition-part = condition-parts.get(0);
         let target = condition-parts.get(1);
         let step = workflow-step.workflow-step-conditional({
@@ -60,10 +60,10 @@ let parse-workflow = (input: string): workflow -> {
 let parse-rating = (input: string): rating -> {
   let r = rating.new({ x: 0, m: 0, a: 0, s: 0 });
   let inner = input.slice(1, (input.size() - 1));
-  let rating-parts = inner.split-by(',');
+  let rating-parts = inner.split-by( ',' );
 
   for rating-part in rating-parts {
-    let property-parts = rating-part.split-by('=');
+    let property-parts = rating-part.split-by( '=' );
     let property-name = property-parts.get(0);
     let property-value = (property-parts.get(1)).to-i32();
     let _ = case {
@@ -177,14 +177,14 @@ let _print-system = (s: system): unit -> {
 
 let does-condition-apply = (c: condition, r: rating): boolean -> {
   let property-value = case {
-    c.property == 'x' -> r.x;
-    c.property == 'm' -> r.m;
-    c.property == 'a' -> r.a;
+    c.property ==  'x'  -> r.x;
+    c.property ==  'm'  -> r.m;
+    c.property ==  'a'  -> r.a;
     _ -> r.s;
   };
 
   case {
-    c.operator == '>' -> property-value > c.value;
+    c.operator ==  '>'  -> property-value > c.value;
     _ -> property-value < c.value;
   }
 }

@@ -7,7 +7,7 @@ import { get-value: get-input } from "./input.txt";
 data row = { conditions: list<i32>, damage-total: i32, damaged: list<i32> }
 
 let parse-row = (line: string): row -> {
-  let parts = line.split-by(' ');
+  let parts = line.split-by( ' ' );
   let conditions = [];
 
   for char in (parts.get(0)).to-list() {
@@ -15,7 +15,7 @@ let parse-row = (line: string): row -> {
   }
 
   let damaged = [];
-  let damaged-parts = (parts.get(1)).split-by(',');
+  let damaged-parts = (parts.get(1)).split-by( ',' );
   let damage-total = 0;
 
   for damaged-part in damaged-parts {
@@ -57,14 +57,14 @@ let place-damage = (conditions: list<i32>, offset: i32, width: i32): list<i32> -
 
   for condition, index in conditions {
     let _ = case {
-      condition == '?' -> {
-        new-conditions.set(index, '.');
+      condition ==  '?'  -> {
+        new-conditions.set(index,  '.' );
       };
       _ -> {};
     };
     let _ = case {
       index >= offset -> {
-        new-conditions.set(index, '#');
+        new-conditions.set(index,  '#' );
       };
       _ -> {};
     };
@@ -84,7 +84,7 @@ let conditions-contain-dot = (conditions: list<i32>): boolean -> {
 
   for condition in conditions {
     let _ = case {
-      condition == '.' -> {
+      condition ==  '.'  -> {
         result = true;
       };
       _ -> {};
@@ -101,14 +101,14 @@ let is-valid-placement = (conditions: list<i32>, max-damage: i32, offset: i32, w
   case {
     (offset + width) > conditions.size() -> false;
     conditions-contain-dot(conditions.slice(offset, (offset + width))) -> false;
-    (prev-index >= 0) && (conditions.get(prev-index) == '#') -> false;
-    (next-index < (conditions.size() - 1)) && (conditions.get(next-index) == '#') -> false;
+    (prev-index >= 0) && (conditions.get(prev-index) ==  '#' ) -> false;
+    (next-index < (conditions.size() - 1)) && (conditions.get(next-index) ==  '#' ) -> false;
     _ -> {
       let damage-total = 0;
 
       for condition2 in place-damage(conditions, offset, width) {
         let _ = case {
-          condition2 == '#' -> {
+          condition2 ==  '#'  -> {
             damage-total = damage-total + 1;
           };
           _ -> {};
@@ -125,7 +125,7 @@ let count-arrangements-rec = (cache: array<i32>, r: row, offset: i32, damaged-in
 
   for condition2 in r.conditions {
     let _ = case {
-      condition2 == '#' -> {
+      condition2 ==  '#'  -> {
         damage-total = damage-total + 1;
       };
       _ -> {};
@@ -182,22 +182,16 @@ let unfold-row = (r: row): row -> {
   row.new({
     conditions: [
       ...r.conditions,
-      '?',
+       '?' ,
       ...r.conditions,
-      '?',
+       '?' ,
       ...r.conditions,
-      '?',
+       '?' ,
       ...r.conditions,
-      '?',
+       '?' ,
       ...r.conditions,
     ],
-    damaged: [
-      ...r.damaged,
-      ...r.damaged,
-      ...r.damaged,
-      ...r.damaged,
-      ...r.damaged,
-    ],
+    damaged: [...r.damaged, ...r.damaged, ...r.damaged, ...r.damaged, ...r.damaged],
     damage-total: (r.damage-total * 5),
   })
 }

@@ -1,6 +1,6 @@
 import { assert-equal } from "@assert";
 import { list } from "@list";
-import { mat2, vec2, mat2-determinant, vec2-add, vec2-scale } from "@math";
+import { mat2, mat2-determinant, vec2, vec2-add, vec2-scale } from "@math";
 import { string, string-from-number } from "@string";
 import { get-value: get-input } from "./input.txt";
 
@@ -41,10 +41,10 @@ let parse-direction = (input: string): direction -> {
   let char = input.get(0);
 
   case {
-    char == 'U' -> direction-north();
-    char == 'R' -> direction-east();
-    char == 'D' -> direction-south();
-    char == 'L' -> direction-west();
+    char ==  'U'  -> direction-north();
+    char ==  'R'  -> direction-east();
+    char ==  'D'  -> direction-south();
+    char ==  'L'  -> direction-west();
     _ -> direction-north();
   }
 }
@@ -54,7 +54,7 @@ let parse-input = (input: string): list<dig-plan-step> -> {
   let steps = [];
 
   for line in lines {
-    let parts = line.split-by(' ');
+    let parts = line.split-by( ' ' );
     let d = parse-direction(parts.get(0));
     let distance = (parts.get(1)).to-i64();
     let color = parts.get(2);
@@ -132,7 +132,7 @@ let solve-part2 = (input: string): string -> {
   for plan-step in plan-steps {
     let distance-hex = plan-step.color.slice(2, 7);
     let distance = ("0x".concat(distance-hex.to-upper())).to-i64();
-    let direction-num = plan-step.color.get(7) - '0';
+    let direction-num = plan-step.color.get(7) -  '0' ;
 
     steps.push(step.new({ direction: ordered-directions.get(direction-num), distance: distance }));
   }

@@ -1,6 +1,6 @@
 import { assert-equal } from "@assert";
 import { list, list-from-array } from "@list";
-import { vec2, min } from "@math";
+import { min, vec2 } from "@math";
 import { string, string-from-number } from "@string";
 import { get-value: get-input } from "./input.txt";
 
@@ -29,7 +29,7 @@ let parse-input = (input: string): list<grid> -> {
         let row = [];
 
         for char in line.to-list() {
-          let is-wall = char == '#';
+          let is-wall = char ==  '#' ;
 
           row.push(is-wall);
         }

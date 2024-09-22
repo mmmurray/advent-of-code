@@ -21,7 +21,7 @@ let parse-input = (input: string): schematic -> {
     while char-index < line.size() {
       let char = line.get(char-index);
       let _ = case {
-        char != '.' -> {
+        char !=  '.'  -> {
           let _ = case {
             char-is-numeric(char) -> {
               let length = 0;
@@ -34,7 +34,7 @@ let parse-input = (input: string): schematic -> {
 
                 let _ = case {
                   char-is-numeric(char) -> {
-                    value = (value * 10) + (char - '0');
+                    value = (value * 10) + (char -  '0' );
                     length = 1 + length;
                     char-index = char-index + 1;
                   };
@@ -113,7 +113,7 @@ let solve-part2 = (input: string): string -> {
 
   for symbol in s.symbols {
     let _ = case {
-      symbol.value == '*' -> {
+      symbol.value ==  '*'  -> {
         let adjacent-count = 0;
         let adjacent-product = 1;
 

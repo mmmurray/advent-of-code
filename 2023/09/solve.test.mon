@@ -9,7 +9,7 @@ let parse-input = (input: string): list<list<i32>> -> {
 
   for line in lines {
     let sequence = [];
-    let parts = line.split-by(' ');
+    let parts = line.split-by( ' ' );
 
     for part in parts {
       let value = part.to-i32();

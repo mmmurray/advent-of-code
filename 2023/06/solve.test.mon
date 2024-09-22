@@ -8,7 +8,7 @@ data race = { distance: u64, time: u64 }
 
 let parse-number-list = (input: string): list<u64> -> {
   let values = [];
-  let parts = input.split-by( ' ');
+  let parts = input.split-by( ' ' );
 
   for part in parts {
     let _ = case {
