@@ -1,85 +1,85 @@
-import { Array, arrayCreate, arrayGet, arraySet } from "@array";
-import { assertEqual } from "@assert";
-import { List, listFromArray } from "@list";
-import { String, stringFromNumber } from "@string";
-import { getValue: getInput } from "./input.txt";
+import { array, array-create, array-get, array-set } from "@array";
+import { assert-equal } from "@assert";
+import { list, list-from-array } from "@list";
+import { string, string-from-number } from "@string";
+import { get-value: get-input } from "./input.txt";
 
-data Row = { conditions: List<i32>, damageTotal: i32, damaged: List<i32> }
+data row = { conditions: list<i32>, damage-total: i32, damaged: list<i32> }
 
-let parseRow = (line: String): Row -> {
-  let parts = line.splitBy(' ');
+let parse-row = (line: string): row -> {
+  let parts = line.split-by(' ');
   let conditions = [];
 
-  for char in (parts.get(0)).toList() {
+  for char in (parts.get(0)).to-list() {
     conditions.push(char);
   }
 
   let damaged = [];
-  let damagedParts = (parts.get(1)).splitBy(',');
-  let damageTotal = 0;
+  let damaged-parts = (parts.get(1)).split-by(',');
+  let damage-total = 0;
 
-  for damagedPart in damagedParts {
-    let damage = damagedPart.toI32();
+  for damaged-part in damaged-parts {
+    let damage = damaged-part.to-i32();
 
     damaged.push(damage);
 
-    damageTotal = damageTotal + damage;
+    damage-total = damage-total + damage;
   }
 
-  Row.New({ conditions: conditions, damaged: damaged, damageTotal: damageTotal })
+  row.new({ conditions: conditions, damaged: damaged, damage-total: damage-total })
 }
 
-let parseInput = (input: String): List<Row> -> {
-  let lines = (input.trim()).toLines();
+let parse-input = (input: string): list<row> -> {
+  let lines = (input.trim()).to-lines();
   let rows = [];
 
   for line in lines {
-    rows.push(parseRow(line));
+    rows.push(parse-row(line));
   }
 
   rows
 }
 
-let cacheSpacing = (): i32 -> 30
+let cache-spacing = (): i32 -> 30
 
-let createCache = (): Array<i32> -> {
-  let cache = arrayCreate((cacheSpacing() * (cacheSpacing() * cacheSpacing())));
+let create-cache = (): array<i32> -> {
+  let cache = array-create((cache-spacing() * (cache-spacing() * cache-spacing())));
 
-  for _, i in listFromArray(cache) {
-    arraySet(cache, i, --(1));
+  for _, i in list-from-array(cache) {
+    array-set(cache, i, --(1));
   }
 
   cache
 }
 
-let placeDamage = (conditions: List<i32>, offset: i32, width: i32): List<i32> -> {
-  let newConditions = conditions.clone();
+let place-damage = (conditions: list<i32>, offset: i32, width: i32): list<i32> -> {
+  let new-conditions = conditions.clone();
 
   for condition, index in conditions {
     let _ = case {
       condition == '?' -> {
-        newConditions.set(index, '.');
+        new-conditions.set(index, '.');
       };
       _ -> {};
     };
     let _ = case {
       index >= offset -> {
-        newConditions.set(index, '#');
+        new-conditions.set(index, '#');
       };
       _ -> {};
     };
     let _ = case {
       index >= (offset + width) -> {
-        newConditions.set(index, conditions.get(index));
+        new-conditions.set(index, conditions.get(index));
       };
       _ -> {};
     };
   }
 
-  newConditions
+  new-conditions
 }
 
-let conditionsContainDot = (conditions: List<i32>): boolean -> {
+let conditions-contain-dot = (conditions: list<i32>): boolean -> {
   let result = false;
 
   for condition in conditions {
@@ -94,68 +94,68 @@ let conditionsContainDot = (conditions: List<i32>): boolean -> {
   result
 }
 
-let isValidPlacement = (conditions: List<i32>, maxDamage: i32, offset: i32, width: i32): boolean -> {
-  let prevIndex = offset - 1;
-  let nextIndex = offset + width;
+let is-valid-placement = (conditions: list<i32>, max-damage: i32, offset: i32, width: i32): boolean -> {
+  let prev-index = offset - 1;
+  let next-index = offset + width;
 
   case {
     (offset + width) > conditions.size() -> false;
-    conditionsContainDot(conditions.slice(offset, (offset + width))) -> false;
-    (prevIndex >= 0) && (conditions.get(prevIndex) == '#') -> false;
-    (nextIndex < (conditions.size() - 1)) && (conditions.get(nextIndex) == '#') -> false;
+    conditions-contain-dot(conditions.slice(offset, (offset + width))) -> false;
+    (prev-index >= 0) && (conditions.get(prev-index) == '#') -> false;
+    (next-index < (conditions.size() - 1)) && (conditions.get(next-index) == '#') -> false;
     _ -> {
-      let damageTotal = 0;
+      let damage-total = 0;
 
-      for condition2 in placeDamage(conditions, offset, width) {
+      for condition2 in place-damage(conditions, offset, width) {
         let _ = case {
           condition2 == '#' -> {
-            damageTotal = damageTotal + 1;
+            damage-total = damage-total + 1;
           };
           _ -> {};
         };
       }
 
-      damageTotal <= maxDamage
+      damage-total <= max-damage
     };
   }
 }
 
-let countArrangementsRec = (cache: Array<i32>, row: Row, offset: i32, damagedIndex: i32): i32 -> {
-  let damageTotal = 0;
+let count-arrangements-rec = (cache: array<i32>, r: row, offset: i32, damaged-index: i32): i32 -> {
+  let damage-total = 0;
 
-  for condition2 in row.conditions {
+  for condition2 in r.conditions {
     let _ = case {
       condition2 == '#' -> {
-        damageTotal = damageTotal + 1;
+        damage-total = damage-total + 1;
       };
       _ -> {};
     };
   }
 
-  let cacheKey = damagedIndex + ((cacheSpacing() * offset) + (damageTotal * (cacheSpacing() * cacheSpacing())));
-  let cached = arrayGet(cache, cacheKey);
+  let cache-key = damaged-index + ((cache-spacing() * offset) + (damage-total * (cache-spacing() * cache-spacing())));
+  let cached = array-get(cache, cache-key);
 
   case {
     cached >= 0 -> cached;
-    offset >= row.conditions.size() -> 0;
+    offset >= r.conditions.size() -> 0;
     _ -> {
       let arrangements = 0;
-      let damageWidth = row.damaged.get(damagedIndex);
-      let valid = isValidPlacement(row.conditions, row.damageTotal, offset, damageWidth);
+      let damage-width = r.damaged.get(damaged-index);
+      let valid = is-valid-placement(r.conditions, r.damage-total, offset, damage-width);
       let _ = case {
         valid -> {
-          let nextConditions = placeDamage(row.conditions, offset, damageWidth);
-          let nextDamagedIndex = damagedIndex + 1;
-          let nextOffset = offset + (damageWidth + 1);
+          let next-conditions = place-damage(r.conditions, offset, damage-width);
+          let next-damaged-index = damaged-index + 1;
+          let next-offset = offset + (damage-width + 1);
           let _ = case {
-            nextDamagedIndex < row.damaged.size() -> {
-              let newRow = Row.New({
-                conditions: nextConditions,
-                damaged: row.damaged,
-                damageTotal: row.damageTotal,
+            next-damaged-index < r.damaged.size() -> {
+              let new-row = row.new({
+                conditions: next-conditions,
+                damaged: r.damaged,
+                damage-total: r.damage-total,
               });
 
-              arrangements = arrangements + countArrangementsRec(cache, newRow, nextOffset, nextDamagedIndex);
+              arrangements = arrangements + count-arrangements-rec(cache, new-row, next-offset, next-damaged-index);
             };
             _ -> {
               arrangements = arrangements + 1;
@@ -165,97 +165,97 @@ let countArrangementsRec = (cache: Array<i32>, row: Row, offset: i32, damagedInd
         _ -> {};
       };
 
-      arrangements = arrangements + countArrangementsRec(cache, row, (offset + 1), damagedIndex);
+      arrangements = arrangements + count-arrangements-rec(cache, r, (offset + 1), damaged-index);
 
-      arraySet(cache, cacheKey, arrangements);
+      array-set(cache, cache-key, arrangements);
 
       arrangements
     };
   }
 }
 
-let countArrangements = (row: Row): i32 -> {
-  countArrangementsRec(createCache(), row, 0, 0)
+let count-arrangements = (r: row): i32 -> {
+  count-arrangements-rec(create-cache(), r, 0, 0)
 }
 
-let unfoldRow = (row: Row): Row -> {
-  Row.New({
+let unfold-row = (r: row): row -> {
+  row.new({
     conditions: [
-      ...row.conditions,
+      ...r.conditions,
       '?',
-      ...row.conditions,
+      ...r.conditions,
       '?',
-      ...row.conditions,
+      ...r.conditions,
       '?',
-      ...row.conditions,
+      ...r.conditions,
       '?',
-      ...row.conditions,
+      ...r.conditions,
     ],
     damaged: [
-      ...row.damaged,
-      ...row.damaged,
-      ...row.damaged,
-      ...row.damaged,
-      ...row.damaged,
+      ...r.damaged,
+      ...r.damaged,
+      ...r.damaged,
+      ...r.damaged,
+      ...r.damaged,
     ],
-    damageTotal: (row.damageTotal * 5),
+    damage-total: (r.damage-total * 5),
   })
 }
 
-let unfoldRows = (rows: List<Row>): List<Row> -> {
-  let newRows = [];
+let unfold-rows = (rows: list<row>): list<row> -> {
+  let new-rows = [];
 
-  for row in rows {
-    newRows.push(unfoldRow(row));
+  for r in rows {
+    new-rows.push(unfold-row(r));
   }
 
-  newRows
+  new-rows
 }
 
-let testCountArrangements = (): unit -> {
-  assertEqual(countArrangements(parseRow("? 1")), 1);
-  assertEqual(countArrangements(parseRow("?? 1")), 2);
-  assertEqual(countArrangements(parseRow("??? 1")), 3);
-  assertEqual(countArrangements(parseRow("??? 2")), 2);
-  assertEqual(countArrangements(parseRow("??? 1,1")), 1);
-  assertEqual(countArrangements(parseRow("??? 3")), 1);
-  assertEqual(countArrangements(parseRow("??? 4")), 0);
-  assertEqual(countArrangements(parseRow("#?? 1")), 1);
-  assertEqual(countArrangements(parseRow("#?? 2")), 1);
-  assertEqual(countArrangements(parseRow("#.. 2")), 0);
-  assertEqual(countArrangements(parseRow("### 2")), 0);
-  assertEqual(countArrangements(parseRow(".## 2")), 1);
-  assertEqual(countArrangements(parseRow("?????#???? 2,1,1")), 11);
+let test-count-arrangements = (): unit -> {
+  assert-equal(count-arrangements(parse-row("? 1")), 1);
+  assert-equal(count-arrangements(parse-row("?? 1")), 2);
+  assert-equal(count-arrangements(parse-row("??? 1")), 3);
+  assert-equal(count-arrangements(parse-row("??? 2")), 2);
+  assert-equal(count-arrangements(parse-row("??? 1,1")), 1);
+  assert-equal(count-arrangements(parse-row("??? 3")), 1);
+  assert-equal(count-arrangements(parse-row("??? 4")), 0);
+  assert-equal(count-arrangements(parse-row("#?? 1")), 1);
+  assert-equal(count-arrangements(parse-row("#?? 2")), 1);
+  assert-equal(count-arrangements(parse-row("#.. 2")), 0);
+  assert-equal(count-arrangements(parse-row("### 2")), 0);
+  assert-equal(count-arrangements(parse-row(".## 2")), 1);
+  assert-equal(count-arrangements(parse-row("?????#???? 2,1,1")), 11);
 }
 
-let solvePart1 = (input: String): String -> {
-  let rows = parseInput(input);
+let solve-part1 = (input: string): string -> {
+  let rows = parse-input(input);
   let result = 0;
 
-  for row in rows {
-    result = result + countArrangements(row);
+  for r in rows {
+    result = result + count-arrangements(r);
   }
 
-  stringFromNumber(result)
+  string-from-number(result)
 }
 
-let _solvePart2 = (input: String): String -> {
-  let rows = unfoldRows(parseInput(input));
+let _solve-part2 = (input: string): string -> {
+  let rows = unfold-rows(parse-input(input));
   let result = 0;
 
-  for row in rows {
-    result = result + countArrangements(row);
+  for r in rows {
+    result = result + count-arrangements(r);
   }
 
-  stringFromNumber(result)
+  string-from-number(result)
 }
 
-testCountArrangements();
+test-count-arrangements();
 
-let input = getInput();
-let part1 = solvePart1(input);
+let input = get-input();
+let part1 = solve-part1(input);
 
-assertEqual(part1, "7204");
+assert-equal(part1, "7204");
 
 # todo
 # let part2 = (solvePart2 input)

@@ -1,64 +1,64 @@
-import { assertEqual } from "@assert";
-import { List } from "@list";
-import { Mat2, Vec2, mat2Determinant, vec2Add, vec2Scale } from "@math";
-import { String, stringFromNumber } from "@string";
-import { getValue: getInput } from "./input.txt";
+import { assert-equal } from "@assert";
+import { list } from "@list";
+import { mat2, vec2, mat2-determinant, vec2-add, vec2-scale } from "@math";
+import { string, string-from-number } from "@string";
+import { get-value: get-input } from "./input.txt";
 
-data Direction =
-  | North
-  | East
-  | South
-  | West
+data direction =
+  | north
+  | east
+  | south
+  | west
 
-let directionNorth = (): Direction -> Direction.North()
+let direction-north = (): direction -> direction.north()
 
-let directionEast = (): Direction -> Direction.East()
+let direction-east = (): direction -> direction.east()
 
-let directionSouth = (): Direction -> Direction.South()
+let direction-south = (): direction -> direction.south()
 
-let directionWest = (): Direction -> Direction.West()
+let direction-west = (): direction -> direction.west()
 
-let vec2North = (): Vec2<i64> -> Vec2.New({ x: 0, y: --(1) })
+let vec2-north = (): vec2<i64> -> vec2.new({ x: 0, y: --(1) })
 
-let vec2East = (): Vec2<i64> -> Vec2.New({ x: 1, y: 0 })
+let vec2-east = (): vec2<i64> -> vec2.new({ x: 1, y: 0 })
 
-let vec2South = (): Vec2<i64> -> Vec2.New({ x: 0, y: 1 })
+let vec2-south = (): vec2<i64> -> vec2.new({ x: 0, y: 1 })
 
-let vec2West = (): Vec2<i64> -> Vec2.New({ x: --(1), y: 0 })
+let vec2-west = (): vec2<i64> -> vec2.new({ x: --(1), y: 0 })
 
-let directionToVec2 = (direction: Direction): Vec2<i64> -> {
-  match direction {
-    North -> vec2North();
-    East -> vec2East();
-    South -> vec2South();
-    West -> vec2West();
+let direction-to-vec2 = (d: direction): vec2<i64> -> {
+  match d {
+    north -> vec2-north();
+    east -> vec2-east();
+    south -> vec2-south();
+    west -> vec2-west();
   }
 }
 
-data DigPlanStep = { color: String, direction: Direction, distance: i64 }
+data dig-plan-step = { color: string, direction: direction, distance: i64 }
 
-let parseDirection = (input: String): Direction -> {
+let parse-direction = (input: string): direction -> {
   let char = input.get(0);
 
   case {
-    char == 'U' -> directionNorth();
-    char == 'R' -> directionEast();
-    char == 'D' -> directionSouth();
-    char == 'L' -> directionWest();
-    _ -> directionNorth();
+    char == 'U' -> direction-north();
+    char == 'R' -> direction-east();
+    char == 'D' -> direction-south();
+    char == 'L' -> direction-west();
+    _ -> direction-north();
   }
 }
 
-let parseInput = (input: String): List<DigPlanStep> -> {
-  let lines = (input.trim()).toLines();
+let parse-input = (input: string): list<dig-plan-step> -> {
+  let lines = (input.trim()).to-lines();
   let steps = [];
 
   for line in lines {
-    let parts = line.splitBy(' ');
-    let direction = parseDirection(parts.get(0));
-    let distance = (parts.get(1)).toI64();
+    let parts = line.split-by(' ');
+    let d = parse-direction(parts.get(0));
+    let distance = (parts.get(1)).to-i64();
     let color = parts.get(2);
-    let step = DigPlanStep.New({ direction: direction, distance: distance, color: color });
+    let step = dig-plan-step.new({ direction: d, distance: distance, color: color });
 
     steps.push(step);
   }
@@ -66,9 +66,9 @@ let parseInput = (input: String): List<DigPlanStep> -> {
   steps
 }
 
-data Step = { direction: Direction, distance: i64 }
+data step = { direction: direction, distance: i64 }
 
-let calculateAreaFromSteps = (steps: List<Step>): i64 -> {
+let calculate-area-from-steps = (steps: list<step>): i64 -> {
   # Shoelace formula (https://en.wikipedia.org/wiki/Shoelace_formula#Example)
   # Determines the area of a simple polygon whose vertices are described by
   # their Cartesian coordinates in the plane
@@ -89,64 +89,64 @@ let calculateAreaFromSteps = (steps: List<Step>): i64 -> {
   # interiorPoints = area - borderPoints / 2 + 1
   # interiorPoints + borderPoints = area + borderPoints / 2 + 1
 
-  let shoelaceArea = 0;
-  let borderPoints = 0;
-  let initialPosition = Vec2.New({ x: 0, y: 0 });
-  let position = initialPosition;
+  let shoelace-area = 0;
+  let border-points = 0;
+  let initial-position = vec2.new({ x: 0, y: 0 });
+  let position = initial-position;
 
   for step in steps {
-    borderPoints = borderPoints + step.distance;
+    border-points = border-points + step.distance;
 
-    let delta = vec2Scale(step.distance, directionToVec2(step.direction));
-    let nextPosition = vec2Add(position, delta);
+    let delta = vec2-scale(step.distance, direction-to-vec2(step.direction));
+    let next-position = vec2-add(position, delta);
 
-    shoelaceArea = shoelaceArea + mat2Determinant(Mat2.New({ a: position.x, b: nextPosition.x, c: position.y, d: nextPosition.y }));
-    position = nextPosition;
+    shoelace-area = shoelace-area + mat2-determinant(mat2.new({ a: position.x, b: next-position.x, c: position.y, d: next-position.y }));
+    position = next-position;
   }
 
-  shoelaceArea = shoelaceArea + mat2Determinant(Mat2.New({ a: position.x, b: initialPosition.x, c: position.y, d: initialPosition.y }));
+  shoelace-area = shoelace-area + mat2-determinant(mat2.new({ a: position.x, b: initial-position.x, c: position.y, d: initial-position.y }));
 
-  let area = shoelaceArea / 2;
+  let area = shoelace-area / 2;
 
-  (area + (borderPoints / 2)) + 1
+  (area + (border-points / 2)) + 1
 }
 
-let solvePart1 = (input: String): String -> {
-  let planSteps = parseInput(input);
+let solve-part1 = (input: string): string -> {
+  let plan-steps = parse-input(input);
   let steps = [];
 
-  for planStep in planSteps {
-    steps.push(Step.New({ direction: planStep.direction, distance: planStep.distance }));
+  for plan-step in plan-steps {
+    steps.push(step.new({ direction: plan-step.direction, distance: plan-step.distance }));
   }
 
-  let result = calculateAreaFromSteps(steps);
+  let result = calculate-area-from-steps(steps);
 
-  stringFromNumber(result)
+  string-from-number(result)
 }
 
-let solvePart2 = (input: String): String -> {
-  let planSteps = parseInput(input);
+let solve-part2 = (input: string): string -> {
+  let plan-steps = parse-input(input);
   let steps = [];
-  let orderedDirections = [directionEast(), directionSouth(), directionWest(), directionNorth()];
+  let ordered-directions = [direction-east(), direction-south(), direction-west(), direction-north()];
 
-  for planStep in planSteps {
-    let distanceHex = planStep.color.slice(2, 7);
-    let distance = ("0x".concat(distanceHex.toUpper())).toI64();
-    let directionNum = planStep.color.get(7) - '0';
+  for plan-step in plan-steps {
+    let distance-hex = plan-step.color.slice(2, 7);
+    let distance = ("0x".concat(distance-hex.to-upper())).to-i64();
+    let direction-num = plan-step.color.get(7) - '0';
 
-    steps.push(Step.New({ direction: orderedDirections.get(directionNum), distance: distance }));
+    steps.push(step.new({ direction: ordered-directions.get(direction-num), distance: distance }));
   }
 
-  let result = calculateAreaFromSteps(steps);
+  let result = calculate-area-from-steps(steps);
 
-  stringFromNumber(result)
+  string-from-number(result)
 }
 
-let input = getInput();
-let part1 = solvePart1(input);
+let input = get-input();
+let part1 = solve-part1(input);
 
-assertEqual(part1, "44436");
+assert-equal(part1, "44436");
 
-let part2 = solvePart2(input);
+let part2 = solve-part2(input);
 
-assertEqual(part2, "106941819907437");
+assert-equal(part2, "106941819907437");

@@ -1,97 +1,97 @@
-import { Array, arrayCreate, arrayGet, arraySet } from "@array";
-import { assertEqual } from "@assert";
-import { List, listFromArray } from "@list";
-import { String, stringFromNumber } from "@string";
-import { getValue: getInput } from "./input.txt";
+import { array, array-create, array-get, array-set } from "@array";
+import { assert-equal } from "@assert";
+import { list, list-from-array } from "@list";
+import { string, string-from-number } from "@string";
+import { get-value: get-input } from "./input.txt";
 
-data Operation =
-  | Insert({ focalLength: i32, label: String })
-  | Remove({ label: String })
+data operation =
+  | insert({ focal-length: i32, label: string })
+  | remove({ label: string })
 
-data Step = { operation: Operation, raw: String }
+data step = { operation: operation, raw: string }
 
-let parseOperation = (input: String): Operation -> {
-  let lastChar = input.get((input.size() - 1));
+let parse-operation = (input: string): operation -> {
+  let last-char = input.get((input.size() - 1));
 
   case {
-    lastChar == '-' -> {
+    last-char == '-' -> {
       let label = input.slice(0, (input.size() - 1));
 
-      Operation.Remove({ label: label })
+      operation.remove({ label: label })
     };
     _ -> {
-      let parts = input.splitBy('=');
+      let parts = input.split-by('=');
 
-      Operation.Insert({ label: parts.get(0), focalLength: (parts.get(1)).toI32() })
+      operation.insert({ label: parts.get(0), focal-length: (parts.get(1)).to-i32() })
     };
   }
 }
 
-let parseInput = (input: String): List<Step> -> {
-  let parts = (input.trim()).splitBy(',');
+let parse-input = (input: string): list<step> -> {
+  let parts = (input.trim()).split-by(',');
   let steps = [];
 
   for part in parts {
-    let step = Step.New({ raw: part, operation: parseOperation(part) });
+    let s = step.new({ raw: part, operation: parse-operation(part) });
 
-    steps.push(step);
+    steps.push(s);
   }
 
   steps
 }
 
-let hash = (value: String): i32 -> {
+let hash = (value: string): i32 -> {
   let result = 0;
 
-  for char in value.toList() {
+  for char in value.to-list() {
     result = ((result + char) * 17) % 256;
   }
 
   result
 }
 
-let solvePart1 = (input: String): String -> {
-  let sequence = parseInput(input);
+let solve-part1 = (input: string): string -> {
+  let sequence = parse-input(input);
   let result = 0;
 
-  for step in sequence {
-    result = result + hash(step.raw);
+  for s in sequence {
+    result = result + hash(s.raw);
   }
 
-  stringFromNumber(result)
+  string-from-number(result)
 }
 
-data Lens = { focalLength: i32, label: String }
+data lens = { focal-length: i32, label: string }
 
-data Box = { lenses: List<Lens> }
+data box = { lenses: list<lens> }
 
-let solvePart2 = (input: String): String -> {
-  let sequence = parseInput(input);
+let solve-part2 = (input: string): string -> {
+  let sequence = parse-input(input);
   let result = 0;
-  let boxes = arrayCreate(256);
+  let boxes = array-create(256);
 
-  for _, i in listFromArray(boxes) {
-    let box = Box.New({ lenses: [] });
+  for _, i in list-from-array(boxes) {
+    let b = box.new({ lenses: [] });
 
-    arraySet(boxes, i, box);
+    array-set(boxes, i, b);
   }
 
-  for step in sequence {
-    let stepOperation = step.operation;
-    let stepLabel = match stepOperation {
-      Insert({ label }) -> label;
-      Remove({ label }) -> label;
+  for s in sequence {
+    let step-operation = s.operation;
+    let step-label = match step-operation {
+      insert({ label }) -> label;
+      remove({ label }) -> label;
     };
-    let boxIndex = hash(stepLabel);
-    let box = arrayGet(boxes, boxIndex);
-    let _ = match stepOperation {
-      Insert({ label, focalLength }) -> {
+    let box-index = hash(step-label);
+    let b = array-get(boxes, box-index);
+    let _ = match step-operation {
+      insert({ label, focal-length }) -> {
         let replaced = false;
 
-        for lens, lensIndex in box.lenses {
+        for l, lens-index in b.lenses {
           let _ = case {
-            lens.label.equals(label) -> {
-              lens.focalLength = focalLength;
+            l.label.equals(label) -> {
+              l.focal-length = focal-length;
               replaced = true;
             };
             _ -> {};
@@ -100,28 +100,28 @@ let solvePart2 = (input: String): String -> {
 
         let _ = case {
           !(replaced) -> {
-            let lens = Lens.New({ label: label, focalLength: focalLength });
+            let l = lens.new({ label: label, focal-length: focal-length });
 
-            box.lenses.push(lens);
+            b.lenses.push(l);
           };
           _ -> {};
         };
       };
-      Remove({ label }) -> {
-        let removeIndex = --(1);
+      remove({ label }) -> {
+        let remove-index = --(1);
 
-        for lens, lensIndex in box.lenses {
+        for l, lens-index in b.lenses {
           let _ = case {
-            lens.label.equals(label) -> {
-              removeIndex = lensIndex;
+            l.label.equals(label) -> {
+              remove-index = lens-index;
             };
             _ -> {};
           };
         }
 
         let _ = case {
-          removeIndex >= 0 -> {
-            box.lenses.remove(removeIndex);
+          remove-index >= 0 -> {
+            b.lenses.remove(remove-index);
           };
           _ -> {};
         };
@@ -129,22 +129,22 @@ let solvePart2 = (input: String): String -> {
     };
   }
 
-  for box, boxIndex in listFromArray(boxes) {
-    for lens, lensIndex in box.lenses {
-      let focussingPower = (boxIndex + 1) * ((lensIndex + 1) * lens.focalLength);
+  for b, box-index in list-from-array(boxes) {
+    for l, lens-index in b.lenses {
+      let focussing-power = (box-index + 1) * ((lens-index + 1) * l.focal-length);
 
-      result = result + focussingPower;
+      result = result + focussing-power;
     }
   }
 
-  stringFromNumber(result)
+  string-from-number(result)
 }
 
-let input = getInput();
-let part1 = solvePart1(input);
+let input = get-input();
+let part1 = solve-part1(input);
 
-assertEqual(part1, "509152");
+assert-equal(part1, "509152");
 
-let part2 = solvePart2(input);
+let part2 = solve-part2(input);
 
-assertEqual(part2, "244403");
+assert-equal(part2, "244403");

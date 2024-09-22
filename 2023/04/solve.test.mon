@@ -1,21 +1,21 @@
-import { arrayCreate, arrayGet, arraySet } from "@array";
-import { assertEqual } from "@assert";
-import { List } from "@list";
+import { array-create, array-get, array-set } from "@array";
+import { assert-equal } from "@assert";
+import { list } from "@list";
 import { max } from "@math";
-import { String, stringFromNumber } from "@string";
-import { getValue: getInput } from "./input.txt";
+import { string, string-from-number } from "@string";
+import { get-value: get-input } from "./input.txt";
 
-data Game = { numbers: List<i32>, winning: List<i32> }
+data game = { numbers: list<i32>, winning: list<i32> }
 
-let parseNumberList = (input: String): List<i32> -> {
-  let parts = (input.trim()).splitBy(' ');
+let parse-number-list = (input: string): list<i32> -> {
+  let parts = (input.trim()).split-by(' ');
   let numbers = [];
 
   for part in parts {
     let trimmed = part.trim();
     let _ = case {
       trimmed.size() > 0 -> {
-        numbers.push(trimmed.toI32());
+        numbers.push(trimmed.to-i32());
       };
       _ -> {};
     };
@@ -24,28 +24,28 @@ let parseNumberList = (input: String): List<i32> -> {
   numbers
 }
 
-let parseInput = (input: String): List<Game> -> {
-  let lines = (input.trim()).toLines();
+let parse-input = (input: string): list<game> -> {
+  let lines = (input.trim()).to-lines();
   let games = [];
 
   for line in lines {
-    let lineParts = line.splitBy(':');
-    let sectionParts = (lineParts.get(1)).splitBy('|');
+    let line-parts = line.split-by(':');
+    let section-parts = (line-parts.get(1)).split-by('|');
 
-    games.push(Game.New({
-      winning: parseNumberList(sectionParts.get(0)),
-      numbers: parseNumberList(sectionParts.get(1)),
+    games.push(game.new({
+      winning: parse-number-list(section-parts.get(0)),
+      numbers: parse-number-list(section-parts.get(1)),
     }));
   }
 
   games
 }
 
-let solvePart1 = (input: String): String -> {
+let solve-part1 = (input: string): string -> {
   let result = 0;
-  let games = parseInput(input);
+  let games = parse-input(input);
 
-  for game, gameIndex in games {
+  for game, game-index in games {
     let score = 0;
 
     for number in game.numbers {
@@ -62,57 +62,57 @@ let solvePart1 = (input: String): String -> {
     result = result + score;
   }
 
-  stringFromNumber(result)
+  string-from-number(result)
 }
 
-let solvePart2 = (input: String): String -> {
+let solve-part2 = (input: string): string -> {
   let result = 0;
-  let games = parseInput(input);
-  let resultByGame = arrayCreate(games.size());
-  let countByGame = [];
+  let games = parse-input(input);
+  let result-by-game = array-create(games.size());
+  let count-by-game = [];
 
-  for game, gameIndex in games {
-    let gameResult = 0;
+  for game, game-index in games {
+    let game-result = 0;
 
     for number in game.numbers {
       for needed in game.winning {
         let _ = case {
           number == needed -> {
-            gameResult = gameResult + 1;
+            game-result = game-result + 1;
           };
           _ -> {};
         };
       }
     }
 
-    arraySet(resultByGame, gameIndex, gameResult);
-    countByGame.push(1);
+    array-set(result-by-game, game-index, game-result);
+    count-by-game.push(1);
   }
 
-  for count, gameIndex in countByGame {
+  for count, game-index in count-by-game {
     result = result + count;
 
-    let gameStart = gameIndex + 1;
-    let gameEnd = gameStart + arrayGet(resultByGame, gameIndex);
+    let game-start = game-index + 1;
+    let game-end = game-start + array-get(result-by-game, game-index);
 
-    while gameStart < gameEnd {
-      let currentCount = countByGame.get(gameStart);
-      let newCount = currentCount + count;
+    while game-start < game-end {
+      let current-count = count-by-game.get(game-start);
+      let new-count = current-count + count;
 
-      countByGame.set(gameStart, newCount);
+      count-by-game.set(game-start, new-count);
 
-      gameStart = gameStart + 1;
+      game-start = game-start + 1;
     }
   }
 
-  stringFromNumber(result)
+  string-from-number(result)
 }
 
-let input = getInput();
-let part1 = solvePart1(input);
+let input = get-input();
+let part1 = solve-part1(input);
 
-assertEqual(part1, "21959");
+assert-equal(part1, "21959");
 
-let part2 = solvePart2(input);
+let part2 = solve-part2(input);
 
-assertEqual(part2, "5132675");
+assert-equal(part2, "5132675");

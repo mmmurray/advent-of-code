@@ -1,21 +1,21 @@
-import { assertEqual } from "@assert";
-import { List, listFromArray } from "@list";
-import { Vec2, vec2Add, vec2ManhattanDistance } from "@math";
-import { String, stringFromNumber } from "@string";
-import { getValue: getInput } from "./input.txt";
+import { assert-equal } from "@assert";
+import { list, list-from-array } from "@list";
+import { vec2, vec2-add, vec2-manhattan-distance } from "@math";
+import { string, string-from-number } from "@string";
+import { get-value: get-input } from "./input.txt";
 
-data Universe = { galaxies: List<Vec2<i64>>, size: Vec2<i64> }
+data universe = { galaxies: list<vec2<i64>>, size: vec2<i64> }
 
-let parseInput = (input: String): Universe -> {
-  let lines = (input.trim()).toLines();
+let parse-input = (input: string): universe -> {
+  let lines = (input.trim()).to-lines();
   let galaxies = [];
-  let size = Vec2.New({ x: $i64((lines.get(0)).size()), y: $i64(lines.size()) });
+  let size = vec2.new({ x: $i64((lines.get(0)).size()), y: $i64(lines.size()) });
 
   for line, y in lines {
-    for char, x in line.toList() {
+    for char, x in line.to-list() {
       let _ = case {
         char == '#' -> {
-          let galaxy = Vec2.New({ x: $i64(x), y: $i64(y) });
+          let galaxy = vec2.new({ x: $i64(x), y: $i64(y) });
 
           galaxies.push(galaxy);
         };
@@ -24,18 +24,18 @@ let parseInput = (input: String): Universe -> {
     }
   }
 
-  Universe.New({ size: size, galaxies: galaxies })
+  universe.new({ size: size, galaxies: galaxies })
 }
 
-let expandUniverse = (universe: Universe, expansionRate: i64): Universe -> {
-  let size = universe.size;
-  let emptyRows = [];
+let expand-universe = (u: universe, expansion-rate: i64): universe -> {
+  let size = u.size;
+  let empty-rows = [];
   let y = 0;
 
   while y < size.y {
     let empty = true;
 
-    for galaxy in universe.galaxies {
+    for galaxy in u.galaxies {
       let _ = case {
         galaxy.y == y -> {
           empty = false;
@@ -46,7 +46,7 @@ let expandUniverse = (universe: Universe, expansionRate: i64): Universe -> {
 
     let _ = case {
       empty -> {
-        emptyRows.push(y);
+        empty-rows.push(y);
       };
       _ -> {};
     };
@@ -54,13 +54,13 @@ let expandUniverse = (universe: Universe, expansionRate: i64): Universe -> {
     y = y + 1;
   }
 
-  let emptyCols = [];
+  let empty-cols = [];
   let x = 0;
 
   while x < size.x {
     let empty = true;
 
-    for galaxy in universe.galaxies {
+    for galaxy in u.galaxies {
       let _ = case {
         galaxy.x == x -> {
           empty = false;
@@ -71,7 +71,7 @@ let expandUniverse = (universe: Universe, expansionRate: i64): Universe -> {
 
     let _ = case {
       empty -> {
-        emptyCols.push(x);
+        empty-cols.push(x);
       };
       _ -> {};
     };
@@ -79,53 +79,53 @@ let expandUniverse = (universe: Universe, expansionRate: i64): Universe -> {
     x = x + 1;
   }
 
-  let newSize = Vec2.New({
-    x: (size.x + (($i64(emptyCols.size()) * expansionRate) - 1)),
-    y: (size.y + (($i64(emptyRows.size()) * expansionRate) - 1)),
+  let new-size = vec2.new({
+    x: (size.x + (($i64(empty-cols.size()) * expansion-rate) - 1)),
+    y: (size.y + (($i64(empty-rows.size()) * expansion-rate) - 1)),
   });
-  let newGalaxies = [];
+  let new-galaxies = [];
 
-  for galaxy in universe.galaxies {
-    let redShift = Vec2.New({ x: 0, y: 0 });
+  for galaxy in u.galaxies {
+    let red-shift = vec2.new({ x: 0, y: 0 });
 
-    for emptyCol in emptyCols {
+    for empty-col in empty-cols {
       let _ = case {
-        emptyCol < galaxy.x -> {
-          redShift.x = redShift.x + (expansionRate - 1);
+        empty-col < galaxy.x -> {
+          red-shift.x = red-shift.x + (expansion-rate - 1);
         };
         _ -> {};
       };
     }
 
-    for emptyRow in emptyRows {
+    for empty-row in empty-rows {
       let _ = case {
-        emptyRow < galaxy.y -> {
-          redShift.y = redShift.y + (expansionRate - 1);
+        empty-row < galaxy.y -> {
+          red-shift.y = red-shift.y + (expansion-rate - 1);
         };
         _ -> {};
       };
     }
 
-    let newGalaxy = vec2Add(galaxy, redShift);
+    let new-galaxy = vec2-add(galaxy, red-shift);
 
-    newGalaxies.push(newGalaxy);
+    new-galaxies.push(new-galaxy);
   }
 
-  Universe.New({ size: newSize, galaxies: newGalaxies })
+  universe.new({ size: new-size, galaxies: new-galaxies })
 }
 
-let sumOfDistancesBetweenGalaxies = (universe: Universe): i64 -> {
+let sum-of-distances-between-galaxies = (u: universe): i64 -> {
   let total = 0;
-  let count = universe.galaxies.size();
+  let count = u.galaxies.size();
   let i = 0;
 
   while i < (count - 1) {
     let j = i + 1;
 
     while j < count {
-      let galaxy1 = universe.galaxies.get(i);
-      let galaxy2 = universe.galaxies.get(j);
-      let distance = vec2ManhattanDistance(galaxy1, galaxy2);
+      let galaxy1 = u.galaxies.get(i);
+      let galaxy2 = u.galaxies.get(j);
+      let distance = vec2-manhattan-distance(galaxy1, galaxy2);
 
       total = total + distance;
       j = j + 1;
@@ -137,27 +137,27 @@ let sumOfDistancesBetweenGalaxies = (universe: Universe): i64 -> {
   total
 }
 
-let solvePart1 = (input: String): String -> {
-  let expansionRate = 2;
-  let universe = expandUniverse(parseInput(input), expansionRate);
-  let result = sumOfDistancesBetweenGalaxies(universe);
+let solve-part1 = (input: string): string -> {
+  let expansion-rate = 2;
+  let u = expand-universe(parse-input(input), expansion-rate);
+  let result = sum-of-distances-between-galaxies(u);
 
-  stringFromNumber(result)
+  string-from-number(result)
 }
 
-let solvePart2 = (input: String): String -> {
-  let expansionRate = 1000000;
-  let universe = expandUniverse(parseInput(input), expansionRate);
-  let result = sumOfDistancesBetweenGalaxies(universe);
+let solve-part2 = (input: string): string -> {
+  let expansion-rate = 1000000;
+  let u = expand-universe(parse-input(input), expansion-rate);
+  let result = sum-of-distances-between-galaxies(u);
 
-  stringFromNumber(result)
+  string-from-number(result)
 }
 
-let input = getInput();
-let part1 = solvePart1(input);
+let input = get-input();
+let part1 = solve-part1(input);
 
-assertEqual(part1, "9565386");
+assert-equal(part1, "9565386");
 
-let part2 = solvePart2(input);
+let part2 = solve-part2(input);
 
-assertEqual(part2, "857986849428");
+assert-equal(part2, "857986849428");

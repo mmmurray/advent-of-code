@@ -1,71 +1,71 @@
-import { assertEqual } from "@assert";
-import { List } from "@list";
+import { assert-equal } from "@assert";
+import { list } from "@list";
 import { max } from "@math";
-import { String, stringFromNumber } from "@string";
-import { getValue: getInput } from "./input.txt";
+import { string, string-from-number } from "@string";
+import { get-value: get-input } from "./input.txt";
 
-data Selection = { blue: i32, green: i32, red: i32 }
+data selection = { blue: i32, green: i32, red: i32 }
 
-data Game = { id: i32, selections: List<Selection> }
+data game = { id: i32, selections: list<selection> }
 
-let parseSelection = (input: String): Selection -> {
-  let valueParts = input.splitBy(',');
-  let selection = Selection.New({ red: 0, blue: 0, green: 0 });
+let parse-selection = (input: string): selection -> {
+  let value-parts = input.split-by(',');
+  let s = selection.new({ red: 0, blue: 0, green: 0 });
 
-  for valuePart in valueParts {
-    let pairParts = (valuePart.trim()).splitBy(' ');
-    let value = (pairParts.get(0)).toI32();
-    let color = pairParts.get(1);
+  for value-part in value-parts {
+    let pair-parts = (value-part.trim()).split-by(' ');
+    let value = (pair-parts.get(0)).to-i32();
+    let color = pair-parts.get(1);
     let _ = case {
       color.equals("red") -> {
-        selection.red = value;
+        s.red = value;
       };
       _ -> {};
     };
     let _ = case {
       color.equals("green") -> {
-        selection.green = value;
+        s.green = value;
       };
       _ -> {};
     };
     let _ = case {
       color.equals("blue") -> {
-        selection.blue = value;
+        s.blue = value;
       };
       _ -> {};
     };
   }
 
-  selection
+  s
 }
 
-let parseInputLine = (line: String): Game -> {
-  let parts = line.splitBy(':');
-  let gameIdPart = parts.get(0);
-  let idPart = gameIdPart.slice(5, gameIdPart.size());
-  let id = idPart.toI32();
+let parse-input-line = (line: string): game -> {
+  let parts = line.split-by(':');
+  let game-id-part = parts.get(0);
+  let id-part = game-id-part.slice(5, game-id-part.size());
+  let id = id-part.to-i32();
   let selections = [];
-  let selectionsPart = (parts.get(1)).trim();
-  let selectionParts = selectionsPart.splitBy(';');
-  let selectionIndex = 0;
+  let selections-part = (parts.get(1)).trim();
+  let selection-parts = selections-part.split-by(';');
+  let selection-index = 0;
 
-  for selectionPart in selectionParts {
-    let selection = parseSelection(selectionPart);
+  for selection-part in selection-parts {
+    let selection = parse-selection(selection-part);
 
     selections.push(selection);
 
-    selectionIndex = selectionIndex + 1;
+    selection-index = selection-index + 1;
   }
 
-  Game.New({ id: id, selections: selections })
+  game.new({ id: id, selections: selections })
 }
 
-let parseInput = (input: String): List<Game> -> {
-  let lines = input.toLines();
+let parse-input = (input: string): list<game> -> {
+  let lines = input.to-lines();
   let games = [];
 
   for line in lines {
-    let game = parseInputLine(line);
+    let game = parse-input-line(line);
 
     games.push(game);
   }
@@ -73,8 +73,8 @@ let parseInput = (input: String): List<Game> -> {
   games
 }
 
-let solvePart1 = (input: String): String -> {
-  let games = parseInput(input);
+let solve-part1 = (input: string): string -> {
+  let games = parse-input(input);
   let result = 0;
 
   for game in games {
@@ -97,35 +97,35 @@ let solvePart1 = (input: String): String -> {
     };
   }
 
-  stringFromNumber(result)
+  string-from-number(result)
 }
 
-let solvePart2 = (input: String): String -> {
-  let games = parseInput(input);
+let solve-part2 = (input: string): string -> {
+  let games = parse-input(input);
   let result = 0;
 
   for game in games {
-    let minSelection = Selection.New({ red: 0, green: 0, blue: 0 });
+    let min-selection = selection.new({ red: 0, green: 0, blue: 0 });
 
     for selection in game.selections {
-      minSelection.red = max(minSelection.red, selection.red);
-      minSelection.green = max(minSelection.green, selection.green);
-      minSelection.blue = max(minSelection.blue, selection.blue);
+      min-selection.red = max(min-selection.red, selection.red);
+      min-selection.green = max(min-selection.green, selection.green);
+      min-selection.blue = max(min-selection.blue, selection.blue);
     }
 
-    let power = minSelection.red * (minSelection.blue * minSelection.green);
+    let power = min-selection.red * (min-selection.blue * min-selection.green);
 
     result = result + power;
   }
 
-  stringFromNumber(result)
+  string-from-number(result)
 }
 
-let input = (getInput()).trim();
-let part1 = solvePart1(input);
+let input = (get-input()).trim();
+let part1 = solve-part1(input);
 
-assertEqual(part1, "1853");
+assert-equal(part1, "1853");
 
-let part2 = solvePart2(input);
+let part2 = solve-part2(input);
 
-assertEqual(part2, "72706");
+assert-equal(part2, "72706");

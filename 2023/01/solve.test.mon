@@ -1,25 +1,25 @@
-import { assertEqual } from "@assert";
-import { charIsNumeric } from "@char";
-import { listFromArray } from "@list";
-import { String, stringFromNumber } from "@string";
-import { getValue: getInput } from "./input.txt";
+import { assert-equal } from "@assert";
+import { char-is-numeric } from "@char";
+import { list-from-array } from "@list";
+import { string, string-from-number } from "@string";
+import { get-value: get-input } from "./input.txt";
 
-let getCalibrationValue1 = (line: String): i32 -> {
-  let setFirstDigit = false;
-  let firstDigit = 0;
-  let lastDigit = 0;
+let get-calibration-value1 = (line: string): i32 -> {
+  let set-first-digit = false;
+  let first-digit = 0;
+  let last-digit = 0;
 
-  for char in line.toList() {
+  for char in line.to-list() {
     let _ = case {
-      charIsNumeric(char) -> {
+      char-is-numeric(char) -> {
         let digit = char - '0';
 
-        lastDigit = digit;
+        last-digit = digit;
 
         let _ = case {
-          !(setFirstDigit) -> {
-            firstDigit = digit;
-            setFirstDigit = true;
+          !(set-first-digit) -> {
+            first-digit = digit;
+            set-first-digit = true;
           };
           _ -> {};
         };
@@ -28,55 +28,55 @@ let getCalibrationValue1 = (line: String): i32 -> {
     };
   }
 
-  ((stringFromNumber(firstDigit)).concat(stringFromNumber(lastDigit))).toI32()
+  ((string-from-number(first-digit)).concat(string-from-number(last-digit))).to-i32()
 }
 
-let solvePart1 = (input: String): String -> {
-  let lines = input.toLines();
+let solve-part1 = (input: string): string -> {
+  let lines = input.to-lines();
   let result = 0;
 
   for line in lines {
-    let calibrationValue = getCalibrationValue1(line);
+    let calibration-value = get-calibration-value1(line);
 
-    result = result + calibrationValue;
+    result = result + calibration-value;
   }
 
-  stringFromNumber(result)
+  string-from-number(result)
 }
 
-let getCalibrationValue2 = (line: String): i32 -> {
-  let digitStrings = ["one", "two", "three", "four", "five", "six", "seven", "eight", "nine"];
-  let setFirstDigit = false;
-  let firstDigit = 0;
-  let lastDigit = 0;
+let get-calibration-value2 = (line: string): i32 -> {
+  let digit-strings = ["one", "two", "three", "four", "five", "six", "seven", "eight", "nine"];
+  let set-first-digit = false;
+  let first-digit = 0;
+  let last-digit = 0;
 
-  for char, charIndex in line.toList() {
+  for char, char-index in line.to-list() {
     let _ = case {
-      charIsNumeric(char) -> {
+      char-is-numeric(char) -> {
         let digit = char - '0';
 
-        lastDigit = digit;
+        last-digit = digit;
 
         let _ = case {
-          !(setFirstDigit) -> {
-            firstDigit = digit;
-            setFirstDigit = true;
+          !(set-first-digit) -> {
+            first-digit = digit;
+            set-first-digit = true;
           };
           _ -> {};
         };
       };
       _ -> {
-        for digitString, digitStringIndex in digitStrings {
+        for digit-string, digit-string-index in digit-strings {
           let _ = case {
-            line.containsAt(digitString, charIndex) -> {
-              let digit2 = digitStringIndex + 1;
+            line.contains-at(digit-string, char-index) -> {
+              let digit2 = digit-string-index + 1;
 
-              lastDigit = digit2;
+              last-digit = digit2;
 
               let _ = case {
-                !(setFirstDigit) -> {
-                  firstDigit = digit2;
-                  setFirstDigit = true;
+                !(set-first-digit) -> {
+                  first-digit = digit2;
+                  set-first-digit = true;
                 };
                 _ -> {};
               };
@@ -88,27 +88,27 @@ let getCalibrationValue2 = (line: String): i32 -> {
     };
   }
 
-  ((stringFromNumber(firstDigit)).concat(stringFromNumber(lastDigit))).toI32()
+  ((string-from-number(first-digit)).concat(string-from-number(last-digit))).to-i32()
 }
 
-let solvePart2 = (input: String): String -> {
-  let lines = input.toLines();
+let solve-part2 = (input: string): string -> {
+  let lines = input.to-lines();
   let result = 0;
 
   for line in lines {
-    let calibrationValue = getCalibrationValue2(line);
+    let calibration-value = get-calibration-value2(line);
 
-    result = result + calibrationValue;
+    result = result + calibration-value;
   }
 
-  stringFromNumber(result)
+  string-from-number(result)
 }
 
-let input = (getInput()).trim();
-let part1 = solvePart1(input);
+let input = (get-input()).trim();
+let part1 = solve-part1(input);
 
-assertEqual(part1, "54605");
+assert-equal(part1, "54605");
 
-let part2 = solvePart2(input);
+let part2 = solve-part2(input);
 
-assertEqual(part2, "55429");
+assert-equal(part2, "55429");

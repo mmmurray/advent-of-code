@@ -1,16 +1,16 @@
-import { assertEqual } from "@assert";
-import { charIsNumeric } from "@char";
-import { List, listFromArray } from "@list";
-import { Map, mapCreate } from "@map";
-import { String, stringFromNumber } from "@string";
-import { getValue: getInput } from "./input.txt";
+import { assert-equal } from "@assert";
+import { char-is-numeric } from "@char";
+import { list, list-from-array } from "@list";
+import { map, map-create } from "@map";
+import { string, string-from-number } from "@string";
+import { get-value: get-input } from "./input.txt";
 
-data Hand = { bid: i32, cards: List<i32>, score: i32 }
+data hand = { bid: i32, cards: list<i32>, score: i32 }
 
-let isFiveOfAKind = (countByCard: Map<String, i32>): boolean -> {
+let is-five-of-a-kind = (count-by-card: map<string, i32>): boolean -> {
   let result = false;
 
-  for item1 in countByCard.entries() {
+  for item1 in count-by-card.entries() {
     let _ = case {
       item1.value == 5 -> {
         result = true;
@@ -22,10 +22,10 @@ let isFiveOfAKind = (countByCard: Map<String, i32>): boolean -> {
   result
 }
 
-let isFourOfAKind = (countByCard: Map<String, i32>): boolean -> {
+let is-four-of-a-kind = (count-by-card: map<string, i32>): boolean -> {
   let result = false;
 
-  for item1 in countByCard.entries() {
+  for item1 in count-by-card.entries() {
     let _ = case {
       item1.value == 4 -> {
         result = true;
@@ -37,10 +37,10 @@ let isFourOfAKind = (countByCard: Map<String, i32>): boolean -> {
   result
 }
 
-let isThreeOfAKind = (countByCard: Map<String, i32>): boolean -> {
+let is-three-of-a-kind = (count-by-card: map<string, i32>): boolean -> {
   let result = false;
 
-  for item1 in countByCard.entries() {
+  for item1 in count-by-card.entries() {
     let _ = case {
       item1.value == 3 -> {
         result = true;
@@ -52,20 +52,20 @@ let isThreeOfAKind = (countByCard: Map<String, i32>): boolean -> {
   result
 }
 
-let isFullHouse = (countByCard: Map<String, i32>): boolean -> {
-  countByCard.size() == 2
+let is-full-house = (count-by-card: map<string, i32>): boolean -> {
+  count-by-card.size() == 2
 }
 
-let isTwoPair = (countByCard: Map<String, i32>): boolean -> {
-  countByCard.size() == 3
+let is-two-pair = (count-by-card: map<string, i32>): boolean -> {
+  count-by-card.size() == 3
 }
 
-let isOnePair = (countByCard: Map<String, i32>): boolean -> {
-  countByCard.size() == 4
+let is-one-pair = (count-by-card: map<string, i32>): boolean -> {
+  count-by-card.size() == 4
 }
 
-let scoreCards = (cards: List<i32>): i32 -> {
-  let countByCard = mapCreate();
+let score-cards = (cards: list<i32>): i32 -> {
+  let count-by-card = map-create();
   let jokers = 0;
 
   for card in cards {
@@ -74,74 +74,74 @@ let scoreCards = (cards: List<i32>): i32 -> {
         jokers = jokers + 1;
       };
       _ -> {
-        let key = stringFromNumber(card);
-        let current = (countByCard.get(key)).or(0);
+        let key = string-from-number(card);
+        let current = (count-by-card.get(key)).or(0);
 
-        countByCard.set(key, (current + 1));
+        count-by-card.set(key, (current + 1));
       };
     };
   }
 
-  let maxCount = 0;
-  let maxCard = "2";
+  let max-count = 0;
+  let max-card = "2";
 
-  for item0 in countByCard.entries() {
+  for item0 in count-by-card.entries() {
     let _ = case {
-      item0.value > maxCount -> {
-        maxCount = item0.value;
-        maxCard = item0.key;
+      item0.value > max-count -> {
+        max-count = item0.value;
+        max-card = item0.key;
       };
       _ -> {};
     };
   }
 
-  countByCard.set(maxCard, (maxCount + jokers));
+  count-by-card.set(max-card, (max-count + jokers));
 
   case {
-    isFiveOfAKind(countByCard) -> 7;
-    isFourOfAKind(countByCard) -> 6;
-    isFullHouse(countByCard) -> 5;
-    isThreeOfAKind(countByCard) -> 4;
-    isTwoPair(countByCard) -> 3;
-    isOnePair(countByCard) -> 2;
+    is-five-of-a-kind(count-by-card) -> 7;
+    is-four-of-a-kind(count-by-card) -> 6;
+    is-full-house(count-by-card) -> 5;
+    is-three-of-a-kind(count-by-card) -> 4;
+    is-two-pair(count-by-card) -> 3;
+    is-one-pair(count-by-card) -> 2;
     _ -> 1;
   }
 
   1
 }
 
-let parseInput = (input: String, jokers: boolean): List<Hand> -> {
+let parse-input = (input: string, jokers: boolean): list<hand> -> {
   let hands = [];
-  let lines = (input.trim()).toLines();
+  let lines = (input.trim()).to-lines();
 
   for line in lines {
-    let parts = line.splitBy(' ');
-    let cardsPart = parts.get(0);
-    let bidPart = parts.get(1);
+    let parts = line.split-by(' ');
+    let cards-part = parts.get(0);
+    let bid-part = parts.get(1);
     let cards = [];
 
-    for cardChar in cardsPart.toList() {
+    for card-char in cards-part.to-list() {
       let card = 0;
       let _ = case {
-        cardChar == 'A' -> {
+        card-char == 'A' -> {
           card = 14;
         };
         _ -> {};
       };
       let _ = case {
-        cardChar == 'K' -> {
+        card-char == 'K' -> {
           card = 13;
         };
         _ -> {};
       };
       let _ = case {
-        cardChar == 'Q' -> {
+        card-char == 'Q' -> {
           card = 12;
         };
         _ -> {};
       };
       let _ = case {
-        cardChar == 'J' -> {
+        card-char == 'J' -> {
           let _ = case {
             jokers -> {
               card = 1;
@@ -154,14 +154,14 @@ let parseInput = (input: String, jokers: boolean): List<Hand> -> {
         _ -> {};
       };
       let _ = case {
-        cardChar == 'T' -> {
+        card-char == 'T' -> {
           card = 10;
         };
         _ -> {};
       };
       let _ = case {
-        charIsNumeric(cardChar) -> {
-          card = cardChar - '0';
+        char-is-numeric(card-char) -> {
+          card = card-char - '0';
         };
         _ -> {};
       };
@@ -169,27 +169,27 @@ let parseInput = (input: String, jokers: boolean): List<Hand> -> {
       cards.push(card);
     }
 
-    let hand = Hand.New({ cards: cards, bid: bidPart.toI32(), score: scoreCards(cards) });
+    let h = hand.new({ cards: cards, bid: bid-part.to-i32(), score: score-cards(cards) });
 
-    hands.push(hand);
+    hands.push(h);
   }
 
   hands
 }
 
-let compareHands = (a: Hand, b: Hand): boolean -> {
+let compare-hands = (a: hand, b: hand): boolean -> {
   case {
     a.score == b.score -> {
       let result = false;
       let loop = true;
 
-      for cardA, cardIndex in a.cards {
+      for card-a, card-index in a.cards {
         let _ = case {
           loop -> {
-            let cardB = b.cards.get(cardIndex);
+            let card-b = b.cards.get(card-index);
             let _ = case {
-              cardA != cardB -> {
-                result = cardA > cardB;
+              card-a != card-b -> {
+                result = card-a > card-b;
                 loop = false;
               };
               _ -> {};
@@ -205,17 +205,17 @@ let compareHands = (a: Hand, b: Hand): boolean -> {
   }
 }
 
-let sortHands = (hands: List<Hand>): List<Hand> -> {
-  let endIndex = hands.size() - 1;
+let sort-hands = (hands: list<hand>): list<hand> -> {
+  let end-index = hands.size() - 1;
 
-  while endIndex > 0 {
+  while end-index > 0 {
     let index = 0;
 
-    while index < endIndex {
+    while index < end-index {
       let a = hands.get(index);
       let b = hands.get((index + 1));
       let _ = case {
-        compareHands(a, b) -> {
+        compare-hands(a, b) -> {
           hands.set(index, b);
           hands.set((index + 1), a);
         };
@@ -225,41 +225,41 @@ let sortHands = (hands: List<Hand>): List<Hand> -> {
       index = index + 1;
     }
 
-    endIndex = endIndex - 1;
+    end-index = end-index - 1;
   }
 
   hands
 }
 
-let scoreHands = (hands: List<Hand>): i32 -> {
+let score-hands = (hands: list<hand>): i32 -> {
   let result = 0;
 
-  for hand, handIndex in hands {
-    let rank = handIndex + 1;
+  for h, hand-index in hands {
+    let rank = hand-index + 1;
 
-    result = result + (rank * hand.bid);
+    result = result + (rank * h.bid);
   }
 
   result
 }
 
-let solvePart1 = (input: String): String -> {
-  let hands = sortHands(parseInput(input, false));
+let solve-part1 = (input: string): string -> {
+  let hands = sort-hands(parse-input(input, false));
 
-  stringFromNumber(scoreHands(hands))
+  string-from-number(score-hands(hands))
 }
 
-let solvePart2 = (input: String): String -> {
-  let hands = sortHands(parseInput(input, true));
+let solve-part2 = (input: string): string -> {
+  let hands = sort-hands(parse-input(input, true));
 
-  stringFromNumber(scoreHands(hands))
+  string-from-number(score-hands(hands))
 }
 
-let input = getInput();
-let part1 = solvePart1(input);
+let input = get-input();
+let part1 = solve-part1(input);
 
-assertEqual(part1, "245794640");
+assert-equal(part1, "245794640");
 
-let part2 = solvePart2(input);
+let part2 = solve-part2(input);
 
-assertEqual(part2, "247899149");
+assert-equal(part2, "247899149");

@@ -1,42 +1,42 @@
-import { assertEqual } from "@assert";
-import { charIsNumeric } from "@char";
-import { List } from "@list";
-import { Vec2, vec2Add, vec2IsAdjacent } from "@math";
-import { String, stringFromNumber } from "@string";
-import { getValue: getInput } from "./input.txt";
+import { assert-equal } from "@assert";
+import { char-is-numeric } from "@char";
+import { list } from "@list";
+import { vec2, vec2-add, vec2-is-adjacent } from "@math";
+import { string, string-from-number } from "@string";
+import { get-value: get-input } from "./input.txt";
 
-data SchematicSymbol = { location: Vec2<i32>, value: i32 }
+data schematic-symbol = { location: vec2<i32>, value: i32 }
 
-data SchematicNumber = { length: i32, location: Vec2<i32>, value: i32 }
+data schematic-number = { length: i32, location: vec2<i32>, value: i32 }
 
-data Schematic = { numbers: List<SchematicNumber>, symbols: List<SchematicSymbol> }
+data schematic = { numbers: list<schematic-number>, symbols: list<schematic-symbol> }
 
-let parseInput = (input: String): Schematic -> {
-  let lines = input.toLines();
-  let schematic = Schematic.New({ symbols: [], numbers: [] });
+let parse-input = (input: string): schematic -> {
+  let lines = input.to-lines();
+  let s = schematic.new({ symbols: [], numbers: [] });
 
-  for line, lineIndex in lines {
-    let charIndex = 0;
+  for line, line-index in lines {
+    let char-index = 0;
 
-    while charIndex < line.size() {
-      let char = line.get(charIndex);
+    while char-index < line.size() {
+      let char = line.get(char-index);
       let _ = case {
         char != '.' -> {
           let _ = case {
-            charIsNumeric(char) -> {
+            char-is-numeric(char) -> {
               let length = 0;
               let value = 0;
-              let location = Vec2.New({ x: charIndex, y: lineIndex });
+              let location = vec2.new({ x: char-index, y: line-index });
               let loop = true;
 
-              while loop && (charIndex < line.size()) {
-                char = line.get(charIndex);
+              while loop && (char-index < line.size()) {
+                char = line.get(char-index);
 
                 let _ = case {
-                  charIsNumeric(char) -> {
+                  char-is-numeric(char) -> {
                     value = (value * 10) + (char - '0');
                     length = 1 + length;
-                    charIndex = charIndex + 1;
+                    char-index = char-index + 1;
                   };
                   _ -> {
                     loop = false;
@@ -44,48 +44,48 @@ let parseInput = (input: String): Schematic -> {
                 };
               }
 
-              let number = SchematicNumber.New({ location: location, value: value, length: length });
+              let number = schematic-number.new({ location: location, value: value, length: length });
 
-              schematic.numbers.push(number);
+              s.numbers.push(number);
 
-              charIndex = charIndex - 1;
+              char-index = char-index - 1;
             };
             _ -> {
-              let symbol = SchematicSymbol.New({
-                location: Vec2.New({ x: charIndex, y: lineIndex }),
+              let symbol = schematic-symbol.new({
+                location: vec2.new({ x: char-index, y: line-index }),
                 value: char,
               });
 
-              schematic.symbols.push(symbol);
+              s.symbols.push(symbol);
             };
           };
         };
         _ -> {};
       };
 
-      charIndex = charIndex + 1;
+      char-index = char-index + 1;
     }
   }
 
-  schematic
+  s
 }
 
-let solvePart1 = (input: String): String -> {
+let solve-part1 = (input: string): string -> {
   let result = 0;
-  let schematic = parseInput(input);
+  let s = parse-input(input);
 
-  for number in schematic.numbers {
-    let offsetX = 0;
+  for number in s.numbers {
+    let offset-x = 0;
     let loop = true;
 
-    while loop && (offsetX < number.length) {
-      let offset = Vec2.New({ x: offsetX, y: 0 });
-      let position = vec2Add(number.location, offset);
+    while loop && (offset-x < number.length) {
+      let offset = vec2.new({ x: offset-x, y: 0 });
+      let position = vec2-add(number.location, offset);
       let found = false;
 
-      for symbol in schematic.symbols {
+      for symbol in s.symbols {
         let _ = case {
-          vec2IsAdjacent(position, symbol.location) -> {
+          vec2-is-adjacent(position, symbol.location) -> {
             found = true;
           };
           _ -> {};
@@ -98,56 +98,56 @@ let solvePart1 = (input: String): String -> {
           loop = false;
         };
         _ -> {
-          offsetX = offsetX + 1;
+          offset-x = offset-x + 1;
         };
       };
     }
   }
 
-  stringFromNumber(result)
+  string-from-number(result)
 }
 
-let solvePart2 = (input: String): String -> {
+let solve-part2 = (input: string): string -> {
   let result = 0;
-  let schematic = parseInput(input);
+  let s = parse-input(input);
 
-  for symbol in schematic.symbols {
+  for symbol in s.symbols {
     let _ = case {
       symbol.value == '*' -> {
-        let adjacentCount = 0;
-        let adjacentProduct = 1;
+        let adjacent-count = 0;
+        let adjacent-product = 1;
 
-        for number in schematic.numbers {
+        for number in s.numbers {
           let adjacent = false;
-          let offsetX = 0;
+          let offset-x = 0;
           let loop = true;
 
-          while loop && (offsetX < number.length) {
-            let offset = Vec2.New({ x: offsetX, y: 0 });
-            let position = vec2Add(number.location, offset);
+          while loop && (offset-x < number.length) {
+            let offset = vec2.new({ x: offset-x, y: 0 });
+            let position = vec2-add(number.location, offset);
             let _ = case {
-              vec2IsAdjacent(position, symbol.location) -> {
+              vec2-is-adjacent(position, symbol.location) -> {
                 adjacent = true;
                 loop = false;
               };
               _ -> {
-                offsetX = offsetX + 1;
+                offset-x = offset-x + 1;
               };
             };
           }
 
           let _ = case {
             adjacent -> {
-              adjacentCount = adjacentCount + 1;
-              adjacentProduct = adjacentProduct * number.value;
+              adjacent-count = adjacent-count + 1;
+              adjacent-product = adjacent-product * number.value;
             };
             _ -> {};
           };
         }
 
         let _ = case {
-          adjacentCount == 2 -> {
-            result = result + adjacentProduct;
+          adjacent-count == 2 -> {
+            result = result + adjacent-product;
           };
           _ -> {};
         };
@@ -156,14 +156,14 @@ let solvePart2 = (input: String): String -> {
     };
   }
 
-  stringFromNumber(result)
+  string-from-number(result)
 }
 
-let input = (getInput()).trim();
-let part1 = solvePart1(input);
+let input = (get-input()).trim();
+let part1 = solve-part1(input);
 
-assertEqual(part1, "525181");
+assert-equal(part1, "525181");
 
-let part2 = solvePart2(input);
+let part2 = solve-part2(input);
 
-assertEqual(part2, "84289137");
+assert-equal(part2, "84289137");

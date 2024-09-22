@@ -1,19 +1,19 @@
-import { assertEqual } from "@assert";
-import { List } from "@list";
-import { String, stringFromNumber } from "@string";
-import { stringBuilderCreate } from "@string-builder";
-import { getValue: getInput } from "./input.txt";
+import { assert-equal } from "@assert";
+import { list } from "@list";
+import { string, string-from-number } from "@string";
+import { string-builder-create } from "@string-builder";
+import { get-value: get-input } from "./input.txt";
 
-data Race = { distance: u64, time: u64 }
+data race = { distance: u64, time: u64 }
 
-let parseNumberList = (input: String): List<u64> -> {
+let parse-number-list = (input: string): list<u64> -> {
   let values = [];
-  let parts = input.splitBy(' ');
+  let parts = input.split-by( ' ');
 
   for part in parts {
     let _ = case {
       part.size() > 0 -> {
-        let num = part.toU64();
+        let num = part.to-u64();
 
         values.push(num);
       };
@@ -24,81 +24,81 @@ let parseNumberList = (input: String): List<u64> -> {
   values
 }
 
-let parseInput = (input: String): List<Race> -> {
+let parse-input = (input: string): list<race> -> {
   let races = [];
-  let lines = input.toLines();
-  let timesLine = lines.get(0);
-  let distancesLine = lines.get(1);
-  let times = parseNumberList((timesLine.splitBy(':')).get(1));
-  let distances = parseNumberList((distancesLine.splitBy(':')).get(1));
+  let lines = input.to-lines();
+  let times-line = lines.get(0);
+  let distances-line = lines.get(1);
+  let times = parse-number-list((times-line.split-by( ':' )).get(1));
+  let distances = parse-number-list((distances-line.split-by( ':' )).get(1));
 
-  for time, timeIndex in times {
-    let race = Race.New({ time: time, distance: distances.get(timeIndex) });
+  for time, time-index in times {
+    let r = race.new({ time: time, distance: distances.get(time-index) });
 
-    races.push(race);
+    races.push(r);
   }
 
   races
 }
 
-let solveRace = (race: Race): u64 -> {
-  let winningStrategies = 0;
-  let holdTime = 0;
+let solve-race = (r: race): u64 -> {
+  let winning-strategies = 0;
+  let hold-time = 0;
 
-  while holdTime <= race.time {
-    let speed = holdTime;
-    let remainingTime = race.time - holdTime;
-    let distance = remainingTime * speed;
+  while hold-time <= r.time {
+    let speed = hold-time;
+    let remaining-time = r.time - hold-time;
+    let distance = remaining-time * speed;
     let _ = case {
-      distance > race.distance -> {
-        winningStrategies = winningStrategies + 1;
+      distance > r.distance -> {
+        winning-strategies = winning-strategies + 1;
       };
       _ -> {};
     };
 
-    holdTime = holdTime + 1;
+    hold-time = hold-time + 1;
   }
 
-  winningStrategies
+  winning-strategies
 }
 
-let solvePart1 = (input: String): String -> {
-  let races = parseInput(input);
+let solve-part1 = (input: string): string -> {
+  let races = parse-input(input);
   let result = 1;
 
-  for race in races {
-    let winningStrategies = solveRace(race);
+  for r in races {
+    let winning-strategies = solve-race(r);
 
-    result = result * winningStrategies;
+    result = result * winning-strategies;
   }
 
-  stringFromNumber(result)
+  string-from-number(result)
 }
 
-let solvePart2 = (input: String): String -> {
-  let races = parseInput(input);
-  let combinedTimes = stringBuilderCreate();
-  let combinedDistances = stringBuilderCreate();
+let solve-part2 = (input: string): string -> {
+  let races = parse-input(input);
+  let combined-times = string-builder-create();
+  let combined-distances = string-builder-create();
 
-  for race in races {
-    combinedTimes.append(stringFromNumber(race.time));
-    combinedDistances.append(stringFromNumber(race.distance));
+  for r in races {
+    combined-times.append(string-from-number(r.time));
+    combined-distances.append(string-from-number(r.distance));
   }
 
-  let combinedRace = Race.New({
-    time: (combinedTimes.build()).toU64(),
-    distance: (combinedDistances.build()).toU64(),
+  let combined-race = race.new({
+    time: (combined-times.build()).to-u64(),
+    distance: (combined-distances.build()).to-u64(),
   });
-  let result = solveRace(combinedRace);
+  let result = solve-race(combined-race);
 
-  stringFromNumber(result)
+  string-from-number(result)
 }
 
-let input = getInput();
-let part1 = solvePart1(input);
+let input = get-input();
+let part1 = solve-part1(input);
 
-assertEqual(part1, "1413720");
+assert-equal(part1, "1413720");
 
-let part2 = solvePart2(input);
+let part2 = solve-part2(input);
 
-assertEqual(part2, "30565288");
+assert-equal(part2, "30565288");

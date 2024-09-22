@@ -1,22 +1,22 @@
-import { assertEqual } from "@assert";
+import { assert-equal } from "@assert";
 import { print } from "@io";
-import { List, listFromArray } from "@list";
-import { Map, mapCreate } from "@map";
-import { lcmMany } from "@math";
-import { String, stringFromNumber } from "@string";
-import { getValue: getInput } from "./input.txt";
+import { list, list-from-array } from "@list";
+import { map, map-create } from "@map";
+import { lcm-many } from "@math";
+import { string, string-from-number } from "@string";
+import { get-value: get-input } from "./input.txt";
 
-data Node = { left: String, right: String }
+data node = { left: string, right: string }
 
-data Network = { instructions: List<boolean>, nodes: Map<String, Node> }
+data network = { instructions: list<boolean>, nodes: map<string, node> }
 
-let parseInput = (input: String): Network -> {
+let parse-input = (input: string): network -> {
   let instructions = [];
-  let nodes = mapCreate();
-  let lines = (input.trim()).toLines();
-  let instructionsLine = lines.get(0);
+  let nodes = map-create();
+  let lines = (input.trim()).to-lines();
+  let instructions-line = lines.get(0);
 
-  for char in instructionsLine.toList() {
+  for char in instructions-line.to-list() {
     let instruction = false;
     let _ = case {
       char == 'L' -> {
@@ -28,31 +28,31 @@ let parseInput = (input: String): Network -> {
     instructions.push(instruction);
   }
 
-  let nodesLines = lines.slice(2, lines.size());
+  let nodes-lines = lines.slice(2, lines.size());
 
-  for nodeLine in nodesLines {
-    let name = nodeLine.slice(0, 3);
-    let left = nodeLine.slice(7, 10);
-    let right = nodeLine.slice(12, 15);
-    let node = Node.New({ left: left, right: right });
+  for node-line in nodes-lines {
+    let name = node-line.slice(0, 3);
+    let left = node-line.slice(7, 10);
+    let right = node-line.slice(12, 15);
+    let n = node.new({ left: left, right: right });
 
-    nodes.set(name, node);
+    nodes.set(name, n);
   }
 
-  Network.New({ instructions: instructions, nodes: nodes })
+  network.new({ instructions: instructions, nodes: nodes })
 }
 
-let countSteps = (network: Network, start: String): u64 -> {
-  let instructionIndex = 0;
+let count-steps = (net: network, start: string): u64 -> {
+  let instruction-index = 0;
   let current = start;
   let steps = 0;
   let loop = true;
 
   while loop {
-    let instruction = network.instructions.get(instructionIndex);
-    let node = network.nodes.get(current);
-    let _ = match node {
-      Some({ value }) -> {
+    let instruction = net.instructions.get(instruction-index);
+    let n = net.nodes.get(current);
+    let _ = match n {
+      some({ value }) -> {
         let _ = case {
           instruction -> {
             current = value.left;
@@ -62,10 +62,10 @@ let countSteps = (network: Network, start: String): u64 -> {
           };
         };
       };
-      None -> print("Node not found");
+      none -> print("Node not found");
     };
 
-    instructionIndex = (instructionIndex + 1) % network.instructions.size();
+    instruction-index = (instruction-index + 1) % net.instructions.size();
     steps = steps + 1;
 
     let _ = case {
@@ -79,37 +79,37 @@ let countSteps = (network: Network, start: String): u64 -> {
   steps
 }
 
-let solvePart1 = (input: String): String -> {
-  let network = parseInput(input);
-  let result = countSteps(network, "AAA");
+let solve-part1 = (input: string): string -> {
+  let n = parse-input(input);
+  let result = count-steps(n, "AAA");
 
-  stringFromNumber(result)
+  string-from-number(result)
 }
 
-let solvePart2 = (input: String): String -> {
-  let network = parseInput(input);
-  let nodes = network.nodes;
-  let allSteps = [];
+let solve-part2 = (input: string): string -> {
+  let n = parse-input(input);
+  let nodes = n.nodes;
+  let all-steps = [];
 
   for item in nodes.entries() {
     let _ = case {
       item.key.get(2) == 'A' -> {
-        allSteps.push(countSteps(network, item.key));
+        all-steps.push(count-steps(n, item.key));
       };
       _ -> {};
     };
   }
 
-  let result = lcmMany(allSteps);
+  let result = lcm-many(all-steps);
 
-  stringFromNumber(result)
+  string-from-number(result)
 }
 
-let input = getInput();
-let part1 = solvePart1(input);
+let input = get-input();
+let part1 = solve-part1(input);
 
-assertEqual(part1, "21883");
+assert-equal(part1, "21883");
 
-let part2 = solvePart2(input);
+let part2 = solve-part2(input);
 
-assertEqual(part2, "12833235391111");
+assert-equal(part2, "12833235391111");

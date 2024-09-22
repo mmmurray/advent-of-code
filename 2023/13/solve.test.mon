@@ -1,26 +1,26 @@
-import { assertEqual } from "@assert";
-import { List, listFromArray } from "@list";
-import { Vec2, min } from "@math";
-import { String, stringFromNumber } from "@string";
-import { getValue: getInput } from "./input.txt";
+import { assert-equal } from "@assert";
+import { list, list-from-array } from "@list";
+import { vec2, min } from "@math";
+import { string, string-from-number } from "@string";
+import { get-value: get-input } from "./input.txt";
 
-data Grid = { rows: List<List<boolean>>, size: Vec2<i32> }
+data grid = { rows: list<list<boolean>>, size: vec2<i32> }
 
-let parseInput = (input: String): List<Grid> -> {
+let parse-input = (input: string): list<grid> -> {
   let grids = [];
-  let lines = input.toLines();
+  let lines = input.to-lines();
   let rows = [];
-  let size = Vec2.New({ x: 0, y: 0 });
+  let size = vec2.new({ x: 0, y: 0 });
 
   for line in lines {
     let _ = case {
       line.size() == 0 -> {
-        let grid = Grid.New({ size: size, rows: rows });
+        let g = grid.new({ size: size, rows: rows });
 
-        grids.push(grid);
+        grids.push(g);
 
         rows = [];
-        size = Vec2.New({ x: 0, y: 0 });
+        size = vec2.new({ x: 0, y: 0 });
       };
       _ -> {
         size.x = line.size();
@@ -28,10 +28,10 @@ let parseInput = (input: String): List<Grid> -> {
 
         let row = [];
 
-        for char in line.toList() {
-          let isWall = char == '#';
+        for char in line.to-list() {
+          let is-wall = char == '#';
 
-          row.push(isWall);
+          row.push(is-wall);
         }
 
         rows.push(row);
@@ -42,28 +42,28 @@ let parseInput = (input: String): List<Grid> -> {
   grids
 }
 
-let getReflectionScore = (grid: Grid, notScore: i32): i32 -> {
+let get-reflection-score = (g: grid, not-score: i32): i32 -> {
   let result = 0;
-  let size = grid.size;
-  let colGap = 1;
+  let size = g.size;
+  let col-gap = 1;
   let loop = true;
 
-  while loop && (colGap < size.x) {
-    let reflectCount = min(colGap, (size.x - colGap));
-    let isReflection = true;
+  while loop && (col-gap < size.x) {
+    let reflect-count = min(col-gap, (size.x - col-gap));
+    let is-reflection = true;
     let offset = 0;
 
-    while offset < reflectCount {
-      let colA = colGap - (offset + 1);
-      let colB = colGap + offset;
+    while offset < reflect-count {
+      let col-a = col-gap - (offset + 1);
+      let col-b = col-gap + offset;
       let row = 0;
 
       while row < size.y {
-        let valA = (grid.rows.get(row)).get(colA);
-        let valB = (grid.rows.get(row)).get(colB);
+        let val-a = (g.rows.get(row)).get(col-a);
+        let val-b = (g.rows.get(row)).get(col-b);
         let _ = case {
-          $i32(valA) != $i32(valB) -> {
-            isReflection = false;
+          $i32(val-a) != $i32(val-b) -> {
+            is-reflection = false;
           };
           _ -> {};
         };
@@ -75,10 +75,10 @@ let getReflectionScore = (grid: Grid, notScore: i32): i32 -> {
     }
 
     let _ = case {
-      isReflection -> {
-        let score = colGap;
+      is-reflection -> {
+        let score = col-gap;
         let _ = case {
-          score != notScore -> {
+          score != not-score -> {
             result = score;
             loop = false;
           };
@@ -88,31 +88,31 @@ let getReflectionScore = (grid: Grid, notScore: i32): i32 -> {
       _ -> {};
     };
 
-    colGap = colGap + 1;
+    col-gap = col-gap + 1;
   }
 
   case {
     !(loop) -> result;
     _ -> {
-      let rowGap = 1;
+      let row-gap = 1;
       let loop1 = true;
 
-      while loop1 && (rowGap < size.y) {
-        let reflectCount = min(rowGap, (size.y - rowGap));
-        let isReflection = true;
+      while loop1 && (row-gap < size.y) {
+        let reflect-count = min(row-gap, (size.y - row-gap));
+        let is-reflection = true;
         let offset = 0;
 
-        while offset < reflectCount {
-          let rowA = rowGap - (offset + 1);
-          let rowB = rowGap + offset;
+        while offset < reflect-count {
+          let row-a = row-gap - (offset + 1);
+          let row-b = row-gap + offset;
           let col = 0;
 
           while col < size.x {
-            let valA = (grid.rows.get(rowA)).get(col);
-            let valB = (grid.rows.get(rowB)).get(col);
+            let val-a = (g.rows.get(row-a)).get(col);
+            let val-b = (g.rows.get(row-b)).get(col);
             let _ = case {
-              $i32(valA) != $i32(valB) -> {
-                isReflection = false;
+              $i32(val-a) != $i32(val-b) -> {
+                is-reflection = false;
               };
               _ -> {};
             };
@@ -124,10 +124,10 @@ let getReflectionScore = (grid: Grid, notScore: i32): i32 -> {
         }
 
         let _ = case {
-          isReflection -> {
-            let score = rowGap * 100;
+          is-reflection -> {
+            let score = row-gap * 100;
             let _ = case {
-              score != notScore -> {
+              score != not-score -> {
                 result = score;
                 loop1 = false;
               };
@@ -137,7 +137,7 @@ let getReflectionScore = (grid: Grid, notScore: i32): i32 -> {
           _ -> {};
         };
 
-        rowGap = rowGap + 1;
+        row-gap = row-gap + 1;
       }
 
       result
@@ -145,20 +145,20 @@ let getReflectionScore = (grid: Grid, notScore: i32): i32 -> {
   }
 }
 
-let solvePart1 = (input: String): String -> {
-  let grids = parseInput(input);
+let solve-part1 = (input: string): string -> {
+  let grids = parse-input(input);
   let result = 0;
 
-  for grid in grids {
-    result = result + getReflectionScore(grid, 0);
+  for g in grids {
+    result = result + get-reflection-score(g, 0);
   }
 
-  stringFromNumber(result)
+  string-from-number(result)
 }
 
-let removeSmudge = (grid: Grid): i32 -> {
-  let result = getReflectionScore(grid, 0);
-  let size = grid.size;
+let remove-smudge = (g: grid): i32 -> {
+  let result = get-reflection-score(g, 0);
+  let size = g.size;
   let y = 0;
   let loop = true;
 
@@ -166,15 +166,15 @@ let removeSmudge = (grid: Grid): i32 -> {
     let x = 0;
 
     while loop && (x < size.x) {
-      let row = grid.rows.get(y);
+      let row = g.rows.get(y);
       let value = row.get(x);
 
       row.set(x, !(value));
 
-      let newScore = getReflectionScore(grid, result);
+      let new-score = get-reflection-score(g, result);
       let _ = case {
-        newScore > 0 -> {
-          result = newScore;
+        new-score > 0 -> {
+          result = new-score;
           loop = false;
         };
         _ -> {
@@ -191,22 +191,22 @@ let removeSmudge = (grid: Grid): i32 -> {
   result
 }
 
-let solvePart2 = (input: String): String -> {
-  let grids = parseInput(input);
+let solve-part2 = (input: string): string -> {
+  let grids = parse-input(input);
   let result = 0;
 
-  for grid in grids {
-    result = result + removeSmudge(grid);
+  for g in grids {
+    result = result + remove-smudge(g);
   }
 
-  stringFromNumber(result)
+  string-from-number(result)
 }
 
-let input = getInput();
-let part1 = solvePart1(input);
+let input = get-input();
+let part1 = solve-part1(input);
 
-assertEqual(part1, "36015");
+assert-equal(part1, "36015");
 
-let part2 = solvePart2(input);
+let part2 = solve-part2(input);
 
-assertEqual(part2, "35335");
+assert-equal(part2, "35335");

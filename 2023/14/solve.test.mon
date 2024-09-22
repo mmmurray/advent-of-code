@@ -1,121 +1,121 @@
-import { assertEqual } from "@assert";
-import { List, listFromArray } from "@list";
-import { Vec2 } from "@math";
-import { String, stringFromNumber } from "@string";
-import { getValue: getInput } from "./input.txt";
+import { assert-equal } from "@assert";
+import { list, list-from-array } from "@list";
+import { vec2 } from "@math";
+import { string, string-from-number } from "@string";
+import { get-value: get-input } from "./input.txt";
 
-data Grid = { cols: List<List<i32>>, size: Vec2<i32> }
+data grid = { cols: list<list<i32>>, size: vec2<i32> }
 
-let parseInput = (input: String): Grid -> {
-  let lines = (input.trim()).toLines();
+let parse-input = (input: string): grid -> {
+  let lines = (input.trim()).to-lines();
   let cols = [];
-  let size = Vec2.New({ x: (lines.get(0)).size(), y: lines.size() });
+  let size = vec2.new({ x: (lines.get(0)).size(), y: lines.size() });
 
-  for _, colIndex in (lines.get(0)).toList() {
+  for _, col-index in (lines.get(0)).to-list() {
     let col = [];
 
     for line in lines {
-      col.push(line.get(colIndex));
+      col.push(line.get(col-index));
     }
 
     cols.push(col);
   }
 
-  Grid.New({ size: size, cols: cols })
+  grid.new({ size: size, cols: cols })
 }
 
-let tiltColumn = (col: List<i32>): List<i32> -> {
-  let newCol = col.clone();
-  let nextFreeIndex = 0;
+let tilt-column = (col: list<i32>): list<i32> -> {
+  let new-col = col.clone();
+  let next-free-index = 0;
 
-  for tile, colIndex in col {
+  for tile, col-index in col {
     let _ = case {
       tile == '#' -> {
-        nextFreeIndex = colIndex + 1;
+        next-free-index = col-index + 1;
 
-        newCol.set(colIndex, '#');
+        new-col.set(col-index, '#');
       };
       _ -> {
         let _ = case {
           tile == 'O' -> {
-            newCol.set(colIndex, '.');
-            newCol.set(nextFreeIndex, 'O');
+            new-col.set(col-index, '.');
+            new-col.set(next-free-index, 'O');
 
-            nextFreeIndex = nextFreeIndex + 1;
+            next-free-index = next-free-index + 1;
           };
           _ -> {
-            newCol.set(colIndex, '.');
+            new-col.set(col-index, '.');
           };
         };
       };
     };
   }
 
-  newCol
+  new-col
 }
 
-let tiltGrid = (grid: Grid): Grid -> {
-  let newCols = [];
+let tilt-grid = (g: grid): grid -> {
+  let new-cols = [];
 
-  for col in grid.cols {
-    newCols.push(tiltColumn(col));
+  for col in g.cols {
+    new-cols.push(tilt-column(col));
   }
 
-  Grid.New({ size: grid.size, cols: newCols })
+  grid.new({ size: g.size, cols: new-cols })
 }
 
-let calculateLoad = (grid: Grid): i32 -> {
-  let totalLoad = 0;
-  let size = grid.size;
+let calculate-load = (g: grid): i32 -> {
+  let total-load = 0;
+  let size = g.size;
 
-  for col in grid.cols {
-    for tile, rowIndex in col {
+  for col in g.cols {
+    for tile, row-index in col {
       let _ = case {
         tile == 'O' -> {
-          totalLoad = totalLoad + (size.y - rowIndex);
+          total-load = total-load + (size.y - row-index);
         };
         _ -> {};
       };
     }
   }
 
-  totalLoad
+  total-load
 }
 
-let rotateGridClockwise = (grid: Grid): Grid -> {
-  let newCols = [];
-  let size = grid.size;
-  let rowIndex = size.y - 1;
+let rotate-grid-clockwise = (g: grid): grid -> {
+  let new-cols = [];
+  let size = g.size;
+  let row-index = size.y - 1;
 
-  while rowIndex >= 0 {
-    let newCol = [];
+  while row-index >= 0 {
+    let new-col = [];
 
-    for col, colIndex in grid.cols {
-      newCol.push(col.get(rowIndex));
+    for col, col-index in g.cols {
+      new-col.push(col.get(row-index));
     }
 
-    newCols.push(newCol);
+    new-cols.push(new-col);
 
-    rowIndex = rowIndex - 1;
+    row-index = row-index - 1;
   }
 
-  Grid.New({ size: size, cols: newCols })
+  grid.new({ size: size, cols: new-cols })
 }
 
-let performSpinCycle = (grid: Grid): Grid -> {
-  grid = tiltGrid(grid);
-  grid = rotateGridClockwise(grid);
-  grid = tiltGrid(grid);
-  grid = rotateGridClockwise(grid);
-  grid = tiltGrid(grid);
-  grid = rotateGridClockwise(grid);
-  grid = tiltGrid(grid);
-  grid = rotateGridClockwise(grid);
+let perform-spin-cycle = (g: grid): grid -> {
+  g = tilt-grid(g);
+  g = rotate-grid-clockwise(g);
+  g = tilt-grid(g);
+  g = rotate-grid-clockwise(g);
+  g = tilt-grid(g);
+  g = rotate-grid-clockwise(g);
+  g = tilt-grid(g);
+  g = rotate-grid-clockwise(g);
 
-  grid
+  g
 }
 
-let areColsEqual = (a: List<i32>, b: List<i32>): boolean -> {
+let are-cols-equal = (a: list<i32>, b: list<i32>): boolean -> {
   let result = true;
 
   for v1, i in a {
@@ -131,13 +131,13 @@ let areColsEqual = (a: List<i32>, b: List<i32>): boolean -> {
   result
 }
 
-let areGridsEqual = (a: Grid, b: Grid): boolean -> {
+let are-grids-equal = (a: grid, b: grid): boolean -> {
   let result = true;
 
   for c1, i in a.cols {
     let c2 = b.cols.get(i);
     let _ = case {
-      !(areColsEqual(c1, c2)) -> {
+      !(are-cols-equal(c1, c2)) -> {
         result = false;
       };
       _ -> {};
@@ -147,36 +147,36 @@ let areGridsEqual = (a: Grid, b: Grid): boolean -> {
   result
 }
 
-let solvePart1 = (input: String): String -> {
-  let grid = parseInput(input);
-  let tiltedGrid = tiltGrid(grid);
-  let result = calculateLoad(tiltedGrid);
+let solve-part1 = (input: string): string -> {
+  let g = parse-input(input);
+  let tilted-grid = tilt-grid(g);
+  let result = calculate-load(tilted-grid);
 
-  stringFromNumber(result)
+  string-from-number(result)
 }
 
-let solvePart2 = (input: String): String -> {
-  let grid = parseInput(input);
+let solve-part2 = (input: string): string -> {
+  let g = parse-input(input);
   let grids = [];
-  let totalCycles = 1000000000;
-  let cycleOffset = --(1);
+  let total-cycles = 1000000000;
+  let cycle-offset = --(1);
   let i = 0;
 
-  while (cycleOffset < 0) && (i < totalCycles) {
-    grid = performSpinCycle(grid);
+  while (cycle-offset < 0) && (i < total-cycles) {
+    g = perform-spin-cycle(g);
 
-    for otherGrid, otherGridIndex in grids {
+    for other-grid, other-grid-index in grids {
       let _ = case {
-        areGridsEqual(grid, otherGrid) -> {
-          cycleOffset = otherGridIndex;
+        are-grids-equal(g, other-grid) -> {
+          cycle-offset = other-grid-index;
         };
         _ -> {};
       };
     }
 
     let _ = case {
-      cycleOffset < 0 -> {
-        grids.push(grid);
+      cycle-offset < 0 -> {
+        grids.push(g);
 
         i = i + 1;
       };
@@ -184,18 +184,18 @@ let solvePart2 = (input: String): String -> {
     };
   }
 
-  let cycleLength = grids.size() - cycleOffset;
-  let gridIndex = cycleOffset + (((totalCycles - 1) - cycleOffset) % cycleLength);
-  let result = calculateLoad(grids.get(gridIndex));
+  let cycle-length = grids.size() - cycle-offset;
+  let grid-index = cycle-offset + (((total-cycles - 1) - cycle-offset) % cycle-length);
+  let result = calculate-load(grids.get(grid-index));
 
-  stringFromNumber(result)
+  string-from-number(result)
 }
 
-let input = getInput();
-let part1 = solvePart1(input);
+let input = get-input();
+let part1 = solve-part1(input);
 
-assertEqual(part1, "109345");
+assert-equal(part1, "109345");
 
-let part2 = solvePart2(input);
+let part2 = solve-part2(input);
 
-assertEqual(part2, "112452");
+assert-equal(part2, "112452");

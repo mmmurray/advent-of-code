@@ -1,120 +1,120 @@
-import { assertEqual } from "@assert";
-import { List, listFromArray } from "@list";
-import { Vec2, max, vec2Add } from "@math";
-import { String, stringFromNumber } from "@string";
-import { getValue: getInput } from "./input.txt";
+import { assert-equal } from "@assert";
+import { list, list-from-array } from "@list";
+import { vec2, max, vec2-add } from "@math";
+import { string, string-from-number } from "@string";
+import { get-value: get-input } from "./input.txt";
 
-data Direction =
-  | North
-  | East
-  | South
-  | West
+data direction =
+  | north
+  | east
+  | south
+  | west
 
-let directionEquals = (a: Direction, b: Direction): boolean -> {
+let direction-equals = (a: direction, b: direction): boolean -> {
   match a {
-    North -> match b {
-      North -> true;
+    north -> match b {
+      north -> true;
       _ -> false;
     };
-    East -> match b {
-      East -> true;
+    east -> match b {
+      east -> true;
       _ -> false;
     };
-    South -> match b {
-      South -> true;
+    south -> match b {
+      south -> true;
       _ -> false;
     };
-    West -> match b {
-      West -> true;
+    west -> match b {
+      west -> true;
       _ -> false;
     };
   }
 }
 
-let directionNorth = (): Direction -> Direction.North()
+let direction-north = (): direction -> direction.north()
 
-let directionEast = (): Direction -> Direction.East()
+let direction-east = (): direction -> direction.east()
 
-let directionSouth = (): Direction -> Direction.South()
+let direction-south = (): direction -> direction.south()
 
-let directionWest = (): Direction -> Direction.West()
+let direction-west = (): direction -> direction.west()
 
-let vec2North = (): Vec2<i32> -> Vec2.New({ x: 0, y: --(1) })
+let vec2-north = (): vec2<i32> -> vec2.new({ x: 0, y: --(1) })
 
-let vec2East = (): Vec2<i32> -> Vec2.New({ x: 1, y: 0 })
+let vec2-east = (): vec2<i32> -> vec2.new({ x: 1, y: 0 })
 
-let vec2South = (): Vec2<i32> -> Vec2.New({ x: 0, y: 1 })
+let vec2-south = (): vec2<i32> -> vec2.new({ x: 0, y: 1 })
 
-let vec2West = (): Vec2<i32> -> Vec2.New({ x: --(1), y: 0 })
+let vec2-west = (): vec2<i32> -> vec2.new({ x: --(1), y: 0 })
 
-let directionToVec2 = (direction: Direction): Vec2<i32> -> {
-  match direction {
-    North -> vec2North();
-    East -> vec2East();
-    South -> vec2South();
-    West -> vec2West();
+let direction-to-vec2 = (d: direction): vec2<i32> -> {
+  match d {
+    north -> vec2-north();
+    east -> vec2-east();
+    south -> vec2-south();
+    west -> vec2-west();
   }
 }
 
-data Tile =
-  | Empty
-  | ReflectForward
-  | ReflectBackward
-  | SplitHorizontal
-  | SplitVertical
+data tile =
+  | empty
+  | reflect-forward
+  | reflect-backward
+  | split-horizontal
+  | split-vertical
 
-data Grid = { energized: List<List<List<Direction>>>, size: Vec2<i32>, tiles: List<List<Tile>> }
+data grid = { energized: list<list<list<direction>>>, size: vec2<i32>, tiles: list<list<tile>> }
 
-let gridClone = (grid: Grid): Grid -> {
-  let newEnergized = [];
+let grid-clone = (g: grid): grid -> {
+  let new-energized = [];
 
-  for energizedRow in grid.energized {
-    let newEnergizedRow = [];
+  for energized-row in g.energized {
+    let new-energized-row = [];
 
-    for x in energizedRow {
-      newEnergizedRow.push(x.clone());
+    for x in energized-row {
+      new-energized-row.push(x.clone());
     }
 
-    newEnergized.push(newEnergizedRow);
+    new-energized.push(new-energized-row);
   }
 
-  Grid.New({ size: grid.size, tiles: grid.tiles, energized: newEnergized })
+  grid.new({ size: g.size, tiles: g.tiles, energized: new-energized })
 }
 
-let parseTile = (char: i32): Tile -> {
+let parse-tile = (char: i32): tile -> {
   case {
-    char == '/' -> Tile.ReflectForward();
-    char == '\\' -> Tile.ReflectBackward();
-    char == '-' -> Tile.SplitHorizontal();
-    char == '|' -> Tile.SplitVertical();
-    _ -> Tile.Empty();
+    char == '/' -> tile.reflect-forward();
+    char == '\\' -> tile.reflect-backward();
+    char == '-' -> tile.split-horizontal();
+    char == '|' -> tile.split-vertical();
+    _ -> tile.empty();
   }
 }
 
-let parseInput = (input: String): Grid -> {
-  let lines = (input.trim()).toLines();
-  let size = Vec2.New({ x: (lines.get(0)).size(), y: lines.size() });
+let parse-input = (input: string): grid -> {
+  let lines = (input.trim()).to-lines();
+  let size = vec2.new({ x: (lines.get(0)).size(), y: lines.size() });
   let tiles = [];
   let energized = [];
 
   for line in lines {
-    let tileRow = [];
-    let energizedRow = [];
+    let tile-row = [];
+    let energized-row = [];
 
-    for char, x in line.toList() {
-      tileRow.push(parseTile(char));
-      energizedRow.push([]);
+    for char, x in line.to-list() {
+      tile-row.push(parse-tile(char));
+      energized-row.push([]);
     }
 
-    tiles.push(tileRow);
-    energized.push(energizedRow);
+    tiles.push(tile-row);
+    energized.push(energized-row);
   }
 
-  Grid.New({ size: size, tiles: tiles, energized: energized })
+  grid.new({ size: size, tiles: tiles, energized: energized })
 }
 
-let propagate = (grid: Grid, position: Vec2<i32>, direction: Direction): boolean -> {
-  let size = grid.size;
+let propagate = (g: grid, position: vec2<i32>, d: direction): boolean -> {
+  let size = g.size;
 
   case {
     position.x < 0 -> false;
@@ -122,95 +122,95 @@ let propagate = (grid: Grid, position: Vec2<i32>, direction: Direction): boolean
     position.x >= size.x -> false;
     position.y >= size.y -> false;
     _ -> {
-      let energizedRow = grid.energized.get(position.y);
-      let currentEnergizedDirections = energizedRow.get(position.x);
-      let isSameDirection = false;
+      let energized-row = g.energized.get(position.y);
+      let current-energized-directions = energized-row.get(position.x);
+      let is-same-direction = false;
 
-      for currentEnergizedDirection in currentEnergizedDirections {
+      for current-energized-direction in current-energized-directions {
         let _ = case {
-          directionEquals(currentEnergizedDirection, direction) -> {
-            isSameDirection = true;
+          direction-equals(current-energized-direction, d) -> {
+            is-same-direction = true;
           };
           _ -> {};
         };
       }
 
       case {
-        isSameDirection -> false;
+        is-same-direction -> false;
         _ -> {
-          energizedRow.set(position.x, [...currentEnergizedDirections, direction]);
+          energized-row.set(position.x, [...current-energized-directions, d]);
 
-          let tile = (grid.tiles.get(position.y)).get(position.x);
-          let directionVec = directionToVec2(direction);
+          let tile = (g.tiles.get(position.y)).get(position.x);
+          let direction-vec = direction-to-vec2(d);
           let _ = match tile {
-            Empty -> {
-              propagate(grid, vec2Add(position, directionVec), direction);
+            empty -> {
+              propagate(g, vec2-add(position, direction-vec), d);
             };
-            ReflectForward -> {
-              let _ = match direction {
-                North -> {
-                  propagate(grid, vec2Add(position, vec2East()), directionEast());
+            reflect-forward -> {
+              let _ = match d {
+                north -> {
+                  propagate(g, vec2-add(position, vec2-east()), direction-east());
                 };
-                East -> {
-                  propagate(grid, vec2Add(position, vec2North()), directionNorth());
+                east -> {
+                  propagate(g, vec2-add(position, vec2-north()), direction-north());
                 };
-                South -> {
-                  propagate(grid, vec2Add(position, vec2West()), directionWest());
+                south -> {
+                  propagate(g, vec2-add(position, vec2-west()), direction-west());
                 };
-                West -> {
-                  propagate(grid, vec2Add(position, vec2South()), directionSouth());
+                west -> {
+                  propagate(g, vec2-add(position, vec2-south()), direction-south());
                 };
               };
             };
-            ReflectBackward -> {
-              let _ = match direction {
-                North -> {
-                  propagate(grid, vec2Add(position, vec2West()), directionWest());
+            reflect-backward -> {
+              let _ = match d {
+                north -> {
+                  propagate(g, vec2-add(position, vec2-west()), direction-west());
                 };
-                East -> {
-                  propagate(grid, vec2Add(position, vec2South()), directionSouth());
+                east -> {
+                  propagate(g, vec2-add(position, vec2-south()), direction-south());
                 };
-                South -> {
-                  propagate(grid, vec2Add(position, vec2East()), directionEast());
+                south -> {
+                  propagate(g, vec2-add(position, vec2-east()), direction-east());
                 };
-                West -> {
-                  propagate(grid, vec2Add(position, vec2North()), directionNorth());
-                };
-              };
-            };
-            SplitHorizontal -> {
-              let _ = match direction {
-                North -> {
-                  propagate(grid, vec2Add(position, vec2East()), directionEast());
-                  propagate(grid, vec2Add(position, vec2West()), directionWest());
-                };
-                East -> {
-                  propagate(grid, vec2Add(position, directionVec), direction);
-                };
-                South -> {
-                  propagate(grid, vec2Add(position, vec2West()), directionWest());
-                  propagate(grid, vec2Add(position, vec2East()), directionEast());
-                };
-                West -> {
-                  propagate(grid, vec2Add(position, directionVec), direction);
+                west -> {
+                  propagate(g, vec2-add(position, vec2-north()), direction-north());
                 };
               };
             };
-            SplitVertical -> {
-              let _ = match direction {
-                North -> {
-                  propagate(grid, vec2Add(position, directionVec), direction);
+            split-horizontal -> {
+              let _ = match d {
+                north -> {
+                  propagate(g, vec2-add(position, vec2-east()), direction-east());
+                  propagate(g, vec2-add(position, vec2-west()), direction-west());
                 };
-                East -> {
-                  propagate(grid, vec2Add(position, vec2North()), directionNorth());
-                  propagate(grid, vec2Add(position, vec2South()), directionSouth());
+                east -> {
+                  propagate(g, vec2-add(position, direction-vec), d);
                 };
-                South -> {
-                  propagate(grid, vec2Add(position, directionVec), direction);
+                south -> {
+                  propagate(g, vec2-add(position, vec2-west()), direction-west());
+                  propagate(g, vec2-add(position, vec2-east()), direction-east());
                 };
-                West -> {
-                  propagate(grid, vec2Add(position, vec2South()), directionSouth());
-                  propagate(grid, vec2Add(position, vec2North()), directionNorth());
+                west -> {
+                  propagate(g, vec2-add(position, direction-vec), d);
+                };
+              };
+            };
+            split-vertical -> {
+              let _ = match d {
+                north -> {
+                  propagate(g, vec2-add(position, direction-vec), d);
+                };
+                east -> {
+                  propagate(g, vec2-add(position, vec2-north()), direction-north());
+                  propagate(g, vec2-add(position, vec2-south()), direction-south());
+                };
+                south -> {
+                  propagate(g, vec2-add(position, direction-vec), d);
+                };
+                west -> {
+                  propagate(g, vec2-add(position, vec2-south()), direction-south());
+                  propagate(g, vec2-add(position, vec2-north()), direction-north());
                 };
               };
             };
@@ -223,14 +223,14 @@ let propagate = (grid: Grid, position: Vec2<i32>, direction: Direction): boolean
   }
 }
 
-let countEnergized = (grid: Grid, startPosition: Vec2<i32>, startDirection: Direction): i32 -> {
-  let newGrid = gridClone(grid);
+let count-energized = (g: grid, start-position: vec2<i32>, start-direction: direction): i32 -> {
+  let new-grid = grid-clone(g);
 
-  propagate(newGrid, startPosition, startDirection);
+  propagate(new-grid, start-position, start-direction);
 
   let total = 0;
 
-  for row in newGrid.energized {
+  for row in new-grid.energized {
     for col in row {
       let _ = case {
         col.size() > 0 -> {
@@ -244,35 +244,35 @@ let countEnergized = (grid: Grid, startPosition: Vec2<i32>, startDirection: Dire
   total
 }
 
-let solvePart1 = (input: String): String -> {
-  let grid = parseInput(input);
-  let result = countEnergized(grid, Vec2.New({ x: 0, y: 0 }), directionEast());
+let solve-part1 = (input: string): string -> {
+  let g = parse-input(input);
+  let result = count-energized(g, vec2.new({ x: 0, y: 0 }), direction-east());
 
-  stringFromNumber(result)
+  string-from-number(result)
 }
 
-let solvePart2 = (input: String): String -> {
-  let grid = parseInput(input);
-  let size = grid.size;
+let solve-part2 = (input: string): string -> {
+  let g = parse-input(input);
+  let size = g.size;
   let result = 0;
   let offset = 0;
 
   while offset < size.x {
-    result = max(result, countEnergized(grid, Vec2.New({ x: offset, y: 0 }), directionSouth()));
-    result = max(result, countEnergized(grid, Vec2.New({ x: offset, y: size.y - 1 }), directionNorth()));
-    result = max(result, countEnergized(grid, Vec2.New({ x: 0, y: offset }), directionEast()));
-    result = max(result, countEnergized(grid, Vec2.New({ x: size.x - 1, y: offset }), directionWest()));
+    result = max(result, count-energized(g, vec2.new({ x: offset, y: 0 }), direction-south()));
+    result = max(result, count-energized(g, vec2.new({ x: offset, y: size.y - 1 }), direction-north()));
+    result = max(result, count-energized(g, vec2.new({ x: 0, y: offset }), direction-east()));
+    result = max(result, count-energized(g, vec2.new({ x: size.x - 1, y: offset }), direction-west()));
     offset = offset + 1;
   }
 
-  stringFromNumber(result)
+  string-from-number(result)
 }
 
-let input = getInput();
-let part1 = solvePart1(input);
+let input = get-input();
+let part1 = solve-part1(input);
 
-assertEqual(part1, "8034");
+assert-equal(part1, "8034");
 
-let part2 = solvePart2(input);
+let part2 = solve-part2(input);
 
-assertEqual(part2, "8225");
+assert-equal(part2, "8225");
