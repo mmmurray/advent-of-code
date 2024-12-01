@@ -1,7 +1,7 @@
 import { assert-equal } from "@assert";
 import { list } from "@list";
-import { vec2, vec2-add, vec2-manhattan-distance } from "@math";
 import { string, string-from-number } from "@string";
+import { vec2, vec2-new } from "@vec2";
 import { get-value: get-input } from "./input.txt";
 
 data universe = { galaxies: list<vec2<i64>>, size: vec2<i64> }
@@ -9,13 +9,13 @@ data universe = { galaxies: list<vec2<i64>>, size: vec2<i64> }
 let parse-input = (input: string): universe -> {
   let lines = (input.trim()).to-lines();
   let galaxies = [];
-  let size = vec2.new({ x: $i64((lines.get(0)).size()), y: $i64(lines.size()) });
+  let size = vec2-new($i64((lines.get(0)).size()), $i64(lines.size()));
 
   for line, y in lines {
     for char, x in line.to-list() {
       let _ = case {
         char ==  '#'  -> {
-          let galaxy = vec2.new({ x: $i64(x), y: $i64(y) });
+          let galaxy = vec2-new($i64(x), $i64(y));
 
           galaxies.push(galaxy);
         };
@@ -79,14 +79,11 @@ let expand-universe = (u: universe, expansion-rate: i64): universe -> {
     x = x + 1;
   }
 
-  let new-size = vec2.new({
-    x: (size.x + (($i64(empty-cols.size()) * expansion-rate) - 1)),
-    y: (size.y + (($i64(empty-rows.size()) * expansion-rate) - 1)),
-  });
+  let new-size = vec2-new((size.x + (($i64(empty-cols.size()) * expansion-rate) - 1)), (size.y + (($i64(empty-rows.size()) * expansion-rate) - 1)));
   let new-galaxies = [];
 
   for galaxy in u.galaxies {
-    let red-shift = vec2.new({ x: 0, y: 0 });
+    let red-shift = vec2-new(0, 0);
 
     for empty-col in empty-cols {
       let _ = case {
@@ -106,7 +103,7 @@ let expand-universe = (u: universe, expansion-rate: i64): universe -> {
       };
     }
 
-    let new-galaxy = vec2-add(galaxy, red-shift);
+    let new-galaxy = galaxy.add(red-shift);
 
     new-galaxies.push(new-galaxy);
   }
@@ -125,7 +122,7 @@ let sum-of-distances-between-galaxies = (u: universe): i64 -> {
     while j < count {
       let galaxy1 = u.galaxies.get(i);
       let galaxy2 = u.galaxies.get(j);
-      let distance = vec2-manhattan-distance(galaxy1, galaxy2);
+      let distance = galaxy1.manhattan-distance(galaxy2);
 
       total = total + distance;
       j = j + 1;

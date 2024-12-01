@@ -1,7 +1,7 @@
 import { assert-equal } from "@assert";
 import { list } from "@list";
-import { vec2 } from "@math";
 import { string, string-from-number } from "@string";
+import { vec2 } from "@vec2";
 import { get-value: get-input } from "./input.txt";
 
 data grid = { cols: list<list<i32>>, size: vec2<i32> }

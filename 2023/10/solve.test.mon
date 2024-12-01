@@ -1,6 +1,7 @@
 import { list } from "@list";
-import { max, vec2, vec2-equals } from "@math";
+import { max } from "@math";
 import { string, string-from-number } from "@string";
+import { vec2, vec2-new } from "@vec2";
 import { get-value: get-input } from "./input.txt";
 
 data connections = { east: boolean, north: boolean, south: boolean, west: boolean }
@@ -23,8 +24,8 @@ let char-to-connections = (char: i32): connections -> {
 let parse-input = (input: string): pipes -> {
   let lines = (input.trim()).to-lines();
   let grid = [];
-  let start = vec2.new({ x: 0, y: 0 });
-  let size = vec2.new({ x: (lines.get(0)).size(), y: lines.size() });
+  let start = vec2-new(0, 0);
+  let size = vec2-new((lines.get(0)).size(), lines.size());
 
   for line, y in lines {
     let row = [];
@@ -36,7 +37,7 @@ let parse-input = (input: string): pipes -> {
 
       let _ = case {
         char ==  'S'  -> {
-          start = vec2.new({ x: x, y: y });
+          start = vec2-new(x, y);
         };
         _ -> {};
       };
@@ -126,7 +127,7 @@ let points-contain = (points: list<vec2<i32>>, point: vec2<i32>): boolean -> {
 
   for other in points {
     let _ = case {
-      vec2-equals(point, other) -> {
+      point.equals(other) -> {
         let result = true;
       };
       _ -> {};
@@ -148,7 +149,7 @@ let search-pipes = (ps: pipes, visited: list<vec2<i32>>, current: vec2<i32>, ste
       let max-steps = steps;
       let _ = case {
         current.y > 0 -> {
-          let candidate = vec2.new({ x: current.x, y: current.y - 1 });
+          let candidate = vec2-new(current.x, current.y - 1);
           let candidate-connections = get-connections(ps, candidate);
           let _ = case {
             current-connections.north && candidate-connections.south -> {
@@ -163,7 +164,7 @@ let search-pipes = (ps: pipes, visited: list<vec2<i32>>, current: vec2<i32>, ste
       };
       let _ = case {
         current.x < (size.x - 1) -> {
-          let candidate = vec2.new({ x: current.x + 1, y: current.y });
+          let candidate = vec2-new(current.x + 1, current.y);
           let candidate-connections = get-connections(ps, candidate);
           let _ = case {
             current-connections.east && candidate-connections.west -> {
@@ -178,7 +179,7 @@ let search-pipes = (ps: pipes, visited: list<vec2<i32>>, current: vec2<i32>, ste
       };
       let _ = case {
         current.y < (size.y - 1) -> {
-          let candidate = vec2.new({ x: current.x, y: current.y + 1 });
+          let candidate = vec2-new(current.x, current.y + 1);
           let candidate-connections = get-connections(ps, candidate);
           let _ = case {
             current-connections.south && candidate-connections.north -> {
@@ -193,7 +194,7 @@ let search-pipes = (ps: pipes, visited: list<vec2<i32>>, current: vec2<i32>, ste
       };
       let _ = case {
         current.x > 0 -> {
-          let candidate = vec2.new({ x: current.x - 1, y: current.y });
+          let candidate = vec2-new(current.x - 1, current.y);
           let candidate-connections = get-connections(ps, candidate);
           let _ = case {
             current-connections.west && candidate-connections.east -> {
@@ -225,7 +226,7 @@ data lake = { size: vec2<i32>, walls: list<list<i32>> }
 let build-lake = (ps: pipes, visited: list<vec2<i32>>): lake -> {
   let walls = [];
   let pipes-size = ps.size;
-  let lake-size = vec2.new({ x: pipes-size.x * 3, y: pipes-size.y * 3 });
+  let lake-size = vec2-new(pipes-size.x * 3, pipes-size.y * 3);
   let y = 0;
 
   while y < lake-size.y {

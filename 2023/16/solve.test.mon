@@ -1,7 +1,8 @@
 import { assert-equal } from "@assert";
 import { list } from "@list";
-import { max, vec2, vec2-add } from "@math";
+import { max } from "@math";
 import { string, string-from-number } from "@string";
+import { vec2, vec2-new } from "@vec2";
 import { get-value: get-input } from "./input.txt";
 
 data direction =
@@ -39,13 +40,13 @@ let direction-south = (): direction -> direction.south()
 
 let direction-west = (): direction -> direction.west()
 
-let vec2-north = (): vec2<i32> -> vec2.new({ x: 0, y: --(1) })
+let vec2-north = (): vec2<i32> -> vec2-new(0, --(1))
 
-let vec2-east = (): vec2<i32> -> vec2.new({ x: 1, y: 0 })
+let vec2-east = (): vec2<i32> -> vec2-new(1, 0)
 
-let vec2-south = (): vec2<i32> -> vec2.new({ x: 0, y: 1 })
+let vec2-south = (): vec2<i32> -> vec2-new(0, 1)
 
-let vec2-west = (): vec2<i32> -> vec2.new({ x: --(1), y: 0 })
+let vec2-west = (): vec2<i32> -> vec2-new(--(1), 0)
 
 let direction-to-vec2 = (d: direction): vec2<i32> -> {
   match d {
@@ -97,7 +98,7 @@ let parse-tile = (char: i32): tile -> {
 
 let parse-input = (input: string): grid -> {
   let lines = (input.trim()).to-lines();
-  let size = vec2.new({ x: (lines.get(0)).size(), y: lines.size() });
+  let size = vec2-new((lines.get(0)).size(), lines.size());
   let tiles = [];
   let energized = [];
 
@@ -148,73 +149,73 @@ let propagate = (g: grid, position: vec2<i32>, d: direction): boolean -> {
           let direction-vec = direction-to-vec2(d);
           let _ = match tile {
             empty -> {
-              propagate(g, vec2-add(position, direction-vec), d);
+              propagate(g, position.add(direction-vec), d);
             };
             reflect-forward -> {
               let _ = match d {
                 north -> {
-                  propagate(g, vec2-add(position, vec2-east()), direction-east());
+                  propagate(g, position.add(vec2-east()), direction-east());
                 };
                 east -> {
-                  propagate(g, vec2-add(position, vec2-north()), direction-north());
+                  propagate(g, position.add(vec2-north()), direction-north());
                 };
                 south -> {
-                  propagate(g, vec2-add(position, vec2-west()), direction-west());
+                  propagate(g, position.add(vec2-west()), direction-west());
                 };
                 west -> {
-                  propagate(g, vec2-add(position, vec2-south()), direction-south());
+                  propagate(g, position.add(vec2-south()), direction-south());
                 };
               };
             };
             reflect-backward -> {
               let _ = match d {
                 north -> {
-                  propagate(g, vec2-add(position, vec2-west()), direction-west());
+                  propagate(g, position.add(vec2-west()), direction-west());
                 };
                 east -> {
-                  propagate(g, vec2-add(position, vec2-south()), direction-south());
+                  propagate(g, position.add(vec2-south()), direction-south());
                 };
                 south -> {
-                  propagate(g, vec2-add(position, vec2-east()), direction-east());
+                  propagate(g, position.add(vec2-east()), direction-east());
                 };
                 west -> {
-                  propagate(g, vec2-add(position, vec2-north()), direction-north());
+                  propagate(g, position.add(vec2-north()), direction-north());
                 };
               };
             };
             split-horizontal -> {
               let _ = match d {
                 north -> {
-                  propagate(g, vec2-add(position, vec2-east()), direction-east());
-                  propagate(g, vec2-add(position, vec2-west()), direction-west());
+                  propagate(g, position.add(vec2-east()), direction-east());
+                  propagate(g, position.add(vec2-west()), direction-west());
                 };
                 east -> {
-                  propagate(g, vec2-add(position, direction-vec), d);
+                  propagate(g, position.add(direction-vec), d);
                 };
                 south -> {
-                  propagate(g, vec2-add(position, vec2-west()), direction-west());
-                  propagate(g, vec2-add(position, vec2-east()), direction-east());
+                  propagate(g, position.add(vec2-west()), direction-west());
+                  propagate(g, position.add(vec2-east()), direction-east());
                 };
                 west -> {
-                  propagate(g, vec2-add(position, direction-vec), d);
+                  propagate(g, position.add(direction-vec), d);
                 };
               };
             };
             split-vertical -> {
               let _ = match d {
                 north -> {
-                  propagate(g, vec2-add(position, direction-vec), d);
+                  propagate(g, position.add(direction-vec), d);
                 };
                 east -> {
-                  propagate(g, vec2-add(position, vec2-north()), direction-north());
-                  propagate(g, vec2-add(position, vec2-south()), direction-south());
+                  propagate(g, position.add(vec2-north()), direction-north());
+                  propagate(g, position.add(vec2-south()), direction-south());
                 };
                 south -> {
-                  propagate(g, vec2-add(position, direction-vec), d);
+                  propagate(g, position.add(direction-vec), d);
                 };
                 west -> {
-                  propagate(g, vec2-add(position, vec2-south()), direction-south());
-                  propagate(g, vec2-add(position, vec2-north()), direction-north());
+                  propagate(g, position.add(vec2-south()), direction-south());
+                  propagate(g, position.add(vec2-north()), direction-north());
                 };
               };
             };
@@ -250,7 +251,7 @@ let count-energized = (g: grid, start-position: vec2<i32>, start-direction: dire
 
 let solve-part-1 = (input: string): string -> {
   let g = parse-input(input);
-  let result = count-energized(g, vec2.new({ x: 0, y: 0 }), direction-east());
+  let result = count-energized(g, vec2-new(0, 0), direction-east());
 
   string-from-number(result)
 }
@@ -262,10 +263,10 @@ let solve-part-2 = (input: string): string -> {
   let offset = 0;
 
   while offset < size.x {
-    result = max(result, count-energized(g, vec2.new({ x: offset, y: 0 }), direction-south()));
-    result = max(result, count-energized(g, vec2.new({ x: offset, y: size.y - 1 }), direction-north()));
-    result = max(result, count-energized(g, vec2.new({ x: 0, y: offset }), direction-east()));
-    result = max(result, count-energized(g, vec2.new({ x: size.x - 1, y: offset }), direction-west()));
+    result = max(result, count-energized(g, vec2-new(offset, 0), direction-south()));
+    result = max(result, count-energized(g, vec2-new(offset, size.y - 1), direction-north()));
+    result = max(result, count-energized(g, vec2-new(0, offset), direction-east()));
+    result = max(result, count-energized(g, vec2-new(size.x - 1, offset), direction-west()));
     offset = offset + 1;
   }
 

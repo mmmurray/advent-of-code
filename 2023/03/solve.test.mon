@@ -1,8 +1,8 @@
 import { assert-equal } from "@assert";
 import { char-is-numeric } from "@char";
 import { list } from "@list";
-import { vec2, vec2-add, vec2-is-adjacent } from "@math";
 import { string, string-from-number } from "@string";
+import { vec2, vec2-new } from "@vec2";
 import { get-value: get-input } from "./input.txt";
 
 data schematic-symbol = { location: vec2<i32>, value: i32 }
@@ -26,7 +26,7 @@ let parse-input = (input: string): schematic -> {
             char-is-numeric(char) -> {
               let length = 0;
               let value = 0;
-              let location = vec2.new({ x: char-index, y: line-index });
+              let location = vec2-new(char-index, line-index);
               let loop = true;
 
               while loop && (char-index < line.size()) {
@@ -51,10 +51,7 @@ let parse-input = (input: string): schematic -> {
               char-index = char-index - 1;
             };
             _ -> {
-              let symbol = schematic-symbol.new({
-                location: vec2.new({ x: char-index, y: line-index }),
-                value: char,
-              });
+              let symbol = schematic-symbol.new({ location: vec2-new(char-index, line-index), value: char });
 
               s.symbols.push(symbol);
             };
@@ -79,13 +76,13 @@ let solve-part-1 = (input: string): string -> {
     let loop = true;
 
     while loop && (offset-x < number.length) {
-      let offset = vec2.new({ x: offset-x, y: 0 });
-      let position = vec2-add(number.location, offset);
+      let offset = vec2-new(offset-x, 0);
+      let position = number.location.add(offset);
       let found = false;
 
       for symbol in s.symbols {
         let _ = case {
-          vec2-is-adjacent(position, symbol.location) -> {
+          position.is-adjacent(symbol.location) -> {
             found = true;
           };
           _ -> {};
@@ -123,10 +120,10 @@ let solve-part-2 = (input: string): string -> {
           let loop = true;
 
           while loop && (offset-x < number.length) {
-            let offset = vec2.new({ x: offset-x, y: 0 });
-            let position = vec2-add(number.location, offset);
+            let offset = vec2-new(offset-x, 0);
+            let position = number.location.add(offset);
             let _ = case {
-              vec2-is-adjacent(position, symbol.location) -> {
+              position.is-adjacent(symbol.location) -> {
                 adjacent = true;
                 loop = false;
               };
