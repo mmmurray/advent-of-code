@@ -1,14 +1,13 @@
 import { assert-equal } from "@assert";
 import { list } from "@list";
 import { map, map-create } from "@map";
-import { abs } from "@math";
 import { pair, pair-create } from "@pair";
-import { string, string-from-number } from "@string";
+import { string } from "@string";
 import { get-value: get-input } from "./input.txt";
 
 let parse-input = (input: string): pair<list<i32>, list<i32>> -> {
   input.trim().to-lines().map((line: string) -> {
-    let parts = line.split-by("   ").map((part: string) -> part.to-i32());
+    let parts = line.split-whitespace().map((part: string) -> part.to-i32());
 
     pair-create(parts.get(0), parts.get(1))
   }).unzip()
@@ -16,15 +15,12 @@ let parse-input = (input: string): pair<list<i32>, list<i32>> -> {
 
 let solve-part-1 = (input: string): string -> {
   let lists = parse-input(input);
-  let as = lists.a.sort();
-  let bs = lists.b.sort();
-  let result = as.reduce-indexed(0, (acc: i32, a: i32, index: i32) -> {
-    let b = bs.get(index);
-
-    acc + abs(a - b)
+  let pairs = lists.a.sort().zip(lists.b.sort());
+  let result = pairs.reduce(0, (acc: i32, p: pair<i32, i32>) -> {
+    acc + (p.a - p.b).abs()
   });
 
-  string-from-number(result)
+  result.to-string()
 }
 
 let solve-part-2 = (input: string): string -> {
@@ -40,7 +36,7 @@ let solve-part-2 = (input: string): string -> {
     acc + a * count
   });
 
-  string-from-number(result)
+  result.to-string()
 }
 
 let part-1 = solve-part-1(get-input());
