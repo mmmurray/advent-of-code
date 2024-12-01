@@ -247,10 +247,10 @@ let _solve-part-2 = (input: string): string -> {
 test-count-arrangements();
 
 let input = get-input();
-let part1 = solve-part-1(input);
+let part-1 = solve-part-1(input);
 
-assert-equal(part1, "7204");
+assert-equal(part-1, "7204");
 
 # todo
-# let part2 = (solvePart2 input)
-# (assertEqual part2 "???")
+# let part-2 = (solvePart2 input)
+# (assertEqual part-2 "???")

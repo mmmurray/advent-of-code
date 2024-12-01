@@ -226,9 +226,9 @@ let input = get-input();
 let _ = solve-part-1(input);
 
 # todo
-# (assertEqual part1 "282277027");
+# (assertEqual part-1 "282277027");
 
 let _ = solve-part-2(input);
 
 # todo
-# (assertEqual part2 "11554135");
+# (assertEqual part-2 "11554135");

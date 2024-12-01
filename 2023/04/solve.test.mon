@@ -109,10 +109,10 @@ let solve-part-2 = (input: string): string -> {
 }
 
 let input = get-input();
-let part1 = solve-part-1(input);
+let part-1 = solve-part-1(input);
 
-assert-equal(part1, "21959");
+assert-equal(part-1, "21959");
 
-let part2 = solve-part-2(input);
+let part-2 = solve-part-2(input);
 
-assert-equal(part2, "5132675");
+assert-equal(part-2, "5132675");

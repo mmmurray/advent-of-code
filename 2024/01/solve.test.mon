@@ -8,7 +8,7 @@ import { get-value: get-input } from "./input.txt";
 data lists = { as: list<i32>, bs: list<i32> }
 
 let parse-input = (input: string): lists -> {
-  input.to-lines().reduce(lists.new({ as: [], bs: [] }), (acc: lists, line: string): lists -> {
+  input.trim().to-lines().reduce(lists.new({ as: [], bs: [] }), (acc: lists, line: string) -> {
     let space-index = line.index-of("   ");
     let a-str = line.slice(0, space-index);
     let b-str = line.slice(space-index + 3, line.size());
@@ -24,7 +24,7 @@ let solve-part-1 = (input: string): string -> {
   let lists = parse-input(input);
   let as = lists.as.sort();
   let bs = lists.bs.sort();
-  let result = as.reduce-indexed(0, (acc: i32, a: i32, index: i32): i32 -> {
+  let result = as.reduce-indexed(0, (acc: i32, a: i32, index: i32) -> {
     let b = bs.get(index);
 
     acc + abs(a - b)
@@ -35,12 +35,12 @@ let solve-part-1 = (input: string): string -> {
 
 let solve-part-2 = (input: string): string -> {
   let lists = parse-input(input);
-  let occurrences = lists.bs.reduce(map-create(), (acc: map<i32, i32>, b: i32): map<i32, i32> -> {
+  let occurrences = lists.bs.reduce(map-create(), (acc: map<i32, i32>, b: i32) -> {
     let count = acc.get(b).or(0);
 
     acc.set(b, count + 1)
   });
-  let result = lists.as.reduce(0, (acc: i32, a: i32): i32 -> {
+  let result = lists.as.reduce(0, (acc: i32, a: i32) -> {
     let count = occurrences.get(a).or(0);
 
     acc + a * count
@@ -49,11 +49,10 @@ let solve-part-2 = (input: string): string -> {
   string-from-number(result)
 }
 
-let input = (get-input()).trim();
-let part1 = solve-part-1(input);
+let part-1 = solve-part-1(get-input());
 
-assert-equal(part1, "1970720");
+assert-equal(part-1, "1970720");
 
-let part2 = solve-part-2(input);
+let part-2 = solve-part-2(get-input());
 
-assert-equal(part2, "17191599");
+assert-equal(part-2, "17191599");

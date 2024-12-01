@@ -352,7 +352,7 @@
 # let input = getExample();
 # # let _part1 = solvePart1(input);
 # # todo
-# # (assertEqual part1 "102")
+# # (assertEqual part-1 "102")
 # # todo
-# # let part2 = (solvePart2 input)
-# # (assertEqual part2 "???")
+# # let part-2 = (solvePart2 input)
+# # (assertEqual part-2 "???")

@@ -299,8 +299,8 @@ let _solve-part-2 = (input: string): string -> {
 let _input = get-input();
 
 # todo
-# let part1 = (solvePart1 input);
-# (assertEqual part1 "7107");
+# let part-1 = (solvePart1 input);
+# (assertEqual part-1 "7107");
 # todo
 # let _ = (solvePart2 input);
-# (assertEqual part2 "281");
+# (assertEqual part-2 "281");
