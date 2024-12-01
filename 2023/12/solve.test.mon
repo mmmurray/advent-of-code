@@ -7,7 +7,7 @@ import { get-value: get-input } from "./input.txt";
 data row = { conditions: list<i32>, damage-total: i32, damaged: list<i32> }
 
 let parse-row = (line: string): row -> {
-  let parts = line.split-by( ' ' );
+  let parts = line.split-by(" ");
   let conditions = [];
 
   for char in (parts.get(0)).to-list() {
@@ -15,7 +15,7 @@ let parse-row = (line: string): row -> {
   }
 
   let damaged = [];
-  let damaged-parts = (parts.get(1)).split-by( ',' );
+  let damaged-parts = (parts.get(1)).split-by(",");
   let damage-total = 0;
 
   for damaged-part in damaged-parts {

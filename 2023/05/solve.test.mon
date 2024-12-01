@@ -18,7 +18,7 @@ data almanac = { categories: list<almanac-category>, seeds: list<u64> }
 
 let parse-number-list = (input: string): list<u64> -> {
   let values = [];
-  let parts = input.split-by( ' ' );
+  let parts = input.split-by(" ");
 
   for part in parts {
     let num = part.to-u64();
@@ -30,7 +30,7 @@ let parse-number-list = (input: string): list<u64> -> {
 }
 
 let parse-seeds = (input: string): list<u64> -> {
-  let input-parts = input.split-by( ':' );
+  let input-parts = input.split-by(":");
   let values = (input-parts.get(1)).trim();
 
   parse-number-list(values)

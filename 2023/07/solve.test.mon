@@ -115,7 +115,7 @@ let parse-input = (input: string, jokers: boolean): list<hand> -> {
   let lines = (input.trim()).to-lines();
 
   for line in lines {
-    let parts = line.split-by( ' ' );
+    let parts = line.split-by(" ");
     let cards-part = parts.get(0);
     let bid-part = parts.get(1);
     let cards = [];

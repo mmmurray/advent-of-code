@@ -9,12 +9,10 @@ data lists = { as: list<i32>, bs: list<i32> }
 
 let parse-input = (input: string): lists -> {
   input.trim().to-lines().reduce(lists.new({ as: [], bs: [] }), (acc: lists, line: string) -> {
-    let space-index = line.index-of("   ");
-    let a-str = line.slice(0, space-index);
-    let b-str = line.slice(space-index + 3, line.size());
+    let parts = line.split-by("   ");
 
-    acc.as.push(a-str.to-i32());
-    acc.bs.push(b-str.to-i32());
+    acc.as.push(parts.get(0).to-i32());
+    acc.bs.push(parts.get(1).to-i32());
 
     acc
   })

@@ -54,7 +54,7 @@ let parse-input = (input: string): list<dig-plan-step> -> {
   let steps = [];
 
   for line in lines {
-    let parts = line.split-by( ' ' );
+    let parts = line.split-by(" ");
     let d = parse-direction(parts.get(0));
     let distance = (parts.get(1)).to-i64();
     let color = parts.get(2);

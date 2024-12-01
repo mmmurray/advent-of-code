@@ -9,11 +9,11 @@ data selection = { blue: i32, green: i32, red: i32 }
 data game = { id: i32, selections: list<selection> }
 
 let parse-selection = (input: string): selection -> {
-  let value-parts = input.split-by( ',' );
+  let value-parts = input.split-by(",");
   let s = selection.new({ red: 0, blue: 0, green: 0 });
 
   for value-part in value-parts {
-    let pair-parts = (value-part.trim()).split-by( ' ' );
+    let pair-parts = (value-part.trim()).split-by(" ");
     let value = (pair-parts.get(0)).to-i32();
     let color = pair-parts.get(1);
     let _ = case {
@@ -40,13 +40,13 @@ let parse-selection = (input: string): selection -> {
 }
 
 let parse-input-line = (line: string): game -> {
-  let parts = line.split-by( ':' );
+  let parts = line.split-by(":");
   let game-id-part = parts.get(0);
   let id-part = game-id-part.slice(5, game-id-part.size());
   let id = id-part.to-i32();
   let selections = [];
   let selections-part = (parts.get(1)).trim();
-  let selection-parts = selections-part.split-by( ';' );
+  let selection-parts = selections-part.split-by(";");
   let selection-index = 0;
 
   for selection-part in selection-parts {

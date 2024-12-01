@@ -8,7 +8,7 @@ data race = { distance: u64, time: u64 }
 
 let parse-number-list = (input: string): list<u64> -> {
   let values = [];
-  let parts = input.split-by( ' ' );
+  let parts = input.split-by(" ");
 
   for part in parts {
     let _ = case {
@@ -29,8 +29,8 @@ let parse-input = (input: string): list<race> -> {
   let lines = input.to-lines();
   let times-line = lines.get(0);
   let distances-line = lines.get(1);
-  let times = parse-number-list((times-line.split-by( ':' )).get(1));
-  let distances = parse-number-list((distances-line.split-by( ':' )).get(1));
+  let times = parse-number-list((times-line.split-by(":")).get(1));
+  let distances = parse-number-list((distances-line.split-by(":")).get(1));
 
   for time, time-index in times {
     let r = race.new({ time: time, distance: distances.get(time-index) });

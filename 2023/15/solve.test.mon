@@ -20,7 +20,7 @@ let parse-operation = (input: string): operation -> {
       operation.remove({ label: label })
     };
     _ -> {
-      let parts = input.split-by( '=' );
+      let parts = input.split-by("=");
 
       operation.insert({ label: parts.get(0), focal-length: (parts.get(1)).to-i32() })
     };
@@ -28,7 +28,7 @@ let parse-operation = (input: string): operation -> {
 }
 
 let parse-input = (input: string): list<step> -> {
-  let parts = (input.trim()).split-by( ',' );
+  let parts = (input.trim()).split-by(",");
   let steps = [];
 
   for part in parts {

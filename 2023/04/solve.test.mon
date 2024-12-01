@@ -8,7 +8,7 @@ import { get-value: get-input } from "./input.txt";
 data game = { numbers: list<i32>, winning: list<i32> }
 
 let parse-number-list = (input: string): list<i32> -> {
-  let parts = (input.trim()).split-by( ' ' );
+  let parts = (input.trim()).split-by(" ");
   let numbers = [];
 
   for part in parts {
@@ -29,8 +29,8 @@ let parse-input = (input: string): list<game> -> {
   let games = [];
 
   for line in lines {
-    let line-parts = line.split-by( ':' );
-    let section-parts = (line-parts.get(1)).split-by( '|' );
+    let line-parts = line.split-by(":");
+    let section-parts = (line-parts.get(1)).split-by("|");
 
     games.push(game.new({
       winning: parse-number-list(section-parts.get(0)),
