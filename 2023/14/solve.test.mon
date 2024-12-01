@@ -1,5 +1,5 @@
 import { assert-equal } from "@assert";
-import { list, list-from-array } from "@list";
+import { list } from "@list";
 import { vec2 } from "@math";
 import { string, string-from-number } from "@string";
 import { get-value: get-input } from "./input.txt";
@@ -147,7 +147,7 @@ let are-grids-equal = (a: grid, b: grid): boolean -> {
   result
 }
 
-let solve-part1 = (input: string): string -> {
+let solve-part-1 = (input: string): string -> {
   let g = parse-input(input);
   let tilted-grid = tilt-grid(g);
   let result = calculate-load(tilted-grid);
@@ -155,7 +155,7 @@ let solve-part1 = (input: string): string -> {
   string-from-number(result)
 }
 
-let solve-part2 = (input: string): string -> {
+let solve-part-2 = (input: string): string -> {
   let g = parse-input(input);
   let grids = [];
   let total-cycles = 1000000000;
@@ -192,10 +192,10 @@ let solve-part2 = (input: string): string -> {
 }
 
 let input = get-input();
-let part1 = solve-part1(input);
+let part1 = solve-part-1(input);
 
 assert-equal(part1, "109345");
 
-let part2 = solve-part2(input);
+let part2 = solve-part-2(input);
 
 assert-equal(part2, "112452");

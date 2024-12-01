@@ -41,7 +41,7 @@ let parse-input = (input: string): list<game> -> {
   games
 }
 
-let solve-part1 = (input: string): string -> {
+let solve-part-1 = (input: string): string -> {
   let result = 0;
   let games = parse-input(input);
 
@@ -65,7 +65,7 @@ let solve-part1 = (input: string): string -> {
   string-from-number(result)
 }
 
-let solve-part2 = (input: string): string -> {
+let solve-part-2 = (input: string): string -> {
   let result = 0;
   let games = parse-input(input);
   let result-by-game = array-create(games.size());
@@ -109,10 +109,10 @@ let solve-part2 = (input: string): string -> {
 }
 
 let input = get-input();
-let part1 = solve-part1(input);
+let part1 = solve-part-1(input);
 
 assert-equal(part1, "21959");
 
-let part2 = solve-part2(input);
+let part2 = solve-part-2(input);
 
 assert-equal(part2, "5132675");

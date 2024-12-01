@@ -222,7 +222,7 @@ let test-count-arrangements = (): unit -> {
   assert-equal(count-arrangements(parse-row("?????#???? 2,1,1")), 11);
 }
 
-let solve-part1 = (input: string): string -> {
+let solve-part-1 = (input: string): string -> {
   let rows = parse-input(input);
   let result = 0;
 
@@ -233,7 +233,7 @@ let solve-part1 = (input: string): string -> {
   string-from-number(result)
 }
 
-let _solve-part2 = (input: string): string -> {
+let _solve-part-2 = (input: string): string -> {
   let rows = unfold-rows(parse-input(input));
   let result = 0;
 
@@ -247,7 +247,7 @@ let _solve-part2 = (input: string): string -> {
 test-count-arrangements();
 
 let input = get-input();
-let part1 = solve-part1(input);
+let part1 = solve-part-1(input);
 
 assert-equal(part1, "7204");
 

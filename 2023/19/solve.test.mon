@@ -2,7 +2,6 @@ import { assert-equal } from "@assert";
 import { print } from "@io";
 import { list } from "@list";
 import { map, map-create } from "@map";
-import { option } from "@option";
 import { string, string-from-char, string-from-number } from "@string";
 import { string-builder-create } from "@string-builder";
 import { get-value: get-input } from "./input.txt";
@@ -251,7 +250,7 @@ let is-part-accepted = (workflows: map<string, workflow>, r: rating): boolean ->
   result
 }
 
-let solve-part1 = (input: string): string -> {
+let solve-part-1 = (input: string): string -> {
   let s = parse-input(input);
   let result = 0;
 
@@ -270,7 +269,7 @@ let solve-part1 = (input: string): string -> {
 }
 
 let input = get-input();
-let part1 = solve-part1(input);
+let part1 = solve-part-1(input);
 
 assert-equal(part1, "287054");
 

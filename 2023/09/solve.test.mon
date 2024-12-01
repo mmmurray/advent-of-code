@@ -78,7 +78,7 @@ let find-previous-value = (sequence: list<i32>): i32 -> {
   }
 }
 
-let solve-part1 = (input: string): string -> {
+let solve-part-1 = (input: string): string -> {
   let sequences = parse-input(input);
   let result = 0;
 
@@ -91,7 +91,7 @@ let solve-part1 = (input: string): string -> {
   string-from-number(result)
 }
 
-let solve-part2 = (input: string): string -> {
+let solve-part-2 = (input: string): string -> {
   let sequences = parse-input(input);
   let result = 0;
 
@@ -105,10 +105,10 @@ let solve-part2 = (input: string): string -> {
 }
 
 let input = get-input();
-let part1 = solve-part1(input);
+let part1 = solve-part-1(input);
 
 assert-equal(part1, "1877825184");
 
-let part2 = solve-part2(input);
+let part2 = solve-part-2(input);
 
 assert-equal(part2, "1108");

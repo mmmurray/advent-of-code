@@ -1,5 +1,5 @@
 import { assert-equal } from "@assert";
-import { list, list-from-array } from "@list";
+import { list } from "@list";
 import { vec2, vec2-add, vec2-manhattan-distance } from "@math";
 import { string, string-from-number } from "@string";
 import { get-value: get-input } from "./input.txt";
@@ -137,7 +137,7 @@ let sum-of-distances-between-galaxies = (u: universe): i64 -> {
   total
 }
 
-let solve-part1 = (input: string): string -> {
+let solve-part-1 = (input: string): string -> {
   let expansion-rate = 2;
   let u = expand-universe(parse-input(input), expansion-rate);
   let result = sum-of-distances-between-galaxies(u);
@@ -145,7 +145,7 @@ let solve-part1 = (input: string): string -> {
   string-from-number(result)
 }
 
-let solve-part2 = (input: string): string -> {
+let solve-part-2 = (input: string): string -> {
   let expansion-rate = 1000000;
   let u = expand-universe(parse-input(input), expansion-rate);
   let result = sum-of-distances-between-galaxies(u);
@@ -154,10 +154,10 @@ let solve-part2 = (input: string): string -> {
 }
 
 let input = get-input();
-let part1 = solve-part1(input);
+let part1 = solve-part-1(input);
 
 assert-equal(part1, "9565386");
 
-let part2 = solve-part2(input);
+let part2 = solve-part-2(input);
 
 assert-equal(part2, "857986849428");

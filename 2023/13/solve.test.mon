@@ -1,5 +1,5 @@
 import { assert-equal } from "@assert";
-import { list, list-from-array } from "@list";
+import { list } from "@list";
 import { min, vec2 } from "@math";
 import { string, string-from-number } from "@string";
 import { get-value: get-input } from "./input.txt";
@@ -145,7 +145,7 @@ let get-reflection-score = (g: grid, not-score: i32): i32 -> {
   }
 }
 
-let solve-part1 = (input: string): string -> {
+let solve-part-1 = (input: string): string -> {
   let grids = parse-input(input);
   let result = 0;
 
@@ -191,7 +191,7 @@ let remove-smudge = (g: grid): i32 -> {
   result
 }
 
-let solve-part2 = (input: string): string -> {
+let solve-part-2 = (input: string): string -> {
   let grids = parse-input(input);
   let result = 0;
 
@@ -203,10 +203,10 @@ let solve-part2 = (input: string): string -> {
 }
 
 let input = get-input();
-let part1 = solve-part1(input);
+let part1 = solve-part-1(input);
 
 assert-equal(part1, "36015");
 
-let part2 = solve-part2(input);
+let part2 = solve-part-2(input);
 
 assert-equal(part2, "35335");

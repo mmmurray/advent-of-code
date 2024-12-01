@@ -4,7 +4,13 @@ import { range, range-create, range-empty, range-intersect, range-shift } from "
 import { string, string-from-number } from "@string";
 import { get-value: get-input } from "./input.txt";
 
-data almanac-mapping = { destination-start: u64, offset: u64, range-length: u64, source-range: range<u64>, source-start: u64 }
+data almanac-mapping = {
+  destination-start: u64,
+  offset: u64,
+  range-length: u64,
+  source-range: range<u64>,
+  source-start: u64,
+}
 
 data almanac-category = { mappings: list<almanac-mapping> }
 
@@ -174,7 +180,7 @@ let map-range-to-location-in-almanac = (a: almanac, initial-range: range<u64>): 
   ranges
 }
 
-let solve-part1 = (input: string): string -> {
+let solve-part-1 = (input: string): string -> {
   let a = sort-almanac-mappings(parse-input(input));
   let result = 999999999;
 
@@ -187,7 +193,7 @@ let solve-part1 = (input: string): string -> {
   string-from-number(result)
 }
 
-let solve-part2 = (input: string): string -> {
+let solve-part-2 = (input: string): string -> {
   let a = sort-almanac-mappings(parse-input(input));
   let ranges = [];
 
@@ -217,12 +223,12 @@ let solve-part2 = (input: string): string -> {
 }
 
 let input = get-input();
-let _ = solve-part1(input);
+let _ = solve-part-1(input);
 
 # todo
 # (assertEqual part1 "282277027");
 
-let _ = solve-part2(input);
+let _ = solve-part-2(input);
 
 # todo
 # (assertEqual part2 "11554135");

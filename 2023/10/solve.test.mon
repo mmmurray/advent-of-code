@@ -1,4 +1,4 @@
-import { list, list-from-array } from "@list";
+import { list } from "@list";
 import { max, vec2, vec2-equals } from "@math";
 import { string, string-from-number } from "@string";
 import { get-value: get-input } from "./input.txt";
@@ -212,7 +212,7 @@ let search-pipes = (ps: pipes, visited: list<vec2<i32>>, current: vec2<i32>, ste
   }
 }
 
-let _solve-part1 = (input: string): string -> {
+let _solve-part-1 = (input: string): string -> {
   let ps = parse-input(input);
   let steps = search-pipes(ps, [], ps.start, 0);
   let result = steps / 2;
@@ -264,7 +264,7 @@ let build-lake = (ps: pipes, visited: list<vec2<i32>>): lake -> {
   lake.new({ walls: walls, size: lake-size })
 }
 
-let _solve-part2 = (input: string): string -> {
+let _solve-part-2 = (input: string): string -> {
   let ps = parse-input(input);
   let pipes-size = ps.size;
   let visited = [];

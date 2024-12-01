@@ -1,5 +1,5 @@
 import { assert-equal } from "@assert";
-import { list, list-from-array } from "@list";
+import { list } from "@list";
 import { max, vec2, vec2-add } from "@math";
 import { string, string-from-number } from "@string";
 import { get-value: get-input } from "./input.txt";
@@ -63,7 +63,11 @@ data tile =
   | split-horizontal
   | split-vertical
 
-data grid = { energized: list<list<list<direction>>>, size: vec2<i32>, tiles: list<list<tile>> }
+data grid = {
+  energized: list<list<list<direction>>>,
+  size: vec2<i32>,
+  tiles: list<list<tile>>,
+}
 
 let grid-clone = (g: grid): grid -> {
   let new-energized = [];
@@ -244,14 +248,14 @@ let count-energized = (g: grid, start-position: vec2<i32>, start-direction: dire
   total
 }
 
-let solve-part1 = (input: string): string -> {
+let solve-part-1 = (input: string): string -> {
   let g = parse-input(input);
   let result = count-energized(g, vec2.new({ x: 0, y: 0 }), direction-east());
 
   string-from-number(result)
 }
 
-let solve-part2 = (input: string): string -> {
+let solve-part-2 = (input: string): string -> {
   let g = parse-input(input);
   let size = g.size;
   let result = 0;
@@ -269,10 +273,10 @@ let solve-part2 = (input: string): string -> {
 }
 
 let input = get-input();
-let part1 = solve-part1(input);
+let part1 = solve-part-1(input);
 
 assert-equal(part1, "8034");
 
-let part2 = solve-part2(input);
+let part2 = solve-part-2(input);
 
 assert-equal(part2, "8225");

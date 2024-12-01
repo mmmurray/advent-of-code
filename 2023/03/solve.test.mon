@@ -70,7 +70,7 @@ let parse-input = (input: string): schematic -> {
   s
 }
 
-let solve-part1 = (input: string): string -> {
+let solve-part-1 = (input: string): string -> {
   let result = 0;
   let s = parse-input(input);
 
@@ -107,7 +107,7 @@ let solve-part1 = (input: string): string -> {
   string-from-number(result)
 }
 
-let solve-part2 = (input: string): string -> {
+let solve-part-2 = (input: string): string -> {
   let result = 0;
   let s = parse-input(input);
 
@@ -160,10 +160,10 @@ let solve-part2 = (input: string): string -> {
 }
 
 let input = (get-input()).trim();
-let part1 = solve-part1(input);
+let part1 = solve-part-1(input);
 
 assert-equal(part1, "525181");
 
-let part2 = solve-part2(input);
+let part2 = solve-part-2(input);
 
 assert-equal(part2, "84289137");

@@ -1,4 +1,4 @@
-import { array, array-create, array-get, array-set } from "@array";
+import { array-create, array-get, array-set } from "@array";
 import { assert-equal } from "@assert";
 import { list, list-from-array } from "@list";
 import { string, string-from-number } from "@string";
@@ -50,7 +50,7 @@ let hash = (value: string): i32 -> {
   result
 }
 
-let solve-part1 = (input: string): string -> {
+let solve-part-1 = (input: string): string -> {
   let sequence = parse-input(input);
   let result = 0;
 
@@ -65,7 +65,7 @@ data lens = { focal-length: i32, label: string }
 
 data box = { lenses: list<lens> }
 
-let solve-part2 = (input: string): string -> {
+let solve-part-2 = (input: string): string -> {
   let sequence = parse-input(input);
   let result = 0;
   let boxes = array-create(256);
@@ -141,10 +141,10 @@ let solve-part2 = (input: string): string -> {
 }
 
 let input = get-input();
-let part1 = solve-part1(input);
+let part1 = solve-part-1(input);
 
 assert-equal(part1, "509152");
 
-let part2 = solve-part2(input);
+let part2 = solve-part-2(input);
 
 assert-equal(part2, "244403");

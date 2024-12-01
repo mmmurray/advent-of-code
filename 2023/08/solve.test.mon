@@ -1,6 +1,6 @@
 import { assert-equal } from "@assert";
 import { print } from "@io";
-import { list, list-from-array } from "@list";
+import { list } from "@list";
 import { map, map-create } from "@map";
 import { lcm-many } from "@math";
 import { string, string-from-number } from "@string";
@@ -79,14 +79,14 @@ let count-steps = (net: network, start: string): u64 -> {
   steps
 }
 
-let solve-part1 = (input: string): string -> {
+let solve-part-1 = (input: string): string -> {
   let n = parse-input(input);
   let result = count-steps(n, "AAA");
 
   string-from-number(result)
 }
 
-let solve-part2 = (input: string): string -> {
+let solve-part-2 = (input: string): string -> {
   let n = parse-input(input);
   let nodes = n.nodes;
   let all-steps = [];
@@ -106,10 +106,10 @@ let solve-part2 = (input: string): string -> {
 }
 
 let input = get-input();
-let part1 = solve-part1(input);
+let part1 = solve-part-1(input);
 
 assert-equal(part1, "21883");
 
-let part2 = solve-part2(input);
+let part2 = solve-part-2(input);
 
 assert-equal(part2, "12833235391111");
