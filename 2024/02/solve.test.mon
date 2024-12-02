@@ -1,0 +1,51 @@
+import { assert-equal } from "@assert";
+import { list, list-from-range } from "@list";
+import { string } from "@string";
+import { get-value: get-input } from "./input.txt";
+
+let parse-input = (input: string): list<list<i32>> -> {
+  input.trim().to-lines().map((line: string) -> {
+    line.split-whitespace().map((part: string) -> part.to-i32())
+  })
+}
+
+let is-report-safe = (report: list<i32>): boolean -> {
+  let deltas = report.reduce-indexed([], (acc: list<i32>, level: i32, index: i32) -> {
+    case {
+      index > 0 -> [...acc, level - report.get(index - 1)];
+      _ -> acc;
+    }
+  });
+  let safe-increasing = deltas.filter((level: i32) -> level >= 1 && level <= 3);
+  let safe-decreasing = deltas.filter((level: i32) -> level >= --(3) && level <= --(1));
+
+  safe-increasing.size() == deltas.size() || safe-decreasing.size() == deltas.size()
+}
+
+let is-report-safe-tolerant = (report: list<i32>): boolean -> {
+  let sub-reports = list-from-range(0, report.size(), 1).map((index: i32) -> [...report].remove(index));
+
+  is-report-safe(report) || sub-reports.some(is-report-safe)
+}
+
+let solve-part-1 = (input: string): string -> {
+  let reports = parse-input(input);
+  let safe-count = reports.filter(is-report-safe).size();
+
+  safe-count.to-string()
+}
+
+let solve-part-2 = (input: string): string -> {
+  let reports = parse-input(input);
+  let safe-count = reports.filter(is-report-safe-tolerant).size();
+
+  safe-count.to-string()
+}
+
+let part-1 = solve-part-1(get-input());
+
+assert-equal(part-1, "598");
+
+let part-2 = solve-part-2(get-input());
+
+assert-equal(part-2, "634");
