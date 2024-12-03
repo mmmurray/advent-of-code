@@ -1,0 +1,170 @@
+import { assert-equal } from "@assert";
+import { char-is-numeric } from "@char";
+import { list } from "@list";
+import { option, option-none, option-some } from "@option";
+import { string } from "@string";
+import { get-value: get-input } from "./input.txt";
+
+data expression =
+  | mul({ left: i32, right: i32 })
+  | enable
+  | disable
+
+data parse-result<t> = { offset: i32, value: t }
+
+let parse-literal = (source: string, offset: i32, literal: string): option<parse-result<string>> -> {
+  case {
+    source.contains-at(literal, offset) -> {
+      offset = offset + literal.size();
+
+      option-some(parse-result.new({ offset: offset, value: literal }))
+    };
+    _ -> option-none();
+  }
+}
+
+let parse-number = (source: string, offset: i32): option<parse-result<i32>> -> {
+  let start = offset;
+
+  while char-is-numeric(source.get(offset)) {
+    offset = offset + 1;
+  }
+
+  case {
+    offset > start -> option-some(parse-result.new({ offset: offset, value: source.slice(start, offset).to-i32() }));
+    _ -> option-none();
+  }
+}
+
+let parse-expression-mul = (source: string, offset: i32): option<parse-result<expression>> -> {
+  let open-result <- parse-literal(source, offset, "mul(");
+
+  offset = open-result.offset;
+
+  let left-result <- parse-number(source, offset);
+
+  offset = left-result.offset;
+
+  let comma-result <- parse-literal(source, offset, ",");
+
+  offset = comma-result.offset;
+
+  let right-result <- parse-number(source, offset);
+
+  offset = right-result.offset;
+
+  let close-result <- parse-literal(source, offset, ")");
+
+  offset = close-result.offset;
+
+  let value = expression.mul({ left: left-result.value, right: right-result.value });
+
+  option-some(parse-result.new({ offset: offset, value: value }))
+}
+
+let parse-expression-enable = (source: string, offset: i32): option<parse-result<expression>> -> {
+  let literal-result <- parse-literal(source, offset, "do()");
+
+  offset = literal-result.offset;
+
+  let value = expression.enable();
+
+  option-some(parse-result.new({ offset: offset, value: value }))
+}
+
+let parse-expression-disable = (source: string, offset: i32): option<parse-result<expression>> -> {
+  let literal-result <- parse-literal(source, offset, "don't()");
+
+  offset = literal-result.offset;
+
+  let value = expression.disable();
+
+  option-some(parse-result.new({ offset: offset, value: value }))
+}
+
+let option-first-some = <t>(values: list<option<t>>): option<t> -> {
+  let result = option-none();
+  let index = 0;
+
+  while result.is-none() && index < values.size() {
+    result = values.get(index);
+    index = index + 1;
+  }
+
+  result
+}
+
+let parse-expression = (source: string, offset: i32): option<parse-result<expression>> -> {
+  option-first-some([
+    parse-expression-mul(source, offset),
+    parse-expression-enable(source, offset),
+    parse-expression-disable(source, offset),
+  ])
+}
+
+let solve-part-1 = (input: string): string -> {
+  let result = 0;
+  let offset = 0;
+
+  while offset < input.size() {
+    let parse-result = parse-expression(input, offset);
+
+    result = result + match parse-result {
+      some({ value }) -> match value.value {
+        mul({ left, right }) -> left * right;
+        _ -> 0;
+      };
+      _ -> 0;
+    };
+    offset = match parse-result {
+      some({ value }) -> value.offset;
+      _ -> offset + 1;
+    };
+  }
+
+  result.to-string()
+}
+
+let solve-part-2 = (input: string): string -> {
+  let result = 0;
+  let offset = 0;
+  let mul-enabled = true;
+
+  while offset < input.size() {
+    let parse-result = parse-expression(input, offset);
+    let mul-value = match parse-result {
+      some({ value }) -> match value.value {
+        mul({ left, right }) -> left * right;
+        _ -> 0;
+      };
+      _ -> 0;
+    };
+
+    result = result + case {
+      mul-enabled -> mul-value;
+      _ -> 0;
+    };
+    mul-enabled = match parse-result {
+      some({ value }) -> match value.value {
+        enable -> true;
+        disable -> false;
+        _ -> mul-enabled;
+      };
+      _ -> mul-enabled;
+    };
+    offset = match parse-result {
+      some({ value }) -> value.offset;
+      _ -> offset + 1;
+    };
+  }
+
+  result.to-string()
+}
+
+let part-1 = solve-part-1(get-input());
+
+assert-equal(part-1, "180233229");
+
+let part-2 = solve-part-2(get-input());
+
+assert-equal(part-2, "95411583");
