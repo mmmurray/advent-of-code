@@ -41,23 +41,14 @@ let parse-number = (source: string, offset: i32): option<parse-result<i32>> -> {
 
 let parse-expression-mul = (source: string, offset: i32): option<parse-result<expression>> -> {
   let open-result <- parse-literal(source, offset, "mul(");
-
   let offset = open-result.offset;
-
   let left-result <- parse-number(source, offset);
-
   let offset = left-result.offset;
-
   let comma-result <- parse-literal(source, offset, ",");
-
   let offset = comma-result.offset;
-
   let right-result <- parse-number(source, offset);
-
   let offset = right-result.offset;
-
   let close-result <- parse-literal(source, offset, ")");
-
   let offset = close-result.offset;
   let value = expression.mul({ left: left-result.value, right: right-result.value });
 
