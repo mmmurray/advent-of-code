@@ -15,23 +15,26 @@ data parse-result<t> = { offset: i32, value: t }
 let parse-literal = (source: string, offset: i32, literal: string): option<parse-result<string>> -> {
   case {
     source.contains-at(literal, offset) -> {
-      offset = offset + literal.size();
+      let next-offset = offset + literal.size();
 
-      option-some(parse-result.new({ offset: offset, value: literal }))
+      option-some(parse-result.new({ offset: next-offset, value: literal }))
     };
     _ -> option-none();
   }
 }
 
 let parse-number = (source: string, offset: i32): option<parse-result<i32>> -> {
-  let start = offset;
-
-  while char-is-numeric(source.get(offset)) {
-    offset = offset + 1;
+  let find-end = (source: string, offset: i32): i32 -> {
+    case {
+      char-is-numeric(source.get(offset)) -> find-end(source, offset + 1);
+      _ -> offset;
+    }
   }
 
+  let end = find-end(source, offset);
+
   case {
-    offset > start -> option-some(parse-result.new({ offset: offset, value: source.slice(start, offset).to-i32() }));
+    end > offset -> option-some(parse-result.new({ offset: end, value: source.slice(offset, end).to-i32() }));
     _ -> option-none();
   }
 }
@@ -39,24 +42,23 @@ let parse-number = (source: string, offset: i32): option<parse-result<i32>> -> {
 let parse-expression-mul = (source: string, offset: i32): option<parse-result<expression>> -> {
   let open-result <- parse-literal(source, offset, "mul(");
 
-  offset = open-result.offset;
+  let offset = open-result.offset;
 
   let left-result <- parse-number(source, offset);
 
-  offset = left-result.offset;
+  let offset = left-result.offset;
 
   let comma-result <- parse-literal(source, offset, ",");
 
-  offset = comma-result.offset;
+  let offset = comma-result.offset;
 
   let right-result <- parse-number(source, offset);
 
-  offset = right-result.offset;
+  let offset = right-result.offset;
 
   let close-result <- parse-literal(source, offset, ")");
 
-  offset = close-result.offset;
-
+  let offset = close-result.offset;
   let value = expression.mul({ left: left-result.value, right: right-result.value });
 
   option-some(parse-result.new({ offset: offset, value: value }))
@@ -82,83 +84,68 @@ let parse-expression-disable = (source: string, offset: i32): option<parse-resul
   option-some(parse-result.new({ offset: offset, value: value }))
 }
 
-let option-first-some = <t>(values: list<option<t>>): option<t> -> {
-  let result = option-none();
-  let index = 0;
-
-  while result.is-none() && index < values.size() {
-    result = values.get(index);
-    index = index + 1;
-  }
-
-  result
-}
-
 let parse-expression = (source: string, offset: i32): option<parse-result<expression>> -> {
-  option-first-some([
+  let first-parsed <- [
     parse-expression-mul(source, offset),
     parse-expression-enable(source, offset),
     parse-expression-disable(source, offset),
-  ])
+  ].find((result: option<parse-result<expression>>) -> result.is-some());
+
+  first-parsed.second()
+}
+
+let parse-expressions = (source: string): list<expression> -> {
+  let rec = (acc: list<expression>, source: string, offset: i32): list<expression> -> {
+    case {
+      offset == source.size() -> acc;
+      _ -> {
+        let parse-result = parse-expression(source, offset);
+        let next-acc = match parse-result {
+          some({ value }) -> [...acc, value.value];
+          _ -> acc;
+        };
+        let next-offset = match parse-result {
+          some({ value }) -> value.offset;
+          _ -> offset + 1;
+        };
+        let expressions = rec(next-acc, source, next-offset);
+
+        expressions
+      };
+    }
+  }
+
+  rec([], source, 0)
 }
 
 let solve-part-1 = (input: string): string -> {
-  let result = 0;
-  let offset = 0;
-
-  while offset < input.size() {
-    let parse-result = parse-expression(input, offset);
-
-    result = result + match parse-result {
-      some({ value }) -> match value.value {
-        mul({ left, right }) -> left * right;
-        _ -> 0;
-      };
-      _ -> 0;
-    };
-    offset = match parse-result {
-      some({ value }) -> value.offset;
-      _ -> offset + 1;
-    };
-  }
+  let expressions = parse-expressions(input);
+  let result = expressions.reduce(0, (acc: i32, e: expression) -> {
+    match e {
+      mul({ left, right }) -> acc + left * right;
+      _ -> acc;
+    }
+  });
 
   result.to-string()
 }
 
 let solve-part-2 = (input: string): string -> {
-  let result = 0;
-  let offset = 0;
-  let mul-enabled = true;
+  data state = { enabled: boolean, total: i32 }
 
-  while offset < input.size() {
-    let parse-result = parse-expression(input, offset);
-    let mul-value = match parse-result {
-      some({ value }) -> match value.value {
-        mul({ left, right }) -> left * right;
-        _ -> 0;
+  let expressions = parse-expressions(input);
+  let result = expressions.reduce(state.new({ enabled: true, total: 0 }), (acc: state, e: expression) -> {
+    match e {
+      mul({ left, right }) -> case {
+        acc.enabled -> state.new({ enabled: true, total: acc.total + left * right });
+        _ -> acc;
       };
-      _ -> 0;
-    };
+      enable -> state.new({ enabled: true, total: acc.total });
+      disable -> state.new({ enabled: false, total: acc.total });
+    }
+  });
 
-    result = result + case {
-      mul-enabled -> mul-value;
-      _ -> 0;
-    };
-    mul-enabled = match parse-result {
-      some({ value }) -> match value.value {
-        enable -> true;
-        disable -> false;
-        _ -> mul-enabled;
-      };
-      _ -> mul-enabled;
-    };
-    offset = match parse-result {
-      some({ value }) -> value.offset;
-      _ -> offset + 1;
-    };
-  }
-
-  result.to-string()
+  result.total.to-string()
 }
 
 let part-1 = solve-part-1(get-input());
