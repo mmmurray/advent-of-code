@@ -39,10 +39,5 @@ let solve-part-2 = (input: string): string -> {
   result.to-string()
 }
 
-let part-1 = solve-part-1(get-input());
-
-assert-equal(part-1, "1970720");
-
-let part-2 = solve-part-2(get-input());
-
-assert-equal(part-2, "17191599");
+assert-equal(solve-part-1(get-input()), "1970720");
+assert-equal(solve-part-2(get-input()), "17191599");

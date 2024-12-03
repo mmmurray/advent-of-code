@@ -42,10 +42,5 @@ let solve-part-2 = (input: string): string -> {
   safe-count.to-string()
 }
 
-let part-1 = solve-part-1(get-input());
-
-assert-equal(part-1, "598");
-
-let part-2 = solve-part-2(get-input());
-
-assert-equal(part-2, "634");
+assert-equal(solve-part-1(get-input()), "598");
+assert-equal(solve-part-2(get-input()), "634");

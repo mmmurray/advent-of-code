@@ -1,14 +1,14 @@
-import { string } from "@string";
 import { assert-equal } from "@assert";
-import { get-value: get-input } from "./input.txt";
-import { map, map-create} from "@map";
 import { list } from "@list";
+import { map, map-create } from "@map";
+import { string } from "@string";
 import { stringable } from "@stringable";
+import { get-value: get-input } from "./input.txt";
 
 data module =
-  | broadcaster ({ outputs: list<string> })
-  | flip-flop ({ name: string, state: boolean, outputs: list<string> })
-  | conjunction ({ name: string, state: map<string, boolean>, outputs: list<string> })
+  | broadcaster({ outputs: list<string> })
+  | flip-flop({ name: string, outputs: list<string>, state: boolean })
+  | conjunction({ name: string, outputs: list<string>, state: map<string, boolean> })
 
 let stringable<module>.to-string = (self: module): string -> {
   match self {
@@ -26,11 +26,7 @@ data modules = {
   low-to-rx: boolean,
 }
 
-data pulse = {
-  source: string,
-  target: string,
-  value: boolean,
-}
+data pulse = { source: string, target: string, value: boolean }
 
 let stringable<pulse>.to-string = (self: pulse): string -> {
   let value-formatted = case {
@@ -46,15 +42,18 @@ let parse-input = (input: string): modules -> {
     let parts = line.split-by(" -> ");
     let target = parts.get(0);
     let outputs = parts.get(1).split-by(", ");
+
     case {
-      target.equals("broadcaster") -> acc.set("broadcaster", module.broadcaster({outputs: outputs}));
+      target.equals("broadcaster") -> acc.set("broadcaster", module.broadcaster({ outputs: outputs }));
       target.starts-with("%") -> {
         let name = target.slice(1, target.size());
-        acc.set(name, module.flip-flop({name: name, state: false, outputs: outputs }))
+
+        acc.set(name, module.flip-flop({ name: name, state: false, outputs: outputs }))
       };
       target.starts-with("&") -> {
         let name = target.slice(1, target.size());
-        acc.set(name, module.conjunction({name: name, state: map-create(), outputs: outputs }))
+
+        acc.set(name, module.conjunction({ name: name, state: map-create(), outputs: outputs }))
       };
       _ -> acc;
     }
@@ -65,9 +64,10 @@ let parse-input = (input: string): modules -> {
 
 let init-conjunction-input = (ms: modules, name: string, input: string): modules -> {
   match ms.by-name.get(name) {
-    some({value: m}) -> match m {
-      conjunction({state}) -> {
+    some({ value: m }) -> match m {
+      conjunction({ state }) -> {
         state.set(input, false);
+
         ms
       };
       _ -> ms;
@@ -79,27 +79,31 @@ let init-conjunction-input = (ms: modules, name: string, input: string): modules
 let init-state = (ms: modules): modules -> {
   for m in ms.by-name.values() {
     ms = match m {
-      broadcaster({outputs}) -> {
+      broadcaster({ outputs }) -> {
         for output in outputs {
           ms = init-conjunction-input(ms, output, "broadcaster");
         }
+
         ms
       };
-      flip-flop({name, outputs}) -> {
+      flip-flop({ name, outputs }) -> {
         for output in outputs {
           ms = init-conjunction-input(ms, output, name);
         }
+
         ms
       };
-      conjunction({name, outputs}) -> {
+      conjunction({ name, outputs }) -> {
         for output in outputs {
           ms = init-conjunction-input(ms, output, name);
         }
+
         ms
       };
       _ -> ms;
     };
   }
+
   ms
 }
 
@@ -107,13 +111,16 @@ let send-pulse = (ms: modules, source: string, target: string, value: boolean): 
   ms = case {
     value -> {
       ms.high-pulses = ms.high-pulses + 1;
+
       ms
     };
     _ -> {
       ms.low-pulses = ms.low-pulses + 1;
+
       case {
         target.equals("rx") -> {
           ms.low-to-rx = true;
+
           ms
         };
         _ -> ms;
@@ -122,29 +129,34 @@ let send-pulse = (ms: modules, source: string, target: string, value: boolean): 
   };
 
   match ms.by-name.get(target) {
-    some({value: m}) -> match m {
-      broadcaster({outputs}) -> {
-        outputs.map((output: string) -> pulse.new({source: target, target: output, value: value}))
+    some({ value: m }) -> match m {
+      broadcaster({ outputs }) -> {
+        outputs.map((output: string) -> pulse.new({ source: target, target: output, value: value }))
       };
-      flip-flop({name, state, outputs }) -> case {
+      flip-flop({ name, state, outputs }) -> case {
         value -> [];
         _ -> {
           let new-state = !(state);
-          let new-module = module.flip-flop({name: name, state: new-state, outputs: outputs });
+          let new-module = module.flip-flop({ name: name, state: new-state, outputs: outputs });
+
           ms.by-name.set(name, new-module);
-          outputs.map((output: string) -> pulse.new({source: name, target: output, value: new-state}))
+
+          outputs.map((output: string) -> pulse.new({ source: name, target: output, value: new-state }))
         };
       };
-      conjunction({name, state, outputs }) -> {
+      conjunction({ name, state, outputs }) -> {
         state.set(source, value);
+
         let all-high = true;
+
         for x in state.values() {
           all-high = case {
             x -> all-high;
             _ -> false;
           };
         }
-        outputs.map((output: string) -> pulse.new({source: name, target: output, value: !(all-high)}))
+
+        outputs.map((output: string) -> pulse.new({ source: name, target: output, value: !(all-high) }))
       };
     };
     none -> [];
@@ -152,23 +164,23 @@ let send-pulse = (ms: modules, source: string, target: string, value: boolean): 
 }
 
 let push-button = (ms: modules): modules -> {
-  let pulses = [pulse.new({source: "button", target: "broadcaster", value: false })];
+  let pulses = [pulse.new({ source: "button", target: "broadcaster", value: false })];
 
   while pulses.size() > 0 {
     pulses.push-list(match pulses.shift() {
-      some({value}) -> send-pulse(ms, value.source, value.target, value.value);
+      some({ value }) -> send-pulse(ms, value.source, value.target, value.value);
       none -> [];
     });
   }
-  
+
   ms
 }
 
 let solve-part-1 = (input: string): string -> {
   let modules = init-state(parse-input(input));
-
   let i = 0;
-  while (i < 1000) {
+
+  while i < 1000 {
     modules = push-button(modules);
     i = i + 1;
   }
@@ -176,20 +188,19 @@ let solve-part-1 = (input: string): string -> {
   (modules.low-pulses * modules.high-pulses).to-string()
 }
 
-let solve-part-2 = (input: string): string -> {
-  let ms = init-state(parse-input(input));
-
-  let i = 0;
-  while !(ms.low-to-rx) {
-    ms = push-button(ms);
-    i = i + 1;
-    $log(i);
-  }
-
-  i.to-string()
-}
+# let solve-part-2 = (input: string): string -> {
+#   let ms = init-state(parse-input(input));
+#   let i = 0;
+#   while !(ms.low-to-rx) {
+#     ms = push-button(ms);
+#     i = i + 1;
+#     $log(i);
+#   }
+#   i.to-string()
+# }
 
 let part-1 = solve-part-1(get-input());
+
 assert-equal(part-1, "818723272");
 
 # let part-2 = solve-part-2(get-input());
