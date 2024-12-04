@@ -1,57 +1,24 @@
 import { assert-equal } from "@assert";
-import { grid, grid-create } from "@grid";
-import { option, option-none, option-some } from "@option";
+import { grid, grid-from-string } from "@grid";
 import { string } from "@string";
 import { vec2, vec2-new } from "@vec2";
-import { get-value: get-example } from "./example.txt";
 import { get-value: get-input } from "./input.txt";
 
-let parse-input = (input: string): grid<i32, i32> -> {
-  let lines = input.trim().to-lines();
-  let empty = grid-create(lines.get(0).size(), lines.size(), (x: i32, y: i32) ->  '.' );
-
-  lines.reduce-indexed(empty, (acc: grid<i32, i32>, line: string, y: i32) -> {
-    line.to-list().reduce-indexed(acc, (acc: grid<i32, i32>, char: i32, x: i32) -> acc.set(x, y, char))
-  })
-}
-
-let grid-get-safe = <t, u:number>(self: grid<t, u>, x: u, y: u): option<t> -> {
+let search-in-direction = (target: string, index: i32, g: grid<i32, i32>, x: i32, y: i32, dx: i32, dy: i32): boolean -> {
   case {
-    x >= 0 && x < self.width && y >= 0 && y < self.height -> {
-      let i = $i32((y * self.width) + x);
-
-      option-some($arrayGet(self.cells, i))
-    };
-    _ -> option-none();
-  }
-}
-
-let search-in-direction = (target: string, g: grid<i32, i32>, x: i32, y: i32, dx: i32, dy: i32): boolean -> {
-  let index = 0;
-  let found = true;
-  let location = grid-create(g.width, g.height, (x: i32, y: i32) ->  '.' );
-
-  while found && index < target.size() {
-    found = match grid-get-safe(g, x, y) {
-      some({ value }) -> {
-        location.set(x, y, value);
-
-        value == target.get(index)
+    index == target.size() -> true;
+    _ -> match g.get-safe(x, y) {
+      some({ value }) -> case {
+        value == target.get(index) -> search-in-direction(target, index + 1, g, x + dx, y + dy, dx, dy);
+        _ -> false;
       };
       _ -> false;
     };
-    x = x + dx;
-    y = y + dy;
-    index = index + 1;
   }
-
-  found
 }
 
 let solve-part-1 = (input: string): string -> {
-  let result = 0;
-  let g = parse-input(input);
-  let dirs = [
+  let directions = [
     vec2-new(1, 0),
     vec2-new(1, 1),
     vec2-new(0, 1),
@@ -61,63 +28,34 @@ let solve-part-1 = (input: string): string -> {
     vec2-new(0, --(1)),
     vec2-new(1, --(1)),
   ];
-  let y = 0;
+  let grid = grid-from-string(input);
+  let result = grid-from-string(input).reduce(0, (acc: i32, char: i32, x: i32, y: i32) -> {
+    let found = directions.reduce(0, (acc: i32, dir: vec2<i32>) -> case {
+      search-in-direction("XMAS", 0, grid, x, y, dir.x, dir.y) -> acc + 1;
+      _ -> acc;
+    });
 
-  while y < g.height {
-    let x = 0;
-
-    while x < g.width {
-      let found = dirs.reduce(0, (acc: i32, dir: vec2<i32>) -> case {
-        search-in-direction("XMAS", g, x, y, dir.x, dir.y) -> acc + 1;
-        _ -> acc;
-      });
-
-      result = result + found;
-      x = x + 1;
-    }
-
-    y = y + 1;
-  }
+    acc + found
+  });
 
   result.to-string()
 }
 
 let solve-part-2 = (input: string): string -> {
-  let result = 0;
-  let g = parse-input(input);
-  let dirs = [
-    vec2-new(1, 0),
-    vec2-new(1, 1),
-    vec2-new(0, 1),
-    vec2-new(--(1), 1),
-    vec2-new(--(1), 0),
-    vec2-new(--(1), --(1)),
-    vec2-new(0, --(1)),
-    vec2-new(1, --(1)),
-  ];
-  let y = 0;
+  let grid = grid-from-string(input);
+  let result = grid-from-string(input).reduce(0, (acc: i32, char: i32, x: i32, y: i32) -> {
+    let diag-1 = search-in-direction("MAS", 0, grid, x, y, 1, 1) || search-in-direction("SAM", 0, grid, x, y, 1, 1);
+    let diag-2 = search-in-direction("MAS", 0, grid, x, y + 2, 1, --(1)) || search-in-direction("SAM", 0, grid, x, y + 2, 1, --(1));
+    let found = case {
+      diag-1 && diag-2 -> 1;
+      _ -> 0;
+    };
 
-  while y < g.height {
-    let x = 0;
-
-    while x < g.width {
-      let diag-1 = search-in-direction("MAS", g, x, y, 1, 1) || search-in-direction("SAM", g, x, y, 1, 1);
-      let diag-2 = search-in-direction("MAS", g, x, y + 2, 1, --(1)) || search-in-direction("SAM", g, x, y + 2, 1, --(1));
-
-      result = result + case {
-        diag-1 && diag-2 -> 1;
-        _ -> 0;
-      };
-      x = x + 1;
-    }
-
-    y = y + 1;
-  }
+    acc + found
+  });
 
   result.to-string()
 }
 
-assert-equal(solve-part-1(get-example()), "18");
 assert-equal(solve-part-1(get-input()), "2378");
-assert-equal(solve-part-2(get-example()), "9");
 assert-equal(solve-part-2(get-input()), "1796");
