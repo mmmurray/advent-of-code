@@ -29,7 +29,7 @@ let solve-part-1 = (input: string): string -> {
     vec2-new(1, --(1)),
   ];
   let grid = grid-from-string(input);
-  let result = grid-from-string(input).reduce(0, (acc: i32, char: i32, x: i32, y: i32) -> {
+  let result = grid.reduce(0, (acc: i32, char: i32, x: i32, y: i32) -> {
     let found = directions.reduce(0, (acc: i32, dir: vec2<i32>) -> case {
       search-in-direction("XMAS", 0, grid, x, y, dir.x, dir.y) -> acc + 1;
       _ -> acc;
