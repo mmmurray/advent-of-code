@@ -1,0 +1,72 @@
+import { assert-equal } from "@assert";
+import { list } from "@list";
+import { map, map-create } from "@map";
+import { order } from "@order";
+import { pair, pair-create } from "@pair";
+import { string } from "@string";
+import { get-value: get-example } from "./example.txt";
+import { get-value: get-input } from "./input.txt";
+
+data print-job = { rules: list<pair<i32, i32>>, updates: list<list<i32>> }
+
+let parse-input = (input: string): print-job -> {
+  let sections = input.trim().split-by("\n\n");
+  let rules = sections.get(0).to-lines().map((line: string): pair<i32, i32> -> {
+    let parts = line.split-by("|");
+
+    pair-create(parts.get(0).to-i32(), parts.get(1).to-i32())
+  });
+  let updates = sections.get(1).to-lines().map((line: string): list<i32> -> {
+    line.split-by(",").map((part: string) -> part.to-i32())
+  });
+
+  print-job.new({ rules: rules, updates: updates })
+}
+
+let is-update-in-correct-order = (rules: list<pair<i32, i32>>, update: list<i32>): boolean -> {
+  let indices-by-page = update.reduce-indexed(map-create(), (acc: map<i32, list<i32>>, page: i32, index: i32) -> {
+    acc.set(page, [...acc.get(page).or([]), index])
+  });
+
+  rules.every((rule: pair<i32, i32>) -> {
+    let page-a-indices = indices-by-page.get(rule.first()).or([]);
+    let page-b-indices = indices-by-page.get(rule.second()).or([]);
+
+    page-a-indices.every((index-a: i32) -> page-b-indices.every((index-b: i32) -> index-a < index-b))
+  })
+}
+
+let middle-page = (update: list<i32>): i32 -> update.get(update.size() / 2)
+
+let sort-update = (rules: list<pair<i32, i32>>, update: list<i32>): list<i32> -> {
+  update.sort-pairs((page-a: i32, page-b: i32) -> {
+    rules.reduce(order.same(), (acc: order, rule: pair<i32, i32>) -> case {
+      rule.first() == page-a && rule.second() == page-b -> order.less();
+      rule.first() == page-b && rule.second() == page-a -> order.more();
+      _ -> acc;
+    })
+  })
+}
+
+let solve-part-1 = (input: string): i32 -> {
+  let print-job = parse-input(input);
+
+  print-job.updates.map((update: list<i32>) -> case {
+    is-update-in-correct-order(print-job.rules, update) -> middle-page(update);
+    _ -> 0;
+  }).sum()
+}
+
+let solve-part-2 = (input: string): i32 -> {
+  let print-job = parse-input(input);
+
+  print-job.updates.map((update: list<i32>) -> case {
+    is-update-in-correct-order(print-job.rules, update) -> 0;
+    _ -> middle-page(sort-update(print-job.rules, update));
+  }).sum()
+}
+
+assert-equal(solve-part-1(get-example()), 143);
+assert-equal(solve-part-1(get-input()), 5248);
+assert-equal(solve-part-2(get-example()), 123);
+assert-equal(solve-part-2(get-input()), 4507);
