@@ -1,0 +1,111 @@
+import { assert-equal } from "@assert";
+import { list } from "@list";
+import { order } from "@order";
+import { pair, pair-create } from "@pair";
+import { set, set-create } from "@set";
+import { string } from "@string";
+import { get-value: get-example } from "./example.txt";
+import { get-value: get-input } from "./input.txt";
+import { grid-from-string } from "@grid";
+import { vec2, vec2-create } from "@vec2";
+import { map, map-create } from "@map";
+import { set, set-create } from "@set";
+
+data world = {
+  width: i32,
+  height: i32,
+  position: vec2<i32>,
+  direction: vec2<i32>,
+  walls: set<vec2<i32>>,
+}
+
+let parse-input = (input: string): world -> {
+  let g = grid-from-string(input.trim());
+  g.reduce(
+    world.new({
+      width: g.width,
+      height: g.height,
+      position: vec2-create(0, 0),
+      direction: vec2-create(0, 0),
+      walls: set-create(),
+    }),
+    (acc: world, cell: i32, x: i32, y: i32) -> {
+      case {
+        cell == '#' -> {
+          acc.walls.add(vec2-create(x, y));
+          acc
+        };
+        cell == '^' -> {
+          acc.position = vec2-create(x, y);
+          acc.direction = vec2-create(0, --(1));
+          acc
+        };
+        _ -> acc;
+      }
+    }
+  )
+}
+
+let rotate-right = (direction: vec2<i32>): vec2<i32> -> {
+  vec2-create(--(direction.y), direction.x)
+}
+
+let print-world = (w: world, visited: set<vec2<i32>>): unit -> {
+  let y = 0;
+  while y < w.height {
+    let x = 0;
+    let line = "";
+    while x < w.width {
+      let p = vec2-create(x, y);
+      let char = case {
+        w.walls.contains(p) -> "#";
+        visited.contains(p) -> "X";
+        _ -> ".";
+      };
+      line = "\(line)\(char)";
+      x = x + 1;
+    }
+    $log(line);
+    y = y + 1;
+  }
+  $log("");
+}
+
+let evolve = (w: world, visited: set<vec2<i32>>): world -> {
+  visited.add(w.position);
+  let ahead = w.position.add(w.direction);
+  case {
+    w.walls.contains(ahead) -> {
+      w.direction = rotate-right(w.direction);
+      w
+    };
+    _ -> {
+      w.position = ahead;
+      w
+    };
+  }
+}
+
+let is-outside = (w: world): boolean -> {
+  w.position.x < 0 || w.position.x >= w.width || w.position.y < 0 || w.position.y >= w.height
+}
+
+let solve-part-1 = (input: string): i32 -> {
+  let w = parse-input(input);
+  let visited = set-create();
+  # print-world(w, visited);
+  while !(is-outside(w)) {
+    w = evolve(w, visited);
+    # print-world(w, visited);
+  }
+  visited.size()
+}
+
+let solve-part-2 = (input: string): i32 -> {
+  0
+}
+
+assert-equal(solve-part-1(get-example()), 41);
+assert-equal(solve-part-1(get-input()), 4758);
+assert-equal(solve-part-2(get-example()), 0);
+assert-equal(solve-part-2(get-input()), 0);
