@@ -1,0 +1,68 @@
+import { assert-equal } from "@assert";
+import { list } from "@list";
+import { string } from "@string";
+import { get-value: get-example } from "./example.txt";
+import { get-value: get-input } from "./input.txt";
+
+data equation = { inputs: list<i64>, target: i64 }
+
+let parse-input = (input: string): list<equation> -> {
+  input.trim().to-lines().map((line: string) -> {
+    let sections = line.split-by(": ");
+    let target = sections.get(0).to-i64();
+    let inputs = sections.get(1).split-by(" ").map((part: string) -> part.to-i64());
+
+    equation.new({ target: target, inputs: inputs })
+  })
+}
+
+let operator-permutations = (size: i32): list<list<i32>> -> {
+  case {
+    size == 0 -> [[]];
+    _ -> {
+      let base = operator-permutations(size - 1);
+
+      [ '+' ,  '*' ].flat-map((op: i32) -> base.map((p: list<i32>) -> [...p, op]))
+    };
+  }
+}
+
+let do-operators-satisfy-equation = (e: equation, operators: list<i32>): boolean -> {
+  let total = operators.reduce-indexed(e.inputs.get(0), (acc: i64, op: i32, index: i32) -> {
+    let input = e.inputs.get(index + 1);
+
+    case {
+      op ==  '+'  -> acc + input;
+      op ==  '*'  -> acc * input;
+      _ -> acc;
+    }
+  });
+
+  total == e.target
+}
+
+let is-equation-possible = (e: equation): boolean -> {
+  let perm = operator-permutations(e.inputs.size() - 1);
+
+  perm.some((operators: list<i32>) -> do-operators-satisfy-equation(e, operators))
+}
+
+let solve-part-1 = (input: string): i64 -> {
+  let equations = parse-input(input);
+
+  equations.reduce(0, (acc: i64, e: equation) -> {
+    case {
+      is-equation-possible(e) -> acc + e.target;
+      _ -> acc;
+    }
+  })
+}
+
+let solve-part-2 = (input: string): i64 -> {
+  0
+}
+
+assert-equal(solve-part-1(get-example()), 3749);
+assert-equal(solve-part-1(get-input()), 5540634308362);
+assert-equal(solve-part-2(get-example()), 0);
+assert-equal(solve-part-2(get-input()), 0);
