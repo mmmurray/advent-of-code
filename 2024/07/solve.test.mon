@@ -16,13 +16,13 @@ let parse-input = (input: string): list<equation> -> {
   })
 }
 
-let operator-permutations = (size: i32): list<list<i32>> -> {
+let get-operator-permutations = (operators: list<i32>, size: i32): list<list<i32>> -> {
   case {
     size == 0 -> [[]];
     _ -> {
-      let base = operator-permutations(size - 1);
+      let sub-permutations = get-operator-permutations(operators, size - 1);
 
-      [ '+' ,  '*' ].flat-map((op: i32) -> base.map((p: list<i32>) -> [...p, op]))
+      operators.flat-map((op: i32) -> sub-permutations.map((p: list<i32>) -> [...p, op]))
     };
   }
 }
@@ -34,6 +34,7 @@ let do-operators-satisfy-equation = (e: equation, operators: list<i32>): boolean
     case {
       op ==  '+'  -> acc + input;
       op ==  '*'  -> acc * input;
+      op ==  '|'  -> "\(acc.to-string())\(input.to-string())".to-i64();
       _ -> acc;
     }
   });
@@ -41,28 +42,31 @@ let do-operators-satisfy-equation = (e: equation, operators: list<i32>): boolean
   total == e.target
 }
 
-let is-equation-possible = (e: equation): boolean -> {
-  let perm = operator-permutations(e.inputs.size() - 1);
+let is-equation-possible = (operators: list<i32>, e: equation): boolean -> {
+  let operator-permutations = get-operator-permutations(operators, e.inputs.size() - 1);
 
-  perm.some((operators: list<i32>) -> do-operators-satisfy-equation(e, operators))
+  operator-permutations.some((operators: list<i32>) -> do-operators-satisfy-equation(e, operators))
 }
 
-let solve-part-1 = (input: string): i64 -> {
-  let equations = parse-input(input);
-
-  equations.reduce(0, (acc: i64, e: equation) -> {
+let solve-common = (input: string, operators: list<i32>): i64 -> {
+  parse-input(input).reduce(0, (acc: i64, e: equation) -> {
     case {
-      is-equation-possible(e) -> acc + e.target;
+      is-equation-possible(operators, e) -> acc + e.target;
       _ -> acc;
     }
   })
 }
 
+let solve-part-1 = (input: string): i64 -> {
+  solve-common(input, [ '+' ,  '*' ])
+}
+
 let solve-part-2 = (input: string): i64 -> {
-  0
+  solve-common(input, [ '+' ,  '*' ,  '|' ])
 }
 
 assert-equal(solve-part-1(get-example()), 3749);
 assert-equal(solve-part-1(get-input()), 5540634308362);
-assert-equal(solve-part-2(get-example()), 0);
-assert-equal(solve-part-2(get-input()), 0);
+assert-equal(solve-part-2(get-example()), 11387);
+
+# assert-equal(solve-part-2(get-input()), 472290821152397);
