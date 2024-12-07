@@ -1,21 +1,17 @@
 import { assert-equal } from "@assert";
-import { list } from "@list";
-import { order } from "@order";
+import { grid-from-string } from "@grid";
 import { pair, pair-create } from "@pair";
 import { set, set-create } from "@set";
 import { string } from "@string";
+import { vec2, vec2-create } from "@vec2";
 import { get-value: get-example } from "./example.txt";
 import { get-value: get-input } from "./input.txt";
-import { grid-from-string } from "@grid";
-import { vec2, vec2-create } from "@vec2";
-import { map, map-create } from "@map";
-import { set, set-create } from "@set";
 
 data world = {
-  width: i32,
   height: i32,
   initial-guard: pair<vec2<i32>, vec2<i32>>,
   walls: set<vec2<i32>>,
+  width: i32,
 }
 
 let guard-create = (position: vec2<i32>, direction: vec2<i32>): pair<vec2<i32>, vec2<i32>> -> {
@@ -28,58 +24,38 @@ let guard-direction = (guard: pair<vec2<i32>, vec2<i32>>): vec2<i32> -> guard.se
 
 let parse-input = (input: string): world -> {
   let g = grid-from-string(input.trim());
-  g.reduce(
-    world.new({
-      width: g.width,
-      height: g.height,
-      initial-guard: guard-create(vec2-create(0, 0), vec2-create(0, 0)),
-      walls: set-create(),
-    }),
-    (acc: world, cell: i32, x: i32, y: i32) -> {
-      case {
-        cell == '#' -> {
-          acc.walls.add(vec2-create(x, y));
-          acc
-        };
-        cell == '^' -> {
-          acc.initial-guard = guard-create(vec2-create(x, y), vec2-create(0, --(1)));
-          acc
-        };
-        _ -> acc;
-      }
+
+  g.reduce(world.new({
+    width: g.width,
+    height: g.height,
+    initial-guard: guard-create(vec2-create(0, 0), vec2-create(0, 0)),
+    walls: set-create(),
+  }), (acc: world, cell: i32, x: i32, y: i32) -> {
+    case {
+      cell ==  '#'  -> {
+        acc.walls.add(vec2-create(x, y));
+
+        acc
+      };
+      cell ==  '^'  -> {
+        acc.initial-guard = guard-create(vec2-create(x, y), vec2-create(0, --(1)));
+
+        acc
+      };
+      _ -> acc;
     }
-  )
+  })
 }
 
 let rotate-right = (direction: vec2<i32>): vec2<i32> -> {
   vec2-create(--(direction.y), direction.x)
 }
 
-let print-world = (w: world, visited: set<vec2<i32>>): unit -> {
-  let y = 0;
-  while y < w.height {
-    let x = 0;
-    let line = "";
-    while x < w.width {
-      let p = vec2-create(x, y);
-      let char = case {
-        w.walls.contains(p) -> "#";
-        visited.contains(p) -> "X";
-        _ -> ".";
-      };
-      line = "\(line)\(char)";
-      x = x + 1;
-    }
-    $log(line);
-    y = y + 1;
-  }
-  $log("");
-}
-
 let evolve = (w: world, guard: pair<vec2<i32>, vec2<i32>>): pair<vec2<i32>, vec2<i32>> -> {
   let position = guard-position(guard);
   let direction = guard-direction(guard);
   let ahead = position.add(direction);
+
   case {
     w.walls.contains(ahead) -> guard-create(position, rotate-right(direction));
     _ -> guard-create(ahead, direction);
@@ -88,6 +64,7 @@ let evolve = (w: world, guard: pair<vec2<i32>, vec2<i32>>): pair<vec2<i32>, vec2
 
 let is-outside = (w: world, guard: pair<vec2<i32>, vec2<i32>>): boolean -> {
   let position = guard-position(guard);
+
   position.x < 0 || position.x >= w.width || position.y < 0 || position.y >= w.height
 }
 
@@ -95,10 +72,13 @@ let solve-part-1 = (input: string): i32 -> {
   let w = parse-input(input);
   let visited = set-create();
   let guard = w.initial-guard;
+
   while !(is-outside(w, guard)) {
     visited.add(guard-position(guard));
+
     guard = evolve(w, guard);
   }
+
   visited.size()
 }
 
@@ -106,8 +86,10 @@ let results-in-loop = (w: world): boolean -> {
   let visited = set-create();
   let guard = w.initial-guard;
   let found-loop = false;
+
   while !(is-outside(w, guard)) && !(found-loop) {
     visited.add(guard);
+
     guard = evolve(w, guard);
     found-loop = visited.contains(guard);
   }
@@ -117,6 +99,7 @@ let results-in-loop = (w: world): boolean -> {
 
 let world-with-wall = (w: world, wall: vec2<i32>): world -> {
   let new-walls = w.walls.clone().add(wall);
+
   world.new({
     width: w.width,
     height: w.height,
@@ -129,23 +112,26 @@ let solve-part-2 = (input: string): i32 -> {
   let w = parse-input(input);
   let result = 0;
   let y = 0;
+
   while y < w.height {
     let x = 0;
+
     while x < w.width {
       let p = vec2-create(x, y);
-      w = parse-input(input);
 
+      w = parse-input(input);
       result = case {
         w.walls.contains(p) -> result;
         p.equals(guard-position(w.initial-guard)) -> result;
         results-in-loop(world-with-wall(w, p)) -> result + 1;
         _ -> result;
       };
-      
       x = x + 1;
     }
+
     y = y + 1;
   }
+
   result
 }
 
