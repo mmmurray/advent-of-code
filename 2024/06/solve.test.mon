@@ -60,8 +60,7 @@ let is-outside = (w: world, guard: pair<vec2<i32>, vec2<i32>>): boolean -> {
   position.x < 0 || position.x >= w.width || position.y < 0 || position.y >= w.height
 }
 
-let solve-part-1 = (input: string): i32 -> {
-  let w = parse-input(input);
+let get-guard-path = (w: world): set<vec2<i32>> -> {
   let visited = set-create();
   let guard = w.initial-guard;
 
@@ -70,6 +69,13 @@ let solve-part-1 = (input: string): i32 -> {
 
     guard = evolve(w, guard);
   }
+
+  visited
+}
+
+let solve-part-1 = (input: string): i32 -> {
+  let w = parse-input(input);
+  let visited = get-guard-path(w);
 
   visited.size()
 }
@@ -102,6 +108,7 @@ let world-with-wall = (w: world, wall: vec2<i32>): world -> {
 
 let solve-part-2 = (input: string): i32 -> {
   let w = parse-input(input);
+  let guard-path = get-guard-path(w);
   let result = 0;
   let y = 0;
 
@@ -113,6 +120,7 @@ let solve-part-2 = (input: string): i32 -> {
 
       w = parse-input(input);
       result = case {
+        !(guard-path.contains(p)) -> result;
         w.walls.contains(p) -> result;
         p.equals(w.initial-guard.first()) -> result;
         results-in-loop(world-with-wall(w, p)) -> result + 1;
