@@ -49,23 +49,20 @@ let get-antennas-by-frequency = (nodes: grid<i32, i32>): map<i32, set<vec2<i32>>
   })
 }
 
-let solve-part-1 = (input: string): i32 -> {
-  let nodes = parse-input(input);
-  let antennas-by-frequency = get-antennas-by-frequency(nodes);
+data context = { get-antinodes: (vec2<i32>, vec2<i32> -> list<vec2<i32>>) }
+
+let count-antinodes = (nodes: grid<i32, i32>, c: context): i32 -> {
   let antinodes = grid-create(nodes.width, nodes.height, (x: i32, y: i32) -> 0);
 
-  antinodes = antennas-by-frequency.values().reduce(antinodes, (acc: grid<i32, i32>, nodes: set<vec2<i32>>) -> {
+  antinodes = get-antennas-by-frequency(nodes).values().reduce(antinodes, (acc: grid<i32, i32>, nodes: set<vec2<i32>>) -> {
     let node-pairs = distinct-pairs(nodes.values());
 
     node-pairs.reduce(acc, (acc1: grid<i32, i32>, node-pair: pair<vec2<i32>, vec2<i32>>) -> {
-      let delta = node-pair.second().sub(node-pair.first());
-      let antinode-a = node-pair.first().sub(delta);
-      let antinode-b = node-pair.second().add(delta);
+      let fn = c.get-antinodes;
 
-      acc1.set(antinode-a.x, antinode-a.y, 1);
-      acc1.set(antinode-b.x, antinode-b.y, 1);
-
-      acc1
+      fn(node-pair.first(), node-pair.second()).reduce(acc1, (acc2: grid<i32, i32>, p: vec2<i32>) -> {
+        acc2.set(p.x, p.y, 1)
+      })
     })
   });
 
@@ -74,39 +71,44 @@ let solve-part-1 = (input: string): i32 -> {
   result
 }
 
+let solve-part-1 = (input: string): i32 -> {
+  let nodes = parse-input(input);
+
+  count-antinodes(nodes, context.new({
+    get-antinodes: (a: vec2<i32>, b: vec2<i32>) -> {
+      let delta = b.sub(a);
+
+      [a.sub(delta), b.add(delta)]
+    },
+  }))
+}
+
 let solve-part-2 = (input: string): i32 -> {
-  let nodes = grid-from-string(input.trim());
-  let antennas-by-frequency = get-antennas-by-frequency(nodes);
-  let antinodes = grid-create(nodes.width, nodes.height, (x: i32, y: i32) -> 0);
+  let nodes = parse-input(input);
 
-  antinodes = antennas-by-frequency.values().reduce(antinodes, (acc: grid<i32, i32>, nodes: set<vec2<i32>>) -> {
-    let node-pairs = distinct-pairs(nodes.values());
+  count-antinodes(nodes, context.new({
+    get-antinodes: (a: vec2<i32>, b: vec2<i32>) -> {
+      let antinodes = [];
+      let delta = b.sub(a);
+      let antinode-a = a;
 
-    node-pairs.reduce(acc, (acc1: grid<i32, i32>, node-pair: pair<vec2<i32>, vec2<i32>>) -> {
-      let delta = node-pair.second().sub(node-pair.first());
-      let antinode-a = node-pair.first();
-
-      while is-in-grid(acc1, antinode-a) {
-        acc1.set(antinode-a.x, antinode-a.y, 1);
+      while is-in-grid(nodes, antinode-a) {
+        antinodes.push(antinode-a);
 
         antinode-a = antinode-a.sub(delta);
       }
 
-      let antinode-b = node-pair.second();
+      let antinode-b = b;
 
-      while is-in-grid(acc1, antinode-b) {
-        acc1.set(antinode-b.x, antinode-b.y, 1);
+      while is-in-grid(nodes, antinode-b) {
+        antinodes.push(antinode-b);
 
         antinode-b = antinode-b.add(delta);
       }
 
-      acc1
-    })
-  });
-
-  let result = antinodes.reduce(0, (acc: i32, count: i32, x: i32, y: i32) -> acc + count);
-
-  result
+      antinodes
+    },
+  }))
 }
 
 assert-equal(solve-part-1(get-example()), 14);
