@@ -49,18 +49,21 @@ let get-antennas-by-frequency = (nodes: grid<i32, i32>): map<i32, set<vec2<i32>>
   })
 }
 
-data context = { get-antinodes: (vec2<i32>, vec2<i32> -> list<vec2<i32>>) }
+data count-antinodes-input = {
+  get-antinodes: (vec2<i32>, vec2<i32> -> list<vec2<i32>>),
+  nodes: grid<i32, i32>,
+}
 
-let count-antinodes = (nodes: grid<i32, i32>, c: context): i32 -> {
-  let antinodes = grid-create(nodes.width, nodes.height, (x: i32, y: i32) -> 0);
+let count-antinodes = (input: count-antinodes-input): i32 -> {
+  let antinodes = grid-create(input.nodes.width, input.nodes.height, (x: i32, y: i32) -> 0);
 
-  antinodes = get-antennas-by-frequency(nodes).values().reduce(antinodes, (acc: grid<i32, i32>, nodes: set<vec2<i32>>) -> {
+  antinodes = get-antennas-by-frequency(input.nodes).values().reduce(antinodes, (acc: grid<i32, i32>, nodes: set<vec2<i32>>) -> {
     let node-pairs = distinct-pairs(nodes.values());
 
     node-pairs.reduce(acc, (acc1: grid<i32, i32>, node-pair: pair<vec2<i32>, vec2<i32>>) -> {
-      let fn = c.get-antinodes;
+      let get-antinodes = input.get-antinodes;
 
-      fn(node-pair.first(), node-pair.second()).reduce(acc1, (acc2: grid<i32, i32>, p: vec2<i32>) -> {
+      get-antinodes(node-pair.first(), node-pair.second()).reduce(acc1, (acc2: grid<i32, i32>, p: vec2<i32>) -> {
         acc2.set(p.x, p.y, 1)
       })
     })
@@ -72,21 +75,17 @@ let count-antinodes = (nodes: grid<i32, i32>, c: context): i32 -> {
 }
 
 let solve-part-1 = (input: string): i32 -> {
-  let nodes = parse-input(input);
-
-  count-antinodes(nodes, context.new({
-    get-antinodes: (a: vec2<i32>, b: vec2<i32>) -> {
-      let delta = b.sub(a);
-
-      [a.sub(delta), b.add(delta)]
-    },
+  count-antinodes(count-antinodes-input.new({
+    nodes: parse-input(input),
+    get-antinodes: (a: vec2<i32>, b: vec2<i32>) -> [a.sub(b.sub(a)), b.add(b.sub(a))],
   }))
 }
 
 let solve-part-2 = (input: string): i32 -> {
   let nodes = parse-input(input);
 
-  count-antinodes(nodes, context.new({
+  count-antinodes(count-antinodes-input.new({
+    nodes: nodes,
     get-antinodes: (a: vec2<i32>, b: vec2<i32>) -> {
       let antinodes = [];
       let delta = b.sub(a);
