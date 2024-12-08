@@ -28,9 +28,16 @@ let distinct-pairs = <t>(values: list<t>): list<pair<t, t>> -> {
   result
 }
 
-let solve-part-1 = (input: string): i32 -> {
-  let nodes = grid-from-string(input.trim());
-  let antennas-by-frequency = nodes.reduce(map-create(), (acc: map<i32, set<vec2<i32>>>, cell: i32, x: i32, y: i32) -> {
+let is-in-grid = <t, u:number>(self: grid<t, u>, p: vec2<u>): boolean -> {
+  p.x >= 0 && p.x < self.width && p.y >= 0 && p.y < self.height
+}
+
+let parse-input = (input: string): grid<i32, i32> -> {
+  grid-from-string(input.trim())
+}
+
+let get-antennas-by-frequency = (nodes: grid<i32, i32>): map<i32, set<vec2<i32>>> -> {
+  nodes.reduce(map-create(), (acc: map<i32, set<vec2<i32>>>, cell: i32, x: i32, y: i32) -> {
     case {
       cell ==  '.'  -> acc;
       _ -> {
@@ -39,7 +46,12 @@ let solve-part-1 = (input: string): i32 -> {
         acc.set(cell, antennas.add(vec2-create(x, y)))
       };
     }
-  });
+  })
+}
+
+let solve-part-1 = (input: string): i32 -> {
+  let nodes = parse-input(input);
+  let antennas-by-frequency = get-antennas-by-frequency(nodes);
   let antinodes = grid-create(nodes.width, nodes.height, (x: i32, y: i32) -> 0);
 
   antinodes = antennas-by-frequency.values().reduce(antinodes, (acc: grid<i32, i32>, nodes: set<vec2<i32>>) -> {
@@ -62,5 +74,42 @@ let solve-part-1 = (input: string): i32 -> {
   result
 }
 
+let solve-part-2 = (input: string): i32 -> {
+  let nodes = grid-from-string(input.trim());
+  let antennas-by-frequency = get-antennas-by-frequency(nodes);
+  let antinodes = grid-create(nodes.width, nodes.height, (x: i32, y: i32) -> 0);
+
+  antinodes = antennas-by-frequency.values().reduce(antinodes, (acc: grid<i32, i32>, nodes: set<vec2<i32>>) -> {
+    let node-pairs = distinct-pairs(nodes.values());
+
+    node-pairs.reduce(acc, (acc1: grid<i32, i32>, node-pair: pair<vec2<i32>, vec2<i32>>) -> {
+      let delta = node-pair.second().sub(node-pair.first());
+      let antinode-a = node-pair.first();
+
+      while is-in-grid(acc1, antinode-a) {
+        acc1.set(antinode-a.x, antinode-a.y, 1);
+
+        antinode-a = antinode-a.sub(delta);
+      }
+
+      let antinode-b = node-pair.second();
+
+      while is-in-grid(acc1, antinode-b) {
+        acc1.set(antinode-b.x, antinode-b.y, 1);
+
+        antinode-b = antinode-b.add(delta);
+      }
+
+      acc1
+    })
+  });
+
+  let result = antinodes.reduce(0, (acc: i32, count: i32, x: i32, y: i32) -> acc + count);
+
+  result
+}
+
 assert-equal(solve-part-1(get-example()), 14);
 assert-equal(solve-part-1(get-input()), 329);
+assert-equal(solve-part-2(get-example()), 34);
+assert-equal(solve-part-2(get-input()), 1190);
