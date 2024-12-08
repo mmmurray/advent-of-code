@@ -1,0 +1,66 @@
+import { assert-equal } from "@assert";
+import { grid, grid-create, grid-from-string } from "@grid";
+import { list } from "@list";
+import { map, map-create } from "@map";
+import { pair, pair-create } from "@pair";
+import { set, set-create } from "@set";
+import { string } from "@string";
+import { vec2, vec2-create } from "@vec2";
+import { get-value: get-example } from "./example.txt";
+import { get-value: get-input } from "./input.txt";
+
+let distinct-pairs = <t>(values: list<t>): list<pair<t, t>> -> {
+  let result = [];
+  let i = 0;
+
+  while i < values.size() {
+    let j = i + 1;
+
+    while j < values.size() {
+      result.push(pair-create(values.get(i), values.get(j)));
+
+      j = j + 1;
+    }
+
+    i = i + 1;
+  }
+
+  result
+}
+
+let solve-part-1 = (input: string): i32 -> {
+  let nodes = grid-from-string(input.trim());
+  let antennas-by-frequency = nodes.reduce(map-create(), (acc: map<i32, set<vec2<i32>>>, cell: i32, x: i32, y: i32) -> {
+    case {
+      cell ==  '.'  -> acc;
+      _ -> {
+        let antennas = acc.get(cell).or(set-create());
+
+        acc.set(cell, antennas.add(vec2-create(x, y)))
+      };
+    }
+  });
+  let antinodes = grid-create(nodes.width, nodes.height, (x: i32, y: i32) -> 0);
+
+  antinodes = antennas-by-frequency.values().reduce(antinodes, (acc: grid<i32, i32>, nodes: set<vec2<i32>>) -> {
+    let node-pairs = distinct-pairs(nodes.values());
+
+    node-pairs.reduce(acc, (acc1: grid<i32, i32>, node-pair: pair<vec2<i32>, vec2<i32>>) -> {
+      let delta = node-pair.second().sub(node-pair.first());
+      let antinode-a = node-pair.first().sub(delta);
+      let antinode-b = node-pair.second().add(delta);
+
+      acc1.set(antinode-a.x, antinode-a.y, 1);
+      acc1.set(antinode-b.x, antinode-b.y, 1);
+
+      acc1
+    })
+  });
+
+  let result = antinodes.reduce(0, (acc: i32, count: i32, x: i32, y: i32) -> acc + count);
+
+  result
+}
+
+assert-equal(solve-part-1(get-example()), 14);
+assert-equal(solve-part-1(get-input()), 329);
