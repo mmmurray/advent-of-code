@@ -1,0 +1,104 @@
+import { assert-equal } from "@assert";
+import { grid, grid-from-string } from "@grid";
+import { set, set-create } from "@set";
+import { string } from "@string";
+import { vec2, vec2-create } from "@vec2";
+import { get-value: get-example } from "./example.txt";
+import { get-value: get-input } from "./input.txt";
+
+let parse-input = (input: string): grid<i32, i32> -> {
+  grid-from-string(input.trim()).map((cell: i32, x: i32, y: i32) -> cell -  '0' )
+}
+
+let get-trailhead-score = (acc: set<vec2<i32>>, g: grid<i32, i32>, p: vec2<i32>, height: i32): set<vec2<i32>> -> {
+  case {
+    height == 9 -> acc.add(p);
+    _ -> {
+      let np = p.add(vec2-create(0, --(1)));
+      let ep = p.add(vec2-create(1, 0));
+      let sp = p.add(vec2-create(0, 1));
+      let wp = p.add(vec2-create(--(1), 0));
+      let total = 0;
+      let next-height = height + 1;
+
+      acc = case {
+        g.get-safe(np.x, np.y).or(100) == next-height -> get-trailhead-score(acc, g, np, next-height);
+        _ -> acc;
+      };
+      acc = case {
+        g.get-safe(ep.x, ep.y).or(100) == next-height -> get-trailhead-score(acc, g, ep, next-height);
+        _ -> acc;
+      };
+      acc = case {
+        g.get-safe(sp.x, sp.y).or(100) == next-height -> get-trailhead-score(acc, g, sp, next-height);
+        _ -> acc;
+      };
+      acc = case {
+        g.get-safe(wp.x, wp.y).or(100) == next-height -> get-trailhead-score(acc, g, wp, next-height);
+        _ -> acc;
+      };
+
+      acc
+    };
+  }
+}
+
+let get-trailhead-rating = (g: grid<i32, i32>, p: vec2<i32>, height: i32): i32 -> {
+  case {
+    height == 9 -> 1;
+    _ -> {
+      let np = p.add(vec2-create(0, --(1)));
+      let ep = p.add(vec2-create(1, 0));
+      let sp = p.add(vec2-create(0, 1));
+      let wp = p.add(vec2-create(--(1), 0));
+      let total = 0;
+      let next-height = height + 1;
+
+      total = total + case {
+        g.get-safe(np.x, np.y).or(100) == next-height -> get-trailhead-rating(g, np, next-height);
+        _ -> 0;
+      };
+      total = total + case {
+        g.get-safe(ep.x, ep.y).or(100) == next-height -> get-trailhead-rating(g, ep, next-height);
+        _ -> 0;
+      };
+      total = total + case {
+        g.get-safe(sp.x, sp.y).or(100) == next-height -> get-trailhead-rating(g, sp, next-height);
+        _ -> 0;
+      };
+      total = total + case {
+        g.get-safe(wp.x, wp.y).or(100) == next-height -> get-trailhead-rating(g, wp, next-height);
+        _ -> 0;
+      };
+
+      total
+    };
+  }
+}
+
+let solve-part-1 = (input: string): i32 -> {
+  let map = parse-input(input);
+
+  map.reduce(0, (acc: i32, height: i32, x: i32, y: i32) -> {
+    acc + case {
+      height == 0 -> get-trailhead-score(set-create(), map, vec2-create(x, y), height).size();
+      _ -> 0;
+    }
+  })
+}
+
+let solve-part-2 = (input: string): i32 -> {
+  let map = parse-input(input);
+
+  map.reduce(0, (acc: i32, height: i32, x: i32, y: i32) -> {
+    acc + case {
+      height == 0 -> get-trailhead-rating(map, vec2-create(x, y), height);
+      _ -> 0;
+    }
+  })
+}
+
+assert-equal(solve-part-1(get-example()), 36);
+assert-equal(solve-part-1(get-input()), 638);
+assert-equal(solve-part-2(get-example()), 81);
+assert-equal(solve-part-2(get-input()), 1289);
