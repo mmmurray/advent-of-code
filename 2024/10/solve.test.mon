@@ -1,5 +1,6 @@
 import { assert-equal } from "@assert";
 import { grid, grid-from-string } from "@grid";
+import { list } from "@list";
 import { set, set-create } from "@set";
 import { string } from "@string";
 import { vec2, vec2-create } from "@vec2";
@@ -10,69 +11,42 @@ let parse-input = (input: string): grid<i32, i32> -> {
   grid-from-string(input.trim()).map((cell: i32, x: i32, y: i32) -> cell -  '0' )
 }
 
-let get-trailhead-score = (acc: set<vec2<i32>>, g: grid<i32, i32>, p: vec2<i32>, height: i32): set<vec2<i32>> -> {
+let compass-directions = (): list<vec2<i32>> -> [
+  vec2-create(0, --(1)),
+  vec2-create(1, 0),
+  vec2-create(0, 1),
+  vec2-create(--(1), 0),
+]
+
+let get-trailhead-score = (acc: set<vec2<i32>>, map: grid<i32, i32>, position: vec2<i32>, height: i32): set<vec2<i32>> -> {
   case {
-    height == 9 -> acc.add(p);
-    _ -> {
-      let np = p.add(vec2-create(0, --(1)));
-      let ep = p.add(vec2-create(1, 0));
-      let sp = p.add(vec2-create(0, 1));
-      let wp = p.add(vec2-create(--(1), 0));
-      let total = 0;
+    height == 9 -> acc.add(position);
+    _ -> compass-directions().reduce(acc, (acc: set<vec2<i32>>, direction: vec2<i32>) -> {
       let next-height = height + 1;
+      let next-position = position.add(direction);
+      let candidate-height = map.get-safe(next-position.x, next-position.y).or(100);
 
-      acc = case {
-        g.get-safe(np.x, np.y).or(100) == next-height -> get-trailhead-score(acc, g, np, next-height);
+      case {
+        candidate-height == next-height -> get-trailhead-score(acc, map, next-position, next-height);
         _ -> acc;
-      };
-      acc = case {
-        g.get-safe(ep.x, ep.y).or(100) == next-height -> get-trailhead-score(acc, g, ep, next-height);
-        _ -> acc;
-      };
-      acc = case {
-        g.get-safe(sp.x, sp.y).or(100) == next-height -> get-trailhead-score(acc, g, sp, next-height);
-        _ -> acc;
-      };
-      acc = case {
-        g.get-safe(wp.x, wp.y).or(100) == next-height -> get-trailhead-score(acc, g, wp, next-height);
-        _ -> acc;
-      };
-
-      acc
-    };
+      }
+    });
   }
 }
 
-let get-trailhead-rating = (g: grid<i32, i32>, p: vec2<i32>, height: i32): i32 -> {
+let get-trailhead-rating = (map: grid<i32, i32>, position: vec2<i32>, height: i32): i32 -> {
   case {
     height == 9 -> 1;
-    _ -> {
-      let np = p.add(vec2-create(0, --(1)));
-      let ep = p.add(vec2-create(1, 0));
-      let sp = p.add(vec2-create(0, 1));
-      let wp = p.add(vec2-create(--(1), 0));
-      let total = 0;
+    _ -> compass-directions().reduce(0, (acc: i32, direction: vec2<i32>) -> {
       let next-height = height + 1;
+      let next-position = position.add(direction);
+      let candidate-height = map.get-safe(next-position.x, next-position.y).or(100);
 
-      total = total + case {
-        g.get-safe(np.x, np.y).or(100) == next-height -> get-trailhead-rating(g, np, next-height);
+      acc + case {
+        candidate-height == next-height -> get-trailhead-rating(map, next-position, next-height);
         _ -> 0;
-      };
-      total = total + case {
-        g.get-safe(ep.x, ep.y).or(100) == next-height -> get-trailhead-rating(g, ep, next-height);
-        _ -> 0;
-      };
-      total = total + case {
-        g.get-safe(sp.x, sp.y).or(100) == next-height -> get-trailhead-rating(g, sp, next-height);
-        _ -> 0;
-      };
-      total = total + case {
-        g.get-safe(wp.x, wp.y).or(100) == next-height -> get-trailhead-rating(g, wp, next-height);
-        _ -> 0;
-      };
-
-      total
-    };
+      }
+    });
   }
 }
 
