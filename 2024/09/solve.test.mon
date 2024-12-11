@@ -1,6 +1,7 @@
 import { assert-equal } from "@assert";
 import { grid, grid-create, grid-from-string } from "@grid";
-import { list-from-range, list } from "@list";
+import { list, list-from-range } from "@list";
+import { log: $log } from "@log";
 import { map, map-create } from "@map";
 import { pair, pair-create } from "@pair";
 import { set, set-create } from "@set";
@@ -36,6 +37,7 @@ let solve-part-1 = (input: string): i64 -> {
   let start = 0;
   let length = disk.size();
   let end = length - 1;
+
   while start < length && start < end {
     let a = disk.get(start);
     let b = disk.get(end);
@@ -44,15 +46,19 @@ let solve-part-1 = (input: string): i64 -> {
       a == 0 && b > 0 -> {
         disk.set(start, b);
         disk.set(end, 0);
+
         # print-disk(disk);
+
         disk
       };
       a == 0 -> {
         end = end - 1;
+
         disk
       };
       _ -> {
         start = start + 1;
+
         disk
       };
     };
@@ -70,5 +76,6 @@ let solve-part-2 = (input: string): i64 -> {
 
 assert-equal(solve-part-1(get-example()), 1928);
 assert-equal(solve-part-1(get-input()), 6385338159127);
+
 # assert-equal(solve-part-2(get-example()), 0);
 # assert-equal(solve-part-2(get-input()), 0);
