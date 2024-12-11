@@ -1,7 +1,7 @@
 import { assert-equal } from "@assert";
-import { grid, grid-from-string } from "@grid";
+import { grid, grid-compass-8, grid-from-string } from "@grid";
 import { string } from "@string";
-import { vec2, vec2-new } from "@vec2";
+import { vec2 } from "@vec2";
 import { get-value: get-input } from "./input.txt";
 
 let search-in-direction = (target: string, index: i32, g: grid<i32, i32>, x: i32, y: i32, dx: i32, dy: i32): boolean -> {
@@ -18,19 +18,9 @@ let search-in-direction = (target: string, index: i32, g: grid<i32, i32>, x: i32
 }
 
 let solve-part-1 = (input: string): string -> {
-  let directions = [
-    vec2-new(1, 0),
-    vec2-new(1, 1),
-    vec2-new(0, 1),
-    vec2-new(--(1), 1),
-    vec2-new(--(1), 0),
-    vec2-new(--(1), --(1)),
-    vec2-new(0, --(1)),
-    vec2-new(1, --(1)),
-  ];
   let grid = grid-from-string(input);
   let result = grid.reduce(0, (acc: i32, char: i32, x: i32, y: i32) -> {
-    let found = directions.reduce(0, (acc: i32, dir: vec2<i32>) -> case {
+    let found = grid-compass-8().reduce(0, (acc: i32, dir: vec2<i32>) -> case {
       search-in-direction("XMAS", 0, grid, x, y, dir.x, dir.y) -> acc + 1;
       _ -> acc;
     });
