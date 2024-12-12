@@ -4,6 +4,10 @@ import { string } from "@string";
 import { get-value: get-example } from "./example.txt";
 import { get-value: get-input } from "./input.txt";
 
+let parse-input = (input: string): list<i64> -> {
+  input.trim().split-by(" ").map((part: string) -> part.to-i64())
+}
+
 let evolve = (stones: list<i64>): list<i64> -> {
   stones.flat-map((stone: i64) -> {
     let stone-str = stone.to-string();
@@ -22,11 +26,7 @@ let evolve = (stones: list<i64>): list<i64> -> {
 }
 
 let solve-part-1 = (input: string): i32 -> {
-  let stones = input.trim().split-by(" ").map((part: string) -> part.to-i64());
-
-  stones = list-from-range(0, 25, 1).reduce(stones, (acc: list<i64>, step: i32) -> evolve(acc));
-
-  stones.size()
+  list-from-range(0, 25, 1).reduce(parse-input(input), (acc: list<i64>, step: i32) -> evolve(acc)).size()
 }
 
 assert-equal(solve-part-1(get-example()), 55312);
