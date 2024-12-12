@@ -1,0 +1,33 @@
+import { assert-equal } from "@assert";
+import { list, list-from-range } from "@list";
+import { string } from "@string";
+import { get-value: get-example } from "./example.txt";
+import { get-value: get-input } from "./input.txt";
+
+let evolve = (stones: list<i64>): list<i64> -> {
+  stones.flat-map((stone: i64) -> {
+    let stone-str = stone.to-string();
+
+    case {
+      stone == 0 -> [1];
+      stone-str.size() % 2 == 0 -> {
+        let a = stone-str.slice(0, stone-str.size() / 2).to-i64();
+        let b = stone-str.slice(stone-str.size() / 2, stone-str.size()).to-i64();
+
+        [a, b]
+      };
+      _ -> [stone * 2024];
+    }
+  })
+}
+
+let solve-part-1 = (input: string): i32 -> {
+  let stones = input.trim().split-by(" ").map((part: string) -> part.to-i64());
+
+  stones = list-from-range(0, 25, 1).reduce(stones, (acc: list<i64>, step: i32) -> evolve(acc));
+
+  stones.size()
+}
+
+assert-equal(solve-part-1(get-example()), 55312);
+assert-equal(solve-part-1(get-input()), 213625);
