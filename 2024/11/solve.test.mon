@@ -1,33 +1,52 @@
 import { assert-equal } from "@assert";
-import { list, list-from-range } from "@list";
+import { list-from-range } from "@list";
+import { map, map-create } from "@map";
 import { string } from "@string";
 import { get-value: get-example } from "./example.txt";
 import { get-value: get-input } from "./input.txt";
 
-let parse-input = (input: string): list<i64> -> {
-  input.trim().split-by(" ").map((part: string) -> part.to-i64())
+let parse-input = (input: string): map<i64, i64> -> {
+  input.trim().split-by(" ").map((part: string) -> part.to-i64()).reduce(map-create(), (acc: map<i64, i64>, num: i64) -> {
+    acc.set(num, acc.get(num).or(0) + 1)
+  })
 }
 
-let evolve = (stones: list<i64>): list<i64> -> {
-  stones.flat-map((stone: i64) -> {
-    let stone-str = stone.to-string();
+let evolve = (stones: map<i64, i64>): map<i64, i64> -> {
+  let new-stones = map-create();
+  let entries = stones.entries();
 
-    case {
-      stone == 0 -> [1];
+  for entry in entries {
+    let stone = entry.key;
+    let stone-str = stone.to-string();
+    let count = entry.value;
+
+    new-stones = case {
+      stone == 0 -> new-stones.set(1, new-stones.get(1).or(0) + count);
       stone-str.size() % 2 == 0 -> {
         let a = stone-str.slice(0, stone-str.size() / 2).to-i64();
         let b = stone-str.slice(stone-str.size() / 2, stone-str.size()).to-i64();
 
-        [a, b]
+        new-stones.set(a, new-stones.get(a).or(0) + count).set(b, new-stones.get(b).or(0) + count)
       };
-      _ -> [stone * 2024];
-    }
-  })
+      _ -> new-stones.set(stone * 2024, new-stones.get(stone * 2024).or(0) + count);
+    };
+  }
+
+  new-stones
 }
 
-let solve-part-1 = (input: string): i32 -> {
-  list-from-range(0, 25, 1).reduce(parse-input(input), (acc: list<i64>, step: i32) -> evolve(acc)).size()
+let solve-part-1 = (input: string): i64 -> {
+  let stones = list-from-range(0, 25, 1).reduce(parse-input(input), (acc: map<i64, i64>, step: i64) -> evolve(acc));
+
+  stones.values().reduce(0, (acc: i64, count: i64) -> acc + count)
+}
+
+let solve-part-2 = (input: string): i64 -> {
+  let stones = list-from-range(0, 75, 1).reduce(parse-input(input), (acc: map<i64, i64>, step: i64) -> evolve(acc));
+
+  stones.values().reduce(0, (acc: i64, count: i64) -> acc + count)
 }
 
 assert-equal(solve-part-1(get-example()), 55312);
 assert-equal(solve-part-1(get-input()), 213625);
+assert-equal(solve-part-2(get-input()), 252442982856820);
