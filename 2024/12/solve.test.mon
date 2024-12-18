@@ -1,10 +1,22 @@
 import { assert-equal } from "@assert";
-import { grid, grid-compass-4, grid-from-string } from "@grid";
+import {
+  grid,
+  grid-compass-4,
+  grid-east,
+  grid-from-string,
+  grid-north,
+  grid-north-east,
+  grid-north-west,
+  grid-south,
+  grid-south-east,
+  grid-south-west,
+  grid-west,
+} from "@grid";
 import { list } from "@list";
 import { set, set-create } from "@set";
 import { string } from "@string";
 import { vec2, vec2-create } from "@vec2";
-import { get-value: get-example } from "./example.txt";
+import { get-value: get-example } from "./example-expanded.txt";
 import { get-value: get-input } from "./input.txt";
 
 let flood-fill = (world: grid<i32, i32>, region-type: i32, acc: set<vec2<i32>>, position: vec2<i32>): set<vec2<i32>> -> {
@@ -27,6 +39,7 @@ let get-regions = (input: string): list<set<vec2<i32>>> -> {
     let position = vec2-create(x, y);
 
     case {
+      type ==  '.'  -> acc;
       acc.some((region: set<vec2<i32>>) -> region.contains(position)) -> acc;
       _ -> acc.push(flood-fill(world, type, set-create(), position));
     }
@@ -46,6 +59,57 @@ let get-region-perimeter = (region: set<vec2<i32>>): i32 -> {
   }).sum()
 }
 
+let get-region-sides = (world: grid<i32, i32>, region: set<vec2<i32>>): i32 -> {
+  let corner-grid = world.map((type: i32, x: i32, y: i32) -> ".");
+  let corners = region.values().map((position: vec2<i32>) -> {
+    let n = region.contains(position.add(grid-north()));
+    let e = region.contains(position.add(grid-east()));
+    let s = region.contains(position.add(grid-south()));
+    let w = region.contains(position.add(grid-west()));
+    let ne = region.contains(position.add(grid-north-east()));
+    let se = region.contains(position.add(grid-south-east()));
+    let sw = region.contains(position.add(grid-south-west()));
+    let nw = region.contains(position.add(grid-north-west()));
+    let c = [n, e, s, w].reduce(0, (acc: i32, p: boolean) -> case {
+      p -> acc + 1;
+      _ -> acc;
+    });
+    let count = 0;
+
+    count = count + case {
+      n && e && !(ne) -> 1;
+      _ -> 0;
+    };
+    count = count + case {
+      e && s && !(se) -> 1;
+      _ -> 0;
+    };
+    count = count + case {
+      s && w && !(sw) -> 1;
+      _ -> 0;
+    };
+    count = count + case {
+      w && n && !(nw) -> 1;
+      _ -> 0;
+    };
+    count = count + case {
+      c == 0 -> 4;
+      c == 1 -> 2;
+      e && s && !(n) && !(w) -> 1;
+      w && s && !(n) && !(e) -> 1;
+      n && w && !(s) && !(e) -> 1;
+      n && e && !(s) && !(w) -> 1;
+      _ -> 0;
+    };
+
+    corner-grid.set(position.x, position.y, count.to-string());
+
+    count
+  }).sum();
+
+  corners
+}
+
 let solve-part-1 = (input: string): i32 -> {
   let regions = get-regions(input);
   let total-price = regions.map((region: set<vec2<i32>>) -> {
@@ -58,5 +122,20 @@ let solve-part-1 = (input: string): i32 -> {
   total-price
 }
 
+let solve-part-2 = (input: string): i32 -> {
+  let world = grid-from-string(input.trim());
+  let regions = get-regions(input);
+  let total-price = regions.map((region: set<vec2<i32>>) -> {
+    let area = region.size();
+    let sides = get-region-sides(world, region);
+
+    area * sides
+  }).sum();
+
+  total-price
+}
+
 assert-equal(solve-part-1(get-example()), 1930);
 assert-equal(solve-part-1(get-input()), 1352976);
+assert-equal(solve-part-2(get-example()), 1206);
+assert-equal(solve-part-2(get-input()), 808796);
