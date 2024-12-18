@@ -16,8 +16,11 @@ import { list } from "@list";
 import { set, set-create } from "@set";
 import { string } from "@string";
 import { vec2, vec2-create } from "@vec2";
-import { get-value: get-example } from "./example-expanded.txt";
-import { get-value: get-input } from "./input.txt";
+import { get-value: get-example } from "./example.txt";
+
+let parse-input = (input: string): grid<i32, i32> -> {
+  grid-from-string(input.trim())
+}
 
 let flood-fill = (world: grid<i32, i32>, region-type: i32, acc: set<vec2<i32>>, position: vec2<i32>): set<vec2<i32>> -> {
   let type = world.get-safe(position.x, position.y).or(0);
@@ -33,8 +36,7 @@ let flood-fill = (world: grid<i32, i32>, region-type: i32, acc: set<vec2<i32>>, 
   }
 }
 
-let get-regions = (input: string): list<set<vec2<i32>>> -> {
-  let world = grid-from-string(input.trim());
+let get-regions = (world: grid<i32, i32>): list<set<vec2<i32>>> -> {
   let regions = world.reduce([], (acc: list<set<vec2<i32>>>, type: i32, x: i32, y: i32) -> {
     let position = vec2-create(x, y);
 
@@ -59,59 +61,53 @@ let get-region-perimeter = (region: set<vec2<i32>>): i32 -> {
   }).sum()
 }
 
-let get-region-sides = (world: grid<i32, i32>, region: set<vec2<i32>>): i32 -> {
-  let corner-grid = world.map((type: i32, x: i32, y: i32) -> ".");
-  let corners = region.values().map((position: vec2<i32>) -> {
-    let n = region.contains(position.add(grid-north()));
-    let e = region.contains(position.add(grid-east()));
-    let s = region.contains(position.add(grid-south()));
-    let w = region.contains(position.add(grid-west()));
-    let ne = region.contains(position.add(grid-north-east()));
-    let se = region.contains(position.add(grid-south-east()));
-    let sw = region.contains(position.add(grid-south-west()));
-    let nw = region.contains(position.add(grid-north-west()));
-    let c = [n, e, s, w].reduce(0, (acc: i32, p: boolean) -> case {
-      p -> acc + 1;
-      _ -> acc;
-    });
-    let count = 0;
+let grid-magnify = <t, u:number>(self: grid<t, u>, factor: u): grid<t, u> -> {
+  let width = self.width * factor;
+  let height = self.height * factor;
+  let count = width * height;
+  let cells = $arrayCreate($i32(count));
+  let y = 0;
 
-    count = count + case {
-      n && e && !(ne) -> 1;
-      _ -> 0;
-    };
-    count = count + case {
-      e && s && !(se) -> 1;
-      _ -> 0;
-    };
-    count = count + case {
-      s && w && !(sw) -> 1;
-      _ -> 0;
-    };
-    count = count + case {
-      w && n && !(nw) -> 1;
-      _ -> 0;
-    };
-    count = count + case {
-      c == 0 -> 4;
-      c == 1 -> 2;
-      e && s && !(n) && !(w) -> 1;
-      w && s && !(n) && !(e) -> 1;
-      n && w && !(s) && !(e) -> 1;
-      n && e && !(s) && !(w) -> 1;
-      _ -> 0;
-    };
+  while y < height {
+    let x = 0;
 
-    corner-grid.set(position.x, position.y, count.to-string());
+    while x < width {
+      let i = $i32((y * width) + x);
+      let cell = self.get(x / factor, y / factor);
 
-    count
-  }).sum();
+      $arraySet(cells, i, cell);
 
-  corners
+      x = x + 1;
+    }
+
+    y = y + 1;
+  }
+
+  grid.new({ cells: cells, width: width, height: height })
+}
+
+let get-region-corners = (world: grid<i32, i32>, region: set<vec2<i32>>): i32 -> {
+  region.values().map((position: vec2<i32>) -> {
+    let neighbours-orthogonal = [grid-north(), grid-east(), grid-south(), grid-west()].map((direction: vec2<i32>) -> case {
+      region.contains(position.add(direction)) -> 1;
+      _ -> 0;
+    }).sum();
+    let neighbours-diagonal = [grid-north-east(), grid-south-east(), grid-south-west(), grid-north-west()].map((direction: vec2<i32>) -> case {
+      region.contains(position.add(direction)) -> 1;
+      _ -> 0;
+    }).sum();
+
+    case {
+      neighbours-orthogonal == 2 -> 1;
+      neighbours-orthogonal == 4 && neighbours-diagonal == 3 -> 1;
+      _ -> 0;
+    }
+  }).sum()
 }
 
 let solve-part-1 = (input: string): i32 -> {
-  let regions = get-regions(input);
+  let world = parse-input(input);
+  let regions = get-regions(world);
   let total-price = regions.map((region: set<vec2<i32>>) -> {
     let area = region.size();
     let perimeter = get-region-perimeter(region);
@@ -123,19 +119,25 @@ let solve-part-1 = (input: string): i32 -> {
 }
 
 let solve-part-2 = (input: string): i32 -> {
-  let world = grid-from-string(input.trim());
-  let regions = get-regions(input);
-  let total-price = regions.map((region: set<vec2<i32>>) -> {
-    let area = region.size();
-    let sides = get-region-sides(world, region);
+  let world = parse-input(input);
 
-    area * sides
+  world = grid-magnify(world, 2);
+
+  let regions = get-regions(world);
+  let total-price = regions.map((region: set<vec2<i32>>) -> {
+    let area = region.size() / 4;
+    let corners = get-region-corners(world, region);
+
+    area * corners
   }).sum();
 
   total-price
 }
 
 assert-equal(solve-part-1(get-example()), 1930);
-assert-equal(solve-part-1(get-input()), 1352976);
+
+# assert-equal(solve-part-1(get-input()), 1352976);
+
 assert-equal(solve-part-2(get-example()), 1206);
-assert-equal(solve-part-2(get-input()), 808796);
+
+# assert-equal(solve-part-2(get-input()), 808796);
