@@ -6,7 +6,7 @@ import { vec2, vec2-create } from "@vec2";
 import { get-value: get-example } from "./example.txt";
 import { get-value: get-input } from "./input.txt";
 
-data machine = { button-a: vec2<i32>, button-b: vec2<i32>, prize: vec2<i32> }
+data machine = { button-a: vec2<i64>, button-b: vec2<i64>, prize: vec2<i64> }
 
 let stringable<machine>.to-string = (self: machine): string -> {
   [
@@ -17,9 +17,9 @@ let stringable<machine>.to-string = (self: machine): string -> {
 }
 
 let parse-input = (input: string): list<machine> -> {
-  let parse-vec2 = (input: string): vec2<i32> -> {
-    let x = input.slice(input.index-of("X") + 2, input.index-of(",")).to-i32();
-    let y = input.slice(input.index-of("Y") + 2, input.size()).to-i32();
+  let parse-vec2 = (input: string): vec2<i64> -> {
+    let x = input.slice(input.index-of("X") + 2, input.index-of(",")).to-i64();
+    let y = input.slice(input.index-of("Y") + 2, input.size()).to-i64();
 
     vec2-create(x, y)
   }
@@ -37,7 +37,7 @@ let parse-input = (input: string): list<machine> -> {
   input.trim().split-by("\n\n").map(parse-machine)
 }
 
-let get-min-credits = (m: machine): i32 -> {
+let get-min-credits = (m: machine): i64 -> {
   let result = 0;
   let as = 0;
 
@@ -61,7 +61,7 @@ let get-min-credits = (m: machine): i32 -> {
   result
 }
 
-let solve-part-1 = (input: string): i32 -> {
+let solve-part-1 = (input: string): i64 -> {
   let machines = parse-input(input);
 
   machines.map(get-min-credits).sum()
