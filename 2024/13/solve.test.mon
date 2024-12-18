@@ -1,0 +1,71 @@
+import { assert-equal } from "@assert";
+import { list } from "@list";
+import { string } from "@string";
+import { stringable } from "@stringable";
+import { vec2, vec2-create } from "@vec2";
+import { get-value: get-example } from "./example.txt";
+import { get-value: get-input } from "./input.txt";
+
+data machine = { button-a: vec2<i32>, button-b: vec2<i32>, prize: vec2<i32> }
+
+let stringable<machine>.to-string = (self: machine): string -> {
+  [
+    "Button A: \(self.button-a)",
+    "Button B: \(self.button-b)",
+    "Prize: \(self.prize)",
+  ].join-by("\n")
+}
+
+let parse-input = (input: string): list<machine> -> {
+  let parse-vec2 = (input: string): vec2<i32> -> {
+    let x = input.slice(input.index-of("X") + 2, input.index-of(",")).to-i32();
+    let y = input.slice(input.index-of("Y") + 2, input.size()).to-i32();
+
+    vec2-create(x, y)
+  }
+
+  let parse-machine = (input: string): machine -> {
+    let lines = input.to-lines();
+
+    machine.new({
+      button-a: parse-vec2(lines.get(0)),
+      button-b: parse-vec2(lines.get(1)),
+      prize: parse-vec2(lines.get(2)),
+    })
+  }
+
+  input.trim().split-by("\n\n").map(parse-machine)
+}
+
+let get-min-credits = (m: machine): i32 -> {
+  let result = 0;
+  let as = 0;
+
+  while as <= 100 {
+    let bs = 0;
+
+    while bs <= 100 {
+      let position = m.button-a.scale(as).add(m.button-b.scale(bs));
+      let credits = as * 3 + bs;
+
+      result = case {
+        position.equals(m.prize) && (credits < result || result == 0) -> credits;
+        _ -> result;
+      };
+      bs = bs + 1;
+    }
+
+    as = as + 1;
+  }
+
+  result
+}
+
+let solve-part-1 = (input: string): i32 -> {
+  let machines = parse-input(input);
+
+  machines.map(get-min-credits).sum()
+}
+
+assert-equal(solve-part-1(get-example()), 480);
+assert-equal(solve-part-1(get-input()), 29023);
