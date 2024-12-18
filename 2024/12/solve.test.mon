@@ -1,0 +1,82 @@
+import { assert-equal } from "@assert";
+import { grid, grid-compass-4, grid-from-string } from "@grid";
+import { list } from "@list";
+import { map, map-create } from "@map";
+import { set, set-create } from "@set";
+import { string } from "@string";
+import { vec2, vec2-create } from "@vec2";
+import { get-value: get-example } from "./example.txt";
+import { get-value: get-input } from "./input.txt";
+
+let parse-input = (input: string): grid<i32, i32> -> {
+  grid-from-string(input.trim())
+}
+
+data state = { filled: map<vec2<i32>, i32>, regions: map<i32, set<vec2<i32>>> }
+
+let flood-fill = (world: grid<i32, i32>, region-type: i32, acc: set<vec2<i32>>, position: vec2<i32>): set<vec2<i32>> -> {
+  let type = world.get-safe(position.x, position.y).or(0);
+
+  case {
+    acc.contains(position) -> acc;
+    type != region-type -> acc;
+    _ -> grid-compass-4().reduce(acc.add(position), (acc2: set<vec2<i32>>, direction: vec2<i32>) -> {
+      let next-position = position.add(direction);
+
+      flood-fill(world, region-type, acc, next-position)
+    });
+  }
+}
+
+let get-region-perimeter = (region: set<vec2<i32>>): i32 -> {
+  region.values().reduce(0, (acc1: i32, p: vec2<i32>) -> {
+    let outside-faces = grid-compass-4().map((direction: vec2<i32>) -> {
+      case {
+        region.contains(p.add(direction)) -> 0;
+        _ -> 1;
+      }
+    }).sum();
+
+    acc1 + outside-faces
+  })
+}
+
+let get-regions = (world: grid<i32, i32>): list<set<vec2<i32>>> -> {
+  let s = world.reduce(state.new({ filled: map-create(), regions: map-create() }), (acc: state, type: i32, x: i32, y: i32) -> {
+    let position = vec2-create(x, y);
+
+    case {
+      acc.filled.contains(position) -> acc;
+      _ -> {
+        let region = flood-fill(world, type, set-create(), position);
+        let region-index = acc.regions.size();
+
+        acc.filled = region.values().reduce(acc.filled, (filled: map<vec2<i32>, i32>, rp: vec2<i32>) -> {
+          filled.set(rp, region-index)
+        });
+
+        acc.regions.set(region-index, region);
+
+        acc
+      };
+    }
+  });
+
+  s.regions.values()
+}
+
+let solve-part-1 = (input: string): i32 -> {
+  let world = parse-input(input);
+  let regions = get-regions(world);
+  let total-price = regions.reduce(0, (acc: i32, region: set<vec2<i32>>) -> {
+    let area = region.size();
+    let perimeter = get-region-perimeter(region);
+
+    acc + area * perimeter
+  });
+
+  total-price
+}
+
+assert-equal(solve-part-1(get-example()), 1930);
+assert-equal(solve-part-1(get-input()), 1352976);
