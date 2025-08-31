@@ -1,12 +1,6 @@
 import { assert-equal } from "@assert";
-import { grid, grid-create, grid-from-string } from "@grid";
 import { list, list-from-range } from "@list";
-import { log: $log } from "@log";
-import { map, map-create } from "@map";
-import { pair, pair-create } from "@pair";
-import { set, set-create } from "@set";
 import { string } from "@string";
-import { vec2, vec2-create } from "@vec2";
 import { get-value: get-example } from "./example.txt";
 import { get-value: get-input } from "./input.txt";
 
@@ -14,12 +8,12 @@ let parse-input = (input: string): list<i32> -> {
   input.trim().split-by("").map((part: string) -> part.to-i32())
 }
 
-let print-disk = (disk: list<i32>): unit -> {
-  $log(disk.map((block: i32) -> case {
-    block == 0 -> ".";
-    _ -> (block - 1).to-string();
-  }).join-by(""));
-}
+# let print-disk = (disk: list<i32>): unit -> {
+#   $log(disk.map((block: i32) -> case {
+#     block == 0 -> ".";
+#     _ -> (block - 1).to-string();
+#   }).join-by(""));
+# }
 
 let solve-part-1 = (input: string): i64 -> {
   let disk-map = parse-input(input);
@@ -76,6 +70,5 @@ let solve-part-2 = (input: string): i64 -> {
 
 assert-equal(solve-part-1(get-example()), 1928);
 assert-equal(solve-part-1(get-input()), 6385338159127);
-
-# assert-equal(solve-part-2(get-example()), 0);
-# assert-equal(solve-part-2(get-input()), 0);
+assert-equal(solve-part-2(get-example()), 0);
+assert-equal(solve-part-2(get-input()), 0);

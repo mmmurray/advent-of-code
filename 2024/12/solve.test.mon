@@ -2,6 +2,7 @@ import { assert-equal } from "@assert";
 import {
   grid,
   grid-compass-4,
+  grid-create,
   grid-east,
   grid-from-string,
   grid-north,
@@ -61,29 +62,8 @@ let get-region-perimeter = (region: set<vec2<i32>>): i32 -> {
   }).sum()
 }
 
-let grid-magnify = <t, u:number>(self: grid<t, u>, factor: u): grid<t, u> -> {
-  let width = self.width * factor;
-  let height = self.height * factor;
-  let count = width * height;
-  let cells = $arrayCreate($i32(count));
-  let y = 0;
-
-  while y < height {
-    let x = 0;
-
-    while x < width {
-      let i = $i32((y * width) + x);
-      let cell = self.get(x / factor, y / factor);
-
-      $arraySet(cells, i, cell);
-
-      x = x + 1;
-    }
-
-    y = y + 1;
-  }
-
-  grid.new({ cells: cells, width: width, height: height })
+let grid-magnify = (self: grid<i32, i32>, factor: i32): grid<i32, i32> -> {
+  grid-create(self.width * factor, self.height * factor, (x: i32, y: i32) -> self.get(x / factor, y / factor))
 }
 
 let get-region-corners = (world: grid<i32, i32>, region: set<vec2<i32>>): i32 -> {
