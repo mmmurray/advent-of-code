@@ -34,7 +34,7 @@ let do-operators-satisfy-equation = (e: equation, operators: list<i32>): boolean
     case {
       op ==  '+'  -> acc + input;
       op ==  '*'  -> acc * input;
-      op ==  '|'  -> "\(acc.to-string())\(input.to-string())".to-i64();
+      op ==  '|'  -> "\(acc)\(input)".to-i64();
       _ -> acc;
     }
   });
