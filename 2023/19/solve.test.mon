@@ -35,7 +35,7 @@ let parse-workflow = (input: string): workflow -> {
         let condition-part = condition-parts.get(0);
         let target = condition-parts.get(1);
         let step = workflow-step.workflow-step-conditional({
-          target: target,
+          target,
           condition: condition.new({
             property: condition-part.get(0),
             operator: condition-part.get(1),
@@ -53,7 +53,7 @@ let parse-workflow = (input: string): workflow -> {
     };
   }
 
-  workflow.new({ name: name, steps: steps })
+  workflow.new({ name, steps })
 }
 
 let parse-rating = (input: string): rating -> {
@@ -120,7 +120,7 @@ let parse-input = (input: string): system -> {
     };
   }
 
-  system.new({ workflows: workflows, ratings: ratings })
+  system.new({ workflows, ratings })
 }
 
 let _print-system = (s: system): unit -> {

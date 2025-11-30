@@ -46,7 +46,7 @@ let parse-input = (input: string): pipes -> {
     grid.push(row);
   }
 
-  pipes.new({ grid: grid, start: start, size: size })
+  pipes.new({ grid, start, size })
 }
 
 let connections-to-char = (cs: connections): i32 -> {
@@ -262,7 +262,7 @@ let build-lake = (ps: pipes, visited: list<vec2<i32>>): lake -> {
     }
   }
 
-  lake.new({ walls: walls, size: lake-size })
+  lake.new({ walls, size: lake-size })
 }
 
 let _solve-part-2 = (input: string): string -> {

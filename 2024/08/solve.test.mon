@@ -85,7 +85,7 @@ let solve-part-2 = (input: string): i32 -> {
   let nodes = parse-input(input);
 
   count-antinodes(count-antinodes-input.new({
-    nodes: nodes,
+    nodes,
     get-antinodes: (a: vec2<i32>, b: vec2<i32>) -> {
       let antinodes = [];
       let delta = b.sub(a);

@@ -57,9 +57,9 @@ let parse-input = (input: string): almanac -> {
             let source-start = values.get(1);
             let range-length = values.get(2);
             let mapping = almanac-mapping.new({
-              destination-start: destination-start,
-              source-start: source-start,
-              range-length: range-length,
+              destination-start,
+              source-start,
+              range-length,
               source-range: range-create(source-start, (source-start + range-length)),
               offset: (destination-start - source-start),
             });

@@ -59,7 +59,7 @@ let parse-input = (input: string): list<dig-plan-step> -> {
     let d = parse-direction(parts.get(0));
     let distance = (parts.get(1)).to-i64();
     let color = parts.get(2);
-    let step = dig-plan-step.new({ direction: d, distance: distance, color: color });
+    let step = dig-plan-step.new({ direction: d, distance, color });
 
     steps.push(step);
   }
@@ -135,7 +135,7 @@ let solve-part-2 = (input: string): string -> {
     let distance = ("0x".concat(distance-hex.to-upper())).to-i64();
     let direction-num = plan-step.color.get(7) -  '0' ;
 
-    steps.push(step.new({ direction: ordered-directions.get(direction-num), distance: distance }));
+    steps.push(step.new({ direction: ordered-directions.get(direction-num), distance }));
   }
 
   let result = calculate-area-from-steps(steps);

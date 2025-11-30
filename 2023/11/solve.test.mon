@@ -24,7 +24,7 @@ let parse-input = (input: string): universe -> {
     }
   }
 
-  universe.new({ size: size, galaxies: galaxies })
+  universe.new({ size, galaxies })
 }
 
 let expand-universe = (u: universe, expansion-rate: i64): universe -> {

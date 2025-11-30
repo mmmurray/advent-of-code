@@ -26,7 +26,7 @@ let parse-row = (line: string): row -> {
     damage-total = damage-total + damage;
   }
 
-  row.new({ conditions: conditions, damaged: damaged, damage-total: damage-total })
+  row.new({ conditions, damaged, damage-total })
 }
 
 let parse-input = (input: string): list<row> -> {

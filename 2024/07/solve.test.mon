@@ -12,7 +12,7 @@ let parse-input = (input: string): list<equation> -> {
     let target = sections.get(0).to-i64();
     let inputs = sections.get(1).split-by(" ").map((part: string) -> part.to-i64());
 
-    equation.new({ target: target, inputs: inputs })
+    equation.new({ target, inputs })
   })
 }
 

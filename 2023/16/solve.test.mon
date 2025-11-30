@@ -115,7 +115,7 @@ let parse-input = (input: string): grid -> {
     energized.push(energized-row);
   }
 
-  grid.new({ size: size, tiles: tiles, energized: energized })
+  grid.new({ size, tiles, energized })
 }
 
 let propagate = (g: grid, position: vec2<i32>, d: direction): boolean -> {

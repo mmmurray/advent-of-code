@@ -34,12 +34,12 @@ let parse-input = (input: string): network -> {
     let name = node-line.slice(0, 3);
     let left = node-line.slice(7, 10);
     let right = node-line.slice(12, 15);
-    let n = node.new({ left: left, right: right });
+    let n = node.new({ left, right });
 
     nodes.set(name, n);
   }
 
-  network.new({ instructions: instructions, nodes: nodes })
+  network.new({ instructions, nodes })
 }
 
 let count-steps = (net: network, start: string): u64 -> {

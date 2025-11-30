@@ -44,7 +44,7 @@ let parse-input = (input: string): schematic -> {
                 };
               }
 
-              let number = schematic-number.new({ location: location, value: value, length: length });
+              let number = schematic-number.new({ location, value, length });
 
               s.numbers.push(number);
 

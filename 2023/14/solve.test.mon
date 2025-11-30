@@ -21,7 +21,7 @@ let parse-input = (input: string): grid -> {
     cols.push(col);
   }
 
-  grid.new({ size: size, cols: cols })
+  grid.new({ size, cols })
 }
 
 let tilt-column = (col: list<i32>): list<i32> -> {
@@ -99,7 +99,7 @@ let rotate-grid-clockwise = (g: grid): grid -> {
     row-index = row-index - 1;
   }
 
-  grid.new({ size: size, cols: new-cols })
+  grid.new({ size, cols: new-cols })
 }
 
 let perform-spin-cycle = (g: grid): grid -> {

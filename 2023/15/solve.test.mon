@@ -17,7 +17,7 @@ let parse-operation = (input: string): operation -> {
     last-char ==  '-'  -> {
       let label = input.slice(0, (input.size() - 1));
 
-      operation.remove({ label: label })
+      operation.remove({ label })
     };
     _ -> {
       let parts = input.split-by("=");
@@ -100,7 +100,7 @@ let solve-part-2 = (input: string): string -> {
 
         let _ = case {
           !(replaced) -> {
-            let l = lens.new({ label: label, focal-length: focal-length });
+            let l = lens.new({ label, focal-length });
 
             b.lenses.push(l);
           };

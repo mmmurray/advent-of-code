@@ -16,7 +16,7 @@ let parse-input = (input: string): list<grid> -> {
   for line in lines {
     let _ = case {
       line.size() == 0 -> {
-        let g = grid.new({ size: size, rows: rows });
+        let g = grid.new({ size, rows });
 
         grids.push(g);
 

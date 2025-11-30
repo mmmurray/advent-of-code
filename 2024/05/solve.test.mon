@@ -20,7 +20,7 @@ let parse-input = (input: string): print-job -> {
     line.split-by(",").map((part: string) -> part.to-i32())
   });
 
-  print-job.new({ rules: rules, updates: updates })
+  print-job.new({ rules, updates })
 }
 
 let pages-order = (rules: set<pair<i32, i32>>, page-a: i32, page-b: i32): order -> {

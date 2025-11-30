@@ -33,7 +33,7 @@ let parse-input = (input: string): list<race> -> {
   let distances = parse-number-list((distances-line.split-by(":")).get(1));
 
   for time, time-index in times {
-    let r = race.new({ time: time, distance: distances.get(time-index) });
+    let r = race.new({ time, distance: distances.get(time-index) });
 
     races.push(r);
   }

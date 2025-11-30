@@ -44,22 +44,22 @@ let parse-input = (input: string): modules -> {
     let outputs = parts.get(1).split-by(", ");
 
     case {
-      target.equals("broadcaster") -> acc.set("broadcaster", module.broadcaster({ outputs: outputs }));
+      target.equals("broadcaster") -> acc.set("broadcaster", module.broadcaster({ outputs }));
       target.starts-with("%") -> {
         let name = target.slice(1, target.size());
 
-        acc.set(name, module.flip-flop({ name: name, state: false, outputs: outputs }))
+        acc.set(name, module.flip-flop({ name, state: false, outputs }))
       };
       target.starts-with("&") -> {
         let name = target.slice(1, target.size());
 
-        acc.set(name, module.conjunction({ name: name, state: map-create(), outputs: outputs }))
+        acc.set(name, module.conjunction({ name, state: map-create(), outputs }))
       };
       _ -> acc;
     }
   });
 
-  modules.new({ by-name: by-name, low-pulses: 0, high-pulses: 0, low-to-rx: false })
+  modules.new({ by-name, low-pulses: 0, high-pulses: 0, low-to-rx: false })
 }
 
 let init-conjunction-input = (ms: modules, name: string, input: string): modules -> {
@@ -131,13 +131,13 @@ let send-pulse = (ms: modules, source: string, target: string, value: boolean): 
   match ms.by-name.get(target) {
     some({ value: m }) -> match m {
       broadcaster({ outputs }) -> {
-        outputs.map((output: string) -> pulse.new({ source: target, target: output, value: value }))
+        outputs.map((output: string) -> pulse.new({ source: target, target: output, value }))
       };
       flip-flop({ name, state, outputs }) -> case {
         value -> [];
         _ -> {
           let new-state = !(state);
-          let new-module = module.flip-flop({ name: name, state: new-state, outputs: outputs });
+          let new-module = module.flip-flop({ name, state: new-state, outputs });
 
           ms.by-name.set(name, new-module);
 

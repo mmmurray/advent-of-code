@@ -48,7 +48,7 @@ let parse-expression-mul = (source: string, offset: i32): option<parse-result<ex
   let offset = close-result.offset;
   let value = expression.mul({ left: left-result.value, right: right-result.value });
 
-  option-some(parse-result.new({ offset: offset, value: value }))
+  option-some(parse-result.new({ offset, value }))
 }
 
 let parse-expression-enable = (source: string, offset: i32): option<parse-result<expression>> -> {
@@ -56,7 +56,7 @@ let parse-expression-enable = (source: string, offset: i32): option<parse-result
   let offset = literal-result.offset;
   let value = expression.enable();
 
-  option-some(parse-result.new({ offset: offset, value: value }))
+  option-some(parse-result.new({ offset, value }))
 }
 
 let parse-expression-disable = (source: string, offset: i32): option<parse-result<expression>> -> {
@@ -64,7 +64,7 @@ let parse-expression-disable = (source: string, offset: i32): option<parse-resul
   let offset = literal-result.offset;
   let value = expression.disable();
 
-  option-some(parse-result.new({ offset: offset, value: value }))
+  option-some(parse-result.new({ offset, value }))
 }
 
 let parse-expression = (source: string, offset: i32): option<parse-result<expression>> -> {

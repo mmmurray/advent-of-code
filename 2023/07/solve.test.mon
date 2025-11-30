@@ -169,7 +169,7 @@ let parse-input = (input: string, jokers: boolean): list<hand> -> {
       cards.push(card);
     }
 
-    let h = hand.new({ cards: cards, bid: bid-part.to-i32(), score: score-cards(cards) });
+    let h = hand.new({ cards, bid: bid-part.to-i32(), score: score-cards(cards) });
 
     hands.push(h);
   }
