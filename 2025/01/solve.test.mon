@@ -1,0 +1,58 @@
+import { assert-equal } from "@assert";
+import { list } from "@list";
+import { mod } from "@math";
+import { string } from "@string";
+import { get-value: get-input } from "./input.txt";
+
+let parse-input = (input: string): list<i32> -> {
+  input.trim().to-lines().map((line: string) -> {
+    let turn = line.slice(1, line.size()).to-i32();
+    let direction = line.get(0);
+    let sign = case {
+      direction ==  'L'  -> --(1);
+      direction ==  'R'  -> 1;
+      _ -> 0;
+    };
+
+    sign * turn
+  })
+}
+
+let solve-part-1 = (input: string): string -> {
+  let turns = parse-input(input);
+  let result = turns.reduce({ zeros: 0, rotation: 50 }, (acc: { rotation: i32, zeros: i32 }, turn: i32) -> {
+    acc.rotation = mod((acc.rotation + turn), 100);
+    acc.zeros = case {
+      acc.rotation == 0 -> acc.zeros + 1;
+      _ -> acc.zeros;
+    };
+
+    acc
+  });
+
+  result.zeros.to-string()
+}
+
+let solve-part-2 = (input: string): string -> {
+  let turns = parse-input(input);
+  let result = turns.reduce({ zeros: 0, rotation: 50 }, (acc: { rotation: i32, zeros: i32 }, turn: i32) -> {
+    let full-turns = (turn / 100).abs();
+    let next-rotation = mod((acc.rotation + turn), 100);
+
+    acc.zeros = acc.zeros + full-turns + case {
+      acc.rotation == 0 -> 0;
+      next-rotation == 0 -> 1;
+      next-rotation > acc.rotation && turn < 0 -> 1;
+      next-rotation < acc.rotation && turn > 0 -> 1;
+      _ -> 0;
+    };
+    acc.rotation = next-rotation;
+
+    acc
+  });
+
+  result.zeros.to-string()
+}
+
+assert-equal(solve-part-1(get-input()), "1021");
+assert-equal(solve-part-2(get-input()), "5933");
