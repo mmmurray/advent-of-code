@@ -16,9 +16,11 @@ let parse-input = (input: string): [i32] -> {
   })
 }
 
+type state = { rotation: i32, zeros: i32 }
+
 let solve-part-1 = (input: string): string -> {
   let turns = parse-input(input);
-  let result = turns.reduce({ zeros: 0, rotation: 50 }, (acc: { rotation: i32, zeros: i32 }, turn: i32) -> {
+  let result = turns.reduce({ zeros: 0, rotation: 50 }, (acc: state, turn: i32) -> {
     rotation: (acc.rotation + turn) % 100,
     zeros: case {
       acc.rotation == 0 -> acc.zeros + 1;
@@ -31,7 +33,7 @@ let solve-part-1 = (input: string): string -> {
 
 let solve-part-2 = (input: string): string -> {
   let turns = parse-input(input);
-  let result = turns.reduce({ zeros: 0, rotation: 50 }, (acc: { rotation: i32, zeros: i32 }, turn: i32) -> {
+  let result = turns.reduce({ zeros: 0, rotation: 50 }, (acc: state, turn: i32) -> {
     let full-turns = (turn / 100).abs();
     let next-rotation = (acc.rotation + turn) % 100;
 
