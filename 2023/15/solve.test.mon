@@ -99,7 +99,7 @@ let solve-part-2 = (input: string): string -> {
         }
 
         let _ = case {
-          !(replaced) -> {
+          !replaced -> {
             let l = lens.new({ label, focal-length });
 
             b.lenses.push(l);

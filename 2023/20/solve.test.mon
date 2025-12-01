@@ -136,7 +136,7 @@ let send-pulse = (ms: modules, source: string, target: string, value: boolean): 
       flip-flop({ name, state, outputs }) -> case {
         value -> [];
         _ -> {
-          let new-state = !(state);
+          let new-state = !state;
           let new-module = module.flip-flop({ name, state: new-state, outputs });
 
           ms.by-name.set(name, new-module);
@@ -156,7 +156,7 @@ let send-pulse = (ms: modules, source: string, target: string, value: boolean): 
           };
         }
 
-        outputs.map((output: string) -> pulse.new({ source: name, target: output, value: !(all-high) }))
+        outputs.map((output: string) -> pulse.new({ source: name, target: output, value: !all-high }))
       };
     };
     none -> [];

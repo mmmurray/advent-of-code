@@ -232,7 +232,7 @@ let is-part-accepted = (workflows: map<string, workflow>, r: rating): boolean ->
                 };
               };
               let _ = case {
-                !(continue) -> {
+                !continue -> {
                   loop = false;
                 };
                 _ -> {};

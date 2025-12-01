@@ -16,7 +16,7 @@ let get-calibration-value1 = (line: string): i32 -> {
         last-digit = digit;
 
         let _ = case {
-          !(set-first-digit) -> {
+          !set-first-digit -> {
             first-digit = digit;
             set-first-digit = true;
           };
@@ -57,7 +57,7 @@ let get-calibration-value2 = (line: string): i32 -> {
         last-digit = digit;
 
         let _ = case {
-          !(set-first-digit) -> {
+          !set-first-digit -> {
             first-digit = digit;
             set-first-digit = true;
           };
@@ -73,7 +73,7 @@ let get-calibration-value2 = (line: string): i32 -> {
               last-digit = digit2;
 
               let _ = case {
-                !(set-first-digit) -> {
+                !set-first-digit -> {
                   first-digit = digit2;
                   set-first-digit = true;
                 };

@@ -51,7 +51,7 @@ let parse-input = (input: string): pipes -> {
 
 let connections-to-char = (cs: connections): i32 -> {
   case {
-    !(cs.north) && (!(cs.east) && (!(cs.south) && !(cs.west))) ->  '.' ;
+    !cs.north && (!cs.east && (!cs.south && !cs.west)) ->  '.' ;
     cs.north && (cs.east && (cs.south && cs.west)) ->  'S' ;
     cs.north && cs.south ->  '║' ;
     cs.east && cs.west ->  '═' ;

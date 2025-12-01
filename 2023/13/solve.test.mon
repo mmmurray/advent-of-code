@@ -93,7 +93,7 @@ let get-reflection-score = (g: grid, not-score: i32): i32 -> {
   }
 
   case {
-    !(loop) -> result;
+    !loop -> result;
     _ -> {
       let row-gap = 1;
       let loop1 = true;
@@ -170,7 +170,7 @@ let remove-smudge = (g: grid): i32 -> {
       let row = g.rows.get(y);
       let value = row.get(x);
 
-      row.set(x, !(value));
+      row.set(x, !value);
 
       let new-score = get-reflection-score(g, result);
       let _ = case {

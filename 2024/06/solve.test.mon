@@ -64,7 +64,7 @@ let get-guard-path = (w: world): set<vec2<i32>> -> {
   let visited = set-create();
   let guard = w.initial-guard;
 
-  while !(is-outside(w, guard)) {
+  while !is-outside(w, guard) {
     visited.add(guard.first());
 
     guard = evolve(w, guard);
@@ -85,7 +85,7 @@ let results-in-loop = (w: world): boolean -> {
   let guard = w.initial-guard;
   let found-loop = false;
 
-  while !(is-outside(w, guard)) && !(found-loop) {
+  while !is-outside(w, guard) && !found-loop {
     visited.add(guard);
 
     guard = evolve(w, guard);
@@ -115,7 +115,7 @@ let solve-part-2 = (input: string): i32 -> {
 
       w = parse-input(input);
       result = case {
-        !(guard-path.contains(p)) -> result;
+        !guard-path.contains(p) -> result;
         w.walls.contains(p) -> result;
         p.equals(w.initial-guard.first()) -> result;
         results-in-loop(world-with-wall(w, p)) -> result + 1;

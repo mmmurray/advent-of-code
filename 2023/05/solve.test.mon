@@ -134,14 +134,14 @@ let map-range-to-location-in-category = (category: almanac-category, r: range<u6
     let mapping-range = mapping.source-range;
     let intersection-before = range-intersect(r, range-create(position, mapping-range.start));
     let _ = case {
-      !(range-empty(intersection-before)) -> {
+      !range-empty(intersection-before) -> {
         ranges.push(intersection-before);
       };
       _ -> {};
     };
     let intersection-mapping = range-intersect(r, mapping-range);
     let _ = case {
-      !(range-empty(intersection-mapping)) -> {
+      !range-empty(intersection-mapping) -> {
         ranges.push(range-shift(mapping.offset, intersection-mapping));
       };
       _ -> {};
@@ -153,7 +153,7 @@ let map-range-to-location-in-category = (category: almanac-category, r: range<u6
 
   let intersection-after = range-intersect(r, range-create(position, position-max));
   let _ = case {
-    !(range-empty(intersection-after)) -> {
+    !range-empty(intersection-after) -> {
       ranges.push(intersection-after);
     };
     _ -> {};

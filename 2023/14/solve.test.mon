@@ -137,7 +137,7 @@ let are-grids-equal = (a: grid, b: grid): boolean -> {
   for c1, i in a.cols {
     let c2 = b.cols.get(i);
     let _ = case {
-      !(are-cols-equal(c1, c2)) -> {
+      !are-cols-equal(c1, c2) -> {
         result = false;
       };
       _ -> {};
