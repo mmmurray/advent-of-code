@@ -98,10 +98,7 @@ let results-in-loop = (w: world): boolean -> {
 let world-with-wall = (w: world, wall: vec2<i32>): world -> {
   let new-walls = w.walls.clone().add(wall);
 
-  world.new({
-    ...w,
-    walls: new-walls,
-  })
+  world.new({ ...w, walls: new-walls })
 }
 
 let solve-part-2 = (input: string): i32 -> {
