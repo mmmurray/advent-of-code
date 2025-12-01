@@ -42,7 +42,7 @@ let get-regions = (world: grid<i32, i32>): list<set<vec2<i32>>> -> {
     let position = vec2-create(x, y);
 
     case {
-      type ==  '.'  -> acc;
+      type == '.' -> acc;
       acc.some((region: set<vec2<i32>>) -> region.contains(position)) -> acc;
       _ -> acc.push(flood-fill(world, type, set-create(), position));
     }

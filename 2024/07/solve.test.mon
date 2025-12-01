@@ -32,9 +32,9 @@ let do-operators-satisfy-equation = (e: equation, operators: list<i32>): boolean
     let input = e.inputs.get(index + 1);
 
     case {
-      op ==  '+'  -> acc + input;
-      op ==  '*'  -> acc * input;
-      op ==  '|'  -> "\(acc)\(input)".to-i64();
+      op == '+' -> acc + input;
+      op == '*' -> acc * input;
+      op == '|' -> "\(acc)\(input)".to-i64();
       _ -> acc;
     }
   });
@@ -58,11 +58,11 @@ let solve-common = (input: string, operators: list<i32>): i64 -> {
 }
 
 let solve-part-1 = (input: string): i64 -> {
-  solve-common(input, [ '+' ,  '*' ])
+  solve-common(input, ['+', '*'])
 }
 
 let solve-part-2 = (input: string): i64 -> {
-  solve-common(input, [ '+' ,  '*' ,  '|' ])
+  solve-common(input, ['+', '*', '|'])
 }
 
 assert-equal(solve-part-1(get-example()), 3749);

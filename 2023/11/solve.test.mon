@@ -14,7 +14,7 @@ let parse-input = (input: string): universe -> {
   for line, y in lines {
     for char, x in line.to-list() {
       let _ = case {
-        char ==  '#'  -> {
+        char == '#' -> {
           let galaxy = vec2-new($i64(x), $i64(y));
 
           galaxies.push(galaxy);

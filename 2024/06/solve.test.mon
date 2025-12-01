@@ -24,12 +24,12 @@ let parse-input = (input: string): world -> {
     walls: set-create(),
   }), (acc: world, cell: i32, x: i32, y: i32) -> {
     case {
-      cell ==  '#'  -> {
+      cell == '#' -> {
         acc.walls.add(vec2-create(x, y));
 
         acc
       };
-      cell ==  '^'  -> {
+      cell == '^' -> {
         acc.initial-guard = pair-create(vec2-create(x, y), vec2-create(0, -1));
 
         acc

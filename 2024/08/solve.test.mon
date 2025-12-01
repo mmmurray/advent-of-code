@@ -39,7 +39,7 @@ let parse-input = (input: string): grid<i32, i32> -> {
 let get-antennas-by-frequency = (nodes: grid<i32, i32>): map<i32, set<vec2<i32>>> -> {
   nodes.reduce(map-create(), (acc: map<i32, set<vec2<i32>>>, cell: i32, x: i32, y: i32) -> {
     case {
-      cell ==  '.'  -> acc;
+      cell == '.' -> acc;
       _ -> {
         let antennas = acc.get(cell).or(set-create());
 

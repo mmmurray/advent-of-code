@@ -7,7 +7,7 @@ import { get-value: get-example } from "./example.txt";
 import { get-value: get-input } from "./input.txt";
 
 let parse-input = (input: string): grid<i32, i32> -> {
-  grid-from-string(input.trim()).map((cell: i32, x: i32, y: i32) -> cell -  '0' )
+  grid-from-string(input.trim()).map((cell: i32, x: i32, y: i32) -> cell - '0')
 }
 
 let get-trailhead-score = (acc: set<vec2<i32>>, map: grid<i32, i32>, position: vec2<i32>, height: i32): set<vec2<i32>> -> {

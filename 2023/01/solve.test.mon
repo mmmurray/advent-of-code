@@ -11,7 +11,7 @@ let get-calibration-value1 = (line: string): i32 -> {
   for char in line.to-list() {
     let _ = case {
       char-is-numeric(char) -> {
-        let digit = char -  '0' ;
+        let digit = char - '0';
 
         last-digit = digit;
 
@@ -52,7 +52,7 @@ let get-calibration-value2 = (line: string): i32 -> {
   for char, char-index in line.to-list() {
     let _ = case {
       char-is-numeric(char) -> {
-        let digit = char -  '0' ;
+        let digit = char - '0';
 
         last-digit = digit;
 

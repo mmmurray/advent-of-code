@@ -14,7 +14,7 @@ let parse-operation = (input: string): operation -> {
   let last-char = input.get((input.size() - 1));
 
   case {
-    last-char ==  '-'  -> {
+    last-char == '-' -> {
       let label = input.slice(0, (input.size() - 1));
 
       operation.remove({ label })

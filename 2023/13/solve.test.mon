@@ -30,7 +30,7 @@ let parse-input = (input: string): list<grid> -> {
         let row = [];
 
         for char in line.to-list() {
-          let is-wall = char ==  '#' ;
+          let is-wall = char == '#';
 
           row.push(is-wall);
         }

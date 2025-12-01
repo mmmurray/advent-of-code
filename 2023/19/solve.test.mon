@@ -176,14 +176,14 @@ let _print-system = (s: system): unit -> {
 
 let does-condition-apply = (c: condition, r: rating): boolean -> {
   let property-value = case {
-    c.property ==  'x'  -> r.x;
-    c.property ==  'm'  -> r.m;
-    c.property ==  'a'  -> r.a;
+    c.property == 'x' -> r.x;
+    c.property == 'm' -> r.m;
+    c.property == 'a' -> r.a;
     _ -> r.s;
   };
 
   case {
-    c.operator ==  '>'  -> property-value > c.value;
+    c.operator == '>' -> property-value > c.value;
     _ -> property-value < c.value;
   }
 }

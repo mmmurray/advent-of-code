@@ -88,10 +88,10 @@ let grid-clone = (g: grid): grid -> {
 
 let parse-tile = (char: i32): tile -> {
   case {
-    char ==  '/'  -> tile.reflect-forward();
-    char ==  '\\'  -> tile.reflect-backward();
-    char ==  '-'  -> tile.split-horizontal();
-    char ==  '|'  -> tile.split-vertical();
+    char == '/' -> tile.reflect-forward();
+    char == '\\' -> tile.reflect-backward();
+    char == '-' -> tile.split-horizontal();
+    char == '|' -> tile.split-vertical();
     _ -> tile.empty();
   }
 }

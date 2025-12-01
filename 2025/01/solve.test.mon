@@ -8,8 +8,8 @@ let parse-input = (input: string): list<i32> -> {
     let turn = line.slice(1, line.size()).to-i32();
     let direction = line.get(0);
     let sign = case {
-      direction ==  'L'  -> -1;
-      direction ==  'R'  -> 1;
+      direction == 'L' -> -1;
+      direction == 'R' -> 1;
       _ -> 0;
     };
 
