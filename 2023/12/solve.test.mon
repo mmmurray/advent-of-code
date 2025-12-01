@@ -46,7 +46,7 @@ let create-cache = (): array<i32> -> {
   let cache = array-create((cache-spacing() * (cache-spacing() * cache-spacing())));
 
   for _, i in list-from-array(cache) {
-    array-set(cache, i, --(1));
+    array-set(cache, i, -1);
   }
 
   cache

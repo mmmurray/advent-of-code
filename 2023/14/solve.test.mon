@@ -159,7 +159,7 @@ let solve-part-2 = (input: string): string -> {
   let g = parse-input(input);
   let grids = [];
   let total-cycles = 1000000000;
-  let cycle-offset = --(1);
+  let cycle-offset = -1;
   let i = 0;
 
   while (cycle-offset < 0) && (i < total-cycles) {

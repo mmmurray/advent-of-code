@@ -30,7 +30,7 @@ let parse-input = (input: string): world -> {
         acc
       };
       cell ==  '^'  -> {
-        acc.initial-guard = pair-create(vec2-create(x, y), vec2-create(0, --(1)));
+        acc.initial-guard = pair-create(vec2-create(x, y), vec2-create(0, -1));
 
         acc
       };
@@ -40,7 +40,7 @@ let parse-input = (input: string): world -> {
 }
 
 let rotate-right = (direction: vec2<i32>): vec2<i32> -> {
-  vec2-create(--(direction.y), direction.x)
+  vec2-create(-direction.y, direction.x)
 }
 
 let evolve = (w: world, guard: pair<vec2<i32>, vec2<i32>>): pair<vec2<i32>, vec2<i32>> -> {

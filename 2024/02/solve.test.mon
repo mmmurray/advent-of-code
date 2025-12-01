@@ -17,7 +17,7 @@ let is-report-safe = (report: list<i32>): boolean -> {
     }
   });
   let safe-increasing = deltas.filter((level: i32) -> level >= 1 && level <= 3);
-  let safe-decreasing = deltas.filter((level: i32) -> level >= --(3) && level <= --(1));
+  let safe-decreasing = deltas.filter((level: i32) -> level >= -3 && level <= -1);
 
   safe-increasing.size() == deltas.size() || safe-decreasing.size() == deltas.size()
 }

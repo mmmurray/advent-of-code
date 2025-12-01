@@ -35,7 +35,7 @@ let solve-part-2 = (input: string): string -> {
   let grid = grid-from-string(input);
   let result = grid-from-string(input).reduce(0, (acc: i32, char: i32, x: i32, y: i32) -> {
     let diag-1 = search-in-direction("MAS", 0, grid, x, y, 1, 1) || search-in-direction("SAM", 0, grid, x, y, 1, 1);
-    let diag-2 = search-in-direction("MAS", 0, grid, x, y + 2, 1, --(1)) || search-in-direction("SAM", 0, grid, x, y + 2, 1, --(1));
+    let diag-2 = search-in-direction("MAS", 0, grid, x, y + 2, 1, -1) || search-in-direction("SAM", 0, grid, x, y + 2, 1, -1);
     let found = case {
       diag-1 && diag-2 -> 1;
       _ -> 0;

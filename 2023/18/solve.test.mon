@@ -19,13 +19,13 @@ let direction-south = (): direction -> direction.south()
 
 let direction-west = (): direction -> direction.west()
 
-let vec2-north = (): vec2<i64> -> vec2-new(0, --(1))
+let vec2-north = (): vec2<i64> -> vec2-new(0, -1)
 
 let vec2-east = (): vec2<i64> -> vec2-new(1, 0)
 
 let vec2-south = (): vec2<i64> -> vec2-new(0, 1)
 
-let vec2-west = (): vec2<i64> -> vec2-new(--(1), 0)
+let vec2-west = (): vec2<i64> -> vec2-new(-1, 0)
 
 let direction-to-vec2 = (d: direction): vec2<i64> -> {
   match d {
