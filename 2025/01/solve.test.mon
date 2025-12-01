@@ -1,6 +1,5 @@
 import { assert-equal } from "@assert";
 import { list } from "@list";
-import { mod } from "@math";
 import { string } from "@string";
 import { get-value: get-input } from "./input.txt";
 
@@ -21,7 +20,7 @@ let parse-input = (input: string): list<i32> -> {
 let solve-part-1 = (input: string): string -> {
   let turns = parse-input(input);
   let result = turns.reduce({ zeros: 0, rotation: 50 }, (acc: { rotation: i32, zeros: i32 }, turn: i32) -> {
-    rotation: mod((acc.rotation + turn), 100),
+    rotation: (acc.rotation + turn) % 100,
     zeros: case {
       acc.rotation == 0 -> acc.zeros + 1;
       _ -> acc.zeros;
@@ -35,7 +34,7 @@ let solve-part-2 = (input: string): string -> {
   let turns = parse-input(input);
   let result = turns.reduce({ zeros: 0, rotation: 50 }, (acc: { rotation: i32, zeros: i32 }, turn: i32) -> {
     let full-turns = (turn / 100).abs();
-    let next-rotation = mod((acc.rotation + turn), 100);
+    let next-rotation = (acc.rotation + turn) % 100;
 
     {
       rotation: next-rotation,
