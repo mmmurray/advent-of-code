@@ -99,9 +99,7 @@ let world-with-wall = (w: world, wall: vec2<i32>): world -> {
   let new-walls = w.walls.clone().add(wall);
 
   world.new({
-    width: w.width,
-    height: w.height,
-    initial-guard: w.initial-guard,
+    ...w,
     walls: new-walls,
   })
 }
