@@ -21,13 +21,11 @@ let parse-input = (input: string): list<i32> -> {
 let solve-part-1 = (input: string): string -> {
   let turns = parse-input(input);
   let result = turns.reduce({ zeros: 0, rotation: 50 }, (acc: { rotation: i32, zeros: i32 }, turn: i32) -> {
-    acc.rotation = mod((acc.rotation + turn), 100);
-    acc.zeros = case {
+    rotation: mod((acc.rotation + turn), 100),
+    zeros: case {
       acc.rotation == 0 -> acc.zeros + 1;
       _ -> acc.zeros;
-    };
-
-    acc
+    },
   });
 
   result.zeros.to-string()
@@ -39,16 +37,16 @@ let solve-part-2 = (input: string): string -> {
     let full-turns = (turn / 100).abs();
     let next-rotation = mod((acc.rotation + turn), 100);
 
-    acc.zeros = acc.zeros + full-turns + case {
-      acc.rotation == 0 -> 0;
-      next-rotation == 0 -> 1;
-      next-rotation > acc.rotation && turn < 0 -> 1;
-      next-rotation < acc.rotation && turn > 0 -> 1;
-      _ -> 0;
-    };
-    acc.rotation = next-rotation;
-
-    acc
+    {
+      rotation: next-rotation,
+      zeros: acc.zeros + full-turns + case {
+        acc.rotation == 0 -> 0;
+        next-rotation == 0 -> 1;
+        next-rotation > acc.rotation && turn < 0 -> 1;
+        next-rotation < acc.rotation && turn > 0 -> 1;
+        _ -> 0;
+      },
+    }
   });
 
   result.zeros.to-string()
