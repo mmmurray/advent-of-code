@@ -127,7 +127,7 @@ let points-contain = (points: list<vec2<i32>>, point: vec2<i32>): boolean -> {
 
   for other in points {
     let _ = case {
-      point.equals(other) -> {
+      point == other -> {
         let result = true;
       };
       _ -> {};

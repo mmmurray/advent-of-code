@@ -117,7 +117,7 @@ let solve-part-2 = (input: string): i32 -> {
       result = case {
         !guard-path.contains(p) -> result;
         w.walls.contains(p) -> result;
-        p.equals(w.initial-guard.first()) -> result;
+        p == w.initial-guard.first() -> result;
         results-in-loop(world-with-wall(w, p)) -> result + 1;
         _ -> result;
       };

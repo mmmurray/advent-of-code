@@ -49,7 +49,7 @@ let get-min-credits = (m: machine): i64 -> {
       let credits = as * 3 + bs;
 
       result = case {
-        position.equals(m.prize) && (credits < result || result == 0) -> credits;
+        position == m.prize && (credits < result || result == 0) -> credits;
         _ -> result;
       };
       bs = bs + 1;

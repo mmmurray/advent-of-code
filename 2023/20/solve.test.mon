@@ -44,7 +44,7 @@ let parse-input = (input: string): modules -> {
     let outputs = parts.get(1).split-by(", ");
 
     case {
-      target.equals("broadcaster") -> acc.set("broadcaster", module.broadcaster({ outputs }));
+      target == "broadcaster" -> acc.set("broadcaster", module.broadcaster({ outputs }));
       target.starts-with("%") -> {
         let name = target.slice(1, target.size());
 
@@ -118,7 +118,7 @@ let send-pulse = (ms: modules, source: string, target: string, value: boolean): 
       ms.low-pulses = ms.low-pulses + 1;
 
       case {
-        target.equals("rx") -> {
+        target == "rx" -> {
           ms.low-to-rx = true;
 
           ms

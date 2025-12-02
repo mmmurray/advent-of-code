@@ -17,19 +17,19 @@ let parse-selection = (input: string): selection -> {
     let value = (pair-parts.get(0)).to-i32();
     let color = pair-parts.get(1);
     let _ = case {
-      color.equals("red") -> {
+      color == "red" -> {
         s.red = value;
       };
       _ -> {};
     };
     let _ = case {
-      color.equals("green") -> {
+      color == "green" -> {
         s.green = value;
       };
       _ -> {};
     };
     let _ = case {
-      color.equals("blue") -> {
+      color == "blue" -> {
         s.blue = value;
       };
       _ -> {};

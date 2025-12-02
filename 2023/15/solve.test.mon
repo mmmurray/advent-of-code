@@ -90,7 +90,7 @@ let solve-part-2 = (input: string): string -> {
 
         for l, lens-index in b.lenses {
           let _ = case {
-            l.label.equals(label) -> {
+            l.label == label -> {
               l.focal-length = focal-length;
               replaced = true;
             };
@@ -112,7 +112,7 @@ let solve-part-2 = (input: string): string -> {
 
         for l, lens-index in b.lenses {
           let _ = case {
-            l.label.equals(label) -> {
+            l.label == label -> {
               remove-index = lens-index;
             };
             _ -> {};

@@ -66,25 +66,25 @@ let parse-rating = (input: string): rating -> {
     let property-name = property-parts.get(0);
     let property-value = (property-parts.get(1)).to-i32();
     let _ = case {
-      property-name.equals("x") -> {
+      property-name == "x" -> {
         r.x = property-value;
       };
       _ -> {};
     };
     let _ = case {
-      property-name.equals("m") -> {
+      property-name == "m" -> {
         r.m = property-value;
       };
       _ -> {};
     };
     let _ = case {
-      property-name.equals("a") -> {
+      property-name == "a" -> {
         r.a = property-value;
       };
       _ -> {};
     };
     let _ = case {
-      property-name.equals("s") -> {
+      property-name == "s" -> {
         r.s = property-value;
       };
       _ -> {};
@@ -195,12 +195,12 @@ let is-part-accepted = (workflows: map<string, workflow>, r: rating): boolean ->
 
   while loop {
     loop = case {
-      current-workflow.equals("A") -> {
+      current-workflow == "A" -> {
         result = true;
 
         false
       };
-      current-workflow.equals("R") -> {
+      current-workflow == "R" -> {
         result = false;
 
         false
