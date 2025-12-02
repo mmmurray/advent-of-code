@@ -1,0 +1,41 @@
+import { assert-equal } from "@assert";
+import { list-from-range } from "@list";
+import { pair, pair-create } from "@pair";
+import { string } from "@string";
+import { get-value: get-input } from "./input.txt";
+
+let parse-input = (input: string): [pair<u64, u64>] -> {
+  input.trim().split-by(",").map((range: string) -> {
+    let parts = range.split-by("-");
+
+    pair-create(parts.get(0).to-u64(), parts.get(1).to-u64())
+  })
+}
+
+let has-repeated-chunks = (value: string, chunk-size: i32): boolean -> {
+  value.to-list().chunks-of(chunk-size).to-set().size() == 1
+}
+
+let solve = (input: string, is-invalid-id: (u64 -> boolean)): string -> {
+  let ranges = parse-input(input);
+  let ids = ranges.flat-map((range: pair<u64, u64>) -> list-from-range(range.first(), range.second() + 1, 1));
+  let invalid-ids = ids.filter(is-invalid-id);
+
+  invalid-ids.sum().to-string()
+}
+
+let solve-part-1 = (input: string): string -> solve(input, (id: u64) -> {
+  let str = id.to-string();
+
+  str.size() % 2 == 0 && has-repeated-chunks(str, str.size() / 2)
+})
+
+let solve-part-2 = (input: string): string -> solve(input, (id: u64) -> {
+  let str = id.to-string();
+  let chunk-sizes = list-from-range(1, str.size() / 2 + 1, 1);
+
+  chunk-sizes.some((chunk-size: i32) -> has-repeated-chunks(str, chunk-size))
+})
+
+assert-equal(solve-part-1(get-input()), "31839939622");
+assert-equal(solve-part-2(get-input()), "41662374059");
