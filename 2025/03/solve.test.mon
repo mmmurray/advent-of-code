@@ -1,0 +1,59 @@
+import { assert-equal } from "@assert";
+import { list-from-range } from "@list";
+import { string } from "@string";
+import { get-value: get-input } from "./input.txt";
+
+let parse-bank = (bank: string): [i64] -> {
+  bank.split-by("").map((cell: string) -> cell.to-i64())
+}
+
+let parse-input = (input: string): [[i64]] -> {
+  input.trim().to-lines().map(parse-bank)
+}
+
+let get-joltage = (bank: [i64], indices: [i32]): i64 -> {
+  indices.map((index: i32) -> bank.get(index)).join-by("").to-i64()
+}
+
+let get-index-of-largest-cell-in-range = (bank: [i64], start: i32, end: i32): i32 -> {
+  let largest-cell = 0;
+  let largest-index = 0;
+  let i = start;
+
+  while i < end {
+    let cell = bank.get(i);
+    let _ = case {
+      cell > largest-cell -> {
+        largest-cell = cell;
+        largest-index = i;
+      };
+      _ -> {};
+    };
+
+    i = i + 1;
+  }
+
+  largest-index
+}
+
+let get-largest-joltage = (bank: [i64], cell-count: i32): i64 -> {
+  let indices = list-from-range(0, cell-count, 1).reduce([], (acc: [i32], i: i32) -> {
+    let start = case {
+      acc.size() == 0 -> 0;
+      _ -> acc.get(acc.size() - 1) + 1;
+    };
+    let remaining = cell-count - acc.size();
+    let end = bank.size() - remaining + 1;
+
+    acc.push(get-index-of-largest-cell-in-range(bank, start, end))
+  });
+
+  get-joltage(bank, indices)
+}
+
+let solve = (input: string, cell-count: i32): string -> {
+  parse-input(input).map((bank: [i64]) -> get-largest-joltage(bank, cell-count)).sum().to-string()
+}
+
+assert-equal(solve(get-input(), 2), "16973");
+assert-equal(solve(get-input(), 12), "168027167146027");
