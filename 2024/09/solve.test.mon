@@ -1,5 +1,5 @@
 import { assert-equal } from "@assert";
-import { list, list-from-range } from "@list";
+import { list } from "@list";
 import { string } from "@string";
 import { get-value: get-example } from "./example.txt";
 import { get-value: get-input } from "./input.txt";
@@ -23,7 +23,7 @@ let solve-part-1 = (input: string): i64 -> {
       _ -> 0;
     };
 
-    [...acc, ...list-from-range(0, x, 1).map((z: i32) -> id)]
+    [...acc, ...[0..x].map((z: i32) -> id)]
   });
 
   # print-disk(disk);

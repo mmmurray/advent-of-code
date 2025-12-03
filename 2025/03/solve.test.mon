@@ -1,5 +1,4 @@
 import { assert-equal } from "@assert";
-import { list-from-range } from "@list";
 import { pair-create } from "@pair";
 import { string } from "@string";
 import { get-value: get-input } from "./input.txt";
@@ -21,7 +20,7 @@ let get-index-of-largest-cell-in-range = (bank: [i64], start: i32, end: i32): i3
 }
 
 let get-largest-joltage = (bank: [i64], cell-count: i32): i64 -> {
-  let indices = list-from-range(0, cell-count, 1).reduce([], (acc: [i32], i: i32) -> {
+  let indices = [0..cell-count].reduce([], (acc: [i32], i: i32) -> {
     let start = case {
       acc.size() == 0 -> 0;
       _ -> acc.get(acc.size() - 1) + 1;

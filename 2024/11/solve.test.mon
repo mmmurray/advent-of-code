@@ -1,5 +1,4 @@
 import { assert-equal } from "@assert";
-import { list-from-range } from "@list";
 import { map, map-create, map-entry } from "@map";
 import { string } from "@string";
 import { get-value: get-example } from "./example.txt";
@@ -39,7 +38,7 @@ let evolve = (stones: map<i64, i64>): map<i64, i64> -> {
 
 let count-stones-after-steps = (input: string, steps: i64): i64 -> {
   let initial-stones = parse-input(input);
-  let final-stones = list-from-range(0, steps, 1).reduce(initial-stones, (acc: map<i64, i64>, step: i64) -> evolve(acc));
+  let final-stones = [0..steps].reduce(initial-stones, (acc: map<i64, i64>, step: i64) -> evolve(acc));
   let stones-count = final-stones.values().reduce(0, (acc: i64, count: i64) -> acc + count);
 
   stones-count
