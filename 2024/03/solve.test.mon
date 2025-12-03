@@ -1,6 +1,5 @@
 import { assert-equal } from "@assert";
 import { char-is-numeric } from "@char";
-import { list } from "@list";
 import { option, option-none, option-some } from "@option";
 import { string } from "@string";
 import { get-value: get-input } from "./input.txt";
@@ -77,8 +76,8 @@ let parse-expression = (source: string, offset: i32): option<parse-result<expres
   result.second()
 }
 
-let parse-expressions = (source: string): list<expression> -> {
-  let rec = (acc: list<expression>, source: string, offset: i32): list<expression> -> {
+let parse-expressions = (source: string): [expression] -> {
+  let rec = (acc: [expression], source: string, offset: i32): [expression] -> {
     case {
       offset == source.size() -> acc;
       _ -> {

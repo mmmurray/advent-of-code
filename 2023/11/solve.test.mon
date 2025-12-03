@@ -1,10 +1,9 @@
 import { assert-equal } from "@assert";
-import { list } from "@list";
 import { string, string-from-number } from "@string";
 import { vec2, vec2-new } from "@vec2";
 import { get-value: get-input } from "./input.txt";
 
-data universe = { galaxies: list<vec2<i64>>, size: vec2<i64> }
+data universe = { galaxies: [vec2<i64>], size: vec2<i64> }
 
 let parse-input = (input: string): universe -> {
   let lines = (input.trim()).to-lines();

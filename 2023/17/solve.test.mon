@@ -137,7 +137,7 @@
 # }
 # data Grid = {
 #   size: Vec2<i32>,
-#   tiles: List<List<i32>>,
+#   tiles: List<[i32]>,
 # }
 # let parseInput = (input: String): Grid -> {
 #   let lines = (input.trim()).toLines();

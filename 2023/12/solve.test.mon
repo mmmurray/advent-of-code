@@ -1,10 +1,10 @@
 import { array, array-create, array-get, array-set } from "@array";
 import { assert-equal } from "@assert";
-import { list, list-from-array } from "@list";
+import { list-from-array } from "@list";
 import { string, string-from-number } from "@string";
 import { get-value: get-input } from "./input.txt";
 
-data row = { conditions: list<i32>, damage-total: i32, damaged: list<i32> }
+data row = { conditions: [i32], damage-total: i32, damaged: [i32] }
 
 let parse-row = (line: string): row -> {
   let parts = line.split-by(" ");
@@ -29,7 +29,7 @@ let parse-row = (line: string): row -> {
   row.new({ conditions, damaged, damage-total })
 }
 
-let parse-input = (input: string): list<row> -> {
+let parse-input = (input: string): [row] -> {
   let lines = (input.trim()).to-lines();
   let rows = [];
 
@@ -52,7 +52,7 @@ let create-cache = (): array<i32> -> {
   cache
 }
 
-let place-damage = (conditions: list<i32>, offset: i32, width: i32): list<i32> -> {
+let place-damage = (conditions: [i32], offset: i32, width: i32): [i32] -> {
   let new-conditions = conditions.clone();
 
   for condition, index in conditions {
@@ -79,7 +79,7 @@ let place-damage = (conditions: list<i32>, offset: i32, width: i32): list<i32> -
   new-conditions
 }
 
-let conditions-contain-dot = (conditions: list<i32>): boolean -> {
+let conditions-contain-dot = (conditions: [i32]): boolean -> {
   let result = false;
 
   for condition in conditions {
@@ -94,7 +94,7 @@ let conditions-contain-dot = (conditions: list<i32>): boolean -> {
   result
 }
 
-let is-valid-placement = (conditions: list<i32>, max-damage: i32, offset: i32, width: i32): boolean -> {
+let is-valid-placement = (conditions: [i32], max-damage: i32, offset: i32, width: i32): boolean -> {
   let prev-index = offset - 1;
   let next-index = offset + width;
 
@@ -196,7 +196,7 @@ let unfold-row = (r: row): row -> {
   })
 }
 
-let unfold-rows = (rows: list<row>): list<row> -> {
+let unfold-rows = (rows: [row]): [row] -> {
   let new-rows = [];
 
   for r in rows {

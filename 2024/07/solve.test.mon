@@ -1,12 +1,11 @@
 import { assert-equal } from "@assert";
-import { list } from "@list";
 import { string } from "@string";
 import { get-value: get-example } from "./example.txt";
 import { get-value: get-input } from "./input.txt";
 
-data equation = { inputs: list<i64>, target: i64 }
+data equation = { inputs: [i64], target: i64 }
 
-let parse-input = (input: string): list<equation> -> {
+let parse-input = (input: string): [equation] -> {
   input.trim().to-lines().map((line: string) -> {
     let sections = line.split-by(": ");
     let target = sections.get(0).to-i64();
@@ -16,18 +15,18 @@ let parse-input = (input: string): list<equation> -> {
   })
 }
 
-let get-operator-permutations = (operators: list<i32>, size: i32): list<list<i32>> -> {
+let get-operator-permutations = (operators: [i32], size: i32): [[i32]] -> {
   case {
     size == 0 -> [[]];
     _ -> {
       let sub-permutations = get-operator-permutations(operators, size - 1);
 
-      operators.flat-map((op: i32) -> sub-permutations.map((p: list<i32>) -> [...p, op]))
+      operators.flat-map((op: i32) -> sub-permutations.map((p: [i32]) -> [...p, op]))
     };
   }
 }
 
-let do-operators-satisfy-equation = (e: equation, operators: list<i32>): boolean -> {
+let do-operators-satisfy-equation = (e: equation, operators: [i32]): boolean -> {
   let total = operators.reduce-indexed(e.inputs.get(0), (acc: i64, op: i32, index: i32) -> {
     let input = e.inputs.get(index + 1);
 
@@ -42,13 +41,13 @@ let do-operators-satisfy-equation = (e: equation, operators: list<i32>): boolean
   total == e.target
 }
 
-let is-equation-possible = (operators: list<i32>, e: equation): boolean -> {
+let is-equation-possible = (operators: [i32], e: equation): boolean -> {
   let operator-permutations = get-operator-permutations(operators, e.inputs.size() - 1);
 
-  operator-permutations.some((operators: list<i32>) -> do-operators-satisfy-equation(e, operators))
+  operator-permutations.some((operators: [i32]) -> do-operators-satisfy-equation(e, operators))
 }
 
-let solve-common = (input: string, operators: list<i32>): i64 -> {
+let solve-common = (input: string, operators: [i32]): i64 -> {
   parse-input(input).reduce(0, (acc: i64, e: equation) -> {
     case {
       is-equation-possible(operators, e) -> acc + e.target;

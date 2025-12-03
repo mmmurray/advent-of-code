@@ -1,6 +1,5 @@
 import { assert-equal } from "@assert";
 import { print } from "@io";
-import { list } from "@list";
 import { map, map-create } from "@map";
 import { string, string-from-char, string-from-number } from "@string";
 import { string-builder-create } from "@string-builder";
@@ -14,9 +13,9 @@ data workflow-step =
   | workflow-step({ target: string })
   | workflow-step-conditional({ condition: condition, target: string })
 
-data workflow = { name: string, steps: list<workflow-step> }
+data workflow = { name: string, steps: [workflow-step] }
 
-data system = { ratings: list<rating>, workflows: map<string, workflow> }
+data system = { ratings: [rating], workflows: map<string, workflow> }
 
 let workflow-default = (): workflow -> workflow.new({ name: "", steps: [] })
 

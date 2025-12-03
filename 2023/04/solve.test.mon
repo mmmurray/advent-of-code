@@ -1,13 +1,12 @@
 import { array-create, array-get, array-set } from "@array";
 import { assert-equal } from "@assert";
-import { list } from "@list";
 import { max } from "@math";
 import { string, string-from-number } from "@string";
 import { get-value: get-input } from "./input.txt";
 
-data game = { numbers: list<i32>, winning: list<i32> }
+data game = { numbers: [i32], winning: [i32] }
 
-let parse-number-list = (input: string): list<i32> -> {
+let parse-number-list = (input: string): [i32] -> {
   let parts = (input.trim()).split-by(" ");
   let numbers = [];
 
@@ -24,7 +23,7 @@ let parse-number-list = (input: string): list<i32> -> {
   numbers
 }
 
-let parse-input = (input: string): list<game> -> {
+let parse-input = (input: string): [game] -> {
   let lines = (input.trim()).to-lines();
   let games = [];
 

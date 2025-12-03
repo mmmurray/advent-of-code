@@ -1,4 +1,3 @@
-import { list } from "@list";
 import { min } from "@math";
 import { range, range-create, range-empty, range-intersect, range-shift } from "@range";
 import { string, string-from-number } from "@string";
@@ -12,11 +11,11 @@ data almanac-mapping = {
   source-start: u64,
 }
 
-data almanac-category = { mappings: list<almanac-mapping> }
+data almanac-category = { mappings: [almanac-mapping] }
 
-data almanac = { categories: list<almanac-category>, seeds: list<u64> }
+data almanac = { categories: [almanac-category], seeds: [u64] }
 
-let parse-number-list = (input: string): list<u64> -> {
+let parse-number-list = (input: string): [u64] -> {
   let values = [];
   let parts = input.split-by(" ");
 
@@ -29,7 +28,7 @@ let parse-number-list = (input: string): list<u64> -> {
   values
 }
 
-let parse-seeds = (input: string): list<u64> -> {
+let parse-seeds = (input: string): [u64] -> {
   let input-parts = input.split-by(":");
   let values = (input-parts.get(1)).trim();
 
@@ -122,7 +121,7 @@ let map-position-to-location = (a: almanac, position: u64): u64 -> {
   value
 }
 
-let map-range-to-location-in-category = (category: almanac-category, r: range<u64>): list<range<u64>> -> {
+let map-range-to-location-in-category = (category: almanac-category, r: range<u64>): [range<u64>] -> {
   let position-min = 0;
   let position-max = 999999999;
   let ranges = [];
@@ -162,7 +161,7 @@ let map-range-to-location-in-category = (category: almanac-category, r: range<u6
   ranges
 }
 
-let map-range-to-location-in-almanac = (a: almanac, initial-range: range<u64>): list<range<u64>> -> {
+let map-range-to-location-in-almanac = (a: almanac, initial-range: range<u64>): [range<u64>] -> {
   let ranges = [];
 
   ranges.push(initial-range);

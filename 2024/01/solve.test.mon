@@ -1,11 +1,10 @@
 import { assert-equal } from "@assert";
-import { list } from "@list";
 import { map, map-create } from "@map";
 import { pair, pair-create } from "@pair";
 import { string } from "@string";
 import { get-value: get-input } from "./input.txt";
 
-let parse-input = (input: string): pair<list<i32>, list<i32>> -> {
+let parse-input = (input: string): pair<[i32], [i32]> -> {
   input.trim().to-lines().map((line: string) -> {
     let parts = line.split-whitespace().map((part: string) -> part.to-i32());
 

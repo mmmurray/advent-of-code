@@ -1,12 +1,11 @@
 import { assert-equal } from "@assert";
-import { list } from "@list";
 import { max } from "@math";
 import { string, string-from-number } from "@string";
 import { get-value: get-input } from "./input.txt";
 
 data selection = { blue: i32, green: i32, red: i32 }
 
-data game = { id: i32, selections: list<selection> }
+data game = { id: i32, selections: [selection] }
 
 let parse-selection = (input: string): selection -> {
   let value-parts = input.split-by(",");
@@ -60,7 +59,7 @@ let parse-input-line = (line: string): game -> {
   game.new({ id, selections })
 }
 
-let parse-input = (input: string): list<game> -> {
+let parse-input = (input: string): [game] -> {
   let lines = input.to-lines();
   let games = [];
 

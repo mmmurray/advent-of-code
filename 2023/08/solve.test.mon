@@ -1,6 +1,5 @@
 import { assert-equal } from "@assert";
 import { print } from "@io";
-import { list } from "@list";
 import { map, map-create } from "@map";
 import { lcm-many } from "@math";
 import { string, string-from-number } from "@string";
@@ -8,7 +7,7 @@ import { get-value: get-input } from "./input.txt";
 
 data node = { left: string, right: string }
 
-data network = { instructions: list<boolean>, nodes: map<string, node> }
+data network = { instructions: [boolean], nodes: map<string, node> }
 
 let parse-input = (input: string): network -> {
   let instructions = [];

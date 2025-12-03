@@ -1,9 +1,8 @@
 import { assert-equal } from "@assert";
-import { list } from "@list";
 import { string, string-from-number } from "@string";
 import { get-value: get-input } from "./input.txt";
 
-let parse-input = (input: string): list<list<i32>> -> {
+let parse-input = (input: string): [[i32]] -> {
   let lines = (input.trim()).to-lines();
   let sequences = [];
 
@@ -23,7 +22,7 @@ let parse-input = (input: string): list<list<i32>> -> {
   sequences
 }
 
-let find-deltas = (sequence: list<i32>): list<i32> -> {
+let find-deltas = (sequence: [i32]): [i32] -> {
   let deltas = [];
 
   for b, index in sequence {
@@ -41,7 +40,7 @@ let find-deltas = (sequence: list<i32>): list<i32> -> {
   deltas
 }
 
-let is-sequence-all-zero = (sequence: list<i32>): boolean -> {
+let is-sequence-all-zero = (sequence: [i32]): boolean -> {
   let all-zero = true;
 
   for value in sequence {
@@ -56,7 +55,7 @@ let is-sequence-all-zero = (sequence: list<i32>): boolean -> {
   all-zero
 }
 
-let find-next-value = (sequence: list<i32>): i32 -> {
+let find-next-value = (sequence: [i32]): i32 -> {
   case {
     is-sequence-all-zero(sequence) -> 0;
     _ -> {
@@ -67,7 +66,7 @@ let find-next-value = (sequence: list<i32>): i32 -> {
   }
 }
 
-let find-previous-value = (sequence: list<i32>): i32 -> {
+let find-previous-value = (sequence: [i32]): i32 -> {
   case {
     is-sequence-all-zero(sequence) -> 0;
     _ -> {

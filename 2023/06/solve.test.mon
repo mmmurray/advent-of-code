@@ -1,12 +1,11 @@
 import { assert-equal } from "@assert";
-import { list } from "@list";
 import { string, string-from-number } from "@string";
 import { string-builder-create } from "@string-builder";
 import { get-value: get-input } from "./input.txt";
 
 data race = { distance: u64, time: u64 }
 
-let parse-number-list = (input: string): list<u64> -> {
+let parse-number-list = (input: string): [u64] -> {
   let values = [];
   let parts = input.split-by(" ");
 
@@ -24,7 +23,7 @@ let parse-number-list = (input: string): list<u64> -> {
   values
 }
 
-let parse-input = (input: string): list<race> -> {
+let parse-input = (input: string): [race] -> {
   let races = [];
   let lines = input.to-lines();
   let times-line = lines.get(0);

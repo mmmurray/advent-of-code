@@ -1,6 +1,5 @@
 import { assert-equal } from "@assert";
 import { grid, grid-create, grid-from-string } from "@grid";
-import { list } from "@list";
 import { map, map-create } from "@map";
 import { pair, pair-create } from "@pair";
 import { set, set-create } from "@set";
@@ -9,7 +8,7 @@ import { vec2, vec2-create } from "@vec2";
 import { get-value: get-example } from "./example.txt";
 import { get-value: get-input } from "./input.txt";
 
-let distinct-pairs = <t>(values: list<t>): list<pair<t, t>> -> {
+let distinct-pairs = <t>(values: [t]): [pair<t, t>] -> {
   let result = [];
   let i = 0;
 
@@ -49,10 +48,7 @@ let get-antennas-by-frequency = (nodes: grid<i32, i32>): map<i32, set<vec2<i32>>
   })
 }
 
-data count-antinodes-input = {
-  get-antinodes: (vec2<i32>, vec2<i32> -> list<vec2<i32>>),
-  nodes: grid<i32, i32>,
-}
+data count-antinodes-input = { get-antinodes: (vec2<i32>, vec2<i32> -> [vec2<i32>]), nodes: grid<i32, i32> }
 
 let count-antinodes = (input: count-antinodes-input): i32 -> {
   let antinodes = grid-create(input.nodes.width, input.nodes.height, (x: i32, y: i32) -> 0);

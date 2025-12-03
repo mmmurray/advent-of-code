@@ -1,5 +1,4 @@
 import { assert-equal } from "@assert";
-import { list } from "@list";
 import { max } from "@math";
 import { string, string-from-number } from "@string";
 import { vec2, vec2-new } from "@vec2";
@@ -64,11 +63,7 @@ data tile =
   | split-horizontal
   | split-vertical
 
-data grid = {
-  energized: list<list<list<direction>>>,
-  size: vec2<i32>,
-  tiles: list<list<tile>>,
-}
+data grid = { energized: [[[direction]]], size: vec2<i32>, tiles: [[tile]] }
 
 let grid-clone = (g: grid): grid -> {
   let new-energized = [];

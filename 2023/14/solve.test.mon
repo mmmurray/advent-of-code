@@ -1,10 +1,9 @@
 import { assert-equal } from "@assert";
-import { list } from "@list";
 import { string, string-from-number } from "@string";
 import { vec2 } from "@vec2";
 import { get-value: get-input } from "./input.txt";
 
-data grid = { cols: list<list<i32>>, size: vec2<i32> }
+data grid = { cols: [[i32]], size: vec2<i32> }
 
 let parse-input = (input: string): grid -> {
   let lines = (input.trim()).to-lines();
@@ -24,7 +23,7 @@ let parse-input = (input: string): grid -> {
   grid.new({ size, cols })
 }
 
-let tilt-column = (col: list<i32>): list<i32> -> {
+let tilt-column = (col: [i32]): [i32] -> {
   let new-col = col.clone();
   let next-free-index = 0;
 
@@ -115,7 +114,7 @@ let perform-spin-cycle = (g: grid): grid -> {
   g
 }
 
-let are-cols-equal = (a: list<i32>, b: list<i32>): boolean -> {
+let are-cols-equal = (a: [i32], b: [i32]): boolean -> {
   let result = true;
 
   for v1, i in a {

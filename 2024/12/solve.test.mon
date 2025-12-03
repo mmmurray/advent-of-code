@@ -13,7 +13,6 @@ import {
   grid-south-west,
   grid-west,
 } from "@grid";
-import { list } from "@list";
 import { set, set-create } from "@set";
 import { string } from "@string";
 import { vec2, vec2-create } from "@vec2";
@@ -37,8 +36,8 @@ let flood-fill = (world: grid<i32, i32>, region-type: i32, acc: set<vec2<i32>>, 
   }
 }
 
-let get-regions = (world: grid<i32, i32>): list<set<vec2<i32>>> -> {
-  let regions = world.reduce([], (acc: list<set<vec2<i32>>>, type: i32, x: i32, y: i32) -> {
+let get-regions = (world: grid<i32, i32>): [set<vec2<i32>>] -> {
+  let regions = world.reduce([], (acc: [set<vec2<i32>>], type: i32, x: i32, y: i32) -> {
     let position = vec2-create(x, y);
 
     case {

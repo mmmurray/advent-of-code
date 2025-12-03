@@ -1,6 +1,5 @@
 import { assert-equal } from "@assert";
 import { char-is-numeric } from "@char";
-import { list } from "@list";
 import { string, string-from-number } from "@string";
 import { vec2, vec2-new } from "@vec2";
 import { get-value: get-input } from "./input.txt";
@@ -9,7 +8,7 @@ data schematic-symbol = { location: vec2<i32>, value: i32 }
 
 data schematic-number = { length: i32, location: vec2<i32>, value: i32 }
 
-data schematic = { numbers: list<schematic-number>, symbols: list<schematic-symbol> }
+data schematic = { numbers: [schematic-number], symbols: [schematic-symbol] }
 
 let parse-input = (input: string): schematic -> {
   let lines = input.to-lines();

@@ -1,5 +1,4 @@
 import { assert-equal } from "@assert";
-import { list } from "@list";
 import { string } from "@string";
 import { stringable } from "@stringable";
 import { vec2, vec2-create } from "@vec2";
@@ -16,7 +15,7 @@ let stringable<machine>.to-string = (self: machine): string -> {
   ].join-by("\n")
 }
 
-let parse-input = (input: string): list<machine> -> {
+let parse-input = (input: string): [machine] -> {
   let parse-vec2 = (input: string): vec2<i64> -> {
     let x = input.slice(input.index-of("X") + 2, input.index-of(",")).to-i64();
     let y = input.slice(input.index-of("Y") + 2, input.size()).to-i64();

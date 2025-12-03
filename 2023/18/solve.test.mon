@@ -1,5 +1,4 @@
 import { assert-equal } from "@assert";
-import { list } from "@list";
 import { mat2, mat2-determinant } from "@math";
 import { string, string-from-number } from "@string";
 import { vec2, vec2-new } from "@vec2";
@@ -50,7 +49,7 @@ let parse-direction = (input: string): direction -> {
   }
 }
 
-let parse-input = (input: string): list<dig-plan-step> -> {
+let parse-input = (input: string): [dig-plan-step] -> {
   let lines = (input.trim()).to-lines();
   let steps = [];
 
@@ -69,7 +68,7 @@ let parse-input = (input: string): list<dig-plan-step> -> {
 
 data step = { direction: direction, distance: i64 }
 
-let calculate-area-from-steps = (steps: list<step>): i64 -> {
+let calculate-area-from-steps = (steps: [step]): i64 -> {
   # Shoelace formula (https://en.wikipedia.org/wiki/Shoelace_formula#Example)
   # Determines the area of a simple polygon whose vertices are described by
   # their Cartesian coordinates in the plane

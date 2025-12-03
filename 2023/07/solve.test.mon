@@ -1,11 +1,10 @@
 import { assert-equal } from "@assert";
 import { char-is-numeric } from "@char";
-import { list } from "@list";
 import { map, map-create } from "@map";
 import { string, string-from-number } from "@string";
 import { get-value: get-input } from "./input.txt";
 
-data hand = { bid: i32, cards: list<i32>, score: i32 }
+data hand = { bid: i32, cards: [i32], score: i32 }
 
 let is-five-of-a-kind = (count-by-card: map<string, i32>): boolean -> {
   let result = false;
@@ -64,7 +63,7 @@ let is-one-pair = (count-by-card: map<string, i32>): boolean -> {
   count-by-card.size() == 4
 }
 
-let score-cards = (cards: list<i32>): i32 -> {
+let score-cards = (cards: [i32]): i32 -> {
   let count-by-card = map-create();
   let jokers = 0;
 
@@ -110,7 +109,7 @@ let score-cards = (cards: list<i32>): i32 -> {
   1
 }
 
-let parse-input = (input: string, jokers: boolean): list<hand> -> {
+let parse-input = (input: string, jokers: boolean): [hand] -> {
   let hands = [];
   let lines = (input.trim()).to-lines();
 
@@ -205,7 +204,7 @@ let compare-hands = (a: hand, b: hand): boolean -> {
   }
 }
 
-let sort-hands = (hands: list<hand>): list<hand> -> {
+let sort-hands = (hands: [hand]): [hand] -> {
   let end-index = hands.size() - 1;
 
   while end-index > 0 {
@@ -231,7 +230,7 @@ let sort-hands = (hands: list<hand>): list<hand> -> {
   hands
 }
 
-let score-hands = (hands: list<hand>): i32 -> {
+let score-hands = (hands: [hand]): i32 -> {
   let result = 0;
 
   for h, hand-index in hands {

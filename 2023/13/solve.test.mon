@@ -1,13 +1,12 @@
 import { assert-equal } from "@assert";
-import { list } from "@list";
 import { min } from "@math";
 import { string, string-from-number } from "@string";
 import { vec2 } from "@vec2";
 import { get-value: get-input } from "./input.txt";
 
-data grid = { rows: list<list<boolean>>, size: vec2<i32> }
+data grid = { rows: [[boolean]], size: vec2<i32> }
 
-let parse-input = (input: string): list<grid> -> {
+let parse-input = (input: string): [grid] -> {
   let grids = [];
   let lines = input.to-lines();
   let rows = [];

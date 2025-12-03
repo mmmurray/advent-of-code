@@ -1,14 +1,13 @@
 import { assert-equal } from "@assert";
-import { list } from "@list";
 import { map, map-create } from "@map";
 import { string } from "@string";
 import { stringable } from "@stringable";
 import { get-value: get-input } from "./input.txt";
 
 data module =
-  | broadcaster({ outputs: list<string> })
-  | flip-flop({ name: string, outputs: list<string>, state: boolean })
-  | conjunction({ name: string, outputs: list<string>, state: map<string, boolean> })
+  | broadcaster({ outputs: [string] })
+  | flip-flop({ name: string, outputs: [string], state: boolean })
+  | conjunction({ name: string, outputs: [string], state: map<string, boolean> })
 
 let stringable<module>.to-string = (self: module): string -> {
   match self {
@@ -107,7 +106,7 @@ let init-state = (ms: modules): modules -> {
   ms
 }
 
-let send-pulse = (ms: modules, source: string, target: string, value: boolean): list<pulse> -> {
+let send-pulse = (ms: modules, source: string, target: string, value: boolean): [pulse] -> {
   ms = case {
     value -> {
       ms.high-pulses = ms.high-pulses + 1;

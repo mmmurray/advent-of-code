@@ -1,4 +1,3 @@
-import { list } from "@list";
 import { max } from "@math";
 import { string, string-from-number } from "@string";
 import { vec2, vec2-new } from "@vec2";
@@ -6,7 +5,7 @@ import { get-value: get-input } from "./input.txt";
 
 data connections = { east: boolean, north: boolean, south: boolean, west: boolean }
 
-data pipes = { grid: list<list<connections>>, size: vec2<i32>, start: vec2<i32> }
+data pipes = { grid: [[connections]], size: vec2<i32>, start: vec2<i32> }
 
 let char-to-connections = (char: i32): connections -> {
   case {
@@ -63,7 +62,7 @@ let connections-to-char = (cs: connections): i32 -> {
   }
 }
 
-let connections-to-walls = (cs: connections): list<list<i32>> -> {
+let connections-to-walls = (cs: connections): [[i32]] -> {
   let walls = [];
   let char = connections-to-char(cs);
   let _ = case {
@@ -122,7 +121,7 @@ let get-connections = (ps: pipes, p: vec2<i32>): connections -> {
   (ps.grid.get(p.y)).get(p.x)
 }
 
-let points-contain = (points: list<vec2<i32>>, point: vec2<i32>): boolean -> {
+let points-contain = (points: [vec2<i32>], point: vec2<i32>): boolean -> {
   let result = false;
 
   for other in points {
@@ -137,7 +136,7 @@ let points-contain = (points: list<vec2<i32>>, point: vec2<i32>): boolean -> {
   result
 }
 
-let search-pipes = (ps: pipes, visited: list<vec2<i32>>, current: vec2<i32>, steps: i32): i32 -> {
+let search-pipes = (ps: pipes, visited: [vec2<i32>], current: vec2<i32>, steps: i32): i32 -> {
   case {
     points-contain(visited, current) -> steps;
     _ -> {
@@ -221,9 +220,9 @@ let _solve-part-1 = (input: string): string -> {
   string-from-number(result)
 }
 
-data lake = { size: vec2<i32>, walls: list<list<i32>> }
+data lake = { size: vec2<i32>, walls: [[i32]] }
 
-let build-lake = (ps: pipes, visited: list<vec2<i32>>): lake -> {
+let build-lake = (ps: pipes, visited: [vec2<i32>]): lake -> {
   let walls = [];
   let pipes-size = ps.size;
   let lake-size = vec2-new(pipes-size.x * 3, pipes-size.y * 3);
