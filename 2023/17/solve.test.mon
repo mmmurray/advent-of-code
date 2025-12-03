@@ -181,7 +181,7 @@
 #   };
 #   adjacent
 # }
-# let extractShortestPath = (cameFrom: Map<String, Vec2<i32>>, targetNode: Vec2<i32>): List<Vec2<i32>> -> {
+# let extractShortestPath = (cameFrom: [String:Vec2<i32]>, targetNode: Vec2<i32>): List<Vec2<i32>> -> {
 #   # (print "+ extractShortestPath")
 #   let path = [];
 #   let c = targetNode;

@@ -1,6 +1,5 @@
 import { assert-equal } from "@assert";
 import { print } from "@io";
-import { map, map-create } from "@map";
 import { string, string-from-char, string-from-number } from "@string";
 import { string-builder-create } from "@string-builder";
 import { get-value: get-input } from "./input.txt";
@@ -15,7 +14,7 @@ data workflow-step =
 
 data workflow = { name: string, steps: [workflow-step] }
 
-data system = { ratings: [rating], workflows: map<string, workflow> }
+data system = { ratings: [rating], workflows: [string:workflow] }
 
 let workflow-default = (): workflow -> workflow.new({ name: "", steps: [] })
 
@@ -96,7 +95,7 @@ let parse-rating = (input: string): rating -> {
 let parse-input = (input: string): system -> {
   let lines = (input.trim()).to-lines();
   let in-workflows-section = true;
-  let workflows = map-create();
+  let workflows = [:];
   let ratings = [];
 
   for line in lines {
@@ -187,7 +186,7 @@ let does-condition-apply = (c: condition, r: rating): boolean -> {
   }
 }
 
-let is-part-accepted = (workflows: map<string, workflow>, r: rating): boolean -> {
+let is-part-accepted = (workflows: [string:workflow], r: rating): boolean -> {
   let current-workflow = "in";
   let result = false;
   let loop = true;

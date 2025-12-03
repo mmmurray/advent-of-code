@@ -1,12 +1,11 @@
 import { assert-equal } from "@assert";
 import { char-is-numeric } from "@char";
-import { map, map-create } from "@map";
 import { string, string-from-number } from "@string";
 import { get-value: get-input } from "./input.txt";
 
 data hand = { bid: i32, cards: [i32], score: i32 }
 
-let is-five-of-a-kind = (count-by-card: map<string, i32>): boolean -> {
+let is-five-of-a-kind = (count-by-card: [string:i32]): boolean -> {
   let result = false;
 
   for item1 in count-by-card.entries() {
@@ -21,7 +20,7 @@ let is-five-of-a-kind = (count-by-card: map<string, i32>): boolean -> {
   result
 }
 
-let is-four-of-a-kind = (count-by-card: map<string, i32>): boolean -> {
+let is-four-of-a-kind = (count-by-card: [string:i32]): boolean -> {
   let result = false;
 
   for item1 in count-by-card.entries() {
@@ -36,7 +35,7 @@ let is-four-of-a-kind = (count-by-card: map<string, i32>): boolean -> {
   result
 }
 
-let is-three-of-a-kind = (count-by-card: map<string, i32>): boolean -> {
+let is-three-of-a-kind = (count-by-card: [string:i32]): boolean -> {
   let result = false;
 
   for item1 in count-by-card.entries() {
@@ -51,20 +50,20 @@ let is-three-of-a-kind = (count-by-card: map<string, i32>): boolean -> {
   result
 }
 
-let is-full-house = (count-by-card: map<string, i32>): boolean -> {
+let is-full-house = (count-by-card: [string:i32]): boolean -> {
   count-by-card.size() == 2
 }
 
-let is-two-pair = (count-by-card: map<string, i32>): boolean -> {
+let is-two-pair = (count-by-card: [string:i32]): boolean -> {
   count-by-card.size() == 3
 }
 
-let is-one-pair = (count-by-card: map<string, i32>): boolean -> {
+let is-one-pair = (count-by-card: [string:i32]): boolean -> {
   count-by-card.size() == 4
 }
 
 let score-cards = (cards: [i32]): i32 -> {
-  let count-by-card = map-create();
+  let count-by-card = [:];
   let jokers = 0;
 
   for card in cards {

@@ -1,5 +1,4 @@
 import { assert-equal } from "@assert";
-import { map, map-create } from "@map";
 import { string } from "@string";
 import { stringable } from "@stringable";
 import { get-value: get-input } from "./input.txt";
@@ -7,7 +6,7 @@ import { get-value: get-input } from "./input.txt";
 data module =
   | broadcaster({ outputs: [string] })
   | flip-flop({ name: string, outputs: [string], state: boolean })
-  | conjunction({ name: string, outputs: [string], state: map<string, boolean> })
+  | conjunction({ name: string, outputs: [string], state: [string:boolean] })
 
 let stringable<module>.to-string = (self: module): string -> {
   match self {
@@ -19,7 +18,7 @@ let stringable<module>.to-string = (self: module): string -> {
 }
 
 data modules = {
-  by-name: map<string, module>,
+  by-name: [string:module],
   high-pulses: i32,
   low-pulses: i32,
   low-to-rx: boolean,
@@ -37,7 +36,7 @@ let stringable<pulse>.to-string = (self: pulse): string -> {
 }
 
 let parse-input = (input: string): modules -> {
-  let by-name = input.trim().to-lines().reduce(map-create(), (acc: map<string, module>, line: string) -> {
+  let by-name = input.trim().to-lines().reduce([:], (acc: [string:module], line: string) -> {
     let parts = line.split-by(" -> ");
     let target = parts.get(0);
     let outputs = parts.get(1).split-by(", ");
@@ -52,7 +51,7 @@ let parse-input = (input: string): modules -> {
       target.starts-with("&") -> {
         let name = target.slice(1, target.size());
 
-        acc.set(name, module.conjunction({ name, state: map-create(), outputs }))
+        acc.set(name, module.conjunction({ name, state: [:], outputs }))
       };
       _ -> acc;
     }

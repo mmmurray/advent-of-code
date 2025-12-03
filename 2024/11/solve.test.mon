@@ -1,21 +1,21 @@
 import { assert-equal } from "@assert";
-import { map, map-create, map-entry } from "@map";
+import { map-entry } from "@map";
 import { string } from "@string";
 import { get-value: get-example } from "./example.txt";
 import { get-value: get-input } from "./input.txt";
 
-let parse-input = (input: string): map<i64, i64> -> {
-  input.trim().split-by(" ").map((part: string) -> part.to-i64()).reduce(map-create(), (acc: map<i64, i64>, num: i64) -> {
+let parse-input = (input: string): [i64:i64] -> {
+  input.trim().split-by(" ").map((part: string) -> part.to-i64()).reduce([:], (acc: [i64:i64], num: i64) -> {
     acc.set(num, acc.get(num).or(0) + 1)
   })
 }
 
-let increment-count = (stones: map<i64, i64>, stone: i64, increment: i64): map<i64, i64> -> {
+let increment-count = (stones: [i64:i64], stone: i64, increment: i64): [i64:i64] -> {
   stones.set(stone, stones.get(stone).or(0) + increment)
 }
 
-let evolve = (stones: map<i64, i64>): map<i64, i64> -> {
-  stones.entries().reduce(map-create(), (acc: map<i64, i64>, entry: map-entry<i64, i64>) -> {
+let evolve = (stones: [i64:i64]): [i64:i64] -> {
+  stones.entries().reduce([:], (acc: [i64:i64], entry: map-entry<i64, i64>) -> {
     let stone = entry.key;
     let stone-str = stone.to-string();
     let count = entry.value;
@@ -38,7 +38,7 @@ let evolve = (stones: map<i64, i64>): map<i64, i64> -> {
 
 let count-stones-after-steps = (input: string, steps: i64): i64 -> {
   let initial-stones = parse-input(input);
-  let final-stones = [0..steps].reduce(initial-stones, (acc: map<i64, i64>, step: i64) -> evolve(acc));
+  let final-stones = [0..steps].reduce(initial-stones, (acc: [i64:i64], step: i64) -> evolve(acc));
   let stones-count = final-stones.values().reduce(0, (acc: i64, count: i64) -> acc + count);
 
   stones-count

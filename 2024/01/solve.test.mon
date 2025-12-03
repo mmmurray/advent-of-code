@@ -1,5 +1,4 @@
 import { assert-equal } from "@assert";
-import { map, map-create } from "@map";
 import { pair, pair-create } from "@pair";
 import { string } from "@string";
 import { get-value: get-input } from "./input.txt";
@@ -24,7 +23,7 @@ let solve-part-1 = (input: string): string -> {
 
 let solve-part-2 = (input: string): string -> {
   let lists = parse-input(input);
-  let occurrences = lists.b.reduce(map-create(), (acc: map<i32, i32>, b: i32) -> {
+  let occurrences = lists.b.reduce([:], (acc: [i32:i32], b: i32) -> {
     let count = acc.get(b).or(0);
 
     acc.set(b, count + 1)
