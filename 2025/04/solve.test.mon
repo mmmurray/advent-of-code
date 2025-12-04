@@ -1,0 +1,54 @@
+import { assert-equal } from "@assert";
+import { grid, grid-from-string } from "@grid";
+import { string, string-from-char } from "@string";
+import { get-value: get-input } from "./input.txt";
+
+type room-grid = grid<string, i32>
+
+let parse-input = (input: string): room-grid -> {
+  grid-from-string(input).map((c: i32, x: i32, y: i32) -> string-from-char(c))
+}
+
+let is-roll = (cell: string): boolean -> cell == "@"
+
+let is-roll-accessible = (room: room-grid, x: i32, y: i32): boolean -> {
+  room.adjacent-8(x, y).filter(is-roll).size() < 4
+}
+
+let count-rolls = (room: room-grid): i32 -> {
+  room.reduce(0, (acc: i32, cell: string, x: i32, y: i32) -> {
+    acc + case {
+      is-roll(cell) -> 1;
+      _ -> 0;
+    }
+  })
+}
+
+let remove-all-accessible-rolls = (room: room-grid): room-grid -> {
+  room.map((cell: string, x: i32, y: i32) -> {
+    case {
+      is-roll(cell) && is-roll-accessible(room, x, y) -> ".";
+      _ -> cell;
+    }
+  })
+}
+
+let remove-all-accessible-rolls-rec = (acc: room-grid): room-grid -> {
+  let next-room = remove-all-accessible-rolls(acc);
+
+  case {
+    count-rolls(next-room) < count-rolls(acc) -> remove-all-accessible-rolls-rec(next-room);
+    _ -> next-room;
+  }
+}
+
+let solve = (input: string, remove-fn: (room-grid -> room-grid)): string -> {
+  let initial-room = parse-input(input);
+  let final-room = remove-fn(initial-room);
+  let removed-count = count-rolls(initial-room) - count-rolls(final-room);
+
+  removed-count.to-string()
+}
+
+assert-equal(solve(get-input(), remove-all-accessible-rolls), "1428");
+assert-equal(solve(get-input(), remove-all-accessible-rolls-rec), "8936");
