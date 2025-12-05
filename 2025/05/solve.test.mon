@@ -1,0 +1,41 @@
+import { assert-equal } from "@assert";
+import { range, range-create, range-size, range-union, ranges-overlap } from "@range";
+import { string } from "@string";
+import { get-value: get-input } from "./input.txt";
+
+type database = { available-ids: [u64], fresh-ranges: [range<u64>] }
+
+let parse-input = (input: string): database -> {
+  let sections = input.trim().split-by("\n\n");
+  let fresh-ranges = sections.get(0).to-lines().map((line: string) -> {
+    let parts = line.split-by("-");
+
+    range-create(parts.get(0).to-u64(), parts.get(1).to-u64() + 1)
+  });
+  let available-ids = sections.get(1).to-lines().map((line: string) -> line.to-u64());
+
+  { fresh-ranges, available-ids }
+}
+
+let add-to-range-set = (rs: [range<u64>], r: range<u64>): [range<u64>] -> {
+  match rs.find((other: range<u64>) -> ranges-overlap(r, other)) {
+    some({ value }) -> add-to-range-set(rs.remove(value.first()), range-union(value.second(), r));
+    _ -> rs.push(r);
+  }
+}
+
+let solve-part-1 = (input: string): string -> {
+  let db = parse-input(input);
+
+  db.available-ids.filter((id: u64) -> db.fresh-ranges.some((r: range<u64>) -> r.contains(id))).size().to-string()
+}
+
+let solve-part-2 = (input: string): string -> {
+  let db = parse-input(input);
+  let rs = db.fresh-ranges.reduce([], add-to-range-set);
+
+  rs.map((r: range<u64>) -> range-size(r)).sum().to-string()
+}
+
+assert-equal(solve-part-1(get-input()), "733");
+assert-equal(solve-part-2(get-input()), "345821388687084");
