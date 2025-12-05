@@ -1,5 +1,6 @@
 import { assert-equal } from "@assert";
 import { range, range-create, range-size, range-union, ranges-overlap } from "@range";
+import { set, set-create } from "@set";
 import { string } from "@string";
 import { get-value: get-input } from "./input.txt";
 
@@ -17,10 +18,10 @@ let parse-input = (input: string): database -> {
   { fresh-ranges, available-ids }
 }
 
-let add-to-range-set = (rs: [range<u64>], r: range<u64>): [range<u64>] -> {
-  match rs.find((other: range<u64>) -> ranges-overlap(r, other)) {
-    some({ value }) -> add-to-range-set(rs.remove(value.first()), range-union(value.second(), r));
-    _ -> rs.push(r);
+let add-to-range-set = (rs: set<range<u64>>, r: range<u64>): set<range<u64>> -> {
+  match rs.values().find((other: range<u64>) -> ranges-overlap(r, other)) {
+    some({ value }) -> add-to-range-set(rs.remove(value.second()), range-union(value.second(), r));
+    _ -> rs.add(r);
   }
 }
 
@@ -32,9 +33,9 @@ let solve-part-1 = (input: string): string -> {
 
 let solve-part-2 = (input: string): string -> {
   let db = parse-input(input);
-  let rs = db.fresh-ranges.reduce([], add-to-range-set);
+  let rs = db.fresh-ranges.reduce(set-create(), add-to-range-set);
 
-  rs.map((r: range<u64>) -> range-size(r)).sum().to-string()
+  rs.values().map((r: range<u64>) -> range-size(r)).sum().to-string()
 }
 
 assert-equal(solve-part-1(get-input()), "733");
