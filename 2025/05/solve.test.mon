@@ -8,12 +8,12 @@ type database = { available-ids: [u64], fresh-ranges: [range<u64>] }
 
 let parse-input = (input: string): database -> {
   let sections = input.trim().split-by("\n\n");
-  let fresh-ranges = sections.get(0).to-lines().map((line: string) -> {
+  let fresh-ranges = sections.get(0).split-by-lines().map((line: string) -> {
     let parts = line.split-by("-");
 
     range-create(parts.get(0).to-u64(), parts.get(1).to-u64() + 1)
   });
-  let available-ids = sections.get(1).to-lines().map((line: string) -> line.to-u64());
+  let available-ids = sections.get(1).split-by-lines().map((line: string) -> line.to-u64());
 
   { fresh-ranges, available-ids }
 }

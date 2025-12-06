@@ -110,7 +110,7 @@ let score-cards = (cards: [i32]): i32 -> {
 
 let parse-input = (input: string, jokers: boolean): [hand] -> {
   let hands = [];
-  let lines = (input.trim()).to-lines();
+  let lines = (input.trim()).split-by-lines();
 
   for line in lines {
     let parts = line.split-by(" ");

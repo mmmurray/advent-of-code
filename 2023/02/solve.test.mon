@@ -60,7 +60,7 @@ let parse-input-line = (line: string): game -> {
 }
 
 let parse-input = (input: string): [game] -> {
-  let lines = input.to-lines();
+  let lines = input.split-by-lines();
   let games = [];
 
   for line in lines {

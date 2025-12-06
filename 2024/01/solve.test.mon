@@ -4,8 +4,8 @@ import { string } from "@string";
 import { get-value: get-input } from "./input.txt";
 
 let parse-input = (input: string): pair<[i32], [i32]> -> {
-  input.trim().to-lines().map((line: string) -> {
-    let parts = line.split-whitespace().map((part: string) -> part.to-i32());
+  input.trim().split-by-lines().map((line: string) -> {
+    let parts = line.split-by-spaces().map((part: string) -> part.to-i32());
 
     pair-create(parts.get(0), parts.get(1))
   }).unzip()

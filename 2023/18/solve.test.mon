@@ -50,7 +50,7 @@ let parse-direction = (input: string): direction -> {
 }
 
 let parse-input = (input: string): [dig-plan-step] -> {
-  let lines = (input.trim()).to-lines();
+  let lines = (input.trim()).split-by-lines();
   let steps = [];
 
   for line in lines {

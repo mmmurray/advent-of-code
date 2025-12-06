@@ -24,7 +24,7 @@ let parse-input = (input: string): [machine] -> {
   }
 
   let parse-machine = (input: string): machine -> {
-    let lines = input.to-lines();
+    let lines = input.split-by-lines();
 
     machine.new({
       button-a: parse-vec2(lines.get(0)),

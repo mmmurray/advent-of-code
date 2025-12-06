@@ -8,7 +8,7 @@ data grid = { rows: [[boolean]], size: vec2<i32> }
 
 let parse-input = (input: string): [grid] -> {
   let grids = [];
-  let lines = input.to-lines();
+  let lines = input.split-by-lines();
   let rows = [];
   let size = vec2.new({ x: 0, y: 0 });
 

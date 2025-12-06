@@ -21,7 +21,7 @@ let char-to-connections = (char: i32): connections -> {
 }
 
 let parse-input = (input: string): pipes -> {
-  let lines = (input.trim()).to-lines();
+  let lines = (input.trim()).split-by-lines();
   let grid = [];
   let start = vec2-new(0, 0);
   let size = vec2-new((lines.get(0)).size(), lines.size());

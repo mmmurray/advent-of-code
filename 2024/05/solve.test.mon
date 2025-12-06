@@ -10,12 +10,12 @@ data print-job = { rules: set<pair<i32, i32>>, updates: [[i32]] }
 
 let parse-input = (input: string): print-job -> {
   let sections = input.trim().split-by("\n\n");
-  let rules = sections.get(0).to-lines().reduce(set-create(), (acc: set<pair<i32, i32>>, line: string) -> {
+  let rules = sections.get(0).split-by-lines().reduce(set-create(), (acc: set<pair<i32, i32>>, line: string) -> {
     let parts = line.split-by("|");
 
     acc.add(pair-create(parts.get(0).to-i32(), parts.get(1).to-i32()))
   });
-  let updates = sections.get(1).to-lines().map((line: string): [i32] -> {
+  let updates = sections.get(1).split-by-lines().map((line: string): [i32] -> {
     line.split-by(",").map((part: string) -> part.to-i32())
   });
 

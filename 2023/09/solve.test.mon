@@ -3,7 +3,7 @@ import { string, string-from-number } from "@string";
 import { get-value: get-input } from "./input.txt";
 
 let parse-input = (input: string): [[i32]] -> {
-  let lines = (input.trim()).to-lines();
+  let lines = (input.trim()).split-by-lines();
   let sequences = [];
 
   for line in lines {

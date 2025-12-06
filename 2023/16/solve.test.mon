@@ -92,7 +92,7 @@ let parse-tile = (char: i32): tile -> {
 }
 
 let parse-input = (input: string): grid -> {
-  let lines = (input.trim()).to-lines();
+  let lines = (input.trim()).split-by-lines();
   let size = vec2-new((lines.get(0)).size(), lines.size());
   let tiles = [];
   let energized = [];

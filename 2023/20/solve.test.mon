@@ -36,7 +36,7 @@ let stringable<pulse>.to-string = (self: pulse): string -> {
 }
 
 let parse-input = (input: string): modules -> {
-  let by-name = input.trim().to-lines().reduce([:], (acc: [string:module], line: string) -> {
+  let by-name = input.trim().split-by-lines().reduce([:], (acc: [string:module], line: string) -> {
     let parts = line.split-by(" -> ");
     let target = parts.get(0);
     let outputs = parts.get(1).split-by(", ");

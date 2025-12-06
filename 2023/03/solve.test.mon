@@ -11,7 +11,7 @@ data schematic-number = { length: i32, location: vec2<i32>, value: i32 }
 data schematic = { numbers: [schematic-number], symbols: [schematic-symbol] }
 
 let parse-input = (input: string): schematic -> {
-  let lines = input.to-lines();
+  let lines = input.split-by-lines();
   let s = schematic.new({ symbols: [], numbers: [] });
 
   for line, line-index in lines {

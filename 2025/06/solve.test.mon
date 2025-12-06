@@ -5,12 +5,12 @@ import { get-value: get-input } from "./input.txt";
 data problem = { inputs: [i64], operator: string }
 
 let parse-input-1 = (input: string): [problem] -> {
-  let lines = input.trim().to-lines();
+  let lines = input.trim().split-by-lines();
   let input-lines = lines.slice(0, lines.size() - 1);
   let operator-line = lines.get(lines.size() - 1).trim();
-  let operators = operator-line.split-whitespace();
+  let operators = operator-line.split-by-spaces();
   let problems = operators.map-indexed((operator: string, i: i32) -> problem.new({
-    inputs: input-lines.map((input-line: string) -> input-line.trim().split-whitespace().get(i).to-i64()),
+    inputs: input-lines.map((input-line: string) -> input-line.trim().split-by-spaces().get(i).to-i64()),
     operator,
   }));
 
@@ -18,13 +18,13 @@ let parse-input-1 = (input: string): [problem] -> {
 }
 
 let parse-input-2 = (input: string): [problem] -> {
-  let lines = input.trim().to-lines();
+  let lines = input.trim().split-by-lines();
   let input-lines = lines.slice(0, lines.size() - 1);
   let operator-line = lines.get(lines.size() - 1).trim();
   let cols = input-lines.join-by("\n").split-by-columns().map((c: string) -> c.trim());
   let input-groups = cols.group-by((a: string, b: string) -> a.size() > 0 && b.size() > 0);
   let input-sets = input-groups.filter((x: [string]) -> !(x.size() == 1 && x.get(0) == ""));
-  let operators = operator-line.split-whitespace();
+  let operators = operator-line.split-by-spaces();
   let problems = operators.map-indexed((operator: string, i: i32) -> problem.new({
     inputs: input-sets.get(i).reverse().map((x: string) -> x.to-i64()),
     operator,

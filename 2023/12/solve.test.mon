@@ -30,7 +30,7 @@ let parse-row = (line: string): row -> {
 }
 
 let parse-input = (input: string): [row] -> {
-  let lines = (input.trim()).to-lines();
+  let lines = (input.trim()).split-by-lines();
   let rows = [];
 
   for line in lines {

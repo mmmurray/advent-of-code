@@ -3,8 +3,8 @@ import { string } from "@string";
 import { get-value: get-input } from "./input.txt";
 
 let parse-input = (input: string): [[i32]] -> {
-  input.trim().to-lines().map((line: string) -> {
-    line.split-whitespace().map((part: string) -> part.to-i32())
+  input.trim().split-by-lines().map((line: string) -> {
+    line.split-by-spaces().map((part: string) -> part.to-i32())
   })
 }
 

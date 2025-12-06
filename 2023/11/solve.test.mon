@@ -6,7 +6,7 @@ import { get-value: get-input } from "./input.txt";
 data universe = { galaxies: [vec2<i64>], size: vec2<i64> }
 
 let parse-input = (input: string): universe -> {
-  let lines = (input.trim()).to-lines();
+  let lines = (input.trim()).split-by-lines();
   let galaxies = [];
   let size = vec2-new($i64((lines.get(0)).size()), $i64(lines.size()));
 

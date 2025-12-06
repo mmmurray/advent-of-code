@@ -11,7 +11,7 @@ data network = { instructions: [boolean], nodes: [string:node] }
 let parse-input = (input: string): network -> {
   let instructions = [];
   let nodes = [:];
-  let lines = (input.trim()).to-lines();
+  let lines = (input.trim()).split-by-lines();
   let instructions-line = lines.get(0);
 
   for char in instructions-line.to-list() {

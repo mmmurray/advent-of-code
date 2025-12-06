@@ -93,7 +93,7 @@ let parse-rating = (input: string): rating -> {
 }
 
 let parse-input = (input: string): system -> {
-  let lines = (input.trim()).to-lines();
+  let lines = (input.trim()).split-by-lines();
   let in-workflows-section = true;
   let workflows = [:];
   let ratings = [];

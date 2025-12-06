@@ -36,7 +36,7 @@ let parse-seeds = (input: string): [u64] -> {
 }
 
 let parse-input = (input: string): almanac -> {
-  let lines = input.to-lines();
+  let lines = input.split-by-lines();
   let a = almanac.new({ seeds: parse-seeds(lines.get(0)), categories: [] });
   let mapping-lines = lines.slice(2, lines.size());
   let category = almanac-category.new({ mappings: [] });

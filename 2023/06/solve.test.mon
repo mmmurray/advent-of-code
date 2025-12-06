@@ -25,7 +25,7 @@ let parse-number-list = (input: string): [u64] -> {
 
 let parse-input = (input: string): [race] -> {
   let races = [];
-  let lines = input.to-lines();
+  let lines = input.split-by-lines();
   let times-line = lines.get(0);
   let distances-line = lines.get(1);
   let times = parse-number-list((times-line.split-by(":")).get(1));

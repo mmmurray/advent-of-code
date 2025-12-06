@@ -8,7 +8,7 @@ let parse-bank = (bank: string): [i64] -> {
 }
 
 let parse-input = (input: string): [[i64]] -> {
-  input.trim().to-lines().map(parse-bank)
+  input.trim().split-by-lines().map(parse-bank)
 }
 
 let get-joltage = (bank: [i64], indices: [i32]): i64 -> {

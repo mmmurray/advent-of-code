@@ -3,7 +3,7 @@ import { string } from "@string";
 import { get-value: get-input } from "./input.txt";
 
 let parse-input = (input: string): [i32] -> {
-  input.trim().to-lines().map((line: string) -> {
+  input.trim().split-by-lines().map((line: string) -> {
     let turn = line.slice(1, line.size()).to-i32();
     let direction = line.get(0);
     let sign = case {
