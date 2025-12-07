@@ -1,0 +1,90 @@
+import { assert-equal } from "@assert";
+import { grid, grid-from-string } from "@grid";
+import { string } from "@string";
+import { vec2, vec2-create } from "@vec2";
+import { get-value: get-example } from "./example.txt";
+import { get-value: get-input } from "./input.txt";
+
+type manifold = grid<i32, i32>
+
+let parse-input = (input: string): manifold -> {
+  grid-from-string(input)
+}
+
+let manifold-get-start = (m: manifold): vec2<i32> -> {
+  let s = m.reduce(vec2-create(0, 0), (acc: vec2<i32>, c: i32, x: i32, y: i32) -> case {
+    c == 'S' -> vec2-create(x, y);
+    _ -> acc;
+  });
+
+  s.add(vec2-create(0, 1))
+}
+
+let count-splits = (m: manifold, splits: i32, beam: vec2<i32>): i32 -> {
+  match m.get-safe(beam.x, beam.y) {
+    some({ value }) -> case {
+      value == '.' -> {
+        m.set(beam.x, beam.y, '|');
+
+        count-splits(m, splits, beam.add(vec2-create(0, 1)))
+      };
+      value == '^' -> {
+        let beam-left = beam.add(vec2-create(-1, 0));
+        let beam-right = beam.add(vec2-create(1, 0));
+        let result = splits + 1;
+
+        result = count-splits(m, result, beam-left);
+        result = count-splits(m, result, beam-right);
+
+        result
+      };
+      _ -> splits;
+    };
+    _ -> splits;
+  }
+}
+
+let solve-part-1 = (input: string): string -> {
+  let m = parse-input(input);
+
+  count-splits(m, 0, manifold-get-start(m)).to-string()
+}
+
+let count-timelines = (cache: [vec2<i32>:i64], m: manifold, splits: i64, beam: vec2<i32>): i64 -> {
+  match cache.get(beam) {
+    some({ value }) -> value;
+    _ -> {
+      let result = match m.get-safe(beam.x, beam.y) {
+        some({ value }) -> case {
+          value == '.' -> count-timelines(cache, m, splits, beam.add(vec2-create(0, 1)));
+          value == '^' -> {
+            let beam-left = beam.add(vec2-create(-1, 0));
+            let result-left = count-timelines(cache, m, splits, beam-left);
+            let beam-right = beam.add(vec2-create(1, 0));
+            let result-right = count-timelines(cache, m, splits, beam-right);
+
+            result-left + result-right + 1
+          };
+          _ -> splits;
+        };
+        _ -> splits;
+      };
+
+      cache.set(beam, result);
+
+      result
+    };
+  }
+}
+
+let solve-part-2 = (input: string): string -> {
+  let m = parse-input(input);
+  let timelines = count-timelines([:], m, 0, manifold-get-start(m)) + 1;
+
+  timelines.to-string()
+}
+
+assert-equal(solve-part-1(get-example()), "21");
+assert-equal(solve-part-1(get-input()), "1590");
+assert-equal(solve-part-2(get-example()), "40");
+assert-equal(solve-part-2(get-input()), "20571740188555");
