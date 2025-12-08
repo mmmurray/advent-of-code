@@ -1,0 +1,178 @@
+import { assert-equal } from "@assert";
+import { set, set-create } from "@set";
+import { string } from "@string";
+import { stringable } from "@stringable";
+import { vec3, vec3-create } from "@vec3";
+import { get-value: get-example } from "./example.txt";
+
+# import { get-value: get-input } from "./input.txt";
+
+type point = vec3<i64>
+
+let parse-input = (input: string): [point] -> {
+  input.trim().split-by-lines().map((line: string) -> {
+    let parts = line.split-by(",");
+
+    vec3-create(parts.get(0).to-i64(), parts.get(1).to-i64(), parts.get(2).to-i64())
+  })
+}
+
+data candidate = { distance: i64, end: point, start: point }
+
+let stringable<candidate>.to-string = (self: candidate): string -> {
+  "Candidate \(self.start) - \(self.end) - \(self.distance)"
+}
+
+data circuit = { connected: [set<point>], direct-connections: [point:set<point>] }
+
+let circuit-create = (): circuit -> {
+  circuit.new({ connected: [], direct-connections: [:] })
+}
+
+let circuit.contains = (self: circuit, p: point): boolean -> {
+  self.connected.some((s: set<point>) -> s.contains(p))
+}
+
+let circuit.are-connected = (self: circuit, start: point, end: point): boolean -> {
+  let are-connected-internal = (a: point, b: point): boolean -> match self.direct-connections.get(a) {
+    some({ value }) -> value.contains(b);
+    _ -> false;
+  }
+
+  are-connected-internal(start, end) || are-connected-internal(end, start)
+}
+
+let circuit.size = (self: circuit): i32 -> {
+  self.connected.map((s: set<point>) -> s.size()).sum()
+}
+
+let circuit.connect = (self: circuit, start: point, end: point): circuit -> {
+  let start-direct-connections = match self.direct-connections.get(start) {
+    some({ value }) -> value;
+    _ -> set-create();
+  };
+
+  self.direct-connections.set(start, start-direct-connections.add(end));
+
+  let existing-end = self.connected.find((s: set<point>) -> s.contains(end));
+  let existing-start = self.connected.find((s: set<point>) -> s.contains(start));
+
+  match existing-end {
+    some({ value: found-end }) -> match existing-start {
+      some({ value: found-start }) -> case {
+                # Start and end are already in same circuit, nothing to do
+found-end.first() == found-start.first() -> self;
+                # Start and end are in different circuits so we need to merge them
+_ -> {
+          self.connected.remove(found-end.first());
+
+          for x in found-end.second().values() {
+            found-start.second().add(x);
+          }
+
+          self
+        };
+      };
+      none -> {
+        # Add start to existing end circuit
+
+        found-end.second().add(start);
+
+        self
+      };
+    };
+    none -> match existing-start {
+      some({ value: found-start }) -> {
+        # Add end to existing start circuit
+
+        found-start.second().add(end);
+
+        self
+      };
+      none -> {
+        # Neither start and end are in a circuit, create a new one for them both
+
+        let s = set-create();
+
+        s.add(start);
+        s.add(end);
+        self.connected.push(s);
+
+        self
+      };
+    };
+  }
+}
+
+let get-next-candidate = (result: candidate, c: circuit, ps: [point]): candidate -> {
+  result.distance = 10000000000;
+
+  for a in ps {
+    for b in ps {
+      let d = a.sub(b).length-squared();
+
+      result = case {
+        d > 0 && d < result.distance && !c.are-connected(a, b) -> {
+          result.start = a;
+          result.end = b;
+          result.distance = d;
+
+          result
+        };
+        _ -> result;
+      };
+    }
+  }
+
+  result
+}
+
+let solve-part-1 = (input: string, total-steps: i32): string -> {
+  let ps = parse-input(input);
+  let cached-candidate = candidate.new({
+    start: vec3-create(0, 0, 0),
+    end: vec3-create(0, 0, 0),
+    distance: 1000000000,
+  });
+  let connected-circuit = circuit-create();
+  let steps = total-steps;
+
+  while steps > 0 {
+    let c = get-next-candidate(cached-candidate, connected-circuit, ps);
+
+    connected-circuit = connected-circuit.connect(c.start, c.end);
+    steps = steps - 1;
+  }
+
+  let counts = connected-circuit.connected.map((s: set<point>) -> s.size()).sort().reverse();
+
+  counts.slice(0, 3).product().to-string()
+}
+
+let solve-part-2 = (input: string): string -> {
+  let ps = parse-input(input);
+  let cached-candidate = candidate.new({
+    start: vec3-create(0, 0, 0),
+    end: vec3-create(0, 0, 0),
+    distance: 1000000000,
+  });
+  let connected-circuit = circuit-create();
+  let steps = 0;
+  let c = get-next-candidate(cached-candidate, connected-circuit, ps);
+
+  while connected-circuit.size() != ps.size() || connected-circuit.connected.size() != 1 {
+    c = get-next-candidate(cached-candidate, connected-circuit, ps);
+    connected-circuit = connected-circuit.connect(c.start, c.end);
+    steps = steps + 1;
+  }
+
+  (c.start.x * c.end.x).to-string()
+}
+
+assert-equal(solve-part-1(get-example(), 10), "40");
+
+# assert-equal(solve-part-1(get-input(), 1000), "1590");
+
+assert-equal(solve-part-2(get-example()), "25272");
+
+# assert-equal(solve-part-2(get-input()), "25272");
