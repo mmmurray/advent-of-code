@@ -1,0 +1,80 @@
+import { assert-equal } from "@assert";
+import { max, min } from "@math";
+import { option-some } from "@option";
+import { pair, pair-create } from "@pair";
+import { string } from "@string";
+import { vec2, vec2-create } from "@vec2";
+import { get-value: get-example } from "./example.txt";
+import { get-value: get-input } from "./input.txt";
+
+type point = vec2<i64>
+
+type line = pair<point, point>
+
+type rect = pair<point, point>
+
+let rect-normalize = (r: rect): rect -> {
+  pair-create(vec2-create(min(r.a.x, r.b.x), min(r.a.y, r.b.y)), vec2-create(max(r.a.x, r.b.x), max(r.a.y, r.b.y)))
+}
+
+let rect-area = (r: rect): i64 -> {
+  let w = r.b.x - r.a.x + 1;
+  let h = r.b.y - r.a.y + 1;
+
+  w * h
+}
+
+let rect-contains-point = (r: rect, p: point): boolean -> {
+  p.x > r.a.x && p.x < r.b.x && p.y > r.a.y && p.y < r.b.y
+}
+
+let line-midpoint = (self: line): point -> {
+  let mx = self.first().x + (self.second().x - self.first().x) / 2;
+  let my = self.first().y + (self.second().y - self.first().y) / 2;
+
+  vec2-create(mx, my)
+}
+
+let line-intersects-rect = (r: rect, l: line): boolean -> {
+  case {
+    rect-contains-point(r, l.first()) -> true;
+    rect-contains-point(r, l.second()) -> true;
+    rect-contains-point(r, line-midpoint(l)) -> true;
+    _ -> false;
+  }
+}
+
+let parse-input = (input: string): [point] -> {
+  input.trim().split-by-lines().map((line: string) -> {
+    let parts = line.split-by(",");
+
+    vec2-create(parts.get(0).to-i64(), parts.get(1).to-i64())
+  })
+}
+
+let solve = (points: [point], is-valid-rect: (rect -> boolean)): i64 -> {
+  let possible-rects = points.pairs(points).map(rect-normalize).filter(is-valid-rect);
+  let max-rect-area-result = possible-rects.map(rect-area).max();
+
+  max-rect-area-result.map((p: pair<i32, i64>) -> option-some(p.second())).or(0)
+}
+
+let solve-part-1 = (input: string): string -> {
+  let points = parse-input(input);
+
+  solve(points, (r: rect) -> true).to-string()
+}
+
+let solve-part-2 = (input: string): string -> {
+  let points = parse-input(input);
+  let edges = points.zip(points.rotate(1));
+
+  let is-valid-rect = (r: rect): boolean -> edges.none((l: line) -> line-intersects-rect(r, l))
+
+  solve(points, is-valid-rect).to-string()
+}
+
+assert-equal(solve-part-1(get-example()), "50");
+assert-equal(solve-part-1(get-input()), "4773451098");
+assert-equal(solve-part-2(get-example()), "24");
+assert-equal(solve-part-2(get-input()), "1429075575");
