@@ -1,0 +1,93 @@
+import { assert-equal } from "@assert";
+import { min } from "@math";
+import { string } from "@string";
+import { stringable } from "@stringable";
+import { get-value: get-example } from "./example.txt";
+import { get-value: get-input } from "./input.txt";
+
+data machine = { buttons: [[i32]], joltage: [i32], size: i32, target: [boolean] }
+
+let stringable<machine>.to-string = (self: machine): string -> {
+  let target-inner = self.target.map((b: boolean) -> case {
+    b -> "#";
+    _ -> ".";
+  }).join-by("");
+  let buttons = self.buttons.map((b: [i32]) -> {
+    let button-inner = b.join-by(",");
+
+    "(\(button-inner))"
+  }).join-by(" ");
+  let joltage-inner = self.joltage.join-by(",");
+
+  "[\(target-inner)] \(buttons) {\(joltage-inner)}"
+}
+
+let parse-target = (input: string): [boolean] -> {
+  let states = input.slice(1, input.size() - 1);
+
+  states.to-list().map((c: i32) -> c == '#')
+}
+
+let parse-collection = (input: string): [i32] -> {
+  let inner = input.slice(1, input.size() - 1);
+
+  inner.split-by(",").map((part: string) -> part.to-i32())
+}
+
+let parse-machine = (input: string): machine -> {
+  let parts = input.split-by(" ");
+  let target = parse-target(parts.get(0));
+  let buttons = parts.slice(1, parts.size() - 1).map(parse-collection);
+  let joltage = parse-collection(parts.get(parts.size() - 1));
+  let size = target.size();
+
+  machine.new({ size, target, buttons, joltage })
+}
+
+let parse-input = (input: string): [machine] -> {
+  input.trim().split-by-lines().map(parse-machine)
+}
+
+let solve-part-1 = (input: string): string -> {
+  let machines = parse-input(input);
+
+  let press-button = (button: [i32], state: [boolean]): [boolean] -> {
+    button.reduce(state.clone(), (acc: [boolean], light-index: i32) -> acc.set(light-index, !acc.get(light-index)))
+  }
+
+  let rec = (cache: [[i32]:i32], m: machine, unpressed: [i32], state: [boolean]): i32 -> {
+    match cache.get(unpressed) {
+      some({ value }) -> value;
+      _ -> {
+        let result = case {
+          state == m.target -> m.buttons.size() - unpressed.size();
+          unpressed.size() == 0 -> 999999998;
+          _ -> {
+            let min-result = 999999999;
+
+            for button-index, index in unpressed {
+              let next-unpressed = unpressed.clone().remove(index);
+              let next-state = press-button(m.buttons.get(button-index), state);
+              let next-result = rec(cache, m, next-unpressed, next-state);
+
+              min-result = min(min-result, next-result);
+            }
+
+            min-result
+          };
+        };
+
+        cache.set(unpressed, result);
+
+        result
+      };
+    }
+  }
+
+  let fewest-presses-to-target = (m: machine): i32 -> rec([:], m, [0..m.buttons.size()], [0..m.size].map((x: i32) -> false))
+
+  machines.map(fewest-presses-to-target).sum().to-string()
+}
+
+assert-equal(solve-part-1(get-example()), "7");
+assert-equal(solve-part-1(get-input()), "550");
