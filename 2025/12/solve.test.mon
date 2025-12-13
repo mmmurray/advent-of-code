@@ -1,0 +1,45 @@
+import { assert-equal } from "@assert";
+import { string } from "@string";
+import { vec2, vec2-create } from "@vec2";
+import { get-value: get-input } from "./input.txt";
+
+data tree = { area: vec2<i32>, counts: [i32] }
+
+data puzzle = { trees: [tree] }
+
+let parse-tree = (input: string): tree -> {
+  let parts = input.split-by(": ");
+  let area-parts = parts.get(0).split-by("x");
+  let area = vec2-create(area-parts.get(0).to-i32(), area-parts.get(1).to-i32());
+  let counts = parts.get(1).split-by(" ").map((n: string) -> n.to-i32());
+
+  tree.new({ area, counts })
+}
+
+let parse-input = (input: string): puzzle -> {
+  let sections = input.trim().split-by("\n\n");
+  let trees-section = sections.get(sections.size() - 1);
+  let trees = trees-section.split-by-lines().map(parse-tree);
+
+  puzzle.new({ trees })
+}
+
+let presents-fit-under-tree = (t: tree): boolean -> {
+  let total-presents = t.counts.sum();
+  let available-area = t.area.x * t.area.y;
+  let max-present-area = 3 * 3;
+
+  available-area >= total-presents * max-present-area
+}
+
+let solve-part-1 = (input: string): string -> {
+  let puzzle = parse-input(input);
+  let result = puzzle.trees.map((t: tree) -> case {
+    presents-fit-under-tree(t) -> 1;
+    _ -> 0;
+  }).sum();
+
+  result.to-string()
+}
+
+assert-equal(solve-part-1(get-input()), "593");
