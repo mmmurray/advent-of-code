@@ -1,0 +1,65 @@
+import { assert-equal } from "@assert";
+import { set, set-create } from "@set";
+import { string } from "@string";
+import { get-value: get-example-1 } from "./example-1.txt";
+import { get-value: get-example-2 } from "./example-2.txt";
+import { get-value: get-input } from "./input.txt";
+
+type graph = [string:set<string>]
+
+let parse-input = (input: string): graph -> {
+  input.trim().split-by-lines().reduce([:], (acc: graph, line: string) -> {
+    let parts = line.split-by(": ");
+    let source = parts.get(0);
+    let dests = parts.get(1).split-by(" ");
+
+    dests.reduce(acc, (acc2: graph, dest: string) -> acc2.set(source, match acc2.get(source) {
+      some({ value }) -> value.add(dest);
+      _ -> set-create().add(dest);
+    }))
+  })
+}
+
+let count-paths = (cache: [string:i64], connections: graph, node: string, target: string): i64 -> {
+  match cache.get(node) {
+    some({ value }) -> value;
+    _ -> {
+      let result = case {
+        node == target -> 1;
+        _ -> match connections.get(node) {
+          some({ value: dests }) -> dests.values().map((dest: string) -> {
+            count-paths(cache, connections, dest, target)
+          }).sum();
+          _ -> 0;
+        };
+      };
+
+      cache.set(node, result);
+
+      result
+    };
+  }
+}
+
+let solve-part-1 = (input: string): string -> {
+  let connections = parse-input(input);
+
+  count-paths([:], connections, "you", "out").to-string()
+}
+
+let solve-part-2 = (input: string): string -> {
+  let connections = parse-input(input);
+  let a1 = count-paths([:], connections, "svr", "fft");
+  let a2 = count-paths([:], connections, "fft", "dac");
+  let a3 = count-paths([:], connections, "dac", "out");
+  let b1 = count-paths([:], connections, "svr", "dac");
+  let b2 = count-paths([:], connections, "dac", "fft");
+  let b3 = count-paths([:], connections, "fft", "out");
+
+  ((a1 * a2 * a3) + (b1 * b2 * b3)).to-string()
+}
+
+assert-equal(solve-part-1(get-example-1()), "5");
+assert-equal(solve-part-1(get-input()), "643");
+assert-equal(solve-part-2(get-example-2()), "2");
+assert-equal(solve-part-2(get-input()), "417190406827152");
